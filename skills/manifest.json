@@ -1,0 +1,67 @@
+{
+  "$schema": "./manifest.schema.json",
+  "version": "1.0.0",
+  "description": "OpenClaw skill templates — compiled at generation time via Handlebars.",
+  "skills": [
+    {
+      "id": "redis-cache",
+      "path": "redis-cache/SKILL.md",
+      "emoji": "🔴",
+      "services": ["redis"]
+    },
+    {
+      "id": "qdrant-memory",
+      "path": "qdrant-memory/SKILL.md",
+      "emoji": "🧠",
+      "services": ["qdrant"]
+    },
+    {
+      "id": "n8n-trigger",
+      "path": "n8n-trigger/SKILL.md",
+      "emoji": "⚡",
+      "services": ["n8n"]
+    },
+    {
+      "id": "ffmpeg-process",
+      "path": "ffmpeg-process/SKILL.md",
+      "emoji": "🎬",
+      "services": ["ffmpeg"]
+    },
+    {
+      "id": "minio-storage",
+      "path": "minio-storage/SKILL.md",
+      "emoji": "📦",
+      "services": ["minio"]
+    },
+    {
+      "id": "browserless-browse",
+      "path": "browserless-browse/SKILL.md",
+      "emoji": "🌐",
+      "services": ["browserless"]
+    },
+    {
+      "id": "searxng-search",
+      "path": "searxng-search/SKILL.md",
+      "emoji": "🔍",
+      "services": ["searxng"]
+    },
+    {
+      "id": "whisper-transcribe",
+      "path": "whisper-transcribe/SKILL.md",
+      "emoji": "🎙️",
+      "services": ["whisper"]
+    },
+    {
+      "id": "ollama-local-llm",
+      "path": "ollama-local-llm/SKILL.md",
+      "emoji": "🦙",
+      "services": ["ollama"]
+    },
+    {
+      "id": "remotion-render",
+      "path": "remotion-render/SKILL.md",
+      "emoji": "🎥",
+      "services": ["remotion"]
+    }
+  ]
+}

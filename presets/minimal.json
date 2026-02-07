@@ -1,0 +1,8 @@
+{
+  "id": "minimal",
+  "name": "Minimal",
+  "description": "OpenClaw + Redis for caching and session management",
+  "services": ["redis"],
+  "skillPacks": [],
+  "estimatedMemoryMB": 1024
+}

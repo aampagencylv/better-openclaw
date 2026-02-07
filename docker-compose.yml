@@ -1,0 +1,10 @@
+services:
+  better-openclaw:
+    build: .
+    ports:
+      - "3000:3000"
+      - "3456:3456"
+    environment:
+      - NODE_ENV=production
+      - PORT=3456
+    restart: unless-stopped

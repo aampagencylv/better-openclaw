@@ -1,0 +1,8 @@
+{
+  "id": "devops",
+  "name": "DevOps",
+  "description": "Full monitoring and automation stack with n8n, Grafana, and Uptime Kuma",
+  "services": ["n8n", "postgresql", "redis", "uptime-kuma", "grafana", "prometheus"],
+  "skillPacks": ["dev-ops"],
+  "estimatedMemoryMB": 3072
+}

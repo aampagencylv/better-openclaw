@@ -1,0 +1,8 @@
+{
+  "id": "custom-example",
+  "name": "Custom Example",
+  "description": "Example preset showing how to define your own stack configuration. Copy this file and modify it to create your own presets.",
+  "services": ["redis", "qdrant", "minio"],
+  "skillPacks": ["research-agent"],
+  "estimatedMemoryMB": 1536
+}

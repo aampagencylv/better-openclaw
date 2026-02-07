@@ -1,0 +1,40 @@
+{
+  "name": "better-openclaw",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks",
+  "author": "bachir@bidew.io",
+  "license": "MIT",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "build:web": "turbo run build --filter=@better-openclaw/web",
+    "build:api": "turbo run build --filter=@better-openclaw/api",
+    "build:core": "turbo run build --filter=@better-openclaw/core",
+    "build:all": "turbo run build --filter=@better-openclaw/web,@better-openclaw/api,@better-openclaw/cli",
+    "dev": "turbo run dev --filter=@better-openclaw/web",
+    "dev:web": "turbo run dev --filter=@better-openclaw/web",
+    "dev:api": "turbo run dev --filter=@better-openclaw/api",
+    "dev:core": "turbo run dev --filter=@better-openclaw/core",
+    "dev:all": "turbo run dev --filter=@better-openclaw/web,@better-openclaw/api,@better-openclaw/cli",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "typecheck": "turbo run typecheck",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "clean": "turbo run clean",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/node": "^22.0.0",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

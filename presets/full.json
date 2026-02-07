@@ -1,0 +1,15 @@
+{
+  "id": "full",
+  "name": "Full Stack",
+  "description": "Everything enabled — all services and skill packs",
+  "services": [
+    "redis", "postgresql", "qdrant", "n8n", "ffmpeg", "remotion",
+    "minio", "caddy", "browserless", "searxng", "meilisearch",
+    "uptime-kuma", "grafana", "prometheus", "ollama", "whisper", "gotify"
+  ],
+  "skillPacks": [
+    "video-creator", "research-agent", "social-media",
+    "dev-ops", "knowledge-base", "local-ai"
+  ],
+  "estimatedMemoryMB": 8192
+}

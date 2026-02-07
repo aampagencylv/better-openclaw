@@ -1,0 +1,8 @@
+{
+  "id": "creator",
+  "name": "Creator",
+  "description": "Full media creation stack with FFmpeg, Remotion, and MinIO storage",
+  "services": ["ffmpeg", "remotion", "minio", "redis"],
+  "skillPacks": ["video-creator"],
+  "estimatedMemoryMB": 2048
+}
