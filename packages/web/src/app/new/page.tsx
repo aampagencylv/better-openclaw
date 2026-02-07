@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
   resolve,
-  compose,
+  composeMultiFile,
   getAllServices,
   SERVICE_CATEGORIES,
   type ServiceDefinition,
@@ -12,6 +12,7 @@ import {
 } from "@better-openclaw/core";
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
+import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { ArrowLeft, Download, RotateCcw, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { generateStack } from "@/lib/api-client";
@@ -50,11 +51,11 @@ export default function NewStackPage() {
     return new Set(resolverOutput.services.map((s) => s.definition.id));
   }, [resolverOutput]);
 
-  // Generate docker-compose preview using the composer
+  // Generate docker-compose preview using the multi-file composer
   const composeYaml = useMemo(() => {
     if (!resolverOutput || resolverOutput.services.length === 0) return "";
     try {
-      return compose(resolverOutput, {
+      const result = composeMultiFile(resolverOutput, {
         projectName: projectName || "my-stack",
         proxy: "none",
         gpu: false,
@@ -62,6 +63,8 @@ export default function NewStackPage() {
         deployment: "local",
         openclawVersion: "latest",
       });
+      // Return the main file YAML as fallback for the composeYaml prop
+      return result.files[result.mainFile] ?? "";
     } catch {
       return "# Error generating preview...";
     }
@@ -242,6 +245,16 @@ export default function NewStackPage() {
             projectName={projectName}
             selectedServiceIds={Array.from(selectedServices)}
           />
+
+          {/* Dependency Graph */}
+          {resolverOutput && resolverOutput.services.length > 1 && (
+            <div className="mt-6">
+              <h3 className="mb-3 text-sm font-semibold text-foreground">
+                Dependency Graph
+              </h3>
+              <DependencyGraph resolverOutput={resolverOutput} />
+            </div>
+          )}
         </div>
       </div>
     </div>

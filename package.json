@@ -15,7 +15,7 @@
     "build:api": "turbo run build --filter=@better-openclaw/api",
     "build:core": "turbo run build --filter=@better-openclaw/core",
     "build:all": "turbo run build --filter=@better-openclaw/web,@better-openclaw/api,@better-openclaw/cli",
-    "dev": "turbo run dev --filter=@better-openclaw/web",
+    "dev": "turbo run dev --filter=@better-openclaw/web --filter=@better-openclaw/api",
     "dev:web": "turbo run dev --filter=@better-openclaw/web",
     "dev:api": "turbo run dev --filter=@better-openclaw/api",
     "dev:core": "turbo run dev --filter=@better-openclaw/core",

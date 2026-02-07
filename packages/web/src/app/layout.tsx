@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://better-openclaw.dev"),
   title: "better-openclaw — Build your OpenClaw superstack",
   description:
-    "A turbocharged stack generator for OpenClaw. Pick your services, resolve dependencies automatically, and generate a production-ready docker-compose.yml in seconds.",
+    "CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks with Docker Compose",
   keywords: [
     "OpenClaw",
     "docker-compose",
@@ -13,6 +14,20 @@ export const metadata: Metadata = {
     "automation",
     "homelab",
   ],
+  openGraph: {
+    title: "better-openclaw — Build your OpenClaw superstack",
+    description:
+      "Generate Docker Compose stacks with 56+ companion services pre-wired with OpenClaw skills",
+    type: "website",
+    images: [{ url: "/og/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "better-openclaw — Build your OpenClaw superstack",
+    description:
+      "Generate Docker Compose stacks with 56+ companion services pre-wired with OpenClaw skills",
+    images: ["/og/og-image.png"],
+  },
 };
 
 export default function RootLayout({

@@ -87,3 +87,166 @@ level = info
 
 	return files;
 }
+
+/**
+ * Generates a Grafana dashboard JSON for the OpenClaw stack overview.
+ *
+ * The dashboard includes:
+ * - Service Health (stat panel)
+ * - Memory Usage (gauge)
+ * - Request Rate (graph)
+ *
+ * Uses Prometheus as the datasource.
+ */
+export function generateGrafanaDashboard(): string {
+	const dashboard = {
+		annotations: { list: [] },
+		editable: true,
+		fiscalYearStartMonth: 0,
+		graphTooltip: 1,
+		links: [],
+		panels: [
+			{
+				// ── Service Health (stat panel) ──
+				id: 1,
+				title: "Service Health",
+				type: "stat",
+				gridPos: { h: 8, w: 8, x: 0, y: 0 },
+				datasource: { type: "prometheus", uid: "prometheus" },
+				targets: [
+					{
+						expr: 'count(up{job=~".+"} == 1)',
+						legendFormat: "Healthy Services",
+						refId: "A",
+					},
+				],
+				fieldConfig: {
+					defaults: {
+						thresholds: {
+							mode: "absolute",
+							steps: [
+								{ color: "red", value: null },
+								{ color: "yellow", value: 1 },
+								{ color: "green", value: 3 },
+							],
+						},
+						color: { mode: "thresholds" },
+						mappings: [],
+					},
+					overrides: [],
+				},
+				options: {
+					reduceOptions: {
+						values: false,
+						calcs: ["lastNotNull"],
+						fields: "",
+					},
+					orientation: "auto",
+					textMode: "auto",
+					colorMode: "background",
+					graphMode: "none",
+					justifyMode: "auto",
+				},
+			},
+			{
+				// ── Memory Usage (gauge) ──
+				id: 2,
+				title: "Memory Usage",
+				type: "gauge",
+				gridPos: { h: 8, w: 8, x: 8, y: 0 },
+				datasource: { type: "prometheus", uid: "prometheus" },
+				targets: [
+					{
+						expr: "sum(container_memory_usage_bytes) / sum(machine_memory_bytes) * 100",
+						legendFormat: "Memory %",
+						refId: "A",
+					},
+				],
+				fieldConfig: {
+					defaults: {
+						thresholds: {
+							mode: "absolute",
+							steps: [
+								{ color: "green", value: null },
+								{ color: "yellow", value: 60 },
+								{ color: "red", value: 85 },
+							],
+						},
+						color: { mode: "thresholds" },
+						min: 0,
+						max: 100,
+						unit: "percent",
+						mappings: [],
+					},
+					overrides: [],
+				},
+				options: {
+					reduceOptions: {
+						values: false,
+						calcs: ["lastNotNull"],
+						fields: "",
+					},
+					orientation: "auto",
+					showThresholdLabels: false,
+					showThresholdMarkers: true,
+				},
+			},
+			{
+				// ── Request Rate (graph / timeseries) ──
+				id: 3,
+				title: "Request Rate",
+				type: "timeseries",
+				gridPos: { h: 8, w: 8, x: 16, y: 0 },
+				datasource: { type: "prometheus", uid: "prometheus" },
+				targets: [
+					{
+						expr: 'sum(rate(http_requests_total{job=~".+"}[5m])) by (job)',
+						legendFormat: "{{job}}",
+						refId: "A",
+					},
+				],
+				fieldConfig: {
+					defaults: {
+						color: { mode: "palette-classic" },
+						custom: {
+							axisBorderShow: false,
+							axisCenteredZero: false,
+							axisColorMode: "text",
+							axisLabel: "req/s",
+							drawStyle: "line",
+							fillOpacity: 10,
+							gradientMode: "none",
+							lineInterpolation: "smooth",
+							lineWidth: 2,
+							pointSize: 5,
+							showPoints: "auto",
+							spanNulls: false,
+							stacking: { group: "A", mode: "none" },
+						},
+						mappings: [],
+						thresholds: {
+							mode: "absolute",
+							steps: [{ color: "green", value: null }],
+						},
+						unit: "reqps",
+					},
+					overrides: [],
+				},
+				options: {
+					legend: { calcs: [], displayMode: "list", placement: "bottom" },
+					tooltip: { mode: "multi", sort: "desc" },
+				},
+			},
+		],
+		schemaVersion: 39,
+		tags: ["openclaw"],
+		templating: { list: [] },
+		time: { from: "now-1h", to: "now" },
+		timepicker: {},
+		timezone: "browser",
+		title: "OpenClaw Stack Overview",
+		uid: "openclaw-stack-overview",
+	};
+
+	return JSON.stringify(dashboard, null, 2);
+}

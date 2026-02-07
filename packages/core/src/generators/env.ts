@@ -180,3 +180,76 @@ function formatComment(
 		`# Service: ${serviceName} | Required: ${required ? "Yes" : "No"} | Secret: ${secret ? "Yes" : "No"}`,
 	].join("\n");
 }
+
+// ── Structured Env Vars ─────────────────────────────────────────────────────
+
+export interface EnvVarGroup {
+	serviceName: string;
+	serviceIcon: string;
+	serviceId: string;
+	vars: { key: string; description: string; secret: boolean; required: boolean; defaultValue: string }[];
+}
+
+/**
+ * Returns environment variables grouped by service, suitable for UI rendering.
+ *
+ * - First group is always "OpenClaw Core" with base variables.
+ * - Subsequent groups correspond to each resolved service.
+ * - Variables are deduplicated across groups (first occurrence wins).
+ */
+export function getStructuredEnvVars(resolved: ResolverOutput): EnvVarGroup[] {
+	const groups: EnvVarGroup[] = [];
+	const seenKeys = new Set<string>();
+
+	// ── OpenClaw Core group ──────────────────────────────────────────────────
+	const coreVars: EnvVarGroup["vars"] = [
+		{ key: "OPENCLAW_VERSION", description: "OpenClaw version to deploy", secret: false, required: true, defaultValue: "latest" },
+		{ key: "OPENCLAW_GATEWAY_TOKEN", description: "Authentication token for the OpenClaw gateway API", secret: true, required: true, defaultValue: "" },
+		{ key: "OPENCLAW_GATEWAY_PORT", description: "Port the OpenClaw gateway listens on", secret: false, required: true, defaultValue: "18789" },
+	];
+
+	for (const v of coreVars) {
+		seenKeys.add(v.key);
+	}
+
+	groups.push({
+		serviceName: "OpenClaw Core",
+		serviceIcon: "⚙️",
+		serviceId: "openclaw-core",
+		vars: coreVars,
+	});
+
+	// ── Per-service groups ───────────────────────────────────────────────────
+	for (const { definition } of resolved.services) {
+		const allEnvVars = [
+			...definition.environment,
+			...definition.openclawEnvVars,
+		];
+
+		const vars: EnvVarGroup["vars"] = [];
+
+		for (const envVar of allEnvVars) {
+			if (seenKeys.has(envVar.key)) continue;
+			seenKeys.add(envVar.key);
+
+			vars.push({
+				key: envVar.key,
+				description: envVar.description,
+				secret: envVar.secret,
+				required: envVar.required,
+				defaultValue: envVar.defaultValue,
+			});
+		}
+
+		if (vars.length === 0) continue;
+
+		groups.push({
+			serviceName: definition.name,
+			serviceIcon: definition.icon,
+			serviceId: definition.id,
+			vars,
+		});
+	}
+
+	return groups;
+}

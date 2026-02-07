@@ -9,15 +9,15 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "api": {
+    "@better-openclaw/api": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "core": {
+    "@better-openclaw/core": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "cli": {
+    "@better-openclaw/cli": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },

@@ -23,6 +23,7 @@ export interface NonInteractiveOptions {
 	platform?: string;
 	dryRun?: boolean;
 	yes?: boolean;
+	outputFormat?: string;
 }
 
 /**
@@ -159,7 +160,10 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 	const result = generate(input);
 
 	// Write files or dry-run
-	await writeProject(projectDir, result.files, { dryRun: options.dryRun });
+	await writeProject(projectDir, result.files, {
+		dryRun: options.dryRun,
+		outputFormat: options.outputFormat,
+	});
 
 	// Summary
 	if (!options.dryRun) {

@@ -23,6 +23,28 @@ const program = new Command()
 	.option("--dry-run", "Show what would be generated without writing files")
 	.option("--open", "Open web UI stack builder in browser")
 	.action(async (projectDirectory: string | undefined, options: Record<string, unknown>) => {
+		// Handle --open flag: open web UI in browser and exit
+		if (options.open) {
+			const url = "https://better-openclaw.dev/new";
+			const { exec } = await import("node:child_process");
+			const command =
+				process.platform === "win32"
+					? "start"
+					: process.platform === "darwin"
+						? "open"
+						: "xdg-open";
+			exec(`${command} ${url}`, (err) => {
+				if (err) {
+					console.log(
+						pc.dim(`Open ${url} in your browser to use the visual stack builder.`),
+					);
+				} else {
+					console.log(pc.green(`Opened ${url} in your browser.`));
+				}
+			});
+			return;
+		}
+
 		const isNonInteractive =
 			options.yes || options.preset || options.services;
 
@@ -55,6 +77,7 @@ const program = new Command()
 					platform: options.platform as string | undefined,
 					dryRun: options.dryRun as boolean | undefined,
 					yes: options.yes as boolean | undefined,
+					outputFormat: options.outputFormat as string | undefined,
 				});
 			} catch (err) {
 				console.error(pc.red(`\nError: ${err instanceof Error ? err.message : String(err)}`));

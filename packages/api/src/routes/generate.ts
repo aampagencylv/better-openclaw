@@ -28,7 +28,29 @@ route.post("/", async (c) => {
 		// Generate the stack
 		const result = generate(parsed.data);
 
-		// Return as JSON (files map + metadata)
+		const accept = c.req.header("Accept") || "";
+
+		// If client requests a downloadable format, return JSON with
+		// Content-Disposition so the browser triggers a file download.
+		// The client is responsible for assembling the files from the JSON payload.
+		// TODO: Add full ZIP support (e.g. using archiver) for a single-file download
+		if (accept.includes("application/zip")) {
+			const projectName = parsed.data.projectName || "project";
+			c.header(
+				"Content-Disposition",
+				`attachment; filename="${projectName}.zip"`,
+			);
+			c.header("Content-Type", "application/json");
+
+			return c.json({
+				files: result.files,
+				metadata: result.metadata,
+				_download: true,
+				_hint: "Assemble files on the client. Full ZIP support coming soon.",
+			});
+		}
+
+		// Default: Return as JSON (files map + metadata)
 		return c.json({
 			files: result.files,
 			metadata: result.metadata,

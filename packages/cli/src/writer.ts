@@ -1,5 +1,6 @@
 import { mkdir, writeFile, chmod } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { execSync } from "node:child_process";
 import pc from "picocolors";
 
 /**
@@ -9,11 +10,12 @@ import pc from "picocolors";
  * - Writes each file with its content
  * - Makes `.sh` files executable (chmod +x)
  * - In dry-run mode, only logs what would be created
+ * - Optionally creates a tar.gz or zip archive of the output
  */
 export async function writeProject(
 	projectDir: string,
 	files: Record<string, string>,
-	options?: { dryRun?: boolean },
+	options?: { dryRun?: boolean; outputFormat?: string },
 ): Promise<void> {
 	const sortedPaths = Object.keys(files).sort();
 
@@ -56,5 +58,62 @@ export async function writeProject(
 				// chmod may not be supported on all platforms (e.g. Windows)
 			}
 		}
+	}
+
+	// Create archive if requested
+	const fmt = options?.outputFormat;
+	if (fmt === "tar" || fmt === "zip") {
+		await createArchive(projectDir, fmt);
+	}
+}
+
+/**
+ * Creates a tar.gz or zip archive from the project directory.
+ */
+async function createArchive(
+	projectDir: string,
+	format: "tar" | "zip",
+): Promise<void> {
+	const absDir = resolve(projectDir);
+	const parentDir = dirname(absDir);
+	const baseName = absDir.split(/[\\/]/).pop()!;
+
+	try {
+		if (format === "tar") {
+			const archivePath = `${absDir}.tar.gz`;
+			execSync(`tar -czf "${archivePath}" -C "${parentDir}" "${baseName}"`, {
+				stdio: "pipe",
+			});
+			console.log(
+				pc.green(`  Archive created: ${archivePath}`),
+			);
+		} else {
+			// zip
+			const archivePath = `${absDir}.zip`;
+			if (process.platform === "win32") {
+				// Use PowerShell Compress-Archive on Windows
+				execSync(
+					`powershell -NoProfile -Command "Compress-Archive -Path '${absDir}\\*' -DestinationPath '${archivePath}' -Force"`,
+					{ stdio: "pipe" },
+				);
+			} else {
+				execSync(
+					`cd "${parentDir}" && zip -r "${archivePath}" "${baseName}"`,
+					{ stdio: "pipe" },
+				);
+			}
+			console.log(
+				pc.green(`  Archive created: ${archivePath}`),
+			);
+		}
+	} catch (err) {
+		console.log(
+			pc.yellow(
+				`  Warning: Could not create ${format} archive. ${err instanceof Error ? err.message : String(err)}`,
+			),
+		);
+		console.log(
+			pc.dim(`  The project files are still available in ${projectDir}`),
+		);
 	}
 }

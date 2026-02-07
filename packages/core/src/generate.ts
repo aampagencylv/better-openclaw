@@ -5,7 +5,7 @@ import type {
 	ResolverInput,
 } from "./types.js";
 import { resolve } from "./resolver.js";
-import { compose } from "./composer.js";
+import { composeMultiFile } from "./composer.js";
 import { validate } from "./validator.js";
 import { generateEnvFiles } from "./generators/env.js";
 import { generateSkillFiles } from "./generators/skills.js";
@@ -13,7 +13,8 @@ import { generateReadme } from "./generators/readme.js";
 import { generateScripts } from "./generators/scripts.js";
 import { generateCaddyfile } from "./generators/caddy.js";
 import { generatePrometheusConfig } from "./generators/prometheus.js";
-import { generateGrafanaConfig } from "./generators/grafana.js";
+import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
+import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 
 /**
  * Main orchestration function: takes generation input, resolves dependencies,
@@ -37,8 +38,8 @@ export function generate(input: GenerationInput): GenerationResult {
 		);
 	}
 
-	// 2. Generate Docker Compose YAML
-	const composeYaml = compose(resolved, {
+	// 2. Generate Docker Compose YAML (multi-file)
+	const composeOptions = {
 		projectName: input.projectName,
 		proxy: input.proxy,
 		domain: input.domain,
@@ -46,10 +47,11 @@ export function generate(input: GenerationInput): GenerationResult {
 		platform: input.platform,
 		deployment: input.deployment,
 		openclawVersion: input.openclawVersion,
-	});
+	};
+	const composeResult = composeMultiFile(resolved, composeOptions);
 
-	// 3. Validate
-	const validation = validate(resolved, composeYaml, {
+	// 3. Validate (using the base docker-compose.yml)
+	const validation = validate(resolved, composeResult.files["docker-compose.yml"] ?? "", {
 		domain: input.domain,
 		generateSecrets: input.generateSecrets,
 	});
@@ -62,8 +64,10 @@ export function generate(input: GenerationInput): GenerationResult {
 	// 4. Generate all files
 	const files: GeneratedFiles = {};
 
-	// Docker Compose
-	files["docker-compose.yml"] = composeYaml;
+	// Docker Compose (multi-file output)
+	for (const [filename, content] of Object.entries(composeResult.files)) {
+		files[filename] = content;
+	}
 
 	// Environment files
 	const envFiles = generateEnvFiles(resolved, {
@@ -102,6 +106,12 @@ export function generate(input: GenerationInput): GenerationResult {
 		files[path] = content;
 	}
 
+	// n8n workflows
+	const n8nWorkflows = generateN8nWorkflows(resolved);
+	for (const [path, content] of Object.entries(n8nWorkflows)) {
+		files[path] = content;
+	}
+
 	// Caddy config
 	if (input.proxy === "caddy" && input.domain) {
 		files["caddy/Caddyfile"] = generateCaddyfile(resolved, input.domain);
@@ -120,6 +130,8 @@ export function generate(input: GenerationInput): GenerationResult {
 		for (const [path, content] of Object.entries(grafanaFiles)) {
 			files[path] = content;
 		}
+		// Grafana dashboard
+		files["config/grafana/dashboards/openclaw-stack-overview.json"] = generateGrafanaDashboard();
 	}
 
 	// Docker Compose override (empty template)

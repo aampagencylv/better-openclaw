@@ -78,13 +78,19 @@ export { presetRegistry, getPresetById, getAllPresets } from "./presets/registry
 
 // ─── Core Engines ───────────────────────────────────────────────────────────
 export { resolve } from "./resolver.js";
-export { compose } from "./composer.js";
+export { compose, composeMultiFile } from "./composer.js";
+export type { ComposeResult } from "./composer.js";
 export { validate } from "./validator.js";
-export { generateEnvFiles } from "./generators/env.js";
+export { generateEnvFiles, getStructuredEnvVars } from "./generators/env.js";
+export type { EnvVarGroup } from "./generators/env.js";
 export { generateSkillFiles } from "./generators/skills.js";
 export { generateReadme } from "./generators/readme.js";
 export { generateScripts } from "./generators/scripts.js";
 export { generateCaddyfile } from "./generators/caddy.js";
 export { generatePrometheusConfig } from "./generators/prometheus.js";
-export { generateGrafanaConfig } from "./generators/grafana.js";
+export { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
+export { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 export { generate } from "./generate.js";
+
+// ─── Version Manager ────────────────────────────────────────────────────────
+export { getImageTag, getImageReference, pinImageTags, checkCompatibility } from "./version-manager.js";
