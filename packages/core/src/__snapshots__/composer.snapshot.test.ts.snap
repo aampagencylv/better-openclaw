@@ -199,6 +199,7 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       - \${POSTGRESQL_PORT:-5432}:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
     healthcheck:
       test:
         - CMD-SHELL
@@ -257,6 +258,9 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
     restart: unless-stopped
     networks:
       - openclaw-network
+    depends_on:
+      postgresql:
+        condition: service_healthy
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
@@ -338,7 +342,7 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: \${GF_SECURITY_ADMIN_PASSWORD}
     ports:
-      - \${GRAFANA_PORT:-3000}:3000
+      - \${GRAFANA_PORT:-3150}:3000
     volumes:
       - grafana-data:/var/lib/grafana
     healthcheck:
@@ -352,6 +356,9 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
     restart: unless-stopped
     networks:
       - openclaw-network
+    depends_on:
+      prometheus:
+        condition: service_healthy
     profiles:
       - monitoring
 volumes:
@@ -521,6 +528,7 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       - \${POSTGRESQL_PORT:-5432}:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
     healthcheck:
       test:
         - CMD-SHELL
@@ -615,6 +623,9 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     restart: unless-stopped
     networks:
       - openclaw-network
+    depends_on:
+      postgresql:
+        condition: service_healthy
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:

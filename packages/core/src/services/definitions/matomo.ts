@@ -55,9 +55,9 @@ export const matomoDefinition: ServiceDefinition = {
 			required: true,
 		},
 		{
-			key: "MATOMO_DATABASE_PASSWORD",
-			defaultValue: "",
-			secret: true,
+		key: "MATOMO_DATABASE_PASSWORD",
+		defaultValue: "${MATOMO_DB_PASSWORD}",
+		secret: true,
 			description: "Database password for Matomo",
 			required: true,
 		},

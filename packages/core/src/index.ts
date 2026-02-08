@@ -90,6 +90,7 @@ export { generateCaddyfile } from "./generators/caddy.js";
 export { generatePrometheusConfig } from "./generators/prometheus.js";
 export { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
 export { generateN8nWorkflows } from "./generators/n8n-workflows.js";
+export { generatePostgresInit, getDbRequirements } from "./generators/postgres-init.js";
 export { generate } from "./generate.js";
 
 // ─── Version Manager ────────────────────────────────────────────────────────

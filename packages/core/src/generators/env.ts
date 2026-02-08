@@ -1,5 +1,6 @@
 import type { ResolverOutput } from "../types.js";
 import { randomBytes } from "node:crypto";
+import { getDbRequirements } from "./postgres-init.js";
 
 /**
  * Options for environment file generation.
@@ -143,13 +144,46 @@ export function generateEnvFiles(
 		actualValue: "",
 	});
 
+	// ── Per-Service Database Passwords ──────────────────────────────────────
+
+	const dbReqs = getDbRequirements(resolved);
+
+	if (dbReqs.length > 0) {
+		lines.push({
+			comment: "\n# ═══════════════════════════════════════════════════════════════════════════════\n# Per-Service Database Passwords\n# Each service gets its own PostgreSQL database and credentials\n# ═══════════════════════════════════════════════════════════════════════════════",
+			key: "",
+			exampleValue: "",
+			actualValue: "",
+		});
+
+		for (const req of dbReqs) {
+			const secretValue = options.generateSecrets
+				? randomBytes(24).toString("hex")
+				: "";
+
+			lines.push({
+				comment: formatComment(
+					`PostgreSQL password for ${req.serviceName} (database: ${req.dbName}, user: ${req.dbUser})`,
+					req.serviceName,
+					true,
+					true,
+				),
+				key: req.passwordEnvVar,
+				exampleValue: `your_${req.passwordEnvVar.toLowerCase()}_here`,
+				actualValue: secretValue,
+			});
+		}
+	}
+
 	// ── Service-Specific Variables ───────────────────────────────────────────
 
+	const dbPasswordKeys = dbReqs.map((r) => r.passwordEnvVar);
 	const seenKeys = new Set<string>([
 		"OPENCLAW_VERSION", "OPENCLAW_GATEWAY_TOKEN", "OPENCLAW_GATEWAY_PORT",
 		"OPENCLAW_BRIDGE_PORT", "OPENCLAW_GATEWAY_BIND", "OPENCLAW_CONFIG_DIR",
 		"OPENCLAW_WORKSPACE_DIR", "OPENCLAW_IMAGE", "OPENCLAW_DOMAIN",
 		"CLAUDE_AI_SESSION_KEY", "CLAUDE_WEB_SESSION_KEY", "CLAUDE_WEB_COOKIE",
+		...dbPasswordKeys,
 	]);
 
 	for (const { definition } of resolved.services) {

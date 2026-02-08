@@ -15,6 +15,7 @@ import { generateCaddyfile } from "./generators/caddy.js";
 import { generatePrometheusConfig } from "./generators/prometheus.js";
 import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
 import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
+import { generatePostgresInit } from "./generators/postgres-init.js";
 
 /**
  * Main orchestration function: takes generation input, resolves dependencies,
@@ -110,6 +111,12 @@ export function generate(input: GenerationInput): GenerationResult {
 	const n8nWorkflows = generateN8nWorkflows(resolved);
 	for (const [path, content] of Object.entries(n8nWorkflows)) {
 		files[path] = content;
+	}
+
+	// PostgreSQL init script (creates per-service databases and users)
+	const postgresInit = generatePostgresInit(resolved);
+	if (postgresInit) {
+		files["postgres/init-databases.sh"] = postgresInit;
 	}
 
 	// Caddy config

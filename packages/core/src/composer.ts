@@ -171,6 +171,14 @@ function buildCompanionService(
 		});
 	}
 
+	// PostgreSQL: mount the init script for creating per-service databases
+	if (def.id === "postgresql") {
+		if (!svc.volumes) svc.volumes = [];
+		(svc.volumes as string[]).push(
+			"./postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro",
+		);
+	}
+
 	if (def.healthcheck) {
 		const hc: Record<string, unknown> = {
 			test: ["CMD-SHELL", def.healthcheck.test],
@@ -211,7 +219,8 @@ function buildCompanionService(
 	}
 	if (deploy) svc.deploy = deploy;
 
-	const depIds = def.dependsOn.filter((id) =>
+	// Merge both dependsOn and requires to ensure proper Docker startup ordering
+	const depIds = [...new Set([...def.dependsOn, ...def.requires])].filter((id) =>
 		resolved.services.some((s) => s.definition.id === id),
 	);
 	if (depIds.length > 0) {

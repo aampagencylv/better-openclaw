@@ -12,7 +12,7 @@ export const grafanaDefinition: ServiceDefinition = {
 	imageTag: "latest",
 	ports: [
 		{
-			host: 3000,
+			host: 3150,
 			container: 3000,
 			description: "Grafana web interface",
 			exposed: true,

@@ -84,9 +84,9 @@ export const n8nDefinition: ServiceDefinition = {
 		},
 		{
 			key: "DB_POSTGRESDB_PASSWORD",
-			defaultValue: "${POSTGRES_PASSWORD}",
-			secret: true,
-			description: "PostgreSQL password for n8n (references Postgres password)",
+		defaultValue: "${N8N_DB_PASSWORD}",
+		secret: true,
+		description: "PostgreSQL password for n8n (references Postgres password)",
 			required: true,
 		},
 		{
