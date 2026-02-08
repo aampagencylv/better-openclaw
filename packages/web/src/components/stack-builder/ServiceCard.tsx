@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Check, AlertTriangle, Beaker, FlaskConical } from "lucide-react";
+import { CheckSquare, Square, AlertTriangle, Link2 } from "lucide-react";
 
 interface ServiceCardProps {
   id: string;
@@ -17,24 +17,27 @@ interface ServiceCardProps {
 
 const maturityConfig: Record<
   string,
-  { label: string; className: string; icon: React.ReactNode }
+  { label: string; dotColor: string; textClass: string }
 > = {
   stable: {
     label: "Stable",
-    className: "bg-accent/10 text-accent border-accent/20",
-    icon: <Check className="h-3 w-3" />,
+    dotColor: "bg-emerald-500",
+    textClass: "text-emerald-600 dark:text-emerald-400",
   },
   beta: {
     label: "Beta",
-    className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-    icon: <Beaker className="h-3 w-3" />,
+    dotColor: "bg-yellow-500",
+    textClass: "text-yellow-600 dark:text-yellow-400",
   },
   experimental: {
     label: "Experimental",
-    className: "bg-red-500/10 text-red-400 border-red-500/20",
-    icon: <FlaskConical className="h-3 w-3" />,
+    dotColor: "bg-red-500",
+    textClass: "text-red-600 dark:text-red-400",
   },
 };
+
+/** Max memory for scaling the bar (8 GB) */
+const MAX_MEMORY_MB = 8192;
 
 export function ServiceCard({
   id,
@@ -50,55 +53,53 @@ export function ServiceCard({
   const mat = maturityConfig[maturity] ?? maturityConfig.stable;
   const isDependency = addedBy && addedBy !== "user";
 
+  const memPercent = minMemoryMB
+    ? Math.max(8, Math.min(100, (minMemoryMB / MAX_MEMORY_MB) * 100))
+    : 0;
+
   return (
     <button
       type="button"
       onClick={() => onToggle(id)}
       className={cn(
-        "group relative flex w-full flex-col gap-3 rounded-xl border p-4 text-left transition-all",
+        "group relative flex w-full flex-col gap-2.5 rounded-xl border p-4 text-left transition-all duration-200",
         selected
-          ? "border-primary/50 bg-primary/5 shadow-sm shadow-primary/10"
-          : "border-border bg-surface/50 hover:border-muted-foreground/30 hover:bg-surface/80"
+          ? "border-primary/50 bg-primary/5 shadow-sm shadow-primary/10 ring-1 ring-primary/20"
+          : "border-border bg-surface/50 hover:border-muted-foreground/30 hover:bg-surface/80 hover:shadow-sm"
       )}
     >
-      {/* Dependency indicator */}
+      {/* Auto-added badge */}
       {isDependency && (
-        <div className="absolute -top-2 -right-2 flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-          <AlertTriangle className="h-2.5 w-2.5" />
+        <div className="absolute -top-2.5 -right-2 flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground shadow-sm">
+          <Link2 className="h-2.5 w-2.5" />
           auto-added
         </div>
       )}
 
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          {/* Checkbox */}
-          <div
-            className={cn(
-              "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors",
-              selected
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-muted-foreground/30 bg-transparent"
+          {/* Checkbox icon */}
+          <div className="shrink-0 transition-transform duration-150 group-hover:scale-110">
+            {selected ? (
+              <CheckSquare className="h-5 w-5 text-primary" />
+            ) : (
+              <Square className="h-5 w-5 text-muted-foreground/40 transition-colors group-hover:text-muted-foreground/70" />
             )}
-          >
-            {selected && <Check className="h-3.5 w-3.5" />}
           </div>
 
           {/* Icon + Name */}
           <div className="flex items-center gap-2">
-            <span className="text-xl">{icon}</span>
+            <span className="text-xl leading-none">{icon}</span>
             <span className="font-semibold text-foreground">{name}</span>
           </div>
         </div>
 
-        {/* Maturity badge */}
-        <span
-          className={cn(
-            "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium",
-            mat.className
-          )}
-        >
-          {mat.icon}
-          {mat.label}
+        {/* Maturity badge: dot + text */}
+        <span className="inline-flex shrink-0 items-center gap-1.5 text-[10px] font-medium">
+          <span
+            className={cn("inline-block h-1.5 w-1.5 rounded-full", mat.dotColor)}
+          />
+          <span className={mat.textClass}>{mat.label}</span>
         </span>
       </div>
 
@@ -107,10 +108,27 @@ export function ServiceCard({
         {description}
       </p>
 
-      {/* RAM estimate */}
+      {/* Memory indicator bar + label */}
       {minMemoryMB != null && (
-        <div className="pl-8 text-[10px] text-muted-foreground/70">
-          ~{minMemoryMB >= 1024 ? `${(minMemoryMB / 1024).toFixed(1)}GB` : `${minMemoryMB}MB`} RAM
+        <div className="flex items-center gap-2 pl-8">
+          <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+            <div
+              className={cn(
+                "h-full rounded-full transition-all duration-300",
+                memPercent > 70
+                  ? "bg-red-500/70"
+                  : memPercent > 40
+                    ? "bg-yellow-500/70"
+                    : "bg-emerald-500/70"
+              )}
+              style={{ width: `${memPercent}%` }}
+            />
+          </div>
+          <span className="text-[10px] text-muted-foreground/70">
+            {minMemoryMB >= 1024
+              ? `${(minMemoryMB / 1024).toFixed(1)} GB`
+              : `${minMemoryMB} MB`}
+          </span>
         </div>
       )}
     </button>

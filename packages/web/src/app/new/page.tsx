@@ -6,6 +6,7 @@ import {
   resolve,
   composeMultiFile,
   getAllServices,
+  getAllPresets,
   SERVICE_CATEGORIES,
   type ServiceDefinition,
   type ResolverOutput,
@@ -13,7 +14,7 @@ import {
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
-import { ArrowLeft, Download, RotateCcw, Loader2, CheckCircle, Copy } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, Loader2, CheckCircle, Copy, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { generateStack } from "@/lib/api-client";
 import JSZip from "jszip";
@@ -23,12 +24,27 @@ export default function NewStackPage() {
     new Set()
   );
   const [projectName, setProjectName] = useState("my-stack");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activePreset, setActivePreset] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [downloadComplete, setDownloadComplete] = useState(false);
 
-  // Load all services from core registry
+  // Load all services and presets from core registry
   const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
+  const allPresets = useMemo(() => getAllPresets(), []);
+
+  // Filter services based on search query
+  const filteredServices = useMemo(() => {
+    if (!searchQuery.trim()) return allServices;
+    const q = searchQuery.toLowerCase().trim();
+    return allServices.filter(
+      (s) =>
+        s.name.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.tags.some((t) => t.toLowerCase().includes(q))
+    );
+  }, [allServices, searchQuery]);
 
   // Resolve dependencies in real-time
   const resolverOutput: ResolverOutput | null = useMemo(() => {
@@ -83,11 +99,31 @@ export default function NewStackPage() {
       }
       return next;
     });
+    setActivePreset(null);
   }, []);
+
+  // Apply a preset
+  const handlePreset = useCallback(
+    (presetId: string) => {
+      const preset = allPresets.find((p) => p.id === presetId);
+      if (!preset) return;
+      if (activePreset === presetId) {
+        // Toggle off
+        setSelectedServices(new Set());
+        setActivePreset(null);
+      } else {
+        setSelectedServices(new Set(preset.services));
+        setActivePreset(presetId);
+      }
+    },
+    [allPresets, activePreset]
+  );
 
   // Reset all selections
   const handleReset = useCallback(() => {
     setSelectedServices(new Set());
+    setActivePreset(null);
+    setSearchQuery("");
     setGenerateError(null);
   }, []);
 
@@ -288,17 +324,75 @@ export default function NewStackPage() {
               automatically.
             </p>
           </div>
+
+          {/* Search bar */}
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search services..."
+              className="w-full rounded-lg border border-border bg-surface/50 py-2 pl-9 pr-9 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Clear search"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Preset quick-select */}
+          <div className="mb-6 flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            {allPresets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => handlePreset(preset.id)}
+                className={cn(
+                  "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-all",
+                  activePreset === preset.id
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-transparent bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+                )}
+              >
+                {preset.name}
+              </button>
+            ))}
+          </div>
+
           <ServiceGrid
-            services={allServices}
+            services={filteredServices}
             categories={SERVICE_CATEGORIES}
             selectedIds={resolvedServiceIds}
             resolvedServices={resolverOutput?.services ?? []}
             onToggle={handleToggle}
           />
+
+          {/* No results message */}
+          {searchQuery && filteredServices.length === 0 && (
+            <div className="py-12 text-center">
+              <p className="text-sm text-muted-foreground">
+                No services match &ldquo;{searchQuery}&rdquo;
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="mt-2 text-xs text-primary hover:underline"
+              >
+                Clear search
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Right panel - Preview */}
-        <div className="w-full shrink-0 overflow-y-auto bg-background/50 p-4 md:p-6 lg:w-[520px] xl:w-[580px]">
+        {/* Right panel - Preview (sticky on desktop) */}
+        <div className="w-full shrink-0 bg-background/50 p-4 md:p-6 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)] lg:w-[520px] lg:overflow-y-auto xl:w-[580px]">
           <div className="mb-4">
             <h2 className="text-xl font-bold text-foreground">
               Stack Preview

@@ -1,160 +1,204 @@
-
 "use client";
 
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, Terminal } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
+/* ── Typewriter terminal lines ─────────────────────────────────────────────── */
+const terminalLines = [
+	{ text: "$ npx create-better-openclaw my-stack", style: "text-foreground" },
+	{ text: "✓ Selected: Redis, Qdrant, n8n, FFmpeg", style: "text-accent" },
+	{
+		text: "✓ Resolved 2 dependencies: PostgreSQL, Prometheus",
+		style: "text-accent",
+	},
+	{
+		text: "✓ Generated docker-compose.yml (6 services)",
+		style: "text-accent",
+	},
+	{ text: "✓ Created .env with secure secrets", style: "text-accent" },
+	{ text: "✓ Installed 4 OpenClaw skills", style: "text-accent" },
+	{ text: "", style: "" },
+	{
+		text: "Your stack is ready! cd my-stack && docker compose up -d",
+		style: "text-primary font-semibold",
+	},
+];
+
+/* ── Stats ─────────────────────────────────────────────────────────────────── */
+const stats = [
+	{ count: "58+", label: "Services" },
+	{ count: "10", label: "Skill Packs" },
+	{ count: "17", label: "Categories" },
+	{ count: "100%", label: "Open Source" },
+];
+
+/* ── Stagger helpers ───────────────────────────────────────────────────────── */
+const container = {
+	hidden: { opacity: 0 },
+	show: {
+		opacity: 1,
+		transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+	},
+};
+
+const fadeUp = {
+	hidden: { opacity: 0, y: 20 },
+	show: {
+		opacity: 1,
+		y: 0,
+		transition: { duration: 0.5, ease: "easeOut" as const },
+	},
+};
+
+/* ── Typewriter hook ───────────────────────────────────────────────────────── */
+function useTypewriter(lines: typeof terminalLines) {
+	const [displayed, setDisplayed] = useState<string[]>([]);
+
+	useEffect(() => {
+		let lineIdx = 0;
+		let charIdx = 0;
+		let cancelled = false;
+
+		function tick() {
+			if (cancelled) return;
+			if (lineIdx >= lines.length) return;
+
+			const line = lines[lineIdx].text;
+			charIdx++;
+
+			setDisplayed((prev) => {
+				const next = [...prev];
+				next[lineIdx] = line.slice(0, charIdx);
+				return next;
+			});
+
+			if (charIdx >= line.length) {
+				lineIdx++;
+				charIdx = 0;
+				setTimeout(tick, 260);
+			} else {
+				setTimeout(tick, 22);
+			}
+		}
+
+		// start after a brief delay so the hero text is visible first
+		const initial = setTimeout(tick, 800);
+		return () => {
+			cancelled = true;
+			clearTimeout(initial);
+		};
+	}, [lines]);
+
+	return displayed;
+}
+
+/* ── Component ─────────────────────────────────────────────────────────────── */
 export function Hero() {
-  return (
-    <section className="relative overflow-hidden pt-32 pb-20 lg:pt-40 lg:pb-32">
-      {/* Background gradients */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background/0 to-background/0 opacity-40" />
-      
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid gap-16 lg:grid-cols-2 lg:gap-8">
-          
-          {/* Left: Content */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col justify-center"
-          >
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-              </span>
-              v1.0 is now available
-            </div>
-            
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl mb-6">
-              Roll your own <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-500">
-                Agent Superstack
-              </span>
-            </h1>
-            
-            <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-              Define your infrastructure as code, resolve dependencies instantly, and deploy production-ready OpenClaw agents in seconds.
-            </p>
-            
-            <div className="flex flex-wrap gap-4">
-              <Link href="/new">
-                <Button variant="lobster" size="lg" className="h-12 px-8 text-base shadow-xl shadow-primary/20">
-                  Start Building
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="https://github.com/diopisemou/better-openclaw" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="lg" className="h-12 px-8 text-base border-white/10 bg-white/5 hover:bg-white/10 text-white">
-                  Documentation
-                </Button>
-              </a>
-            </div>
-            
-            <div className="mt-10 flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-8 w-8 rounded-full bg-slate-800 border-2 border-background flex items-center justify-center text-xs font-medium text-white">
-                    {String.fromCharCode(64 + i)}
-                  </div>
-                ))}
-              </div>
-              <p>Trusted by 500+ developers</p>
-            </div>
-          </motion.div>
-          
-          {/* Right: Terminal / Command Center */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative lg:mt-0"
-          >
-            <div className="relative rounded-xl border border-white/10 bg-[#0F1117] shadow-2xl shadow-black/50 overflow-hidden">
-              <div className="flex items-center justify-between border-b border-white/5 bg-[#151720] px-4 py-3">
-                <div className="flex gap-2">
-                  <div className="h-3 w-3 rounded-full bg-red-500/80" />
-                  <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-                  <div className="h-3 w-3 rounded-full bg-green-500/80" />
-                </div>
-                <div className="text-xs font-medium text-muted-foreground font-mono">
-                  openclaw-cli — bash
-                </div>
-                <div className="w-12" /> 
-              </div>
-              
-              <div className="p-6 font-mono text-sm leading-relaxed overflow-hidden">
-                <div className="flex gap-2">
-                  <span className="text-green-500">➜</span>
-                  <span className="text-blue-400">~</span>
-                  <span className="text-white">npx better-openclaw init my-stack</span>
-                </div>
-                
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center gap-2 text-white">
-                    <span className="text-primary">?</span>
-                    <span className="font-bold">Select services:</span>
-                  </div>
-                  
-                  <div className="pl-4 text-muted-foreground space-y-1">
-                    <div className="flex items-center gap-2 text-white">
-                      <span className="text-green-500">●</span> n8n
-                    </div>
-                    <div className="flex items-center gap-2 text-white">
-                      <span className="text-green-500">●</span> ollama
-                    </div>
-                    <div className="flex items-center gap-2 text-white">
-                      <span className="text-green-500">●</span> qdrant
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">○</span> flowise
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 text-emerald-400 font-bold">
-                    [SUCCESS] Stack generated successfully!
-                  </div>
-                  <div className="mt-2 text-muted-foreground">
-                    Created <span className="text-white">docker-compose.yml</span><br/>
-                    Created <span className="text-white">.env</span><br/>
-                    Created <span className="text-white">README.md</span>
-                  </div>
-                  
-                  <div className="mt-4 flex gap-2 animate-pulse">
-                    <span className="text-green-500">➜</span>
-                    <span className="text-blue-400">~</span>
-                    <span className="text-white">docker compose up -d<span className="w-2 h-4 bg-white/50 inline-block ml-1 align-middle" /></span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Blur effect at bottom */}
-              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0F1117] to-transparent pointer-events-none" />
-            </div>
-            
-            {/* Floating badges */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="absolute -right-4 top-10 rounded-lg border border-white/10 bg-[#1A1D26]/90 p-3 shadow-xl backdrop-blur-md"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold">
-                  <Terminal className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground">Services</div>
-                  <div className="text-sm font-bold text-white">23+ Ready</div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
+	const typed = useTypewriter(terminalLines);
+
+	return (
+		<section className="relative overflow-hidden pt-28 pb-16 md:pb-24">
+			{/* Background glow */}
+			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50" />
+
+			<motion.div
+				variants={container}
+				initial="hidden"
+				animate="show"
+				className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+			>
+				{/* ── Headline ────────────────────────────────────────────────── */}
+				<motion.h1
+					variants={fadeUp}
+					className="mx-auto max-w-4xl text-center text-4xl font-extrabold tracking-tight text-foreground md:text-5xl lg:text-6xl"
+				>
+					Build your{" "}
+					<span className="text-gradient">OpenClaw superstack</span> in
+					seconds
+				</motion.h1>
+
+				{/* ── Subtitle ────────────────────────────────────────────────── */}
+				<motion.p
+					variants={fadeUp}
+					className="mx-auto mt-6 max-w-2xl text-center text-lg text-muted-foreground md:text-xl"
+				>
+					Generate production-ready Docker&nbsp;Compose stacks with 58+
+					companion services, pre-wired skills, and one command.
+				</motion.p>
+
+				{/* ── CTA buttons ─────────────────────────────────────────────── */}
+				<motion.div
+					variants={fadeUp}
+					className="mt-10 flex flex-wrap items-center justify-center gap-4"
+				>
+					<Link
+						href="/new"
+						className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25"
+					>
+						Start Building
+					</Link>
+					<Link
+						href="/docs"
+						className="inline-flex items-center justify-center rounded-lg border border-border px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-muted/50"
+					>
+						View Docs
+					</Link>
+				</motion.div>
+
+				{/* ── Terminal mockup ─────────────────────────────────────────── */}
+				<motion.div
+					variants={fadeUp}
+					className="mx-auto mt-14 max-w-3xl"
+				>
+					<div className="overflow-hidden rounded-xl border border-border bg-[#0d1117] shadow-2xl dark:bg-surface">
+						{/* Title bar */}
+						<div className="flex items-center gap-2 border-b border-border/40 bg-[#161b22] px-4 py-3 dark:bg-surface/80">
+							<span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+							<span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+							<span className="h-3 w-3 rounded-full bg-[#28c840]" />
+							<span className="ml-auto font-mono text-xs text-muted-foreground">
+								better-openclaw — bash
+							</span>
+						</div>
+
+						{/* Lines */}
+						<div className="p-5 font-mono text-sm leading-relaxed md:p-6">
+							{terminalLines.map((line, i) => (
+								<div
+									key={i}
+									className={`min-h-[1.5em] ${line.style}`}
+								>
+									{typed[i] ?? ""}
+									{/* blinking cursor on the line currently being typed */}
+									{i === typed.length - 1 &&
+										(typed[i]?.length ?? 0) <
+											line.text.length && (
+											<span className="ml-0.5 inline-block h-4 w-[7px] animate-pulse bg-foreground/60 align-middle" />
+										)}
+								</div>
+							))}
+						</div>
+					</div>
+				</motion.div>
+
+				{/* ── Stats row ───────────────────────────────────────────────── */}
+				<motion.div
+					variants={fadeUp}
+					className="mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-6 sm:grid-cols-4"
+				>
+					{stats.map((s) => (
+						<div key={s.label} className="text-center">
+							<p className="font-mono text-3xl font-bold text-foreground">
+								{s.count}
+							</p>
+							<p className="mt-1 text-sm text-muted-foreground">
+								{s.label}
+							</p>
+						</div>
+					))}
+				</motion.div>
+			</motion.div>
+		</section>
+	);
 }

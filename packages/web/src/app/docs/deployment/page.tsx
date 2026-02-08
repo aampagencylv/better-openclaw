@@ -1,42 +1,31 @@
 import Link from "next/link";
 
 export const metadata = {
-	title: "Deployment Guide — better-openclaw",
-	description: "Deploy your OpenClaw stack to VPS, homelab, or cloud providers",
+  title: "Local Deployment — better-openclaw Docs",
+  description:
+    "Deploy your OpenClaw stack locally with Docker Desktop. Development setup, configuration, and maintenance.",
 };
 
-export default function DeploymentGuidePage() {
-	return (
-		<div className="min-h-screen bg-background text-foreground">
-			<header className="border-b border-border">
-				<div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-					<Link href="/" className="text-xl font-bold text-primary">
-						better-openclaw
-					</Link>
-					<nav className="flex gap-6 text-sm text-muted-foreground">
-						<Link href="/new" className="hover:text-foreground transition-colors">
-							Builder
-						</Link>
-						<Link href="/docs" className="text-foreground">
-							Docs
-						</Link>
-					</nav>
-				</div>
-			</header>
+export default function DeploymentPage() {
+  return (
+    <>
+      <h1>Local / Docker Desktop</h1>
+      <p>
+        The simplest way to run your OpenClaw stack. Ideal for development,
+        testing, and personal use. Requires{" "}
+        <a
+          href="https://www.docker.com/products/docker-desktop/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Docker Desktop
+        </a>{" "}
+        (macOS/Windows) or Docker Engine (Linux).
+      </p>
 
-			<main className="mx-auto max-w-4xl px-6 py-12">
-				<h1 className="text-4xl font-bold mb-4">Deployment Guide</h1>
-				<p className="text-lg text-muted-foreground mb-12">
-					Step-by-step instructions for deploying your OpenClaw stack to different environments.
-				</p>
-
-				<section className="mb-12">
-					<h2 className="text-2xl font-bold mb-4">Local / Docker Desktop</h2>
-					<div className="space-y-4 text-muted-foreground">
-						<p>Best for development and personal use. Requires Docker Desktop installed.</p>
-						<pre className="bg-surface border border-border rounded-lg p-4 overflow-x-auto">
-							<code className="text-sm font-mono text-accent">
-								{`# Generate your stack
+      <h2>Quick Start</h2>
+      <pre>
+        <code>{`# Generate your stack
 npx create-better-openclaw my-stack --preset researcher --yes
 
 # Start it up
@@ -46,134 +35,233 @@ docker compose up -d
 
 # Check status
 docker compose ps
-docker compose logs -f openclaw-gateway`}
-							</code>
-						</pre>
-					</div>
-				</section>
+docker compose logs -f openclaw-gateway`}</code>
+      </pre>
 
-				<section className="mb-12">
-					<h2 className="text-2xl font-bold mb-4">VPS / Cloud Server</h2>
-					<div className="space-y-4 text-muted-foreground">
-						<p>
-							For production deployments on DigitalOcean, Hetzner, Contabo, AWS EC2, or any VPS.
-						</p>
+      <h2>Configuration</h2>
 
-						<h3 className="text-lg font-semibold text-foreground mt-6">1. Server Setup</h3>
-						<pre className="bg-surface border border-border rounded-lg p-4 overflow-x-auto">
-							<code className="text-sm font-mono text-accent">
-								{`# Install Docker (Ubuntu/Debian)
-curl -fsSL https://get.docker.com | sh
-sudo usermod -aG docker $USER
+      <h3>Environment Variables</h3>
+      <p>
+        The generated <code>.env.example</code> file contains all configuration
+        variables. Copy it to <code>.env</code> and fill in your values:
+      </p>
+      <pre>
+        <code>{`# Required: At least one LLM API key
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
 
-# Install Docker Compose plugin
-sudo apt install docker-compose-plugin`}
-							</code>
-						</pre>
+# Optional: Service-specific config
+QDRANT_API_KEY=               # Auto-generated if --generateSecrets
+REDIS_PASSWORD=               # Auto-generated if --generateSecrets
+N8N_BASIC_AUTH_USER=admin
+N8N_BASIC_AUTH_PASSWORD=      # Auto-generated if --generateSecrets`}</code>
+      </pre>
 
-						<h3 className="text-lg font-semibold text-foreground mt-6">2. Generate with Caddy</h3>
-						<pre className="bg-surface border border-border rounded-lg p-4 overflow-x-auto">
-							<code className="text-sm font-mono text-accent">
-								{`npx create-better-openclaw my-stack \\
-  --preset researcher \\
-  --proxy caddy \\
-  --domain openclaw.example.com \\
-  --yes`}
-							</code>
-						</pre>
+      <h3>Ports</h3>
+      <p>
+        Default port assignments for common services:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Port</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OpenClaw Gateway</td>
+            <td>8080</td>
+            <td>
+              <code>http://localhost:8080</code>
+            </td>
+          </tr>
+          <tr>
+            <td>OpenClaw Web UI</td>
+            <td>3000</td>
+            <td>
+              <code>http://localhost:3000</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Qdrant</td>
+            <td>6333</td>
+            <td>
+              <code>http://localhost:6333/dashboard</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Redis</td>
+            <td>6379</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>n8n</td>
+            <td>5678</td>
+            <td>
+              <code>http://localhost:5678</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Grafana</td>
+            <td>3001</td>
+            <td>
+              <code>http://localhost:3001</code>
+            </td>
+          </tr>
+          <tr>
+            <td>SearXNG</td>
+            <td>8888</td>
+            <td>
+              <code>http://localhost:8888</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Ollama</td>
+            <td>11434</td>
+            <td>
+              <code>http://localhost:11434</code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-						<h3 className="text-lg font-semibold text-foreground mt-6">3. DNS Configuration</h3>
-						<p>
-							Point your domain to your server&apos;s IP address with an A record.
-							Caddy will automatically obtain SSL certificates from Let&apos;s Encrypt.
-						</p>
+      <h2>Common Operations</h2>
+      <pre>
+        <code>{`# Start all services
+docker compose up -d
 
-						<h3 className="text-lg font-semibold text-foreground mt-6">4. Deploy</h3>
-						<pre className="bg-surface border border-border rounded-lg p-4 overflow-x-auto">
-							<code className="text-sm font-mono text-accent">
-								{`scp -r my-stack/ user@your-server:~/
-ssh user@your-server
-cd my-stack
-cp .env.example .env  # Edit with production values
-chmod +x scripts/*.sh
-./scripts/start.sh`}
-							</code>
-						</pre>
-					</div>
-				</section>
+# Stop all services
+docker compose down
 
-				<section className="mb-12">
-					<h2 className="text-2xl font-bold mb-4">Homelab</h2>
-					<div className="space-y-4 text-muted-foreground">
-						<p>
-							For self-hosted setups on Unraid, Proxmox, bare metal, or Raspberry Pi.
-						</p>
+# Stop and remove volumes (⚠️ deletes data)
+docker compose down -v
 
-						<h3 className="text-lg font-semibold text-foreground mt-6">ARM64 Support</h3>
-						<p>
-							Most services have ARM64 builds. Use the <code className="text-accent">--platform linux/arm64</code> flag
-							to ensure compatibility with Apple Silicon or Raspberry Pi.
-						</p>
-						<pre className="bg-surface border border-border rounded-lg p-4 overflow-x-auto">
-							<code className="text-sm font-mono text-accent">
-								{`npx create-better-openclaw my-stack \\
-  --preset minimal \\
-  --platform linux/arm64 \\
-  --yes`}
-							</code>
-						</pre>
+# Restart a single service
+docker compose restart qdrant
 
-						<h3 className="text-lg font-semibold text-foreground mt-6">GPU Passthrough</h3>
-						<p>
-							For Ollama, Whisper, and other AI services, enable GPU passthrough:
-						</p>
-						<pre className="bg-surface border border-border rounded-lg p-4 overflow-x-auto">
-							<code className="text-sm font-mono text-accent">
-								{`npx create-better-openclaw my-stack \\
-  --services ollama,whisper,redis \\
-  --skills local-ai \\
-  --gpu \\
-  --yes`}
-							</code>
-						</pre>
-					</div>
-				</section>
+# View logs for a specific service
+docker compose logs -f n8n
 
-				<section className="mb-12">
-					<h2 className="text-2xl font-bold mb-4">Maintenance</h2>
-					<div className="space-y-4 text-muted-foreground">
-						<p>Generated stacks include helper scripts for common operations:</p>
+# Scale a service (if supported)
+docker compose up -d --scale worker=3`}</code>
+      </pre>
 
-						<div className="grid gap-3">
-							{[
-								{ script: "scripts/start.sh", desc: "Start all services with health check validation" },
-								{ script: "scripts/stop.sh", desc: "Gracefully stop all services" },
-								{ script: "scripts/update.sh", desc: "Pull latest images and restart" },
-								{ script: "scripts/backup.sh", desc: "Backup all named volumes to tar archives" },
-								{ script: "scripts/status.sh", desc: "Show service status, resource usage, and disk" },
-							].map((item) => (
-								<div key={item.script} className="flex gap-3 items-start p-3 rounded bg-surface border border-border">
-									<code className="text-sm font-mono text-accent whitespace-nowrap">{item.script}</code>
-									<span className="text-sm">{item.desc}</span>
-								</div>
-							))}
-						</div>
-					</div>
-				</section>
+      <h2>Helper Scripts</h2>
+      <p>
+        Generated stacks include convenience scripts in the <code>scripts/</code>{" "}
+        directory:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Script</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>scripts/start.sh</code>
+            </td>
+            <td>Start all services with health check validation</td>
+          </tr>
+          <tr>
+            <td>
+              <code>scripts/stop.sh</code>
+            </td>
+            <td>Gracefully stop all services</td>
+          </tr>
+          <tr>
+            <td>
+              <code>scripts/update.sh</code>
+            </td>
+            <td>Pull latest images and restart</td>
+          </tr>
+          <tr>
+            <td>
+              <code>scripts/backup.sh</code>
+            </td>
+            <td>Backup all named volumes to tar archives</td>
+          </tr>
+          <tr>
+            <td>
+              <code>scripts/status.sh</code>
+            </td>
+            <td>Show service status, resource usage, and disk</td>
+          </tr>
+        </tbody>
+      </table>
 
-				<section>
-					<h2 className="text-2xl font-bold mb-4">Security Best Practices</h2>
-					<ul className="space-y-2 text-muted-foreground list-disc list-inside">
-						<li>Always use <code className="text-accent">--generateSecrets</code> for production (enabled by default)</li>
-						<li>Never commit <code className="text-accent">.env</code> files to version control</li>
-						<li>Use Caddy or Traefik for automatic HTTPS in production</li>
-						<li>Bind services to <code className="text-accent">127.0.0.1</code> and route through the reverse proxy</li>
-						<li>Regularly run <code className="text-accent">./scripts/update.sh</code> to pull security patches</li>
-						<li>Use <code className="text-accent">./scripts/backup.sh</code> before major updates</li>
-						<li>Review the generated <code className="text-accent">.env.example</code> file for all configuration options</li>
-					</ul>
-				</section>
-			</main>
-		</div>
-	);
+      <h2>Troubleshooting</h2>
+
+      <h3>Port Conflict</h3>
+      <p>
+        If a port is already in use, edit <code>docker-compose.yml</code> and
+        change the host port:
+      </p>
+      <pre>
+        <code>{`services:
+  qdrant:
+    ports:
+      - "6334:6333"  # Changed host port to 6334`}</code>
+      </pre>
+
+      <h3>Service Won&apos;t Start</h3>
+      <pre>
+        <code>{`# Check the service logs
+docker compose logs qdrant
+
+# Check resource usage
+docker stats
+
+# Restart with fresh state
+docker compose down
+docker compose up -d`}</code>
+      </pre>
+
+      <h3>Insufficient Memory</h3>
+      <p>
+        Docker Desktop has a default memory limit. Increase it in Docker Desktop
+        → Settings → Resources → Memory.
+      </p>
+      <ul>
+        <li>Minimal stack: 2 GB</li>
+        <li>Standard stack: 4 GB</li>
+        <li>Full stack or AI services: 8 GB+</li>
+      </ul>
+
+      <h2>Security Notes</h2>
+      <ul>
+        <li>
+          Local stacks bind to <code>localhost</code> by default — not exposed
+          to the network
+        </li>
+        <li>
+          Never commit <code>.env</code> files to version control
+        </li>
+        <li>
+          Use <code>--generateSecrets</code> even for local dev to practice
+          good habits
+        </li>
+      </ul>
+
+      <h2>Next Steps</h2>
+      <ul>
+        <li>
+          <Link href="/docs/deployment/vps">VPS Deployment</Link> — deploy to
+          production
+        </li>
+        <li>
+          <Link href="/docs/deployment/homelab">Homelab Deployment</Link> — ARM64,
+          GPU passthrough
+        </li>
+        <li>
+          <Link href="/docs/services">Service Catalog</Link> — explore all
+          available services
+        </li>
+      </ul>
+    </>
+  );
 }
