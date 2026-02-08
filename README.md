@@ -160,7 +160,7 @@ pnpm dev
 
 This starts:
 - **API** at `http://localhost:3456` (with hot reload via tsx)
-- **Web** at `http://localhost:3000` (with Next.js fast refresh)
+- **Web** at `http://localhost:3654` (with Next.js fast refresh)
 - **Core** and **CLI** in watch mode
 
 ### Commands

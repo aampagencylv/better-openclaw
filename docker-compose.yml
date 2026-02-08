@@ -2,7 +2,7 @@ services:
   better-openclaw:
     build: .
     ports:
-      - "3000:3000"
+      - "3654:3654"
       - "3456:3456"
     environment:
       - NODE_ENV=production
