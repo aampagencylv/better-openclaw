@@ -12,7 +12,9 @@ export function generateScripts(): Record<string, string> {
 set -euo pipefail
 
 # ─── OpenClaw Start Script ──────────────────────────────────────────────────
-# Validates prerequisites and starts all services.
+# Production-quality bootstrap: validates prerequisites, auto-generates secrets,
+# creates required directories, and starts all services via Docker Compose.
+# Modelled after the official docker-setup.sh patterns.
 
 SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -22,77 +24,145 @@ cd "$PROJECT_DIR"
 echo "🐾 OpenClaw — Starting services..."
 echo ""
 
-# Check Docker
+# ── Colour helpers (no-op when not a TTY) ────────────────────────────────────
+if [ -t 1 ]; then
+  RED='\\033[0;31m'; GREEN='\\033[0;32m'; YELLOW='\\033[1;33m'; CYAN='\\033[0;36m'; NC='\\033[0m'
+else
+  RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
+fi
+
+info()  { echo -e "\${CYAN}ℹ  $*\${NC}"; }
+ok()    { echo -e "\${GREEN}✅ $*\${NC}"; }
+warn()  { echo -e "\${YELLOW}⚠️  $*\${NC}"; }
+err()   { echo -e "\${RED}❌ $*\${NC}" >&2; }
+
+# ── Prerequisite checks ─────────────────────────────────────────────────────
+
 if ! command -v docker &> /dev/null; then
-  echo "❌ Docker is not installed. Please install Docker first."
+  err "Docker is not installed. Please install Docker first."
   echo "   https://docs.docker.com/get-docker/"
   exit 1
 fi
 
-# Check Docker Compose
 if ! docker compose version &> /dev/null; then
-  echo "❌ Docker Compose (v2) is not available."
+  err "Docker Compose (v2) is not available."
   echo "   https://docs.docker.com/compose/install/"
   exit 1
 fi
 
-# Check if Docker daemon is running
 if ! docker info &> /dev/null 2>&1; then
-  echo "❌ Docker daemon is not running. Please start Docker."
+  err "Docker daemon is not running. Please start Docker."
   exit 1
 fi
 
-# Validate .env exists
-if [ ! -f ".env" ]; then
-  echo "❌ .env file not found!"
-  echo "   Run: cp .env.example .env"
-  echo "   Then edit .env with your configuration."
-  exit 1
+# ── Source .env if it exists ─────────────────────────────────────────────────
+
+if [ -f ".env" ]; then
+  info "Loading existing .env file..."
+  set -a
+  # shellcheck disable=SC1091
+  source .env
+  set +a
+else
+  warn ".env file not found — will create one from .env.example if available."
+  if [ -f ".env.example" ]; then
+    cp .env.example .env
+    info "Created .env from .env.example"
+    set -a
+    # shellcheck disable=SC1091
+    source .env
+    set +a
+  fi
 fi
 
-# Check for empty secret values
+# ── Auto-generate OPENCLAW_GATEWAY_TOKEN if missing ──────────────────────────
+
+if [ -z "\${OPENCLAW_GATEWAY_TOKEN:-}" ]; then
+  info "Generating OPENCLAW_GATEWAY_TOKEN..."
+  if command -v openssl &> /dev/null; then
+    OPENCLAW_GATEWAY_TOKEN="$(openssl rand -hex 32)"
+  elif command -v python3 &> /dev/null; then
+    OPENCLAW_GATEWAY_TOKEN="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+  elif command -v python &> /dev/null; then
+    OPENCLAW_GATEWAY_TOKEN="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+  else
+    err "Cannot generate token: neither openssl nor python3 found."
+    exit 1
+  fi
+  export OPENCLAW_GATEWAY_TOKEN
+
+  # Persist into .env
+  if [ -f ".env" ]; then
+    if grep -q "^OPENCLAW_GATEWAY_TOKEN=" .env 2>/dev/null; then
+      sed -i.bak "s|^OPENCLAW_GATEWAY_TOKEN=.*|OPENCLAW_GATEWAY_TOKEN=\${OPENCLAW_GATEWAY_TOKEN}|" .env && rm -f .env.bak
+    else
+      echo "OPENCLAW_GATEWAY_TOKEN=\${OPENCLAW_GATEWAY_TOKEN}" >> .env
+    fi
+  fi
+  ok "Gateway token generated and saved."
+fi
+
+# ── Apply defaults for optional variables ────────────────────────────────────
+
+export OPENCLAW_VERSION="\${OPENCLAW_VERSION:-latest}"
+export OPENCLAW_GATEWAY_PORT="\${OPENCLAW_GATEWAY_PORT:-18789}"
+export OPENCLAW_BRIDGE_PORT="\${OPENCLAW_BRIDGE_PORT:-18790}"
+export OPENCLAW_GATEWAY_BIND="\${OPENCLAW_GATEWAY_BIND:-lan}"
+export OPENCLAW_CONFIG_DIR="\${OPENCLAW_CONFIG_DIR:-./openclaw/config}"
+export OPENCLAW_WORKSPACE_DIR="\${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}"
+
+# ── Create required host directories ────────────────────────────────────────
+
+info "Ensuring host directories exist..."
+mkdir -p "\${OPENCLAW_CONFIG_DIR}"
+mkdir -p "\${OPENCLAW_WORKSPACE_DIR}"
+ok "Directories ready: \${OPENCLAW_CONFIG_DIR}, \${OPENCLAW_WORKSPACE_DIR}"
+
+# ── Check for empty secret values ────────────────────────────────────────────
+
 EMPTY_SECRETS=0
 while IFS='=' read -r key value; do
-  # Skip comments and empty lines
-  [[ "$key" =~ ^#.*$ ]] && continue
-  [[ -z "$key" ]] && continue
-  # Check for empty values on known secret patterns
-  if [[ "$key" =~ (PASSWORD|TOKEN|SECRET) ]] && [[ -z "$value" ]]; then
-    echo "⚠️  Warning: $key is empty in .env"
+  [[ "\$key" =~ ^#.*$ ]] && continue
+  [[ -z "\$key" ]] && continue
+  if [[ "\$key" =~ (PASSWORD|TOKEN|SECRET|SESSION_KEY|COOKIE) ]] && [[ -z "\${value:-}" ]]; then
+    warn "Warning: \$key is empty in .env"
     EMPTY_SECRETS=$((EMPTY_SECRETS + 1))
   fi
-done < .env
+done < .env 2>/dev/null || true
 
-if [ "$EMPTY_SECRETS" -gt 0 ]; then
+if [ "\$EMPTY_SECRETS" -gt 0 ]; then
   echo ""
-  echo "⚠️  $EMPTY_SECRETS secret(s) are empty. Consider generating values before starting."
+  warn "\$EMPTY_SECRETS secret(s) are empty. Some services may not function until they are set."
   echo ""
 fi
 
-# Pull latest images
-echo "📦 Pulling latest images..."
-docker compose pull --quiet
+# ── Pull and start ───────────────────────────────────────────────────────────
 
-# Start services
-echo "🚀 Starting services..."
-docker compose up -d
-
-# Wait for health checks
 echo ""
-echo "⏳ Waiting for services to become healthy..."
+info "Pulling latest images..."
+docker compose pull --quiet 2>/dev/null || docker compose pull
+
+echo ""
+info "Starting services..."
+docker compose up -d --remove-orphans
+
+# ── Health-check loop ────────────────────────────────────────────────────────
+
+echo ""
+info "Waiting for services to become healthy..."
 sleep 5
 
 RETRIES=0
 MAX_RETRIES=30
-while [ $RETRIES -lt $MAX_RETRIES ]; do
-  UNHEALTHY=$(docker compose ps --format json 2>/dev/null | grep -c '"unhealthy"' || true)
-  STARTING=$(docker compose ps --format json 2>/dev/null | grep -c '"starting"' || true)
+while [ \$RETRIES -lt \$MAX_RETRIES ]; do
+  UNHEALTHY=\$(docker compose ps --format json 2>/dev/null | grep -c '"unhealthy"' || true)
+  STARTING=\$(docker compose ps --format json 2>/dev/null | grep -c '"starting"' || true)
 
-  if [ "$UNHEALTHY" -eq 0 ] && [ "$STARTING" -eq 0 ]; then
+  if [ "\$UNHEALTHY" -eq 0 ] && [ "\$STARTING" -eq 0 ]; then
     break
   fi
 
-  RETRIES=$((RETRIES + 1))
+  RETRIES=\$((RETRIES + 1))
   sleep 2
 done
 
@@ -100,11 +170,38 @@ echo ""
 docker compose ps
 echo ""
 
-if [ $RETRIES -ge $MAX_RETRIES ]; then
-  echo "⚠️  Some services may still be starting. Check: docker compose ps"
+if [ \$RETRIES -ge \$MAX_RETRIES ]; then
+  warn "Some services may still be starting. Check: docker compose ps"
 else
-  echo "✅ All services are running!"
+  ok "All services are running!"
 fi
+
+# ── Print service URLs & token ───────────────────────────────────────────────
+
+GATEWAY_HOST="localhost"
+if [ "\${OPENCLAW_GATEWAY_BIND}" = "lan" ]; then
+  GATEWAY_HOST="0.0.0.0"
+fi
+
+echo ""
+echo "═══════════════════════════════════════════════════════════════════════════════"
+echo " 🐾 OpenClaw is ready!"
+echo "═══════════════════════════════════════════════════════════════════════════════"
+echo ""
+echo "  Gateway URL:        http://\${GATEWAY_HOST}:\${OPENCLAW_GATEWAY_PORT}"
+echo "  Bridge (WebSocket): ws://\${GATEWAY_HOST}:\${OPENCLAW_BRIDGE_PORT}"
+echo "  Config directory:   \${OPENCLAW_CONFIG_DIR}"
+echo "  Workspace directory:\${OPENCLAW_WORKSPACE_DIR}"
+echo ""
+echo "  Gateway Token:      \${OPENCLAW_GATEWAY_TOKEN}"
+echo ""
+echo "  Manage:"
+echo "    Stop:   ./scripts/stop.sh"
+echo "    Status: ./scripts/status.sh"
+echo "    Update: ./scripts/update.sh"
+echo "    Logs:   docker compose logs -f"
+echo ""
+echo "═══════════════════════════════════════════════════════════════════════════════"
 `;
 
 	// ── scripts/stop.sh ─────────────────────────────────────────────────────

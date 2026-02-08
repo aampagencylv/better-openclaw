@@ -468,6 +468,74 @@ docker exec remotion npx remotion render src/index.tsx MyComposition out/video.m
 - Use the Studio UI for previewing before rendering.
 - Combine with FFmpeg for post-processing.
 `,
+
+	"lightpanda-browse": `---
+name: lightpanda-browse
+description: "Browse the web using the ultra-fast LightPanda headless browser via CDP"
+metadata:
+  openclaw:
+    emoji: "🐼"
+---
+
+# LightPanda Browse
+
+LightPanda is an ultra-fast headless browser available via CDP WebSocket at \`ws://{{LIGHTPANDA_HOST}}:{{LIGHTPANDA_PORT}}\`.
+
+## Connect via Puppeteer
+
+\`\`\`javascript
+const browser = await puppeteer.connect({
+  browserWSEndpoint: "ws://{{LIGHTPANDA_HOST}}:{{LIGHTPANDA_PORT}}"
+});
+const page = await browser.newPage();
+await page.goto('https://example.com');
+const content = await page.evaluate(() => document.body.innerText);
+\`\`\`
+
+## Key Advantages
+
+- 9x less memory than Chrome (ideal for parallel scraping)
+- 11x faster page loading
+- Instant startup
+- Full CDP compatibility with Puppeteer and Playwright
+`,
+
+	"steel-browse": `---
+name: steel-browse
+description: "Browse the web using Steel Browser API with session management and anti-detection"
+metadata:
+  openclaw:
+    emoji: "🔥"
+---
+
+# Steel Browser
+
+Steel provides a REST API at \`http://{{STEEL_HOST}}:{{STEEL_PORT}}\` for AI agent web automation.
+
+## Create a Session
+
+\`\`\`bash
+curl -X POST http://{{STEEL_HOST}}:{{STEEL_PORT}}/v1/sessions \\
+  -H "Content-Type: application/json" \\
+  -d '{"blockAds": true}'
+\`\`\`
+
+## Scrape a Page
+
+\`\`\`bash
+curl -X POST http://{{STEEL_HOST}}:{{STEEL_PORT}}/v1/scrape \\
+  -H "Content-Type: application/json" \\
+  -d '{"url": "https://example.com", "format": "markdown"}'
+\`\`\`
+
+## Features
+
+- Session management with persistent cookies
+- Anti-detection and stealth plugins
+- Proxy support and IP rotation
+- Auto CAPTCHA solving
+- Puppeteer/Playwright/Selenium compatible
+`,
 };
 
 /**

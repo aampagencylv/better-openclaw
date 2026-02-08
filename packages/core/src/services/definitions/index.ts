@@ -54,6 +54,8 @@ export { mixpostDefinition } from "./mixpost.js";
 export { matomoDefinition } from "./matomo.js";
 export { umamiDefinition } from "./umami.js";
 export { openpanelDefinition } from "./openpanel.js";
+export { lightpandaDefinition } from "./lightpanda.js";
+export { steelBrowserDefinition } from "./steel-browser.js";
 
 import { redisDefinition } from "./redis.js";
 import { qdrantDefinition } from "./qdrant.js";
@@ -111,6 +113,8 @@ import { mixpostDefinition } from "./mixpost.js";
 import { matomoDefinition } from "./matomo.js";
 import { umamiDefinition } from "./umami.js";
 import { openpanelDefinition } from "./openpanel.js";
+import { lightpandaDefinition } from "./lightpanda.js";
+import { steelBrowserDefinition } from "./steel-browser.js";
 import type { ServiceDefinition } from "../../types.js";
 
 export const allServiceDefinitions: ServiceDefinition[] = [
@@ -170,4 +174,6 @@ export const allServiceDefinitions: ServiceDefinition[] = [
 	matomoDefinition,
 	umamiDefinition,
 	openpanelDefinition,
+	lightpandaDefinition,
+	steelBrowserDefinition,
 ];

@@ -27,13 +27,16 @@ describe("compose", () => {
 		expect(parsed.services["openclaw-gateway"].environment.HOME).toBe("/home/node");
 		expect(parsed.services["openclaw-gateway"].environment.TERM).toBe("xterm-256color");
 
-		// Should have base volumes
-		expect(parsed.volumes).toHaveProperty("openclaw-config");
-		expect(parsed.volumes).toHaveProperty("openclaw-workspace");
+		// Gateway uses bind-mount volumes (not named volumes in top-level volumes section)
+		const gwVolumes = parsed.services["openclaw-gateway"].volumes as string[];
+		expect(gwVolumes.some((v: string) => v.includes(".openclaw"))).toBe(true);
 
 		// Should have network
 		expect(parsed.networks).toHaveProperty("openclaw-network");
 		expect(parsed.networks["openclaw-network"].driver).toBe("bridge");
+
+		// Should have CLI companion service
+		expect(parsed.services).toHaveProperty("openclaw-cli");
 
 		// Gateway should have no depends_on (no companions)
 		expect(parsed.services["openclaw-gateway"]).not.toHaveProperty("depends_on");
@@ -110,9 +113,9 @@ describe("compose", () => {
 			expect(parsed.volumes).toHaveProperty(volName);
 		}
 
-		// Gateway volumes must also be present
-		expect(parsed.volumes).toHaveProperty("openclaw-config");
-		expect(parsed.volumes).toHaveProperty("openclaw-workspace");
+		// Gateway uses bind-mount volumes (not in top-level volumes section)
+		const gwVols = parsed.services["openclaw-gateway"].volumes as string[];
+		expect(gwVols.some((v: string) => v.includes(".openclaw"))).toBe(true);
 	});
 
 	it("includes GPU passthrough when gpu=true and service requires it", () => {

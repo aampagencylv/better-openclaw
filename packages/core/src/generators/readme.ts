@@ -63,15 +63,22 @@ ${serviceRows}
 - [Docker Compose](https://docs.docker.com/compose/install/) (v2+)
 - At least ${Math.ceil(resolved.estimatedMemoryMB / 1024)}GB of RAM available
 
-### 1. Configure Environment
+### 1. Extract the ZIP
+
+\`\`\`bash
+unzip ${projectName}.zip
+cd ${projectName}
+\`\`\`
+
+### 2. Configure Environment
 
 \`\`\`bash
 cp .env.example .env
 \`\`\`
 
-Edit \`.env\` and update any values as needed. Secret values have been pre-generated—review and change them for production use.
+Edit \`.env\` and update any values as needed. Secret values have been pre-generated — review and change them for production use.
 
-### 2. Start Services
+### 3. Start Services
 
 \`\`\`bash
 docker compose up -d
@@ -84,13 +91,51 @@ chmod +x scripts/*.sh
 ./scripts/start.sh
 \`\`\`
 
-### 3. Verify
+### 4. Check Status
 
 \`\`\`bash
 docker compose ps
 \`\`\`
 
+### 5. View Logs
+
+\`\`\`bash
+docker compose logs -f openclaw-gateway
+\`\`\`
+
 All services should show a healthy status within 1–2 minutes.
+`);
+
+	// ── Docker Compose Profiles ──────────────────────────────────────────────
+
+	sections.push(`## Using Docker Compose Profiles
+
+Your stack may include profile-based compose files for optional service groups. Only the base services start by default — use profiles to activate additional groups:
+
+\`\`\`bash
+# Start base services only
+docker compose up -d
+
+# Start base + AI services (Ollama, Open WebUI, etc.)
+docker compose -f docker-compose.yml -f docker-compose.ai.yml --profile ai up -d
+
+# Start base + monitoring (Grafana, Prometheus, Uptime Kuma)
+docker compose -f docker-compose.yml -f docker-compose.monitoring.yml --profile monitoring up -d
+
+# Start base + AI + dev tools
+docker compose -f docker-compose.yml -f docker-compose.ai.yml -f docker-compose.tools.yml --profile ai --profile tools up -d
+\`\`\`
+
+Available profile files (if generated):
+| File | Profile | Services |
+|------|---------|----------|
+| \`docker-compose.ai.yml\` | \`ai\` | AI models, chat UIs, LLM platforms |
+| \`docker-compose.media.yml\` | \`media\` | FFmpeg, Remotion, Motion Canvas |
+| \`docker-compose.monitoring.yml\` | \`monitoring\` | Grafana, Prometheus, Uptime Kuma, analytics |
+| \`docker-compose.tools.yml\` | \`tools\` | Gitea, code-server, Portainer, coding agents |
+| \`docker-compose.social.yml\` | \`social\` | Postiz, Mixpost |
+| \`docker-compose.knowledge.yml\` | \`knowledge\` | Outline, Paperless-ngx, NocoDB |
+| \`docker-compose.communication.yml\` | \`communication\` | Matrix, Rocket.Chat, Mattermost |
 `);
 
 	// ── Service URLs & Ports ─────────────────────────────────────────────────
@@ -156,15 +201,19 @@ ${proxy === "caddy" ? "The Caddyfile is located at `config/Caddyfile`." : "Traef
 
 	// ── Scripts ──────────────────────────────────────────────────────────────
 
-	sections.push(`## Scripts
+	sections.push(`## Management Scripts
+
+\`\`\`bash
+chmod +x scripts/*.sh     # Make scripts executable (first time only)
+\`\`\`
 
 | Script | Description |
 |--------|-------------|
-| \`scripts/start.sh\` | Validates environment and starts all services |
-| \`scripts/stop.sh\` | Gracefully stops all services |
-| \`scripts/update.sh\` | Pulls latest images and restarts services |
-| \`scripts/backup.sh\` | Backs up all named Docker volumes |
-| \`scripts/status.sh\` | Shows current status of all services |
+| \`./scripts/start.sh\` | Validates .env, auto-generates gateway token, creates dirs, starts all services with health checks |
+| \`./scripts/stop.sh\` | Gracefully stops all services |
+| \`./scripts/update.sh\` | Pulls latest Docker images and restarts services |
+| \`./scripts/backup.sh\` | Backs up all named Docker volumes to timestamped archives |
+| \`./scripts/status.sh\` | Shows current service status, resource usage, and disk |
 `);
 
 	// ── Data & Volumes ──────────────────────────────────────────────────────

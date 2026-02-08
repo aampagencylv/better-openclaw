@@ -65,6 +65,41 @@ export function generateEnvFiles(
 		actualValue: "18789",
 	});
 
+	lines.push({
+		comment: formatComment("Port for the OpenClaw ACP bridge (WebSocket)", "OpenClaw Core", false, false),
+		key: "OPENCLAW_BRIDGE_PORT",
+		exampleValue: "18790",
+		actualValue: "18790",
+	});
+
+	lines.push({
+		comment: formatComment("Gateway network bind mode (lan for Docker networking, loopback for local-only)", "OpenClaw Core", false, false),
+		key: "OPENCLAW_GATEWAY_BIND",
+		exampleValue: "lan",
+		actualValue: "lan",
+	});
+
+	lines.push({
+		comment: formatComment("Host path to OpenClaw configuration directory", "OpenClaw Core", true, false),
+		key: "OPENCLAW_CONFIG_DIR",
+		exampleValue: "./openclaw/config",
+		actualValue: "./openclaw/config",
+	});
+
+	lines.push({
+		comment: formatComment("Host path to OpenClaw workspace directory", "OpenClaw Core", true, false),
+		key: "OPENCLAW_WORKSPACE_DIR",
+		exampleValue: "./openclaw/workspace",
+		actualValue: "./openclaw/workspace",
+	});
+
+	lines.push({
+		comment: formatComment("OpenClaw Docker image override (default uses ghcr.io/openclaw/openclaw)", "OpenClaw Core", false, false),
+		key: "OPENCLAW_IMAGE",
+		exampleValue: "",
+		actualValue: "",
+	});
+
 	if (options.domain) {
 		lines.push({
 			comment: formatComment(
@@ -79,13 +114,42 @@ export function generateEnvFiles(
 		});
 	}
 
+	// Claude web-provider session variables (optional)
+	lines.push({
+		comment: "\n# ═══════════════════════════════════════════════════════════════════════════════\n# Claude Web Provider (optional)\n# ═══════════════════════════════════════════════════════════════════════════════",
+		key: "",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment("Claude AI session key for web provider authentication", "OpenClaw Core", false, true),
+		key: "CLAUDE_AI_SESSION_KEY",
+		exampleValue: "your_claude_ai_session_key_here",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment("Claude web session key for web provider authentication", "OpenClaw Core", false, true),
+		key: "CLAUDE_WEB_SESSION_KEY",
+		exampleValue: "your_claude_web_session_key_here",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment("Claude web cookie for web provider authentication", "OpenClaw Core", false, true),
+		key: "CLAUDE_WEB_COOKIE",
+		exampleValue: "your_claude_web_cookie_here",
+		actualValue: "",
+	});
+
 	// ── Service-Specific Variables ───────────────────────────────────────────
 
 	const seenKeys = new Set<string>([
-		"OPENCLAW_VERSION",
-		"OPENCLAW_GATEWAY_TOKEN",
-		"OPENCLAW_GATEWAY_PORT",
-		"OPENCLAW_DOMAIN",
+		"OPENCLAW_VERSION", "OPENCLAW_GATEWAY_TOKEN", "OPENCLAW_GATEWAY_PORT",
+		"OPENCLAW_BRIDGE_PORT", "OPENCLAW_GATEWAY_BIND", "OPENCLAW_CONFIG_DIR",
+		"OPENCLAW_WORKSPACE_DIR", "OPENCLAW_IMAGE", "OPENCLAW_DOMAIN",
+		"CLAUDE_AI_SESSION_KEY", "CLAUDE_WEB_SESSION_KEY", "CLAUDE_WEB_COOKIE",
 	]);
 
 	for (const { definition } of resolved.services) {

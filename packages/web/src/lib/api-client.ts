@@ -90,6 +90,16 @@ export async function validateStack(config: {
   });
 }
 
+export interface GenerateResponse {
+  files: Record<string, string>;
+  metadata: {
+    serviceCount: number;
+    skillCount: number;
+    estimatedMemoryMB: number;
+    generatedAt: string;
+  };
+}
+
 export async function generateStack(config: {
   projectName: string;
   services: string[];
@@ -100,19 +110,9 @@ export async function generateStack(config: {
   platform?: string;
   deployment?: string;
   monitoring?: boolean;
-}): Promise<Blob> {
-  const res = await fetch(`${API_BASE}/generate`, {
+}): Promise<GenerateResponse> {
+  return apiFetch<GenerateResponse>("/generate", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(config),
   });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(
-      body?.error?.message ?? `API error: ${res.status} ${res.statusText}`
-    );
-  }
-
-  return res.blob();
 }

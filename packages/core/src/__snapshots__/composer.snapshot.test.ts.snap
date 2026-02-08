@@ -3,11 +3,14 @@
 exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + redis) 1`] = `
 "services:
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:\${OPENCLAW_VERSION:-latest}
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
       FFMPEG_SHARED_DIR: /home/node/.openclaw/workspace/media
       MINIO_HOST: minio
       MINIO_PORT: "9000"
@@ -19,15 +22,24 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
       REMOTION_HOST: remotion
       REMOTION_PORT: "3000"
     volumes:
-      - openclaw-config:/home/node/.openclaw
-      - openclaw-workspace:/home/node/.openclaw/workspace
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
       - ffmpeg-shared:/home/node/.openclaw/workspace/media
     ports:
       - \${OPENCLAW_GATEWAY_PORT:-18789}:18789
+      - \${OPENCLAW_BRIDGE_PORT:-18790}:18790
     networks:
       - openclaw-network
     init: true
     restart: unless-stopped
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - \${OPENCLAW_GATEWAY_BIND:-lan}
+      - --port
+      - "18789"
     depends_on:
       minio:
         condition: service_healthy
@@ -73,11 +85,30 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
     restart: unless-stopped
     networks:
       - openclaw-network
+  openclaw-cli:
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      BROWSER: echo
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+    volumes:
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
+    stdin_open: true
+    tty: true
+    init: true
+    networks:
+      - openclaw-network
+    entrypoint:
+      - node
+      - dist/index.js
 volumes:
   ffmpeg-shared:
   minio-data:
-  openclaw-config:
-  openclaw-workspace:
   redis-data:
 networks:
   openclaw-network:
@@ -117,11 +148,14 @@ volumes:
 exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + monitoring) 1`] = `
 "services:
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:\${OPENCLAW_VERSION:-latest}
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
       POSTGRES_HOST: postgresql
       POSTGRES_PORT: "5432"
       REDIS_HOST: redis
@@ -131,14 +165,23 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       N8N_PORT: "5678"
       N8N_WEBHOOK_URL: http://n8n:5678/
     volumes:
-      - openclaw-config:/home/node/.openclaw
-      - openclaw-workspace:/home/node/.openclaw/workspace
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
     ports:
       - \${OPENCLAW_GATEWAY_PORT:-18789}:18789
+      - \${OPENCLAW_BRIDGE_PORT:-18790}:18790
     networks:
       - openclaw-network
     init: true
     restart: unless-stopped
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - \${OPENCLAW_GATEWAY_BIND:-lan}
+      - --port
+      - "18789"
     depends_on:
       postgresql:
         condition: service_healthy
@@ -214,11 +257,30 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
     restart: unless-stopped
     networks:
       - openclaw-network
+  openclaw-cli:
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      BROWSER: echo
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+    volumes:
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
+    stdin_open: true
+    tty: true
+    init: true
+    networks:
+      - openclaw-network
+    entrypoint:
+      - node
+      - dist/index.js
 volumes:
   grafana-data:
   n8n-data:
-  openclaw-config:
-  openclaw-workspace:
   postgres-data:
   prometheus-data:
   redis-data:
@@ -302,11 +364,14 @@ volumes:
 exports[`compose snapshot tests > full preset (many services) 1`] = `
 "services:
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:\${OPENCLAW_VERSION:-latest}
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
       BROWSERLESS_HOST: browserless
       BROWSERLESS_PORT: "3000"
       BROWSERLESS_TOKEN: \${BROWSERLESS_TOKEN}
@@ -339,15 +404,24 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       N8N_PORT: "5678"
       N8N_WEBHOOK_URL: http://n8n:5678/
     volumes:
-      - openclaw-config:/home/node/.openclaw
-      - openclaw-workspace:/home/node/.openclaw/workspace
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
       - ffmpeg-shared:/home/node/.openclaw/workspace/media
     ports:
       - \${OPENCLAW_GATEWAY_PORT:-18789}:18789
+      - \${OPENCLAW_BRIDGE_PORT:-18790}:18790
     networks:
       - openclaw-network
     init: true
     restart: unless-stopped
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - \${OPENCLAW_GATEWAY_BIND:-lan}
+      - --port
+      - "18789"
     depends_on:
       browserless:
         condition: service_healthy
@@ -541,6 +615,27 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     restart: unless-stopped
     networks:
       - openclaw-network
+  openclaw-cli:
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      BROWSER: echo
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+    volumes:
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
+    stdin_open: true
+    tty: true
+    init: true
+    networks:
+      - openclaw-network
+    entrypoint:
+      - node
+      - dist/index.js
 volumes:
   caddy-config:
   caddy-data:
@@ -551,8 +646,6 @@ volumes:
   minio-data:
   n8n-data:
   ollama-data:
-  openclaw-config:
-  openclaw-workspace:
   postgres-data:
   prometheus-data:
   qdrant-data:
@@ -568,23 +661,35 @@ networks:
 exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
 "services:
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:\${OPENCLAW_VERSION:-latest}
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       REDIS_PASSWORD: \${REDIS_PASSWORD}
     volumes:
-      - openclaw-config:/home/node/.openclaw
-      - openclaw-workspace:/home/node/.openclaw/workspace
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
     ports:
       - \${OPENCLAW_GATEWAY_PORT:-18789}:18789
+      - \${OPENCLAW_BRIDGE_PORT:-18790}:18790
     networks:
       - openclaw-network
     init: true
     restart: unless-stopped
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - \${OPENCLAW_GATEWAY_BIND:-lan}
+      - --port
+      - "18789"
     depends_on:
       redis:
         condition: service_healthy
@@ -606,9 +711,28 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
     restart: unless-stopped
     networks:
       - openclaw-network
+  openclaw-cli:
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      BROWSER: echo
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+    volumes:
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
+    stdin_open: true
+    tty: true
+    init: true
+    networks:
+      - openclaw-network
+    entrypoint:
+      - node
+      - dist/index.js
 volumes:
-  openclaw-config:
-  openclaw-workspace:
   redis-data:
 networks:
   openclaw-network:
@@ -619,11 +743,14 @@ networks:
 exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserless + redis) 1`] = `
 "services:
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:\${OPENCLAW_VERSION:-latest}
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
       BROWSERLESS_HOST: browserless
       BROWSERLESS_PORT: "3000"
       BROWSERLESS_TOKEN: \${BROWSERLESS_TOKEN}
@@ -635,14 +762,23 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
       SEARXNG_HOST: searxng
       SEARXNG_PORT: "8080"
     volumes:
-      - openclaw-config:/home/node/.openclaw
-      - openclaw-workspace:/home/node/.openclaw/workspace
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
     ports:
       - \${OPENCLAW_GATEWAY_PORT:-18789}:18789
+      - \${OPENCLAW_BRIDGE_PORT:-18790}:18790
     networks:
       - openclaw-network
     init: true
     restart: unless-stopped
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - \${OPENCLAW_GATEWAY_BIND:-lan}
+      - --port
+      - "18789"
     depends_on:
       browserless:
         condition: service_healthy
@@ -724,9 +860,28 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
     restart: unless-stopped
     networks:
       - openclaw-network
+  openclaw-cli:
+    image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      BROWSER: echo
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+    volumes:
+      - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
+      - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
+    stdin_open: true
+    tty: true
+    init: true
+    networks:
+      - openclaw-network
+    entrypoint:
+      - node
+      - dist/index.js
 volumes:
-  openclaw-config:
-  openclaw-workspace:
   qdrant-data:
   redis-data:
   searxng-data:

@@ -26,32 +26,48 @@ const CATEGORY_PROFILE_MAP: Partial<Record<ServiceCategory, { file: string; prof
 
 const YAML_OPTIONS = { lineWidth: 120, nullStr: "" };
 
+// ── Shared Gateway Builder ──────────────────────────────────────────────────
+
+interface GatewayBuildResult {
+	gatewayService: Record<string, unknown>;
+	cliService: Record<string, unknown>;
+	allVolumes: Set<string>;
+}
+
 /**
- * Generates a Docker Compose YAML string from resolved services and options.
- *
- * Uses Docker Compose v3.8 conventions (no `version` field).
- * The OpenClaw gateway is always the first service, followed by companion
- * services in their topologically-sorted order.
- *
- * Returns a single YAML string with ALL services in one file (backward-compatible).
+ * Builds the OpenClaw gateway and CLI service entries.
+ * Matches the real OpenClaw docker-compose.yml structure:
+ * - Bridge port 18790 for ACP/WebSocket
+ * - Bind-mount volumes (not named volumes)
+ * - Claude web-provider session env vars
+ * - Gateway bind mode (--bind lan)
+ * - CLI companion service with stdin/tty
  */
-export function compose(resolved: ResolverOutput, options: ComposeOptions): string {
-	const services: Record<string, Record<string, unknown>> = {};
-	const allVolumes = new Set<string>(["openclaw-config", "openclaw-workspace"]);
+function buildGatewayServices(
+	resolved: ResolverOutput,
+	options: ComposeOptions,
+	dependsOn?: Record<string, { condition: string }>,
+): GatewayBuildResult {
+	const allVolumes = new Set<string>();
 
-	// ── Collect gateway environment & volume mounts from all companion services ──
-
+	// Gateway environment
 	const gatewayEnv: Record<string, string> = {
 		HOME: "/home/node",
 		TERM: "xterm-256color",
 		OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}",
+		// Claude web-provider session vars (optional, user fills in .env)
+		CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY}",
+		CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY}",
+		CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE}",
 	};
 
+	// Gateway volumes (bind-mount style matching real docker-setup.sh)
 	const gatewayVolumes: string[] = [
-		"openclaw-config:/home/node/.openclaw",
-		"openclaw-workspace:/home/node/.openclaw/workspace",
+		"${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw",
+		"${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace",
 	];
 
+	// Collect env vars and volume mounts from companion services
 	for (const { definition: def } of resolved.services) {
 		for (const env of def.openclawEnvVars) {
 			gatewayEnv[env.key] = env.secret ? `\${${env.key}}` : env.defaultValue;
@@ -64,8 +80,162 @@ export function compose(resolved: ResolverOutput, options: ComposeOptions): stri
 		}
 	}
 
-	// ── Gateway depends_on (all companion services) ──
+	// Gateway service
+	const gateway: Record<string, unknown> = {
+		image: `\${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:${options.openclawVersion}}`,
+		environment: gatewayEnv,
+		volumes: gatewayVolumes,
+		ports: [
+			"${OPENCLAW_GATEWAY_PORT:-18789}:18789",
+			"${OPENCLAW_BRIDGE_PORT:-18790}:18790",
+		],
+		networks: ["openclaw-network"],
+		init: true,
+		restart: "unless-stopped",
+		command: [
+			"node",
+			"dist/index.js",
+			"gateway",
+			"--bind",
+			"${OPENCLAW_GATEWAY_BIND:-lan}",
+			"--port",
+			"18789",
+		],
+	};
 
+	if (dependsOn && Object.keys(dependsOn).length > 0) {
+		gateway.depends_on = dependsOn;
+	}
+
+	// CLI companion service (matching real OpenClaw docker-compose.yml)
+	const cliService: Record<string, unknown> = {
+		image: `\${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:${options.openclawVersion}}`,
+		environment: {
+			HOME: "/home/node",
+			TERM: "xterm-256color",
+			OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}",
+			BROWSER: "echo",
+			CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY}",
+			CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY}",
+			CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE}",
+		},
+		volumes: [
+			"${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw",
+			"${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace",
+		],
+		stdin_open: true,
+		tty: true,
+		init: true,
+		networks: ["openclaw-network"],
+		entrypoint: ["node", "dist/index.js"],
+	};
+
+	return { gatewayService: gateway, cliService: cliService, allVolumes };
+}
+
+// ── Shared Companion Service Builder ────────────────────────────────────────
+
+function buildCompanionService(
+	def: ResolverOutput["services"][number]["definition"],
+	resolved: ResolverOutput,
+	options: ComposeOptions,
+	allVolumes: Set<string>,
+): { entry: Record<string, unknown>; volumeNames: string[] } {
+	const svc: Record<string, unknown> = {};
+	const volumeNames: string[] = [];
+
+	svc.image = `${def.image}:${def.imageTag}`;
+
+	if (def.environment.length > 0) {
+		const env: Record<string, string> = {};
+		for (const e of def.environment) {
+			env[e.key] = e.secret ? `\${${e.key}}` : e.defaultValue;
+		}
+		svc.environment = env;
+	}
+
+	const exposedPorts = def.ports.filter((p) => p.exposed);
+	if (exposedPorts.length > 0) {
+		const prefix = def.id.toUpperCase().replace(/-/g, "_");
+		svc.ports = exposedPorts.map((p, i) => {
+			const suffix = exposedPorts.length > 1 ? `_${i}` : "";
+			return `\${${prefix}_PORT${suffix}:-${p.host}}:${p.container}`;
+		});
+	}
+
+	if (def.volumes.length > 0) {
+		svc.volumes = def.volumes.map((v) => {
+			allVolumes.add(v.name);
+			volumeNames.push(v.name);
+			return `${v.name}:${v.containerPath}`;
+		});
+	}
+
+	if (def.healthcheck) {
+		const hc: Record<string, unknown> = {
+			test: ["CMD-SHELL", def.healthcheck.test],
+			interval: def.healthcheck.interval,
+			timeout: def.healthcheck.timeout,
+			retries: def.healthcheck.retries,
+		};
+		if (def.healthcheck.startPeriod) {
+			hc.start_period = def.healthcheck.startPeriod;
+		}
+		svc.healthcheck = hc;
+	}
+
+	svc.restart = def.restartPolicy;
+	svc.networks = def.networks;
+
+	if (def.command) svc.command = def.command;
+	if (def.entrypoint) svc.entrypoint = def.entrypoint;
+	if (def.labels && Object.keys(def.labels).length > 0) svc.labels = def.labels;
+
+	let deploy: Record<string, unknown> | undefined;
+	if (def.deploy) {
+		deploy = JSON.parse(JSON.stringify(def.deploy)) as Record<string, unknown>;
+	}
+	if (options.gpu && def.gpuRequired) {
+		const base = deploy ?? {};
+		const resources = (base.resources ?? {}) as Record<string, unknown>;
+		deploy = {
+			...base,
+			resources: {
+				...resources,
+				reservations: {
+					...((resources.reservations as Record<string, unknown>) ?? {}),
+					devices: [{ driver: "nvidia", count: "all", capabilities: ["gpu"] }],
+				},
+			},
+		};
+	}
+	if (deploy) svc.deploy = deploy;
+
+	const depIds = def.dependsOn.filter((id) =>
+		resolved.services.some((s) => s.definition.id === id),
+	);
+	if (depIds.length > 0) {
+		const dependsOn: Record<string, { condition: string }> = {};
+		for (const depId of depIds) {
+			const dep = resolved.services.find((s) => s.definition.id === depId);
+			dependsOn[depId] = {
+				condition: dep?.definition.healthcheck ? "service_healthy" : "service_started",
+			};
+		}
+		svc.depends_on = dependsOn;
+	}
+
+	return { entry: svc, volumeNames };
+}
+
+// ── Single-File Compose ─────────────────────────────────────────────────────
+
+/**
+ * Generates a single Docker Compose YAML string with ALL services.
+ * Backward-compatible signature.
+ */
+export function compose(resolved: ResolverOutput, options: ComposeOptions): string {
+	// Build depends_on for ALL companion services
 	const gatewayDependsOn: Record<string, { condition: string }> = {};
 	for (const { definition: def } of resolved.services) {
 		gatewayDependsOn[def.id] = {
@@ -73,323 +243,59 @@ export function compose(resolved: ResolverOutput, options: ComposeOptions): stri
 		};
 	}
 
-	// ── OpenClaw Gateway (always first) ──
+	const { gatewayService, cliService, allVolumes } = buildGatewayServices(
+		resolved,
+		options,
+		gatewayDependsOn,
+	);
 
-	const gateway: Record<string, unknown> = {
-		image: `ghcr.io/openclaw/openclaw:\${OPENCLAW_VERSION:-${options.openclawVersion}}`,
-		environment: gatewayEnv,
-		volumes: gatewayVolumes,
-		ports: ["${OPENCLAW_GATEWAY_PORT:-18789}:18789"],
-		networks: ["openclaw-network"],
-		init: true,
-		restart: "unless-stopped",
+	const services: Record<string, Record<string, unknown>> = {
+		"openclaw-gateway": gatewayService,
 	};
 
-	if (Object.keys(gatewayDependsOn).length > 0) {
-		gateway.depends_on = gatewayDependsOn;
-	}
-
-	services["openclaw-gateway"] = gateway;
-
-	// ── Companion Services ──
-
 	for (const { definition: def } of resolved.services) {
-		const svc: Record<string, unknown> = {};
-
-		// Image
-		svc.image = `${def.image}:${def.imageTag}`;
-
-		// Environment — secrets use ${KEY} syntax, non-secrets use defaultValue
-		if (def.environment.length > 0) {
-			const env: Record<string, string> = {};
-			for (const e of def.environment) {
-				env[e.key] = e.secret ? `\${${e.key}}` : e.defaultValue;
-			}
-			svc.environment = env;
-		}
-
-		// Ports – only exposed ports are host-mapped
-		const exposedPorts = def.ports.filter((p) => p.exposed);
-		if (exposedPorts.length > 0) {
-			const prefix = def.id.toUpperCase().replace(/-/g, "_");
-			svc.ports = exposedPorts.map((p, i) => {
-				const suffix = exposedPorts.length > 1 ? `_${i}` : "";
-				return `\${${prefix}_PORT${suffix}:-${p.host}}:${p.container}`;
-			});
-		}
-
-		// Volumes
-		if (def.volumes.length > 0) {
-			svc.volumes = def.volumes.map((v) => {
-				allVolumes.add(v.name);
-				return `${v.name}:${v.containerPath}`;
-			});
-		}
-
-		// Health check
-		if (def.healthcheck) {
-			const hc: Record<string, unknown> = {
-				test: ["CMD-SHELL", def.healthcheck.test],
-				interval: def.healthcheck.interval,
-				timeout: def.healthcheck.timeout,
-				retries: def.healthcheck.retries,
-			};
-			if (def.healthcheck.startPeriod) {
-				hc.start_period = def.healthcheck.startPeriod;
-			}
-			svc.healthcheck = hc;
-		}
-
-		// Restart policy
-		svc.restart = def.restartPolicy;
-
-		// Networks
-		svc.networks = def.networks;
-
-		// Command & entrypoint
-		if (def.command) {
-			svc.command = def.command;
-		}
-		if (def.entrypoint) {
-			svc.entrypoint = def.entrypoint;
-		}
-
-		// Labels
-		if (def.labels && Object.keys(def.labels).length > 0) {
-			svc.labels = def.labels;
-		}
-
-		// Deploy + GPU passthrough
-		let deploy: Record<string, unknown> | undefined;
-
-		if (def.deploy) {
-			deploy = JSON.parse(JSON.stringify(def.deploy)) as Record<string, unknown>;
-		}
-
-		if (options.gpu && def.gpuRequired) {
-			const base = deploy ?? {};
-			const resources = (base.resources ?? {}) as Record<string, unknown>;
-			deploy = {
-				...base,
-				resources: {
-					...resources,
-					reservations: {
-						...((resources.reservations as Record<string, unknown>) ?? {}),
-						devices: [
-							{
-								driver: "nvidia",
-								count: "all",
-								capabilities: ["gpu"],
-							},
-						],
-					},
-				},
-			};
-		}
-
-		if (deploy) {
-			svc.deploy = deploy;
-		}
-
-		// Depends on (from definition's dependsOn field)
-		const depIds = def.dependsOn.filter((id) => resolved.services.some((s) => s.definition.id === id));
-		if (depIds.length > 0) {
-			const dependsOn: Record<string, { condition: string }> = {};
-			for (const depId of depIds) {
-				const dep = resolved.services.find((s) => s.definition.id === depId);
-				dependsOn[depId] = {
-					condition: dep?.definition.healthcheck ? "service_healthy" : "service_started",
-				};
-			}
-			svc.depends_on = dependsOn;
-		}
-
-		services[def.id] = svc;
+		const { entry } = buildCompanionService(def, resolved, options, allVolumes);
+		services[def.id] = entry;
 	}
 
-	// ── Top-level volumes ──
+	// Add CLI service
+	services["openclaw-cli"] = cliService;
 
 	const volumes: Record<string, null> = {};
 	for (const v of [...allVolumes].sort()) {
 		volumes[v] = null;
 	}
 
-	// ── Top-level networks ──
-
-	const networks = {
-		"openclaw-network": { driver: "bridge" },
-	};
-
-	// ── Serialize to YAML ──
+	const networks = { "openclaw-network": { driver: "bridge" } };
 
 	return stringify({ services, volumes, networks }, YAML_OPTIONS);
+}
+
+// ── Multi-File Compose ──────────────────────────────────────────────────────
+
+interface ServiceInfo {
+	id: string;
+	category: ServiceCategory;
+	entry: Record<string, unknown>;
+	volumeNames: string[];
 }
 
 /**
  * Generates multiple Docker Compose files, splitting services into profile-based
  * override files by category.
- *
- * Core / infrastructure services stay in the base `docker-compose.yml`.
- * Category-specific services are placed in dedicated override files with
- * Docker Compose `profiles` so they can be activated selectively.
  */
 export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptions): ComposeResult {
-	const allVolumes = new Set<string>(["openclaw-config", "openclaw-workspace"]);
+	const allVolumes = new Set<string>();
 
-	// ── Collect gateway environment & volume mounts from all companion services ──
-
-	const gatewayEnv: Record<string, string> = {
-		HOME: "/home/node",
-		TERM: "xterm-256color",
-		OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}",
-	};
-
-	const gatewayVolumes: string[] = [
-		"openclaw-config:/home/node/.openclaw",
-		"openclaw-workspace:/home/node/.openclaw/workspace",
-	];
-
-	for (const { definition: def } of resolved.services) {
-		for (const env of def.openclawEnvVars) {
-			gatewayEnv[env.key] = env.secret ? `\${${env.key}}` : env.defaultValue;
-		}
-		if (def.openclawVolumeMounts) {
-			for (const vol of def.openclawVolumeMounts) {
-				allVolumes.add(vol.name);
-				gatewayVolumes.push(`${vol.name}:${vol.containerPath}`);
-			}
-		}
-	}
-
-	// ── Build all companion service entries & classify by category ──
-
-	interface ServiceInfo {
-		id: string;
-		category: ServiceCategory;
-		entry: Record<string, unknown>;
-		volumeNames: string[];
-	}
-
+	// Build all companion service entries & classify by category
 	const serviceInfos: ServiceInfo[] = [];
 
 	for (const { definition: def } of resolved.services) {
-		const svc: Record<string, unknown> = {};
-
-		// Image
-		svc.image = `${def.image}:${def.imageTag}`;
-
-		// Environment — secrets use ${KEY} syntax, non-secrets use defaultValue
-		if (def.environment.length > 0) {
-			const env: Record<string, string> = {};
-			for (const e of def.environment) {
-				env[e.key] = e.secret ? `\${${e.key}}` : e.defaultValue;
-			}
-			svc.environment = env;
-		}
-
-		// Ports – only exposed ports are host-mapped
-		const exposedPorts = def.ports.filter((p) => p.exposed);
-		if (exposedPorts.length > 0) {
-			const prefix = def.id.toUpperCase().replace(/-/g, "_");
-			svc.ports = exposedPorts.map((p, i) => {
-				const suffix = exposedPorts.length > 1 ? `_${i}` : "";
-				return `\${${prefix}_PORT${suffix}:-${p.host}}:${p.container}`;
-			});
-		}
-
-		// Volumes
-		const volumeNames: string[] = [];
-		if (def.volumes.length > 0) {
-			svc.volumes = def.volumes.map((v) => {
-				allVolumes.add(v.name);
-				volumeNames.push(v.name);
-				return `${v.name}:${v.containerPath}`;
-			});
-		}
-
-		// Health check
-		if (def.healthcheck) {
-			const hc: Record<string, unknown> = {
-				test: ["CMD-SHELL", def.healthcheck.test],
-				interval: def.healthcheck.interval,
-				timeout: def.healthcheck.timeout,
-				retries: def.healthcheck.retries,
-			};
-			if (def.healthcheck.startPeriod) {
-				hc.start_period = def.healthcheck.startPeriod;
-			}
-			svc.healthcheck = hc;
-		}
-
-		// Restart policy
-		svc.restart = def.restartPolicy;
-
-		// Networks
-		svc.networks = def.networks;
-
-		// Command & entrypoint
-		if (def.command) {
-			svc.command = def.command;
-		}
-		if (def.entrypoint) {
-			svc.entrypoint = def.entrypoint;
-		}
-
-		// Labels
-		if (def.labels && Object.keys(def.labels).length > 0) {
-			svc.labels = def.labels;
-		}
-
-		// Deploy + GPU passthrough
-		let deploy: Record<string, unknown> | undefined;
-
-		if (def.deploy) {
-			deploy = JSON.parse(JSON.stringify(def.deploy)) as Record<string, unknown>;
-		}
-
-		if (options.gpu && def.gpuRequired) {
-			const base = deploy ?? {};
-			const resources = (base.resources ?? {}) as Record<string, unknown>;
-			deploy = {
-				...base,
-				resources: {
-					...resources,
-					reservations: {
-						...((resources.reservations as Record<string, unknown>) ?? {}),
-						devices: [
-							{
-								driver: "nvidia",
-								count: "all",
-								capabilities: ["gpu"],
-							},
-						],
-					},
-				},
-			};
-		}
-
-		if (deploy) {
-			svc.deploy = deploy;
-		}
-
-		// Depends on (from definition's dependsOn field)
-		const depIds = def.dependsOn.filter((id) => resolved.services.some((s) => s.definition.id === id));
-		if (depIds.length > 0) {
-			const dependsOn: Record<string, { condition: string }> = {};
-			for (const depId of depIds) {
-				const dep = resolved.services.find((s) => s.definition.id === depId);
-				dependsOn[depId] = {
-					condition: dep?.definition.healthcheck ? "service_healthy" : "service_started",
-				};
-			}
-			svc.depends_on = dependsOn;
-		}
-
-		serviceInfos.push({ id: def.id, category: def.category, entry: svc, volumeNames });
+		const { entry, volumeNames } = buildCompanionService(def, resolved, options, allVolumes);
+		serviceInfos.push({ id: def.id, category: def.category, entry, volumeNames });
 	}
 
-	// ── Partition services into base vs. profile files ──
-
+	// Partition services into base vs. profile files
 	const baseServiceIds = new Set<string>();
 	const profileFileMap: Record<string, { profile: string; services: ServiceInfo[] }> = {};
 
@@ -405,8 +311,7 @@ export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptio
 		}
 	}
 
-	// ── Gateway depends_on (only base services) ──
-
+	// Gateway depends_on (only base services)
 	const gatewayDependsOn: Record<string, { condition: string }> = {};
 	for (const { definition: def } of resolved.services) {
 		if (baseServiceIds.has(def.id)) {
@@ -416,26 +321,18 @@ export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptio
 		}
 	}
 
-	// ── OpenClaw Gateway (always in the base file) ──
+	const { gatewayService, cliService, allVolumes: gwVolumes } = buildGatewayServices(
+		resolved,
+		options,
+		gatewayDependsOn,
+	);
 
-	const gateway: Record<string, unknown> = {
-		image: `ghcr.io/openclaw/openclaw:\${OPENCLAW_VERSION:-${options.openclawVersion}}`,
-		environment: gatewayEnv,
-		volumes: gatewayVolumes,
-		ports: ["${OPENCLAW_GATEWAY_PORT:-18789}:18789"],
-		networks: ["openclaw-network"],
-		init: true,
-		restart: "unless-stopped",
-	};
+	// Merge gateway volumes into allVolumes
+	for (const v of gwVolumes) allVolumes.add(v);
 
-	if (Object.keys(gatewayDependsOn).length > 0) {
-		gateway.depends_on = gatewayDependsOn;
-	}
-
-	// ── Base file: gateway + core services + ALL volumes + networks ──
-
+	// Base file: gateway + CLI + core services + ALL volumes + networks
 	const baseServices: Record<string, Record<string, unknown>> = {
-		"openclaw-gateway": gateway,
+		"openclaw-gateway": gatewayService,
 	};
 
 	for (const info of serviceInfos) {
@@ -443,6 +340,8 @@ export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptio
 			baseServices[info.id] = info.entry;
 		}
 	}
+
+	baseServices["openclaw-cli"] = cliService;
 
 	const sortedAllVolumes: Record<string, null> = {};
 	for (const v of [...allVolumes].sort()) {
@@ -457,8 +356,7 @@ export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptio
 		YAML_OPTIONS,
 	);
 
-	// ── Profile override files ──
-
+	// Profile override files
 	const usedProfiles = new Set<string>();
 
 	for (const [fileName, { profile, services }] of Object.entries(profileFileMap)) {

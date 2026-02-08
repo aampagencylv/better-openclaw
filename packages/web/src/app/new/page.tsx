@@ -13,9 +13,10 @@ import {
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
-import { ArrowLeft, Download, RotateCcw, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, Loader2, CheckCircle, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { generateStack } from "@/lib/api-client";
+import JSZip from "jszip";
 
 export default function NewStackPage() {
   const [selectedServices, setSelectedServices] = useState<Set<string>>(
@@ -24,6 +25,7 @@ export default function NewStackPage() {
   const [projectName, setProjectName] = useState("my-stack");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const [downloadComplete, setDownloadComplete] = useState(false);
 
   // Load all services from core registry
   const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
@@ -89,14 +91,18 @@ export default function NewStackPage() {
     setGenerateError(null);
   }, []);
 
-  // Download generated stack
+  // Download generated stack as a real ZIP file
   const handleDownload = useCallback(async () => {
     if (selectedServices.size === 0) return;
     setIsGenerating(true);
     setGenerateError(null);
+    setDownloadComplete(false);
     try {
-      const blob = await generateStack({
-        projectName: projectName || "my-stack",
+      const name = projectName || "my-stack";
+
+      // 1. Call the generation API to get the files map
+      const result = await generateStack({
+        projectName: name,
         services: Array.from(selectedServices),
         skillPacks: [],
         proxy: "none",
@@ -105,15 +111,29 @@ export default function NewStackPage() {
         deployment: "local",
         monitoring: false,
       });
-      // Trigger browser download
+
+      // 2. Build a real ZIP archive client-side using JSZip
+      const zip = new JSZip();
+      const folder = zip.folder(name);
+      if (folder) {
+        for (const [path, content] of Object.entries(result.files)) {
+          folder.file(path, content);
+        }
+      }
+
+      // 3. Generate ZIP blob and trigger browser download
+      const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${projectName || "my-stack"}.tar.gz`;
+      a.download = `${name}.zip`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+
+      // 4. Show post-download instructions
+      setDownloadComplete(true);
     } catch (err) {
       setGenerateError(
         err instanceof Error ? err.message : "Failed to generate stack"
@@ -204,6 +224,54 @@ export default function NewStackPage() {
       {generateError && (
         <div className="border-b border-red-500/20 bg-red-500/5 px-6 py-3 text-center text-sm text-red-400">
           {generateError}
+        </div>
+      )}
+
+      {/* Post-download instructions */}
+      {downloadComplete && (
+        <div className="border-b border-accent/20 bg-accent/5 px-6 py-4">
+          <div className="mx-auto max-w-3xl">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+              <div className="flex-1">
+                <p className="font-semibold text-accent">Stack downloaded successfully!</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Extract the ZIP and follow these steps:
+                </p>
+                <div className="mt-3 space-y-2">
+                  {[
+                    `cd ${projectName || "my-stack"}`,
+                    "cp .env.example .env        # Edit with your API keys",
+                    "docker compose up -d        # Start everything",
+                    "docker compose logs -f openclaw-gateway   # Watch OpenClaw boot",
+                  ].map((cmd) => (
+                    <div
+                      key={cmd}
+                      className="flex items-center gap-2 rounded bg-surface/80 px-3 py-1.5 font-mono text-xs text-foreground"
+                    >
+                      <span className="text-muted-foreground">$</span>
+                      <code className="flex-1">{cmd}</code>
+                      <button
+                        type="button"
+                        onClick={() => navigator.clipboard.writeText(cmd.split("#")[0]?.trim() ?? cmd)}
+                        className="text-muted-foreground hover:text-foreground"
+                        title="Copy command"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDownloadComplete(false)}
+                  className="mt-3 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
