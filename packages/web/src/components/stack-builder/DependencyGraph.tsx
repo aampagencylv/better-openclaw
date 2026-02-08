@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
 import type { ResolverOutput } from "@better-openclaw/core";
+import { useMemo } from "react";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -227,7 +227,7 @@ export function DependencyGraph({ resolverOutput }: DependencyGraphProps) {
 							fontFamily="Inter, system-ui, sans-serif"
 							fontWeight="500"
 						>
-							{node.name.length > 14 ? node.name.slice(0, 13) + "…" : node.name}
+							{node.name.length > 14 ? `${node.name.slice(0, 13)}…` : node.name}
 						</text>
 					</g>
 				))}

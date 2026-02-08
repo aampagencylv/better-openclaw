@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/navbar";
-import { Hero } from "@/components/hero";
-import { FeaturesGrid } from "@/components/features-grid";
-import { PresetsSection } from "@/components/presets-section";
+import Link from "next/link";
 import { CommonSetups } from "@/components/common-setups";
+import { FeaturesGrid } from "@/components/features-grid";
 import { Footer } from "@/components/footer";
+import { Hero } from "@/components/hero";
+import { Navbar } from "@/components/navbar";
+import { PresetsSection } from "@/components/presets-section";
 
 export default function HomePage() {
 	return (

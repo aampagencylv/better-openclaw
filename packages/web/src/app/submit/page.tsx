@@ -1,9 +1,9 @@
 "use client";
 
+import { Layers, Package, Send } from "lucide-react";
 import { useState } from "react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { Send, Package, Layers } from "lucide-react";
+import { Navbar } from "@/components/navbar";
 
 const SERVICE_CATEGORIES = [
 	"AI / Local Models",

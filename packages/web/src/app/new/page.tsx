@@ -1,32 +1,32 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import Link from "next/link";
 import {
-	resolve,
 	composeMultiFile,
-	getAllServices,
 	getAllPresets,
+	getAllServices,
+	type ResolverOutput,
+	resolve,
 	SERVICE_CATEGORIES,
 	type ServiceDefinition,
-	type ResolverOutput,
 } from "@better-openclaw/core";
-import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
-import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
-import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
+import JSZip from "jszip";
 import {
 	ArrowLeft,
-	Download,
-	RotateCcw,
-	Loader2,
 	CheckCircle,
 	Copy,
+	Download,
+	Loader2,
+	RotateCcw,
 	Search,
 	X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { useCallback, useMemo, useState } from "react";
+import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
+import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
+import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
 import { generateStack } from "@/lib/api-client";
-import JSZip from "jszip";
+import { cn } from "@/lib/utils";
 
 export default function NewStackPage() {
 	const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set());

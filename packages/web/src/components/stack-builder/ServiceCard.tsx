@@ -1,7 +1,7 @@
 "use client";
 
+import { CheckSquare, Link2, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CheckSquare, Square, AlertTriangle, Link2 } from "lucide-react";
 
 interface ServiceCardProps {
 	id: string;

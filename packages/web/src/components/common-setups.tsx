@@ -1,8 +1,8 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check } from "lucide-react";
 
 /* ── Package manager variants ──────────────────────────────────────────────── */
 type PM = "pnpm" | "npx" | "bun";

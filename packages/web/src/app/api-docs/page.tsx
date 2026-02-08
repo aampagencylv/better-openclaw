@@ -1,9 +1,9 @@
 "use client";
 
+import { Check, ChevronDown, Copy, ExternalLink } from "lucide-react";
 import { useState } from "react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { ChevronDown, Copy, Check, ExternalLink } from "lucide-react";
+import { Navbar } from "@/components/navbar";
 
 interface Endpoint {
 	method: "GET" | "POST";

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ServiceDefinition, CategoryInfo, ResolvedService } from "@better-openclaw/core";
+import type { CategoryInfo, ResolvedService, ServiceDefinition } from "@better-openclaw/core";
 import { ServiceCard } from "./ServiceCard";
 
 interface ServiceGridProps {

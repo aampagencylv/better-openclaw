@@ -1,28 +1,28 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import type { ResolverOutput } from "@better-openclaw/core";
 import {
-	composeMultiFile,
-	getStructuredEnvVars,
 	type ComposeResult,
+	composeMultiFile,
 	type EnvVarGroup,
+	getStructuredEnvVars,
 } from "@better-openclaw/core";
-import { cn } from "@/lib/utils";
 import {
-	Box,
-	Cpu,
-	HardDrive,
 	AlertTriangle,
+	Box,
 	ChevronDown,
 	ChevronRight,
+	Cpu,
 	Eye,
 	EyeOff,
+	FileCode2,
+	HardDrive,
 	Lock,
 	ShieldCheck,
-	FileCode2,
 	Variable,
 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 import { CommandOutput } from "./CommandOutput";
 
 // ── Sub-tab label map ───────────────────────────────────────────────────────

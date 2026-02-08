@@ -6,7 +6,8 @@
     "dev": "next dev --port 3654",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "biome check src/",
+    "lint:fix": "biome check --write src/",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

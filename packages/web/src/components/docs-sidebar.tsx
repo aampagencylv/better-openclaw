@@ -1,20 +1,20 @@
 "use client";
 
+import {
+	BookOpen,
+	ChevronRight,
+	Globe,
+	Menu,
+	Package,
+	Rocket,
+	Server,
+	Terminal,
+	Users,
+	X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import {
-	ChevronRight,
-	Menu,
-	X,
-	BookOpen,
-	Terminal,
-	Globe,
-	Server,
-	Package,
-	Rocket,
-	Users,
-} from "lucide-react";
 
 interface NavItem {
 	title: string;

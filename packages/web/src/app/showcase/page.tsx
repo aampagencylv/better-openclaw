@@ -1,7 +1,7 @@
+import { Calendar, ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
-import { Github, ExternalLink, Calendar } from "lucide-react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 
 export const metadata = {
 	title: "Project Showcase",

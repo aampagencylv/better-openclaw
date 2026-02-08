@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type PM = "npx" | "pnpm" | "bun";

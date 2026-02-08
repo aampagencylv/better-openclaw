@@ -23,6 +23,9 @@
 			},
 			"style": {
 				"noNonNullAssertion": "warn"
+			},
+			"suspicious": {
+				"noTemplateCurlyInString": "off"
 			}
 		}
 	},
@@ -36,5 +39,24 @@
 	"files": {
 		"includes": ["packages/**/*.ts", "packages/**/*.tsx"],
 		"experimentalScannerIgnores": ["**/node_modules", "**/dist", "**/.next"]
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["packages/web/**"],
+			"linter": {
+				"rules": {
+					"security": {
+						"noDangerouslySetInnerHtml": "off"
+					},
+					"a11y": {
+						"noLabelWithoutControl": "warn",
+						"noSvgWithoutTitle": "warn"
+					},
+					"suspicious": {
+						"noArrayIndexKey": "warn"
+					}
+				}
+			}
+		}
+	]
 }

@@ -1,5 +1,5 @@
+import { GenerationInputSchema, generate } from "@better-openclaw/core";
 import { NextResponse } from "next/server";
-import { generate, GenerationInputSchema } from "@better-openclaw/core";
 
 export async function POST(request: Request) {
 	try {

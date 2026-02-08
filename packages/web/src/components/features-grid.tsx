@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Terminal, Globe, LayoutDashboard, Layers, Bot, Package } from "lucide-react";
+import { Bot, Globe, Layers, LayoutDashboard, Package, Terminal } from "lucide-react";
 
 const features = [
 	{
