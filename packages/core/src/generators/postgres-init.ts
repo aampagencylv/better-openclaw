@@ -21,9 +21,17 @@ const DB_REQUIREMENTS: Record<string, Omit<DbRequirement, "serviceId" | "service
 	outline: { dbName: "outline", dbUser: "outline", passwordEnvVar: "OUTLINE_DB_PASSWORD" },
 	dify: { dbName: "dify", dbUser: "dify", passwordEnvVar: "DIFY_DB_PASSWORD" },
 	temporal: { dbName: "temporal", dbUser: "temporal", passwordEnvVar: "TEMPORAL_DB_PASSWORD" },
-	mattermost: { dbName: "mattermost", dbUser: "mattermost", passwordEnvVar: "MATTERMOST_DB_PASSWORD" },
+	mattermost: {
+		dbName: "mattermost",
+		dbUser: "mattermost",
+		passwordEnvVar: "MATTERMOST_DB_PASSWORD",
+	},
 	"matrix-synapse": { dbName: "synapse", dbUser: "synapse", passwordEnvVar: "SYNAPSE_DB_PASSWORD" },
-	"paperless-ngx": { dbName: "paperless", dbUser: "paperless", passwordEnvVar: "PAPERLESS_DB_PASSWORD" },
+	"paperless-ngx": {
+		dbName: "paperless",
+		dbUser: "paperless",
+		passwordEnvVar: "PAPERLESS_DB_PASSWORD",
+	},
 	umami: { dbName: "umami", dbUser: "umami", passwordEnvVar: "UMAMI_DB_PASSWORD" },
 	matomo: { dbName: "matomo", dbUser: "matomo", passwordEnvVar: "MATOMO_DB_PASSWORD" },
 	mixpost: { dbName: "mixpost", dbUser: "mixpost", passwordEnvVar: "MIXPOST_DB_PASSWORD" },
@@ -66,7 +74,7 @@ export function generatePostgresInit(resolved: ResolverOutput): string | null {
 	const createCalls = reqs
 		.map(
 			(r) =>
-				`create_db_and_user "${r.dbName}" "${r.dbUser}" "\${${r.passwordEnvVar}:-\$POSTGRES_PASSWORD}"`,
+				`create_db_and_user "${r.dbName}" "${r.dbUser}" "\${${r.passwordEnvVar}:-$POSTGRES_PASSWORD}"`,
 		)
 		.join("\n");
 

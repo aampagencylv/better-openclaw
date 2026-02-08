@@ -22,8 +22,7 @@ export const umamiDefinition: ServiceDefinition = {
 	environment: [
 		{
 			key: "DATABASE_URL",
-			defaultValue:
-				"postgresql://umami:${UMAMI_DB_PASSWORD}@postgresql:5432/umami",
+			defaultValue: "postgresql://umami:${UMAMI_DB_PASSWORD}@postgresql:5432/umami",
 			secret: false,
 			description: "PostgreSQL connection string for Umami",
 			required: true,

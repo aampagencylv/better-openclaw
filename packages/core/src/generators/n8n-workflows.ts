@@ -11,7 +11,11 @@ export function generateN8nWorkflows(resolved: ResolverOutput): Record<string, s
 	const hasN8n = resolved.services.some((s) => s.definition.id === "n8n");
 	if (!hasN8n) return files;
 
-	files["n8n/workflows/openclaw-webhook-handler.json"] = JSON.stringify(createWebhookHandlerWorkflow(resolved), null, 2);
+	files["n8n/workflows/openclaw-webhook-handler.json"] = JSON.stringify(
+		createWebhookHandlerWorkflow(resolved),
+		null,
+		2,
+	);
 
 	return files;
 }
@@ -48,7 +52,7 @@ function createWebhookHandlerWorkflow(resolved: ResolverOutput) {
 						"// Available services in this stack:\n" +
 						`// ${serviceNames}\n` +
 						"\n" +
-						'return [{ json: { received: true, timestamp: new Date().toISOString(), payload } }];',
+						"return [{ json: { received: true, timestamp: new Date().toISOString(), payload } }];",
 				},
 				id: "process-payload",
 				name: "Process Payload",

@@ -1,6 +1,6 @@
-import { mkdir, writeFile, chmod } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
 import { execSync } from "node:child_process";
+import { chmod, mkdir, writeFile } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
 import pc from "picocolors";
 
 /**
@@ -70,10 +70,7 @@ export async function writeProject(
 /**
  * Creates a tar.gz or zip archive from the project directory.
  */
-async function createArchive(
-	projectDir: string,
-	format: "tar" | "zip",
-): Promise<void> {
+async function createArchive(projectDir: string, format: "tar" | "zip"): Promise<void> {
 	const absDir = resolve(projectDir);
 	const parentDir = dirname(absDir);
 	const baseName = absDir.split(/[\\/]/).pop()!;
@@ -84,9 +81,7 @@ async function createArchive(
 			execSync(`tar -czf "${archivePath}" -C "${parentDir}" "${baseName}"`, {
 				stdio: "pipe",
 			});
-			console.log(
-				pc.green(`  Archive created: ${archivePath}`),
-			);
+			console.log(pc.green(`  Archive created: ${archivePath}`));
 		} else {
 			// zip
 			const archivePath = `${absDir}.zip`;
@@ -97,14 +92,9 @@ async function createArchive(
 					{ stdio: "pipe" },
 				);
 			} else {
-				execSync(
-					`cd "${parentDir}" && zip -r "${archivePath}" "${baseName}"`,
-					{ stdio: "pipe" },
-				);
+				execSync(`cd "${parentDir}" && zip -r "${archivePath}" "${baseName}"`, { stdio: "pipe" });
 			}
-			console.log(
-				pc.green(`  Archive created: ${archivePath}`),
-			);
+			console.log(pc.green(`  Archive created: ${archivePath}`));
 		}
 	} catch (err) {
 		console.log(
@@ -112,8 +102,6 @@ async function createArchive(
 				`  Warning: Could not create ${format} archive. ${err instanceof Error ? err.message : String(err)}`,
 			),
 		);
-		console.log(
-			pc.dim(`  The project files are still available in ${projectDir}`),
-		);
+		console.log(pc.dim(`  The project files are still available in ${projectDir}`));
 	}
 }

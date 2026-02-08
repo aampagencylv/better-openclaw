@@ -1,0 +1,17 @@
+{
+	"schema_version": "v1",
+	"name_for_human": "better-openclaw",
+	"name_for_model": "better_openclaw",
+	"description_for_human": "Generate and manage Docker Compose stacks via the better-openclaw API. Build OpenClaw superstacks with 58+ services and 10 skill packs.",
+	"description_for_model": "Use this plugin to generate Docker Compose stacks for OpenClaw. Call the API to list services, validate configs, and generate complete stacks with docker-compose.yml, .env, and skill files.",
+	"api": {
+		"type": "openapi",
+		"url": "https://better-openclaw.dev/api-docs"
+	},
+	"auth": {
+		"type": "none"
+	},
+	"logo_url": "https://better-openclaw.dev/og/og-image.svg",
+	"contact_email": "support@better-openclaw.dev",
+	"legal_info_url": "https://better-openclaw.dev/docs"
+}

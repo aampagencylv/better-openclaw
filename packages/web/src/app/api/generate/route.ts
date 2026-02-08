@@ -26,8 +26,7 @@ export async function POST(request: Request) {
 			{
 				error: {
 					code: "GENERATION_ERROR",
-					message:
-						err instanceof Error ? err.message : "Generation failed",
+					message: err instanceof Error ? err.message : "Generation failed",
 				},
 			},
 			{ status: 500 },

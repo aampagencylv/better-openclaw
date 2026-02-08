@@ -50,15 +50,9 @@ describe("generate (end-to-end)", () => {
 		});
 
 		// Skill SKILL.md files for each skill in the research-agent pack
-		expect(result.files).toHaveProperty(
-			"openclaw/workspace/skills/qdrant-memory/SKILL.md",
-		);
-		expect(result.files).toHaveProperty(
-			"openclaw/workspace/skills/searxng-search/SKILL.md",
-		);
-		expect(result.files).toHaveProperty(
-			"openclaw/workspace/skills/browserless-browse/SKILL.md",
-		);
+		expect(result.files).toHaveProperty("openclaw/workspace/skills/qdrant-memory/SKILL.md");
+		expect(result.files).toHaveProperty("openclaw/workspace/skills/searxng-search/SKILL.md");
+		expect(result.files).toHaveProperty("openclaw/workspace/skills/browserless-browse/SKILL.md");
 
 		// docker-compose.yml should contain the expected services
 		const composed = parse(result.files["docker-compose.yml"]!);

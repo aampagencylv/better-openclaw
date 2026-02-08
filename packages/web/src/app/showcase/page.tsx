@@ -3,7 +3,19 @@ import { Github, ExternalLink, Calendar } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
-export const metadata = { title: "Showcase" };
+export const metadata = {
+	title: "Project Showcase",
+	description:
+		"Example OpenClaw stacks built with better-openclaw: AI research hubs, content pipelines, DevOps dashboards, and more.",
+	openGraph: {
+		title: "Project Showcase | better-openclaw",
+		description:
+			"Explore example stacks — AI research, content pipelines, DevOps dashboards — built with better-openclaw.",
+		url: "https://better-openclaw.dev/showcase",
+		type: "website",
+	},
+	alternates: { canonical: "https://better-openclaw.dev/showcase" },
+};
 
 const showcaseProjects = [
 	{
@@ -54,8 +66,7 @@ export default function ShowcasePage() {
 				<section className="border-b border-border">
 					<div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
 						<h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-							Project{" "}
-							<span className="text-gradient">Showcase</span>
+							Project <span className="text-gradient">Showcase</span>
 						</h1>
 						<p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
 							Community projects built with better-openclaw
@@ -107,9 +118,7 @@ export default function ShowcasePage() {
 									<div className="mt-4 flex items-center justify-between border-t border-border pt-4">
 										<span className="flex items-center gap-1.5 text-xs text-muted-foreground">
 											<Calendar className="h-3 w-3" />
-											{project.daysAgo === 1
-												? "1 day ago"
-												: `${project.daysAgo} days ago`}
+											{project.daysAgo === 1 ? "1 day ago" : `${project.daysAgo} days ago`}
 										</span>
 										<a
 											href={project.github}
@@ -129,9 +138,7 @@ export default function ShowcasePage() {
 
 					{/* CTA */}
 					<div className="mt-16 text-center">
-						<p className="mb-4 text-muted-foreground">
-							Have a project built with better-openclaw?
-						</p>
+						<p className="mb-4 text-muted-foreground">Have a project built with better-openclaw?</p>
 						<Link
 							href="/submit"
 							className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25"

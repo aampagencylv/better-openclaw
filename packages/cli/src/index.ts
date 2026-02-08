@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import pc from "picocolors";
-import { runWizard } from "./wizard.js";
 import { runNonInteractive } from "./non-interactive.js";
+import { runWizard } from "./wizard.js";
 
 const program = new Command()
 	.name("create-better-openclaw")
@@ -35,9 +35,7 @@ const program = new Command()
 						: "xdg-open";
 			exec(`${command} ${url}`, (err) => {
 				if (err) {
-					console.log(
-						pc.dim(`Open ${url} in your browser to use the visual stack builder.`),
-					);
+					console.log(pc.dim(`Open ${url} in your browser to use the visual stack builder.`));
 				} else {
 					console.log(pc.green(`Opened ${url} in your browser.`));
 				}
@@ -45,8 +43,7 @@ const program = new Command()
 			return;
 		}
 
-		const isNonInteractive =
-			options.yes || options.preset || options.services;
+		const isNonInteractive = options.yes || options.preset || options.services;
 
 		// If stdin is not a TTY and no non-interactive flags, error out
 		if (!process.stdin.isTTY && !isNonInteractive) {
@@ -56,7 +53,9 @@ const program = new Command()
 			console.error("");
 			console.error("Run with one of the following:");
 			console.error(`  ${pc.cyan("--yes")}            Use default configuration`);
-			console.error(`  ${pc.cyan("--preset <name>")}  Use a preset (minimal, creator, researcher, devops, full)`);
+			console.error(
+				`  ${pc.cyan("--preset <name>")}  Use a preset (minimal, creator, researcher, devops, full)`,
+			);
 			console.error(`  ${pc.cyan("--services <ids>")} Provide comma-separated service IDs`);
 			console.error("");
 			console.error(`Or run in an interactive terminal to use the wizard.`);

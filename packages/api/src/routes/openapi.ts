@@ -7,8 +7,7 @@ route.get("/", (c) => {
 		openapi: "3.1.0",
 		info: {
 			title: "better-openclaw API",
-			description:
-				"REST API for generating production-ready OpenClaw Docker Compose stacks",
+			description: "REST API for generating production-ready OpenClaw Docker Compose stacks",
 			version: "1.0.0",
 			contact: { name: "Bachir @ bidew.io" },
 		},
@@ -66,8 +65,7 @@ route.get("/", (c) => {
 							name: "services",
 							in: "query",
 							schema: { type: "string" },
-							description:
-								"Comma-separated service IDs to filter compatible packs",
+							description: "Comma-separated service IDs to filter compatible packs",
 						},
 					],
 					responses: { "200": { description: "List of skill packs" } },

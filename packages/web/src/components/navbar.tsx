@@ -20,7 +20,9 @@ export function Navbar() {
 			<div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 				{/* Logo */}
 				<Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-					<span className="text-2xl" aria-hidden>🦞</span>
+					<span className="text-2xl" aria-hidden>
+						🦞
+					</span>
 					<span className="text-lg font-bold tracking-tight">better-openclaw</span>
 				</Link>
 

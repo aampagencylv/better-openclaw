@@ -4,7 +4,8 @@ const skillPacks: SkillPack[] = [
 	{
 		id: "video-creator",
 		name: "Video Creator",
-		description: "Create and process videos programmatically with FFmpeg, Remotion, and MinIO storage",
+		description:
+			"Create and process videos programmatically with FFmpeg, Remotion, and MinIO storage",
 		requiredServices: ["ffmpeg", "remotion", "minio"],
 		skills: ["ffmpeg-process", "remotion-render", "minio-storage"],
 		icon: "🎬",
@@ -22,7 +23,8 @@ const skillPacks: SkillPack[] = [
 	{
 		id: "social-media",
 		name: "Social Media",
-		description: "Process and manage social media content with video tools, caching, and asset storage",
+		description:
+			"Process and manage social media content with video tools, caching, and asset storage",
 		requiredServices: ["ffmpeg", "redis", "minio"],
 		skills: ["ffmpeg-process", "redis-cache", "minio-storage"],
 		icon: "📱",
@@ -40,7 +42,8 @@ const skillPacks: SkillPack[] = [
 	{
 		id: "knowledge-base",
 		name: "Knowledge Base",
-		description: "Index documents with vector search and full-text search for comprehensive retrieval",
+		description:
+			"Index documents with vector search and full-text search for comprehensive retrieval",
 		requiredServices: ["qdrant", "postgresql", "meilisearch"],
 		skills: ["qdrant-memory"],
 		icon: "📚",
@@ -58,7 +61,8 @@ const skillPacks: SkillPack[] = [
 	{
 		id: "content-creator",
 		name: "Content Creator",
-		description: "Full social media content pipeline with scheduling, media processing, analytics, and storage",
+		description:
+			"Full social media content pipeline with scheduling, media processing, analytics, and storage",
 		requiredServices: ["postiz", "ffmpeg", "minio", "redis", "postgresql"],
 		skills: ["ffmpeg-process", "minio-storage", "redis-cache"],
 		icon: "📱",
@@ -67,7 +71,8 @@ const skillPacks: SkillPack[] = [
 	{
 		id: "ai-playground",
 		name: "AI Playground",
-		description: "Full AI experimentation stack with chat UIs, LLM gateway, local models, and document chat",
+		description:
+			"Full AI experimentation stack with chat UIs, LLM gateway, local models, and document chat",
 		requiredServices: ["ollama", "open-webui", "litellm"],
 		skills: ["ollama-local-llm"],
 		icon: "🧪",
@@ -76,7 +81,8 @@ const skillPacks: SkillPack[] = [
 	{
 		id: "coding-team",
 		name: "Coding Team",
-		description: "AI-powered development environment with coding agents, Git hosting, and browser IDE",
+		description:
+			"AI-powered development environment with coding agents, Git hosting, and browser IDE",
 		requiredServices: ["claude-code", "gitea", "code-server"],
 		skills: [],
 		icon: "💻",
@@ -85,7 +91,8 @@ const skillPacks: SkillPack[] = [
 	{
 		id: "knowledge-hub",
 		name: "Knowledge Hub",
-		description: "Enterprise knowledge management with wiki, document processing, analytics, and vector search",
+		description:
+			"Enterprise knowledge management with wiki, document processing, analytics, and vector search",
 		requiredServices: ["outline", "paperless-ngx", "qdrant", "postgresql", "redis"],
 		skills: ["qdrant-memory"],
 		icon: "📚",

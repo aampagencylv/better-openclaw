@@ -42,8 +42,7 @@ export const outlineDefinition: ServiceDefinition = {
 		},
 		{
 			key: "DATABASE_URL",
-			defaultValue:
-				"postgresql://outline:${OUTLINE_DB_PASSWORD}@postgresql:5432/outline",
+			defaultValue: "postgresql://outline:${OUTLINE_DB_PASSWORD}@postgresql:5432/outline",
 			secret: false,
 			description: "PostgreSQL connection string for Outline",
 			required: true,
@@ -64,13 +63,7 @@ export const outlineDefinition: ServiceDefinition = {
 	openclawEnvVars: [],
 
 	docsUrl: "https://www.getoutline.com/developers",
-	tags: [
-		"wiki",
-		"knowledge-base",
-		"documentation",
-		"team",
-		"notion-alternative",
-	],
+	tags: ["wiki", "knowledge-base", "documentation", "team", "notion-alternative"],
 	maturity: "stable",
 
 	requires: ["postgresql", "redis"],

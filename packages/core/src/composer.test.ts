@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
-import { resolve } from "./resolver.js";
 import { compose } from "./composer.js";
+import { resolve } from "./resolver.js";
 import type { ComposeOptions, ResolverOutput } from "./types.js";
 
 const defaultOptions: ComposeOptions = {

@@ -1,21 +1,16 @@
-import type {
-	GeneratedFiles,
-	GenerationInput,
-	GenerationResult,
-	ResolverInput,
-} from "./types.js";
-import { resolve } from "./resolver.js";
 import { composeMultiFile } from "./composer.js";
-import { validate } from "./validator.js";
-import { generateEnvFiles } from "./generators/env.js";
-import { generateSkillFiles } from "./generators/skills.js";
-import { generateReadme } from "./generators/readme.js";
-import { generateScripts } from "./generators/scripts.js";
 import { generateCaddyfile } from "./generators/caddy.js";
-import { generatePrometheusConfig } from "./generators/prometheus.js";
+import { generateEnvFiles } from "./generators/env.js";
 import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
 import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 import { generatePostgresInit } from "./generators/postgres-init.js";
+import { generatePrometheusConfig } from "./generators/prometheus.js";
+import { generateReadme } from "./generators/readme.js";
+import { generateScripts } from "./generators/scripts.js";
+import { generateSkillFiles } from "./generators/skills.js";
+import { resolve } from "./resolver.js";
+import type { GeneratedFiles, GenerationInput, GenerationResult, ResolverInput } from "./types.js";
+import { validate } from "./validator.js";
 
 /**
  * Main orchestration function: takes generation input, resolves dependencies,
@@ -57,9 +52,7 @@ export function generate(input: GenerationInput): GenerationResult {
 		generateSecrets: input.generateSecrets,
 	});
 	if (!validation.valid) {
-		throw new Error(
-			`Validation failed: ${validation.errors.map((e) => e.message).join("; ")}`,
-		);
+		throw new Error(`Validation failed: ${validation.errors.map((e) => e.message).join("; ")}`);
 	}
 
 	// 4. Generate all files
@@ -153,10 +146,7 @@ export function generate(input: GenerationInput): GenerationResult {
 	files["docs/SERVICES.md"] = generateServicesDoc(resolved);
 
 	// 5. Calculate metadata
-	const skillCount = resolved.services.reduce(
-		(sum, s) => sum + s.definition.skills.length,
-		0,
-	);
+	const skillCount = resolved.services.reduce((sum, s) => sum + s.definition.skills.length, 0);
 
 	return {
 		files,
@@ -192,7 +182,9 @@ function generateServicesDoc(resolved: import("./types.js").ResolverOutput): str
 		if (def.ports.length > 0) {
 			lines.push("- **Ports**:");
 			for (const p of def.ports) {
-				lines.push(`  - \`${p.container}\` — ${p.description}${p.exposed ? "" : " (internal only)"}`);
+				lines.push(
+					`  - \`${p.container}\` — ${p.description}${p.exposed ? "" : " (internal only)"}`,
+				);
 			}
 		}
 		lines.push(`- **Docs**: ${def.docsUrl}`);

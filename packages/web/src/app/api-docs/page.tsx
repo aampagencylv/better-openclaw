@@ -21,28 +21,24 @@ const endpoints: Endpoint[] = [
 	{
 		method: "GET",
 		path: "/v1/health",
-		description:
-			"Health check endpoint. Returns 200 when the API server is running.",
+		description: "Health check endpoint. Returns 200 when the API server is running.",
 		response: { status: "ok", version: "1.0.0", uptime: 12345 },
 		curl: `curl ${BASE_URL}/health`,
 	},
 	{
 		method: "GET",
 		path: "/v1/services",
-		description:
-			"List all available companion services that can be added to a stack.",
+		description: "List all available companion services that can be added to a stack.",
 		params: [
 			{
 				name: "category",
 				type: "string",
-				description:
-					'Filter by service category (e.g. "ai", "monitoring", "database")',
+				description: 'Filter by service category (e.g. "ai", "monitoring", "database")',
 			},
 			{
 				name: "maturity",
 				type: "string",
-				description:
-					'Filter by maturity level: "stable", "beta", or "experimental"',
+				description: 'Filter by maturity level: "stable", "beta", or "experimental"',
 			},
 		],
 		response: {
@@ -66,8 +62,7 @@ const endpoints: Endpoint[] = [
 			{
 				name: "services",
 				type: "string",
-				description:
-					"Comma-separated list of service IDs to filter compatible skill packs",
+				description: "Comma-separated list of service IDs to filter compatible skill packs",
 			},
 		],
 		response: {
@@ -112,9 +107,7 @@ const endpoints: Endpoint[] = [
 		},
 		response: {
 			valid: true,
-			warnings: [
-				"Skill pack 'researcher' recommends 'searxng' which is not selected",
-			],
+			warnings: ["Skill pack 'researcher' recommends 'searxng' which is not selected"],
 			errors: [],
 		},
 		curl: `curl -X POST ${BASE_URL}/validate \\
@@ -139,12 +132,7 @@ const endpoints: Endpoint[] = [
 		},
 		response: {
 			success: true,
-			files: [
-				"docker-compose.yml",
-				".env",
-				"traefik/traefik.yml",
-				"README.md",
-			],
+			files: ["docker-compose.yml", ".env", "traefik/traefik.yml", "README.md"],
 		},
 		curl: `curl -X POST ${BASE_URL}/generate \\
   -H "Content-Type: application/json" \\
@@ -154,8 +142,7 @@ const endpoints: Endpoint[] = [
 	{
 		method: "GET",
 		path: "/v1/openapi.json",
-		description:
-			"Download the full OpenAPI 3.0 specification for this API.",
+		description: "Download the full OpenAPI 3.0 specification for this API.",
 		response: {
 			openapi: "3.0.0",
 			info: { title: "better-openclaw API", version: "1.0.0" },
@@ -169,9 +156,7 @@ function MethodBadge({ method }: { method: "GET" | "POST" }) {
 	return (
 		<span
 			className={`inline-flex min-w-14 items-center justify-center rounded-md px-2 py-0.5 text-xs font-bold tracking-wide ${
-				method === "GET"
-					? "bg-accent/15 text-accent"
-					: "bg-primary/15 text-primary"
+				method === "GET" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"
 			}`}
 		>
 			{method}
@@ -221,9 +206,7 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 				className="flex w-full items-center gap-3 px-5 py-4 text-left"
 			>
 				<MethodBadge method={endpoint.method} />
-				<code className="flex-1 font-mono text-sm text-foreground">
-					{endpoint.path}
-				</code>
+				<code className="flex-1 font-mono text-sm text-foreground">{endpoint.path}</code>
 				<span className="hidden text-sm text-muted-foreground sm:block">
 					{endpoint.description.slice(0, 50)}
 					{endpoint.description.length > 50 ? "..." : ""}
@@ -238,16 +221,12 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 			{/* Expanded details */}
 			{expanded && (
 				<div className="border-t border-border px-5 pb-5 pt-4 space-y-5">
-					<p className="text-sm leading-relaxed text-muted-foreground">
-						{endpoint.description}
-					</p>
+					<p className="text-sm leading-relaxed text-muted-foreground">{endpoint.description}</p>
 
 					{/* Parameters table */}
 					{endpoint.params && endpoint.params.length > 0 && (
 						<div>
-							<h4 className="mb-2 text-sm font-semibold text-foreground">
-								Query Parameters
-							</h4>
+							<h4 className="mb-2 text-sm font-semibold text-foreground">Query Parameters</h4>
 							<div className="overflow-x-auto rounded-lg border border-border">
 								<table className="w-full text-sm">
 									<thead>
@@ -265,16 +244,9 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 									</thead>
 									<tbody>
 										{endpoint.params.map((param) => (
-											<tr
-												key={param.name}
-												className="border-b border-border last:border-0"
-											>
-												<td className="px-3 py-2 font-mono text-xs text-accent">
-													{param.name}
-												</td>
-												<td className="px-3 py-2 text-xs text-muted-foreground">
-													{param.type}
-												</td>
+											<tr key={param.name} className="border-b border-border last:border-0">
+												<td className="px-3 py-2 font-mono text-xs text-accent">{param.name}</td>
+												<td className="px-3 py-2 text-xs text-muted-foreground">{param.type}</td>
 												<td className="px-3 py-2 text-xs text-muted-foreground">
 													{param.description}
 												</td>
@@ -289,9 +261,7 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 					{/* Request body */}
 					{endpoint.body && (
 						<div>
-							<h4 className="mb-2 text-sm font-semibold text-foreground">
-								Request Body
-							</h4>
+							<h4 className="mb-2 text-sm font-semibold text-foreground">Request Body</h4>
 							<pre className="overflow-x-auto rounded-lg border border-border bg-background p-4">
 								<code className="text-xs font-mono text-accent">
 									{JSON.stringify(endpoint.body, null, 2)}
@@ -303,16 +273,10 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 					{/* Response example */}
 					{endpoint.response && (
 						<div>
-							<h4 className="mb-2 text-sm font-semibold text-foreground">
-								Response Example
-							</h4>
+							<h4 className="mb-2 text-sm font-semibold text-foreground">Response Example</h4>
 							<pre className="overflow-x-auto rounded-lg border border-border bg-background p-4">
 								<code className="text-xs font-mono text-accent">
-									{JSON.stringify(
-										endpoint.response,
-										null,
-										2
-									)}
+									{JSON.stringify(endpoint.response, null, 2)}
 								</code>
 							</pre>
 						</div>
@@ -321,9 +285,7 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 					{/* Curl */}
 					<div>
 						<div className="mb-2 flex items-center justify-between">
-							<h4 className="text-sm font-semibold text-foreground">
-								cURL
-							</h4>
+							<h4 className="text-sm font-semibold text-foreground">cURL</h4>
 							<CopyButton text={endpoint.curl} />
 						</div>
 						<pre className="overflow-x-auto rounded-lg border border-border bg-background p-4">
@@ -348,12 +310,10 @@ export default function ApiDocsPage() {
 				<section className="border-b border-border">
 					<div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
 						<h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-							API{" "}
-							<span className="text-gradient">Reference</span>
+							API <span className="text-gradient">Reference</span>
 						</h1>
 						<p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-							REST API for programmatic stack generation. Base
-							URL:{" "}
+							REST API for programmatic stack generation. Base URL:{" "}
 							<code className="rounded-md border border-border bg-muted px-2 py-0.5 font-mono text-sm text-accent">
 								{BASE_URL}
 							</code>
@@ -365,18 +325,13 @@ export default function ApiDocsPage() {
 				<section className="mx-auto max-w-4xl px-6 py-16 lg:px-8">
 					<div className="space-y-3">
 						{endpoints.map((ep) => (
-							<EndpointCard
-								key={ep.path + ep.method}
-								endpoint={ep}
-							/>
+							<EndpointCard key={ep.path + ep.method} endpoint={ep} />
 						))}
 					</div>
 
 					{/* OpenAPI link */}
 					<div className="mt-12 rounded-xl border border-border bg-surface p-6 text-center">
-						<p className="mb-3 text-sm text-muted-foreground">
-							Want the full specification?
-						</p>
+						<p className="mb-3 text-sm text-muted-foreground">Want the full specification?</p>
 						<a
 							href={`${BASE_URL}/openapi.json`}
 							target="_blank"

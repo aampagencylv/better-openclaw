@@ -1,14 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-	Terminal,
-	Globe,
-	LayoutDashboard,
-	Layers,
-	Bot,
-	Package,
-} from "lucide-react";
+import { Terminal, Globe, LayoutDashboard, Layers, Bot, Package } from "lucide-react";
 
 const features = [
 	{
@@ -73,8 +66,7 @@ export function FeaturesGrid() {
 						Everything you need
 					</h2>
 					<p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-						Stop wrestling with docker-compose files. Focus on
-						building the brain, not the body.
+						Stop wrestling with docker-compose files. Focus on building the brain, not the body.
 					</p>
 				</div>
 
@@ -97,9 +89,7 @@ export function FeaturesGrid() {
 								<div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
 									<Icon className="h-5 w-5" />
 								</div>
-								<h3 className="text-lg font-semibold text-foreground">
-									{f.title}
-								</h3>
+								<h3 className="text-lg font-semibold text-foreground">{f.title}</h3>
 								<p className="mt-2 text-sm leading-relaxed text-muted-foreground">
 									{f.description}
 								</p>

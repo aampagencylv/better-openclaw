@@ -1,0 +1,76 @@
+# better-openclaw
+
+> CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks with Docker Compose. 58+ services, 10 skill packs, one command.
+
+## Project Description
+
+better-openclaw generates complete Docker Compose stacks pre-wired with OpenClaw skills. Pick services, choose skill packs, and get a fully wired `docker-compose.yml`, `.env`, reverse proxy configs, and agent skill files.
+
+## How to Use
+
+1. **Web UI**: Visit https://better-openclaw.dev/new for the visual stack builder
+2. **CLI**: Run `pnpm create better-openclaw@latest` or `npx create-better-openclaw`
+3. **API**: POST to the generate endpoint with your stack configuration
+
+## CLI Commands
+
+```bash
+# Interactive wizard (default)
+pnpm create better-openclaw@latest [project-directory]
+
+# Non-interactive options
+pnpm create better-openclaw@latest --yes                    # Use defaults
+pnpm create better-openclaw@latest --preset <name>          # Preset: minimal, creator, researcher, devops, full
+pnpm create better-openclaw@latest --services <ids>         # Comma-separated service IDs
+pnpm create better-openclaw@latest --skills <packs>         # Comma-separated skill pack IDs
+pnpm create better-openclaw@latest --proxy <type>           # none, caddy, traefik
+pnpm create better-openclaw@latest --domain <domain>        # Domain for auto-SSL
+pnpm create better-openclaw@latest --monitoring             # Include Grafana + Prometheus
+pnpm create better-openclaw@latest --gpu                    # Enable GPU for AI services
+pnpm create better-openclaw@latest --dry-run                # Preview without writing files
+pnpm create better-openclaw@latest --open                   # Open web UI in browser
+```
+
+## API Endpoints
+
+Base URL (standalone API): `https://api.better-openclaw.dev/v1` (or configured API_URL)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /v1/health | Health check |
+| GET | /v1/services | List all services (?category=, ?maturity=) |
+| GET | /v1/skills | List skill packs (?services=id1,id2) |
+| GET | /v1/presets | List preset stacks |
+| POST | /v1/validate | Validate stack config before generation |
+| POST | /v1/generate | Generate stack (returns files + metadata) |
+| GET | /v1/openapi.json | OpenAPI specification |
+
+Web API (Next.js): `POST https://better-openclaw.dev/api/generate` — generates stack directly
+
+### Generate Request Body
+
+```json
+{
+  "projectName": "my-stack",
+  "services": ["ollama", "qdrant", "n8n"],
+  "skillPacks": ["ollama-local-llm", "qdrant-memory"],
+  "proxy": "caddy",
+  "domain": "example.local",
+  "gpu": false,
+  "monitoring": true
+}
+```
+
+## Service Catalog Summary
+
+Categories: Database & Caching, Vector Databases, Automation & Workflows, Media & Video, Object Storage, Reverse Proxy, Monitoring, Browser Automation, Search, AI/Local Models, Notifications, and more. 58+ services including PostgreSQL, Redis, Qdrant, n8n, FFmpeg, MinIO, Caddy, Traefik, Grafana, Ollama, Whisper, and others.
+
+## Skill Packs
+
+Pre-bundled OpenClaw skills: redis-cache, qdrant-memory, n8n-trigger, ffmpeg-process, minio-storage, browserless-browse, searxng-search, whisper-transcribe, ollama-local-llm, remotion-render, steel-browse, lightpanda-browse.
+
+## Documentation
+
+- Docs: https://better-openclaw.dev/docs
+- API Reference: https://better-openclaw.dev/api-docs
+- Showcase: https://better-openclaw.dev/showcase

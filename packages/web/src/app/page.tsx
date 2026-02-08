@@ -37,8 +37,7 @@ export default function HomePage() {
 								Ready to build?
 							</h2>
 							<p className="relative mx-auto mt-4 max-w-lg text-lg text-muted-foreground">
-								Scaffold your production-ready OpenClaw stack in
-								under a minute.
+								Scaffold your production-ready OpenClaw stack in under a minute.
 							</p>
 							<div className="relative mt-8">
 								<Link

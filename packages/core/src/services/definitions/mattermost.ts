@@ -55,13 +55,7 @@ export const mattermostDefinition: ServiceDefinition = {
 	openclawEnvVars: [],
 
 	docsUrl: "https://docs.mattermost.com/",
-	tags: [
-		"team-chat",
-		"messaging",
-		"slack-alternative",
-		"channels",
-		"integrations",
-	],
+	tags: ["team-chat", "messaging", "slack-alternative", "channels", "integrations"],
 	maturity: "stable",
 
 	requires: ["postgresql"],

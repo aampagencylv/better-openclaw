@@ -1,5 +1,5 @@
-import type { ResolverOutput } from "../types.js";
 import Handlebars from "handlebars";
+import type { ResolverOutput } from "../types.js";
 
 /**
  * Basic skill templates keyed by skillId.
@@ -545,9 +545,7 @@ curl -X POST http://{{STEEL_HOST}}:{{STEEL_PORT}}/v1/scrape \\
  * Handlebars is used to replace `{{VAR}}` placeholders with actual values
  * from each service's `openclawEnvVars`.
  */
-export function generateSkillFiles(
-	resolved: ResolverOutput,
-): Record<string, string> {
+export function generateSkillFiles(resolved: ResolverOutput): Record<string, string> {
 	const files: Record<string, string> = {};
 
 	for (const { definition } of resolved.services) {

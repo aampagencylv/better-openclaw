@@ -37,17 +37,13 @@ describe("resolve", () => {
 	it("detects Redis + Valkey conflict", () => {
 		const result = resolve({ services: ["redis", "valkey"], skillPacks: [] });
 		expect(result.isValid).toBe(false);
-		expect(result.errors).toContainEqual(
-			expect.objectContaining({ type: "conflict" }),
-		);
+		expect(result.errors).toContainEqual(expect.objectContaining({ type: "conflict" }));
 	});
 
 	it("detects Caddy + Traefik conflict", () => {
 		const result = resolve({ services: ["caddy", "traefik"], skillPacks: [] });
 		expect(result.isValid).toBe(false);
-		expect(result.errors).toContainEqual(
-			expect.objectContaining({ type: "conflict" }),
-		);
+		expect(result.errors).toContainEqual(expect.objectContaining({ type: "conflict" }));
 	});
 
 	it("expands research-agent skill pack", () => {
@@ -81,16 +77,12 @@ describe("resolve", () => {
 
 	it("reports unknown service IDs", () => {
 		const result = resolve({ services: ["nonexistent"], skillPacks: [] });
-		expect(result.errors).toContainEqual(
-			expect.objectContaining({ type: "unknown_service" }),
-		);
+		expect(result.errors).toContainEqual(expect.objectContaining({ type: "unknown_service" }));
 	});
 
 	it("reports unknown skill pack IDs", () => {
 		const result = resolve({ services: [], skillPacks: ["nonexistent-pack"] });
-		expect(result.errors).toContainEqual(
-			expect.objectContaining({ type: "unknown_skill_pack" }),
-		);
+		expect(result.errors).toContainEqual(expect.objectContaining({ type: "unknown_skill_pack" }));
 	});
 
 	it("does not duplicate services already selected by user", () => {

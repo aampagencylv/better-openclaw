@@ -91,7 +91,10 @@ export const SkillBindingSchema = z.object({
 
 export const ServiceDefinitionSchema = z.object({
 	// Identity
-	id: z.string().min(1).regex(/^[a-z0-9-]+$/),
+	id: z
+		.string()
+		.min(1)
+		.regex(/^[a-z0-9-]+$/),
 	name: z.string().min(1),
 	description: z.string(),
 	category: ServiceCategorySchema,
@@ -137,7 +140,10 @@ export const ServiceDefinitionSchema = z.object({
 // ─── Skill Pack ─────────────────────────────────────────────────────────────
 
 export const SkillPackSchema = z.object({
-	id: z.string().min(1).regex(/^[a-z0-9-]+$/),
+	id: z
+		.string()
+		.min(1)
+		.regex(/^[a-z0-9-]+$/),
 	name: z.string().min(1),
 	description: z.string(),
 	requiredServices: z.array(z.string()).min(1),
@@ -149,7 +155,10 @@ export const SkillPackSchema = z.object({
 // ─── Preset ─────────────────────────────────────────────────────────────────
 
 export const PresetSchema = z.object({
-	id: z.string().min(1).regex(/^[a-z0-9-]+$/),
+	id: z
+		.string()
+		.min(1)
+		.regex(/^[a-z0-9-]+$/),
 	name: z.string().min(1),
 	description: z.string(),
 	services: z.array(z.string()),

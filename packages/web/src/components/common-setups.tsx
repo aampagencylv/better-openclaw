@@ -62,11 +62,7 @@ function CopyButton({ text }: { text: string }) {
 			className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md border border-border/30 bg-surface/30 text-muted-foreground transition-colors hover:text-foreground"
 			aria-label="Copy command"
 		>
-			{copied ? (
-				<Check className="h-4 w-4 text-accent" />
-			) : (
-				<Copy className="h-4 w-4" />
-			)}
+			{copied ? <Check className="h-4 w-4 text-accent" /> : <Copy className="h-4 w-4" />}
 		</button>
 	);
 }
@@ -118,16 +114,12 @@ export function CommonSetups() {
 					>
 						{examples.map((ex) => (
 							<div key={ex.title}>
-								<p className="mb-2 text-sm font-medium text-muted-foreground">
-									{ex.title}
-								</p>
+								<p className="mb-2 text-sm font-medium text-muted-foreground">{ex.title}</p>
 								<div className="relative overflow-hidden rounded-lg border border-border bg-[#0d1117] dark:bg-surface">
 									<pre className="overflow-x-auto p-4 pr-14 font-mono text-sm leading-relaxed text-foreground">
 										<code>{ex.commands[selectedPm]}</code>
 									</pre>
-									<CopyButton
-										text={ex.commands[selectedPm]}
-									/>
+									<CopyButton text={ex.commands[selectedPm]} />
 								</div>
 							</div>
 						))}

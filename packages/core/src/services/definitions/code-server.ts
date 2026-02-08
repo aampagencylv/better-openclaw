@@ -3,8 +3,7 @@ import type { ServiceDefinition } from "../../types.js";
 export const codeServerDefinition: ServiceDefinition = {
 	id: "code-server",
 	name: "code-server",
-	description:
-		"Run VS Code in the browser. Full IDE experience accessible from anywhere.",
+	description: "Run VS Code in the browser. Full IDE experience accessible from anywhere.",
 	category: "dev-tools",
 	icon: "🖥️",
 

@@ -1,14 +1,14 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { rateLimiter } from "./middleware/rate-limit.js";
+import { generateRoute } from "./routes/generate.js";
 import { healthRoute } from "./routes/health.js";
+import { openapiRoute } from "./routes/openapi.js";
+import { presetsRoute } from "./routes/presets.js";
 import { servicesRoute } from "./routes/services.js";
 import { skillsRoute } from "./routes/skills.js";
-import { presetsRoute } from "./routes/presets.js";
 import { validateRoute } from "./routes/validate.js";
-import { generateRoute } from "./routes/generate.js";
-import { openapiRoute } from "./routes/openapi.js";
-import { rateLimiter } from "./middleware/rate-limit.js";
 
 const app = new Hono().basePath("/v1");
 

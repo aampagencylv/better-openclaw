@@ -1,6 +1,6 @@
 {
   "name": "create-better-openclaw",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "CLI tool for scaffolding production-ready OpenClaw stacks with Docker Compose",
   "type": "module",
   "main": "./dist/index.js",
@@ -40,7 +40,11 @@
     "node": ">=20"
   },
   "keywords": [
+    "clawexa",
     "openclaw",
+    "better-openclaw",
+    "create-better-openclaw",
+    "better-openclaw-cli",
     "docker",
     "docker-compose",
     "scaffolding",

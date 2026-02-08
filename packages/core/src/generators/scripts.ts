@@ -122,17 +122,17 @@ ok "Directories ready: \${OPENCLAW_CONFIG_DIR}, \${OPENCLAW_WORKSPACE_DIR}"
 
 EMPTY_SECRETS=0
 while IFS='=' read -r key value; do
-  [[ "\$key" =~ ^#.*$ ]] && continue
-  [[ -z "\$key" ]] && continue
-  if [[ "\$key" =~ (PASSWORD|TOKEN|SECRET|SESSION_KEY|COOKIE) ]] && [[ -z "\${value:-}" ]]; then
-    warn "Warning: \$key is empty in .env"
+  [[ "$key" =~ ^#.*$ ]] && continue
+  [[ -z "$key" ]] && continue
+  if [[ "$key" =~ (PASSWORD|TOKEN|SECRET|SESSION_KEY|COOKIE) ]] && [[ -z "\${value:-}" ]]; then
+    warn "Warning: $key is empty in .env"
     EMPTY_SECRETS=$((EMPTY_SECRETS + 1))
   fi
 done < .env 2>/dev/null || true
 
-if [ "\$EMPTY_SECRETS" -gt 0 ]; then
+if [ "$EMPTY_SECRETS" -gt 0 ]; then
   echo ""
-  warn "\$EMPTY_SECRETS secret(s) are empty. Some services may not function until they are set."
+  warn "$EMPTY_SECRETS secret(s) are empty. Some services may not function until they are set."
   echo ""
 fi
 
@@ -154,15 +154,15 @@ sleep 5
 
 RETRIES=0
 MAX_RETRIES=30
-while [ \$RETRIES -lt \$MAX_RETRIES ]; do
-  UNHEALTHY=\$(docker compose ps --format json 2>/dev/null | grep -c '"unhealthy"' || true)
-  STARTING=\$(docker compose ps --format json 2>/dev/null | grep -c '"starting"' || true)
+while [ $RETRIES -lt $MAX_RETRIES ]; do
+  UNHEALTHY=$(docker compose ps --format json 2>/dev/null | grep -c '"unhealthy"' || true)
+  STARTING=$(docker compose ps --format json 2>/dev/null | grep -c '"starting"' || true)
 
-  if [ "\$UNHEALTHY" -eq 0 ] && [ "\$STARTING" -eq 0 ]; then
+  if [ "$UNHEALTHY" -eq 0 ] && [ "$STARTING" -eq 0 ]; then
     break
   fi
 
-  RETRIES=\$((RETRIES + 1))
+  RETRIES=$((RETRIES + 1))
   sleep 2
 done
 
@@ -170,7 +170,7 @@ echo ""
 docker compose ps
 echo ""
 
-if [ \$RETRIES -ge \$MAX_RETRIES ]; then
+if [ $RETRIES -ge $MAX_RETRIES ]; then
   warn "Some services may still be starting. Check: docker compose ps"
 else
   ok "All services are running!"

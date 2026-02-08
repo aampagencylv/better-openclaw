@@ -1,26 +1,26 @@
+import type { GenerationInput } from "@better-openclaw/core";
 import {
-	intro,
-	outro,
-	text,
-	select,
-	multiselect,
-	groupMultiselect,
-	confirm,
-	spinner,
-	note,
-	cancel,
-	isCancel,
-} from "@clack/prompts";
-import pc from "picocolors";
-import {
+	generate,
 	getAllServices,
 	getAllSkillPacks,
 	getCompatibleSkillPacks,
-	SERVICE_CATEGORIES,
-	generate,
 	resolve,
+	SERVICE_CATEGORIES,
 } from "@better-openclaw/core";
-import type { GenerationInput } from "@better-openclaw/core";
+import {
+	cancel,
+	confirm,
+	groupMultiselect,
+	intro,
+	isCancel,
+	multiselect,
+	note,
+	outro,
+	select,
+	spinner,
+	text,
+} from "@clack/prompts";
+import pc from "picocolors";
 import { writeProject } from "./writer.js";
 
 /**
@@ -141,10 +141,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 		if (acceptDeps) {
 			finalServiceIds = [
-				...new Set([
-					...serviceIds,
-					...resolved.addedDependencies.map((d) => d.service),
-				]),
+				...new Set([...serviceIds, ...resolved.addedDependencies.map((d) => d.service)]),
 			];
 		}
 	}

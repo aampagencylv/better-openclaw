@@ -34,13 +34,7 @@ export const nocodbDefinition: ServiceDefinition = {
 	openclawEnvVars: [],
 
 	docsUrl: "https://docs.nocodb.com/",
-	tags: [
-		"database",
-		"spreadsheet",
-		"airtable-alternative",
-		"no-code",
-		"forms",
-	],
+	tags: ["database", "spreadsheet", "airtable-alternative", "no-code", "forms"],
 	maturity: "stable",
 
 	requires: [],

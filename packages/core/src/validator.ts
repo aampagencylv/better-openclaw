@@ -1,5 +1,5 @@
 import { parse } from "yaml";
-import type { ResolverOutput, Warning, ResolverError } from "./types.js";
+import type { ResolverError, ResolverOutput, Warning } from "./types.js";
 
 export interface ValidationResult {
 	valid: boolean;

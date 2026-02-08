@@ -39,35 +39,65 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
 	const umamiUrl = process.env.NEXT_PUBLIC_UMAMI_URL;
 	const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+
+	const webSiteJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		name: "better-openclaw",
+		description:
+			"CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks with Docker Compose. 58+ services, 10 skill packs, one command.",
+		url: "https://better-openclaw.dev",
+		potentialAction: {
+			"@type": "SearchAction",
+			target: {
+				"@type": "EntryPoint",
+				urlTemplate: "https://better-openclaw.dev/new?q={search_term_string}",
+			},
+			"query-input": "required name=search_term_string",
+		},
+	};
+
+	const softwareJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "SoftwareApplication",
+		name: "better-openclaw",
+		applicationCategory: "DeveloperApplication",
+		operatingSystem: "Linux, macOS, Windows",
+		description:
+			"Generate Docker Compose stacks with 58+ companion services pre-wired with OpenClaw skills",
+		url: "https://better-openclaw.dev",
+		offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+	};
 
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(webSiteJsonLd),
+					}}
+				/>
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(softwareJsonLd),
+					}}
+				/>
 				<link
 					href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
 					rel="stylesheet"
 				/>
 			</head>
 			<body className="bg-background text-foreground font-sans antialiased min-h-screen">
-				<ThemeProvider>
-					{children}
-				</ThemeProvider>
+				<ThemeProvider>{children}</ThemeProvider>
 
 				{/* Umami Analytics (only in production) */}
 				{umamiUrl && umamiId && process.env.NODE_ENV === "production" && (
-					<Script
-						defer
-						src={umamiUrl}
-						data-website-id={umamiId}
-						strategy="afterInteractive"
-					/>
+					<Script defer src={umamiUrl} data-website-id={umamiId} strategy="afterInteractive" />
 				)}
 			</body>
 		</html>

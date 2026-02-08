@@ -1,8 +1,5 @@
+import { getAllSkillPacks, getCompatibleSkillPacks } from "@better-openclaw/core";
 import { Hono } from "hono";
-import {
-	getAllSkillPacks,
-	getCompatibleSkillPacks,
-} from "@better-openclaw/core";
 
 const route = new Hono();
 

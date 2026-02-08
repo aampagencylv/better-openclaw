@@ -3,8 +3,7 @@ import type { ServiceDefinition } from "../../types.js";
 export const stableDiffusionDefinition: ServiceDefinition = {
 	id: "stable-diffusion",
 	name: "Stable Diffusion WebUI",
-	description:
-		"Local AI image generation with a web interface. Generate images from text prompts.",
+	description: "Local AI image generation with a web interface. Generate images from text prompts.",
 	category: "ai",
 	icon: "🎨",
 
@@ -39,12 +38,7 @@ export const stableDiffusionDefinition: ServiceDefinition = {
 	openclawEnvVars: [],
 
 	docsUrl: "https://github.com/AUTOMATIC1111/stable-diffusion-webui",
-	tags: [
-		"image-generation",
-		"ai-art",
-		"stable-diffusion",
-		"text-to-image",
-	],
+	tags: ["image-generation", "ai-art", "stable-diffusion", "text-to-image"],
 	maturity: "experimental",
 
 	requires: [],

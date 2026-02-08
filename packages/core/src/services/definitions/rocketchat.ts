@@ -49,13 +49,7 @@ export const rocketchatDefinition: ServiceDefinition = {
 	openclawEnvVars: [],
 
 	docsUrl: "https://docs.rocket.chat/",
-	tags: [
-		"team-chat",
-		"messaging",
-		"video-calls",
-		"ai",
-		"slack-alternative",
-	],
+	tags: ["team-chat", "messaging", "video-calls", "ai", "slack-alternative"],
 	maturity: "stable",
 
 	requires: [],

@@ -3,8 +3,7 @@ import type { ServiceDefinition } from "../../types.js";
 export const flowiseDefinition: ServiceDefinition = {
 	id: "flowise",
 	name: "Flowise",
-	description:
-		"Drag & drop UI to build customized LLM flows, chatbots, and AI agents.",
+	description: "Drag & drop UI to build customized LLM flows, chatbots, and AI agents.",
 	category: "ai-platform",
 	icon: "🌊",
 

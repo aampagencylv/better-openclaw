@@ -8,12 +8,15 @@ interface RateLimitEntry {
 const store = new Map<string, RateLimitEntry>();
 
 // Cleanup expired entries every 5 minutes
-setInterval(() => {
-	const now = Date.now();
-	for (const [key, entry] of store) {
-		if (entry.resetAt <= now) store.delete(key);
-	}
-}, 5 * 60 * 1000);
+setInterval(
+	() => {
+		const now = Date.now();
+		for (const [key, entry] of store) {
+			if (entry.resetAt <= now) store.delete(key);
+		}
+	},
+	5 * 60 * 1000,
+);
 
 export function rateLimiter(): MiddlewareHandler {
 	return async (c, next): Promise<Response | void> => {
@@ -22,10 +25,7 @@ export function rateLimiter(): MiddlewareHandler {
 		const windowMs = 60 * 1000; // 1 minute
 
 		// Use IP + API key as identifier
-		const ip =
-			c.req.header("x-forwarded-for") ||
-			c.req.header("x-real-ip") ||
-			"unknown";
+		const ip = c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
 		const key = apiKey ? `key:${apiKey}` : `ip:${ip}`;
 
 		const now = Date.now();

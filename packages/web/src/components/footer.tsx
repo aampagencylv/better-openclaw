@@ -48,22 +48,14 @@ function FooterColumn({
 }) {
 	return (
 		<div>
-			<h4 className="mb-4 text-sm font-semibold text-foreground">
-				{title}
-			</h4>
+			<h4 className="mb-4 text-sm font-semibold text-foreground">{title}</h4>
 			<ul className="space-y-2.5">
 				{links.map((link) => {
-					const cls =
-						"text-sm text-muted-foreground transition-colors hover:text-foreground";
+					const cls = "text-sm text-muted-foreground transition-colors hover:text-foreground";
 					return (
 						<li key={link.label}>
 							{link.external ? (
-								<a
-									href={link.href}
-									target="_blank"
-									rel="noopener noreferrer"
-									className={cls}
-								>
+								<a href={link.href} target="_blank" rel="noopener noreferrer" className={cls}>
 									{link.label}
 								</a>
 							) : (
@@ -87,10 +79,7 @@ export function Footer() {
 				<div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
 					{/* Brand */}
 					<div>
-						<Link
-							href="/"
-							className="inline-flex items-center gap-2"
-						>
+						<Link href="/" className="inline-flex items-center gap-2">
 							<span className="text-2xl" aria-hidden>
 								🦞
 							</span>
@@ -99,9 +88,8 @@ export function Footer() {
 							</span>
 						</Link>
 						<p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-							Open-source OpenClaw stack builder. CLI, API, and web
-							UI for scaffolding production-ready Docker&nbsp;Compose
-							stacks.
+							Open-source OpenClaw stack builder. CLI, API, and web UI for scaffolding
+							production-ready Docker&nbsp;Compose stacks.
 						</p>
 					</div>
 
@@ -112,10 +100,7 @@ export function Footer() {
 
 				{/* Bottom bar */}
 				<div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted-foreground sm:flex-row">
-					<p>
-						&copy; {new Date().getFullYear()} better-openclaw. All
-						rights reserved.
-					</p>
+					<p>&copy; {new Date().getFullYear()} better-openclaw. All rights reserved.</p>
 					<p>
 						Built by{" "}
 						<a

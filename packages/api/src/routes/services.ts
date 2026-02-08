@@ -1,10 +1,6 @@
-import { Hono } from "hono";
-import {
-	getAllServices,
-	getServicesByCategory,
-	SERVICE_CATEGORIES,
-} from "@better-openclaw/core";
 import type { ServiceCategory } from "@better-openclaw/core";
+import { getAllServices, getServicesByCategory, SERVICE_CATEGORIES } from "@better-openclaw/core";
+import { Hono } from "hono";
 
 const route = new Hono();
 
@@ -13,9 +9,7 @@ route.get("/", (c) => {
 		const category = c.req.query("category");
 		const maturity = c.req.query("maturity");
 
-		let services = category
-			? getServicesByCategory(category as ServiceCategory)
-			: getAllServices();
+		let services = category ? getServicesByCategory(category as ServiceCategory) : getAllServices();
 
 		// Filter by maturity if provided
 		if (maturity) {

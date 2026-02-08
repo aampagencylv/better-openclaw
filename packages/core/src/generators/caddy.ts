@@ -10,10 +10,7 @@ import type { ResolverOutput } from "../types.js";
  * @param domain - The main domain for routing (e.g. "example.com")
  * @returns The Caddyfile content as a string
  */
-export function generateCaddyfile(
-	resolved: ResolverOutput,
-	domain: string,
-): string {
+export function generateCaddyfile(resolved: ResolverOutput, domain: string): string {
 	const sections: string[] = [];
 
 	// ── Global Options ──────────────────────────────────────────────────────
@@ -70,7 +67,10 @@ export function generateCaddyfile(
 		// If there are additional exposed ports, add them as separate entries
 		for (let i = 1; i < exposedPorts.length; i++) {
 			const port = exposedPorts[i]!;
-			const portSubdomain = `${definition.id}-${port.description.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}.${domain}`;
+			const portSubdomain = `${definition.id}-${port.description
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, "-")
+				.replace(/-+$/, "")}.${domain}`;
 
 			block.push(`# ${definition.name} — ${port.description}`);
 			block.push(`${portSubdomain} {`);

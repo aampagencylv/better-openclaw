@@ -15,10 +15,7 @@ export interface ReadmeOptions {
  * Includes: project description, service table, quick start instructions,
  * service URLs, skill packs, and scripts documentation.
  */
-export function generateReadme(
-	resolved: ResolverOutput,
-	options: ReadmeOptions,
-): string {
+export function generateReadme(resolved: ResolverOutput, options: ReadmeOptions): string {
 	const { projectName, domain, proxy } = options;
 	const sections: string[] = [];
 
@@ -161,14 +158,13 @@ ${portRows}
 
 	// ── Skill Packs ─────────────────────────────────────────────────────────
 
-	const allSkills = resolved.services
-		.flatMap(({ definition }) =>
-			definition.skills.map((s) => ({
-				skillId: s.skillId,
-				serviceName: definition.name,
-				serviceIcon: definition.icon,
-			})),
-		);
+	const allSkills = resolved.services.flatMap(({ definition }) =>
+		definition.skills.map((s) => ({
+			skillId: s.skillId,
+			serviceName: definition.name,
+			serviceIcon: definition.icon,
+		})),
+	);
 
 	if (allSkills.length > 0) {
 		const skillRows = allSkills
@@ -218,15 +214,14 @@ chmod +x scripts/*.sh     # Make scripts executable (first time only)
 
 	// ── Data & Volumes ──────────────────────────────────────────────────────
 
-	const volumeRows = resolved.services
-		.flatMap(({ definition }) =>
-			definition.volumes.map((v) => ({
-				name: v.name,
-				path: v.containerPath,
-				description: v.description,
-				serviceName: definition.name,
-			})),
-		);
+	const volumeRows = resolved.services.flatMap(({ definition }) =>
+		definition.volumes.map((v) => ({
+			name: v.name,
+			path: v.containerPath,
+			description: v.description,
+			serviceName: definition.name,
+		})),
+	);
 
 	if (volumeRows.length > 0) {
 		const rows = volumeRows
@@ -255,9 +250,7 @@ ${rows}
 	// ── Warnings ─────────────────────────────────────────────────────────────
 
 	if (resolved.warnings.length > 0) {
-		const warningList = resolved.warnings
-			.map((w) => `- ⚠️ ${w.message}`)
-			.join("\n");
+		const warningList = resolved.warnings.map((w) => `- ⚠️ ${w.message}`).join("\n");
 
 		sections.push(`## Warnings
 

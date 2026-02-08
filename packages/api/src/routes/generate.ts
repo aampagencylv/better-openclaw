@@ -1,5 +1,5 @@
+import { GenerationInputSchema, generate } from "@better-openclaw/core";
 import { Hono } from "hono";
-import { generate, GenerationInputSchema } from "@better-openclaw/core";
 
 const route = new Hono();
 
@@ -36,10 +36,7 @@ route.post("/", async (c) => {
 		// TODO: Add full ZIP support (e.g. using archiver) for a single-file download
 		if (accept.includes("application/zip")) {
 			const projectName = parsed.data.projectName || "project";
-			c.header(
-				"Content-Disposition",
-				`attachment; filename="${projectName}.zip"`,
-			);
+			c.header("Content-Disposition", `attachment; filename="${projectName}.zip"`);
 			c.header("Content-Type", "application/json");
 
 			return c.json({
@@ -60,8 +57,7 @@ route.post("/", async (c) => {
 
 		// Distinguish between config errors and internal errors
 		const isConfigError =
-			message.includes("Invalid stack configuration") ||
-			message.includes("Validation failed");
+			message.includes("Invalid stack configuration") || message.includes("Validation failed");
 
 		return c.json(
 			{

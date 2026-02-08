@@ -1,30 +1,28 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Adding Custom Services — better-openclaw Docs",
-  description:
-    "How to add custom service definitions to better-openclaw. ServiceDefinition interface, configuration options, and examples.",
+	title: "Adding Custom Services — better-openclaw Docs",
+	description:
+		"How to add custom service definitions to better-openclaw. ServiceDefinition interface, configuration options, and examples.",
 };
 
 export default function AddingServicesPage() {
-  return (
-    <>
-      <h1>Adding Custom Services</h1>
-      <p>
-        better-openclaw is designed to be extensible. You can add your own
-        service definitions to the catalog, either for personal use or to
-        contribute back to the project. This guide explains the{" "}
-        <code>ServiceDefinition</code> interface and how to create a new service.
-      </p>
+	return (
+		<>
+			<h1>Adding Custom Services</h1>
+			<p>
+				better-openclaw is designed to be extensible. You can add your own service definitions to
+				the catalog, either for personal use or to contribute back to the project. This guide
+				explains the <code>ServiceDefinition</code> interface and how to create a new service.
+			</p>
 
-      <h2>Where Services Live</h2>
-      <p>
-        Service definitions are TypeScript files in the{" "}
-        <code>packages/core/src/services/</code> directory. Each service has its
-        own file:
-      </p>
-      <pre>
-        <code>{`packages/core/src/services/
+			<h2>Where Services Live</h2>
+			<p>
+				Service definitions are TypeScript files in the <code>packages/core/src/services/</code>{" "}
+				directory. Each service has its own file:
+			</p>
+			<pre>
+				<code>{`packages/core/src/services/
 ├── databases/
 │   ├── qdrant.ts
 │   ├── redis.ts
@@ -42,15 +40,14 @@ export default function AddingServicesPage() {
 │   ├── whisper.ts
 │   └── ...
 └── index.ts            # Re-exports all services`}</code>
-      </pre>
+			</pre>
 
-      <h2>The ServiceDefinition Interface</h2>
-      <p>
-        Every service must conform to the <code>ServiceDefinition</code>{" "}
-        interface:
-      </p>
-      <pre>
-        <code>{`interface ServiceDefinition {
+			<h2>The ServiceDefinition Interface</h2>
+			<p>
+				Every service must conform to the <code>ServiceDefinition</code> interface:
+			</p>
+			<pre>
+				<code>{`interface ServiceDefinition {
   // ── Identity ──────────────────────────────────
   id: string;                    // Unique kebab-case identifier
   name: string;                  // Display name
@@ -90,44 +87,43 @@ export default function AddingServicesPage() {
     envMapping?: Record<string, string>; // Map service vars to OpenClaw vars
   };
 }`}</code>
-      </pre>
+			</pre>
 
-      <h3>Port Type</h3>
-      <pre>
-        <code>{`interface Port {
+			<h3>Port Type</h3>
+			<pre>
+				<code>{`interface Port {
   host: number;         // Port on the host machine
   container: number;    // Port inside the container
   protocol?: "tcp" | "udp";  // Default: "tcp"
 }`}</code>
-      </pre>
+			</pre>
 
-      <h3>Volume Type</h3>
-      <pre>
-        <code>{`interface Volume {
+			<h3>Volume Type</h3>
+			<pre>
+				<code>{`interface Volume {
   name: string;         // Named volume identifier
   containerPath: string; // Mount path inside container
   description: string;  // What this volume stores
 }`}</code>
-      </pre>
+			</pre>
 
-      <h3>EnvVar Type</h3>
-      <pre>
-        <code>{`interface EnvVar {
+			<h3>EnvVar Type</h3>
+			<pre>
+				<code>{`interface EnvVar {
   name: string;         // Variable name
   description: string;  // What this variable configures
   default?: string;     // Default value
   required: boolean;    // Must be set by user
   secret: boolean;      // Should be auto-generated
 }`}</code>
-      </pre>
+			</pre>
 
-      <h2>Example: Adding a Custom Service</h2>
-      <p>
-        Let&apos;s walk through adding <strong>Meilisearch</strong> as a new
-        service:
-      </p>
-      <pre>
-        <code>{`// packages/core/src/services/search/meilisearch.ts
+			<h2>Example: Adding a Custom Service</h2>
+			<p>
+				Let&apos;s walk through adding <strong>Meilisearch</strong> as a new service:
+			</p>
+			<pre>
+				<code>{`// packages/core/src/services/search/meilisearch.ts
 
 import type { ServiceDefinition } from "../types";
 
@@ -204,22 +200,18 @@ export const meilisearch: ServiceDefinition = {
     },
   },
 };`}</code>
-      </pre>
+			</pre>
 
-      <h2>Registering the Service</h2>
-      <p>
-        After creating the service file, register it in the category&apos;s index:
-      </p>
-      <pre>
-        <code>{`// packages/core/src/services/search/index.ts
+			<h2>Registering the Service</h2>
+			<p>After creating the service file, register it in the category&apos;s index:</p>
+			<pre>
+				<code>{`// packages/core/src/services/search/index.ts
 export { searxng } from "./searxng";
 export { meilisearch } from "./meilisearch";  // Add this line`}</code>
-      </pre>
-      <p>
-        Then add it to the main service registry:
-      </p>
-      <pre>
-        <code>{`// packages/core/src/services/index.ts
+			</pre>
+			<p>Then add it to the main service registry:</p>
+			<pre>
+				<code>{`// packages/core/src/services/index.ts
 import { meilisearch } from "./search/meilisearch";
 
 // Add to the allServices array
@@ -227,11 +219,11 @@ const allServices: ServiceDefinition[] = [
   // ... existing services
   meilisearch,
 ];`}</code>
-      </pre>
+			</pre>
 
-      <h2>Testing Your Service</h2>
-      <pre>
-        <code>{`# Build the core package
+			<h2>Testing Your Service</h2>
+			<pre>
+				<code>{`# Build the core package
 cd packages/core
 pnpm build
 
@@ -248,54 +240,52 @@ cd test-stack
 docker compose up -d
 docker compose ps
 curl http://localhost:7700/health`}</code>
-      </pre>
+			</pre>
 
-      <h2>Service Guidelines</h2>
-      <ul>
-        <li>
-          <strong>Use official Docker images</strong> whenever possible
-        </li>
-        <li>
-          <strong>Pin image tags</strong> to specific versions (not{" "}
-          <code>latest</code>) for stability
-        </li>
-        <li>
-          <strong>Mark secrets</strong> with <code>secret: true</code> so the
-          CLI auto-generates them
-        </li>
-        <li>
-          <strong>Include a healthcheck</strong> so Docker can monitor the
-          service
-        </li>
-        <li>
-          <strong>Declare dependencies</strong> accurately — missing deps cause
-          confusing startup errors
-        </li>
-        <li>
-          <strong>Test on both AMD64 and ARM64</strong> if you claim
-          multi-platform support
-        </li>
-        <li>
-          <strong>Add the <code>openclawConfig</code></strong> if the service
-          integrates with OpenClaw skills
-        </li>
-      </ul>
+			<h2>Service Guidelines</h2>
+			<ul>
+				<li>
+					<strong>Use official Docker images</strong> whenever possible
+				</li>
+				<li>
+					<strong>Pin image tags</strong> to specific versions (not <code>latest</code>) for
+					stability
+				</li>
+				<li>
+					<strong>Mark secrets</strong> with <code>secret: true</code> so the CLI auto-generates
+					them
+				</li>
+				<li>
+					<strong>Include a healthcheck</strong> so Docker can monitor the service
+				</li>
+				<li>
+					<strong>Declare dependencies</strong> accurately — missing deps cause confusing startup
+					errors
+				</li>
+				<li>
+					<strong>Test on both AMD64 and ARM64</strong> if you claim multi-platform support
+				</li>
+				<li>
+					<strong>
+						Add the <code>openclawConfig</code>
+					</strong>{" "}
+					if the service integrates with OpenClaw skills
+				</li>
+			</ul>
 
-      <h2>Next Steps</h2>
-      <ul>
-        <li>
-          <Link href="/docs/services">Service Catalog</Link> — see all existing
-          services for reference
-        </li>
-        <li>
-          <Link href="/docs/skill-packs">Skill Packs</Link> — learn how skills
-          connect to services
-        </li>
-        <li>
-          <Link href="/docs/contributing">Contributing Guide</Link> — submit
-          your service as a PR
-        </li>
-      </ul>
-    </>
-  );
+			<h2>Next Steps</h2>
+			<ul>
+				<li>
+					<Link href="/docs/services">Service Catalog</Link> — see all existing services for
+					reference
+				</li>
+				<li>
+					<Link href="/docs/skill-packs">Skill Packs</Link> — learn how skills connect to services
+				</li>
+				<li>
+					<Link href="/docs/contributing">Contributing Guide</Link> — submit your service as a PR
+				</li>
+			</ul>
+		</>
+	);
 }

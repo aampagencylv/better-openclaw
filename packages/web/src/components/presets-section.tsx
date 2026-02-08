@@ -8,9 +8,7 @@ const presets = getAllPresets();
 
 function formatRam(mb: number | undefined): string {
 	if (!mb) return "—";
-	return mb >= 1024
-		? `${(mb / 1024).toFixed(mb % 1024 === 0 ? 0 : 1)} GB`
-		: `${mb} MB`;
+	return mb >= 1024 ? `${(mb / 1024).toFixed(mb % 1024 === 0 ? 0 : 1)} GB` : `${mb} MB`;
 }
 
 const container = {
@@ -37,8 +35,7 @@ export function PresetsSection() {
 						Presets for every use case
 					</h2>
 					<p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-						One-click starter stacks tuned for common workflows.
-						Customize after scaffolding.
+						One-click starter stacks tuned for common workflows. Customize after scaffolding.
 					</p>
 				</div>
 
@@ -57,9 +54,7 @@ export function PresetsSection() {
 								className="group block overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-primary/30"
 							>
 								{/* Colored top bar */}
-								<div
-									className={`h-1 ${idx === 0 ? "bg-primary" : "bg-accent"}`}
-								/>
+								<div className={`h-1 ${idx === 0 ? "bg-primary" : "bg-accent"}`} />
 
 								<div className="p-5">
 									<h3 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -77,9 +72,7 @@ export function PresetsSection() {
 											</strong>{" "}
 											services
 										</span>
-										<span>
-											~{formatRam(preset.estimatedMemoryMB)} RAM
-										</span>
+										<span>~{formatRam(preset.estimatedMemoryMB)} RAM</span>
 									</div>
 								</div>
 							</Link>

@@ -3,8 +3,7 @@ import type { ServiceDefinition } from "../../types.js";
 export const docsgptDefinition: ServiceDefinition = {
 	id: "docsgpt",
 	name: "DocsGPT",
-	description:
-		"AI-powered documentation assistant. Upload documents and chat with them using RAG.",
+	description: "AI-powered documentation assistant. Upload documents and chat with them using RAG.",
 	category: "knowledge",
 	icon: "📄",
 

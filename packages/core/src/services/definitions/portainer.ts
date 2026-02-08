@@ -3,8 +3,7 @@ import type { ServiceDefinition } from "../../types.js";
 export const portainerDefinition: ServiceDefinition = {
 	id: "portainer",
 	name: "Portainer",
-	description:
-		"Docker management UI for monitoring and managing your entire stack visually.",
+	description: "Docker management UI for monitoring and managing your entire stack visually.",
 	category: "dev-tools",
 	icon: "🐳",
 
@@ -27,8 +26,7 @@ export const portainerDefinition: ServiceDefinition = {
 		{
 			name: "portainer-docker-sock",
 			containerPath: "/var/run/docker.sock",
-			description:
-				"Docker socket (must be bind-mounted to /var/run/docker.sock on host)",
+			description: "Docker socket (must be bind-mounted to /var/run/docker.sock on host)",
 		},
 	],
 	environment: [],

@@ -3,8 +3,7 @@ import type { ServiceDefinition } from "../../types.js";
 export const watchtowerDefinition: ServiceDefinition = {
 	id: "watchtower",
 	name: "Watchtower",
-	description:
-		"Automatically update Docker container images when new versions are released.",
+	description: "Automatically update Docker container images when new versions are released.",
 	category: "dev-tools",
 	icon: "🗼",
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { resolve } from "./resolver.js";
 import { composeMultiFile } from "./composer.js";
+import { resolve } from "./resolver.js";
 
 function generateForPreset(services: string[], skillPacks: string[] = []) {
 	const resolved = resolve({ services, skillPacks });

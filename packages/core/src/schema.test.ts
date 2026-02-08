@@ -181,9 +181,7 @@ describe("ServiceDefinitionSchema", () => {
 	});
 
 	it("rejects invalid id format", () => {
-		expect(() =>
-			ServiceDefinitionSchema.parse({ ...validDef, id: "Bad_Id" }),
-		).toThrow();
+		expect(() => ServiceDefinitionSchema.parse({ ...validDef, id: "Bad_Id" })).toThrow();
 	});
 
 	it("defaults arrays and booleans correctly", () => {

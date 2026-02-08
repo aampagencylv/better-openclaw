@@ -1,3 +1,5 @@
+import { getServiceById } from "./services/registry.js";
+import { getSkillPackById } from "./skills/registry.js";
 import type {
 	AddedDependency,
 	ResolvedService,
@@ -7,8 +9,6 @@ import type {
 	ServiceDefinition,
 	Warning,
 } from "./types.js";
-import { getServiceById } from "./services/registry.js";
-import { getSkillPackById } from "./skills/registry.js";
 
 /**
  * Resolves user selections into a complete, valid service list.

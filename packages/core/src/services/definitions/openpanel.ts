@@ -22,8 +22,7 @@ export const openpanelDefinition: ServiceDefinition = {
 	environment: [
 		{
 			key: "DATABASE_URL",
-			defaultValue:
-				"postgresql://openpanel:${OPENPANEL_DB_PASSWORD}@postgresql:5432/openpanel",
+			defaultValue: "postgresql://openpanel:${OPENPANEL_DB_PASSWORD}@postgresql:5432/openpanel",
 			secret: false,
 			description: "PostgreSQL connection string for OpenPanel",
 			required: true,

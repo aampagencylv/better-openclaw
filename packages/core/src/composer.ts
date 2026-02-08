@@ -85,10 +85,7 @@ function buildGatewayServices(
 		image: `\${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:${options.openclawVersion}}`,
 		environment: gatewayEnv,
 		volumes: gatewayVolumes,
-		ports: [
-			"${OPENCLAW_GATEWAY_PORT:-18789}:18789",
-			"${OPENCLAW_BRIDGE_PORT:-18790}:18790",
-		],
+		ports: ["${OPENCLAW_GATEWAY_PORT:-18789}:18789", "${OPENCLAW_BRIDGE_PORT:-18790}:18790"],
 		networks: ["openclaw-network"],
 		init: true,
 		restart: "unless-stopped",
@@ -330,11 +327,11 @@ export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptio
 		}
 	}
 
-	const { gatewayService, cliService, allVolumes: gwVolumes } = buildGatewayServices(
-		resolved,
-		options,
-		gatewayDependsOn,
-	);
+	const {
+		gatewayService,
+		cliService,
+		allVolumes: gwVolumes,
+	} = buildGatewayServices(resolved, options, gatewayDependsOn);
 
 	// Merge gateway volumes into allVolumes
 	for (const v of gwVolumes) allVolumes.add(v);

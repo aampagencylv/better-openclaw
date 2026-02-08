@@ -53,7 +53,7 @@ export default function SubmitPage() {
 			.join("\n");
 
 		const url = `https://github.com/diopisemou/better-openclaw/issues/new?title=${encodeURIComponent(
-			`[Showcase] ${stackName}`
+			`[Showcase] ${stackName}`,
 		)}&body=${encodeURIComponent(body)}&labels=showcase`;
 
 		window.open(url, "_blank");
@@ -75,7 +75,7 @@ export default function SubmitPage() {
 		].join("\n");
 
 		const url = `https://github.com/diopisemou/better-openclaw/issues/new?title=${encodeURIComponent(
-			`[Service] ${serviceName}`
+			`[Service] ${serviceName}`,
 		)}&body=${encodeURIComponent(body)}&labels=service-proposal`;
 
 		window.open(url, "_blank");
@@ -90,14 +90,10 @@ export default function SubmitPage() {
 				<section className="border-b border-border">
 					<div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
 						<h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-							Submit to{" "}
-							<span className="text-gradient">
-								better-openclaw
-							</span>
+							Submit to <span className="text-gradient">better-openclaw</span>
 						</h1>
 						<p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-							Share your stack or propose a new service for the
-							community
+							Share your stack or propose a new service for the community
 						</p>
 					</div>
 				</section>
@@ -112,12 +108,9 @@ export default function SubmitPage() {
 									<Layers className="h-5 w-5 text-primary" />
 								</div>
 								<div>
-									<h2 className="text-xl font-semibold text-foreground">
-										Submit a Stack
-									</h2>
+									<h2 className="text-xl font-semibold text-foreground">Submit a Stack</h2>
 									<p className="text-sm text-muted-foreground">
-										Share your better-openclaw stack with the
-										community
+										Share your better-openclaw stack with the community
 									</p>
 								</div>
 							</div>
@@ -130,9 +123,7 @@ export default function SubmitPage() {
 									<input
 										type="text"
 										value={stackName}
-										onChange={(e) =>
-											setStackName(e.target.value)
-										}
+										onChange={(e) => setStackName(e.target.value)}
 										placeholder="My Awesome Stack"
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									/>
@@ -144,9 +135,7 @@ export default function SubmitPage() {
 									</label>
 									<textarea
 										value={stackDescription}
-										onChange={(e) =>
-											setStackDescription(e.target.value)
-										}
+										onChange={(e) => setStackDescription(e.target.value)}
 										placeholder="Brief description of what your stack does..."
 										rows={3}
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
@@ -160,9 +149,7 @@ export default function SubmitPage() {
 									<input
 										type="url"
 										value={stackGithub}
-										onChange={(e) =>
-											setStackGithub(e.target.value)
-										}
+										onChange={(e) => setStackGithub(e.target.value)}
 										placeholder="https://github.com/..."
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									/>
@@ -175,9 +162,7 @@ export default function SubmitPage() {
 									<input
 										type="url"
 										value={stackScreenshot}
-										onChange={(e) =>
-											setStackScreenshot(e.target.value)
-										}
+										onChange={(e) => setStackScreenshot(e.target.value)}
 										placeholder="https://..."
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									/>
@@ -186,11 +171,7 @@ export default function SubmitPage() {
 								<button
 									type="button"
 									onClick={submitStack}
-									disabled={
-										!stackName ||
-										!stackDescription ||
-										!stackGithub
-									}
+									disabled={!stackName || !stackDescription || !stackGithub}
 									className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
 								>
 									<Send className="h-4 w-4" />
@@ -206,12 +187,9 @@ export default function SubmitPage() {
 									<Package className="h-5 w-5 text-accent" />
 								</div>
 								<div>
-									<h2 className="text-xl font-semibold text-foreground">
-										Propose a Service
-									</h2>
+									<h2 className="text-xl font-semibold text-foreground">Propose a Service</h2>
 									<p className="text-sm text-muted-foreground">
-										Suggest a new service or tool for
-										integration
+										Suggest a new service or tool for integration
 									</p>
 								</div>
 							</div>
@@ -224,9 +202,7 @@ export default function SubmitPage() {
 									<input
 										type="text"
 										value={serviceName}
-										onChange={(e) =>
-											setServiceName(e.target.value)
-										}
+										onChange={(e) => setServiceName(e.target.value)}
 										placeholder="e.g. Meilisearch"
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									/>
@@ -239,9 +215,7 @@ export default function SubmitPage() {
 									<input
 										type="text"
 										value={dockerImage}
-										onChange={(e) =>
-											setDockerImage(e.target.value)
-										}
+										onChange={(e) => setDockerImage(e.target.value)}
 										placeholder="e.g. getmeili/meilisearch:latest"
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									/>
@@ -253,15 +227,11 @@ export default function SubmitPage() {
 									</label>
 									<select
 										value={serviceCategory}
-										onChange={(e) =>
-											setServiceCategory(e.target.value)
-										}
+										onChange={(e) => setServiceCategory(e.target.value)}
 										aria-label="Category"
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									>
-										<option value="">
-											Select a category...
-										</option>
+										<option value="">Select a category...</option>
 										{SERVICE_CATEGORIES.map((cat) => (
 											<option key={cat} value={cat}>
 												{cat}
@@ -276,11 +246,7 @@ export default function SubmitPage() {
 									</label>
 									<textarea
 										value={serviceDescription}
-										onChange={(e) =>
-											setServiceDescription(
-												e.target.value
-											)
-										}
+										onChange={(e) => setServiceDescription(e.target.value)}
 										placeholder="What does this service do?"
 										rows={2}
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
@@ -294,9 +260,7 @@ export default function SubmitPage() {
 									<input
 										type="url"
 										value={serviceWebsite}
-										onChange={(e) =>
-											setServiceWebsite(e.target.value)
-										}
+										onChange={(e) => setServiceWebsite(e.target.value)}
 										placeholder="https://..."
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									/>
@@ -308,9 +272,7 @@ export default function SubmitPage() {
 									</label>
 									<textarea
 										value={serviceWhy}
-										onChange={(e) =>
-											setServiceWhy(e.target.value)
-										}
+										onChange={(e) => setServiceWhy(e.target.value)}
 										placeholder="Why should this service be part of better-openclaw?"
 										rows={2}
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"

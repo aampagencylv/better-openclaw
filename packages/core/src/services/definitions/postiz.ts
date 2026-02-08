@@ -60,8 +60,7 @@ export const postizDefinition: ServiceDefinition = {
 		},
 		{
 			key: "DATABASE_URL",
-			defaultValue:
-				"postgresql://postiz:${POSTIZ_DB_PASSWORD}@postgresql:5432/postiz",
+			defaultValue: "postgresql://postiz:${POSTIZ_DB_PASSWORD}@postgresql:5432/postiz",
 			secret: false,
 			description: "PostgreSQL connection string",
 			required: true,

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { validate } from "./validator.js";
-import { resolve } from "./resolver.js";
 import { compose } from "./composer.js";
+import { resolve } from "./resolver.js";
 import type { ComposeOptions } from "./types.js";
+import { validate } from "./validator.js";
 
 const defaultComposeOptions: ComposeOptions = {
 	projectName: "test-project",
@@ -25,7 +25,8 @@ describe("validate", () => {
 
 	it("detects invalid YAML", () => {
 		const resolved = resolve({ services: ["redis"], skillPacks: [] });
-		const brokenYaml = "services:\n  redis:\n    image: redis\n  bad_indent:\n- broken\n::: invalid";
+		const brokenYaml =
+			"services:\n  redis:\n    image: redis\n  bad_indent:\n- broken\n::: invalid";
 
 		const result = validate(resolved, brokenYaml);
 

@@ -26,8 +26,7 @@ export const prometheusDefinition: ServiceDefinition = {
 		},
 	],
 	environment: [],
-	command:
-		"--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus",
+	command: "--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus",
 	healthcheck: {
 		test: "wget -q --spider http://localhost:9090/-/healthy || exit 1",
 		interval: "30s",

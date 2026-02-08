@@ -34,13 +34,7 @@ export const appflowyDefinition: ServiceDefinition = {
 	openclawEnvVars: [],
 
 	docsUrl: "https://docs.appflowy.io/",
-	tags: [
-		"notion-alternative",
-		"workspace",
-		"notes",
-		"wiki",
-		"collaboration",
-	],
+	tags: ["notion-alternative", "workspace", "notes", "wiki", "collaboration"],
 	maturity: "beta",
 
 	requires: [],

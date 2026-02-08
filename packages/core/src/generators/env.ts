@@ -1,5 +1,5 @@
-import type { ResolverOutput } from "../types.js";
 import { randomBytes } from "node:crypto";
+import type { ResolverOutput } from "../types.js";
 import { getDbRequirements } from "./postgres-init.js";
 
 /**
@@ -27,20 +27,13 @@ export function generateEnvFiles(
 	// ── Base OpenClaw Variables ──────────────────────────────────────────────
 
 	lines.push({
-		comment: formatComment(
-			"OpenClaw version to deploy",
-			"OpenClaw Core",
-			true,
-			false,
-		),
+		comment: formatComment("OpenClaw version to deploy", "OpenClaw Core", true, false),
 		key: "OPENCLAW_VERSION",
 		exampleValue: version,
 		actualValue: version,
 	});
 
-	const gatewayToken = options.generateSecrets
-		? randomBytes(24).toString("hex")
-		: "";
+	const gatewayToken = options.generateSecrets ? randomBytes(24).toString("hex") : "";
 
 	lines.push({
 		comment: formatComment(
@@ -55,47 +48,67 @@ export function generateEnvFiles(
 	});
 
 	lines.push({
-		comment: formatComment(
-			"Port the OpenClaw gateway listens on",
-			"OpenClaw Core",
-			true,
-			false,
-		),
+		comment: formatComment("Port the OpenClaw gateway listens on", "OpenClaw Core", true, false),
 		key: "OPENCLAW_GATEWAY_PORT",
 		exampleValue: "18789",
 		actualValue: "18789",
 	});
 
 	lines.push({
-		comment: formatComment("Port for the OpenClaw ACP bridge (WebSocket)", "OpenClaw Core", false, false),
+		comment: formatComment(
+			"Port for the OpenClaw ACP bridge (WebSocket)",
+			"OpenClaw Core",
+			false,
+			false,
+		),
 		key: "OPENCLAW_BRIDGE_PORT",
 		exampleValue: "18790",
 		actualValue: "18790",
 	});
 
 	lines.push({
-		comment: formatComment("Gateway network bind mode (lan for Docker networking, loopback for local-only)", "OpenClaw Core", false, false),
+		comment: formatComment(
+			"Gateway network bind mode (lan for Docker networking, loopback for local-only)",
+			"OpenClaw Core",
+			false,
+			false,
+		),
 		key: "OPENCLAW_GATEWAY_BIND",
 		exampleValue: "lan",
 		actualValue: "lan",
 	});
 
 	lines.push({
-		comment: formatComment("Host path to OpenClaw configuration directory", "OpenClaw Core", true, false),
+		comment: formatComment(
+			"Host path to OpenClaw configuration directory",
+			"OpenClaw Core",
+			true,
+			false,
+		),
 		key: "OPENCLAW_CONFIG_DIR",
 		exampleValue: "./openclaw/config",
 		actualValue: "./openclaw/config",
 	});
 
 	lines.push({
-		comment: formatComment("Host path to OpenClaw workspace directory", "OpenClaw Core", true, false),
+		comment: formatComment(
+			"Host path to OpenClaw workspace directory",
+			"OpenClaw Core",
+			true,
+			false,
+		),
 		key: "OPENCLAW_WORKSPACE_DIR",
 		exampleValue: "./openclaw/workspace",
 		actualValue: "./openclaw/workspace",
 	});
 
 	lines.push({
-		comment: formatComment("OpenClaw Docker image override (default uses ghcr.io/openclaw/openclaw)", "OpenClaw Core", false, false),
+		comment: formatComment(
+			"OpenClaw Docker image override (default uses ghcr.io/openclaw/openclaw)",
+			"OpenClaw Core",
+			false,
+			false,
+		),
 		key: "OPENCLAW_IMAGE",
 		exampleValue: "",
 		actualValue: "",
@@ -103,12 +116,7 @@ export function generateEnvFiles(
 
 	if (options.domain) {
 		lines.push({
-			comment: formatComment(
-				"Primary domain for service routing",
-				"OpenClaw Core",
-				false,
-				false,
-			),
+			comment: formatComment("Primary domain for service routing", "OpenClaw Core", false, false),
 			key: "OPENCLAW_DOMAIN",
 			exampleValue: "example.com",
 			actualValue: options.domain,
@@ -117,28 +125,44 @@ export function generateEnvFiles(
 
 	// Claude web-provider session variables (optional)
 	lines.push({
-		comment: "\n# ═══════════════════════════════════════════════════════════════════════════════\n# Claude Web Provider (optional)\n# ═══════════════════════════════════════════════════════════════════════════════",
+		comment:
+			"\n# ═══════════════════════════════════════════════════════════════════════════════\n# Claude Web Provider (optional)\n# ═══════════════════════════════════════════════════════════════════════════════",
 		key: "",
 		exampleValue: "",
 		actualValue: "",
 	});
 
 	lines.push({
-		comment: formatComment("Claude AI session key for web provider authentication", "OpenClaw Core", false, true),
+		comment: formatComment(
+			"Claude AI session key for web provider authentication",
+			"OpenClaw Core",
+			false,
+			true,
+		),
 		key: "CLAUDE_AI_SESSION_KEY",
 		exampleValue: "your_claude_ai_session_key_here",
 		actualValue: "",
 	});
 
 	lines.push({
-		comment: formatComment("Claude web session key for web provider authentication", "OpenClaw Core", false, true),
+		comment: formatComment(
+			"Claude web session key for web provider authentication",
+			"OpenClaw Core",
+			false,
+			true,
+		),
 		key: "CLAUDE_WEB_SESSION_KEY",
 		exampleValue: "your_claude_web_session_key_here",
 		actualValue: "",
 	});
 
 	lines.push({
-		comment: formatComment("Claude web cookie for web provider authentication", "OpenClaw Core", false, true),
+		comment: formatComment(
+			"Claude web cookie for web provider authentication",
+			"OpenClaw Core",
+			false,
+			true,
+		),
 		key: "CLAUDE_WEB_COOKIE",
 		exampleValue: "your_claude_web_cookie_here",
 		actualValue: "",
@@ -150,16 +174,15 @@ export function generateEnvFiles(
 
 	if (dbReqs.length > 0) {
 		lines.push({
-			comment: "\n# ═══════════════════════════════════════════════════════════════════════════════\n# Per-Service Database Passwords\n# Each service gets its own PostgreSQL database and credentials\n# ═══════════════════════════════════════════════════════════════════════════════",
+			comment:
+				"\n# ═══════════════════════════════════════════════════════════════════════════════\n# Per-Service Database Passwords\n# Each service gets its own PostgreSQL database and credentials\n# ═══════════════════════════════════════════════════════════════════════════════",
 			key: "",
 			exampleValue: "",
 			actualValue: "",
 		});
 
 		for (const req of dbReqs) {
-			const secretValue = options.generateSecrets
-				? randomBytes(24).toString("hex")
-				: "";
+			const secretValue = options.generateSecrets ? randomBytes(24).toString("hex") : "";
 
 			lines.push({
 				comment: formatComment(
@@ -179,18 +202,23 @@ export function generateEnvFiles(
 
 	const dbPasswordKeys = dbReqs.map((r) => r.passwordEnvVar);
 	const seenKeys = new Set<string>([
-		"OPENCLAW_VERSION", "OPENCLAW_GATEWAY_TOKEN", "OPENCLAW_GATEWAY_PORT",
-		"OPENCLAW_BRIDGE_PORT", "OPENCLAW_GATEWAY_BIND", "OPENCLAW_CONFIG_DIR",
-		"OPENCLAW_WORKSPACE_DIR", "OPENCLAW_IMAGE", "OPENCLAW_DOMAIN",
-		"CLAUDE_AI_SESSION_KEY", "CLAUDE_WEB_SESSION_KEY", "CLAUDE_WEB_COOKIE",
+		"OPENCLAW_VERSION",
+		"OPENCLAW_GATEWAY_TOKEN",
+		"OPENCLAW_GATEWAY_PORT",
+		"OPENCLAW_BRIDGE_PORT",
+		"OPENCLAW_GATEWAY_BIND",
+		"OPENCLAW_CONFIG_DIR",
+		"OPENCLAW_WORKSPACE_DIR",
+		"OPENCLAW_IMAGE",
+		"OPENCLAW_DOMAIN",
+		"CLAUDE_AI_SESSION_KEY",
+		"CLAUDE_WEB_SESSION_KEY",
+		"CLAUDE_WEB_COOKIE",
 		...dbPasswordKeys,
 	]);
 
 	for (const { definition } of resolved.services) {
-		const allEnvVars = [
-			...definition.environment,
-			...definition.openclawEnvVars,
-		];
+		const allEnvVars = [...definition.environment, ...definition.openclawEnvVars];
 
 		if (allEnvVars.length === 0) continue;
 
@@ -206,9 +234,7 @@ export function generateEnvFiles(
 			if (seenKeys.has(envVar.key)) continue;
 			seenKeys.add(envVar.key);
 
-			const secretValue = options.generateSecrets
-				? randomBytes(24).toString("hex")
-				: "";
+			const secretValue = options.generateSecrets ? randomBytes(24).toString("hex") : "";
 
 			const exampleValue = envVar.secret
 				? `your_${envVar.key.toLowerCase()}_here`
@@ -216,20 +242,13 @@ export function generateEnvFiles(
 
 			let actualValue: string;
 			if (envVar.secret) {
-				actualValue = envVar.defaultValue.startsWith("${")
-					? envVar.defaultValue
-					: secretValue;
+				actualValue = envVar.defaultValue.startsWith("${") ? envVar.defaultValue : secretValue;
 			} else {
 				actualValue = envVar.defaultValue;
 			}
 
 			lines.push({
-				comment: formatComment(
-					envVar.description,
-					definition.name,
-					envVar.required,
-					envVar.secret,
-				),
+				comment: formatComment(envVar.description, definition.name, envVar.required, envVar.secret),
 				key: envVar.key,
 				exampleValue,
 				actualValue,
@@ -285,7 +304,13 @@ export interface EnvVarGroup {
 	serviceName: string;
 	serviceIcon: string;
 	serviceId: string;
-	vars: { key: string; description: string; secret: boolean; required: boolean; defaultValue: string }[];
+	vars: {
+		key: string;
+		description: string;
+		secret: boolean;
+		required: boolean;
+		defaultValue: string;
+	}[];
 }
 
 /**
@@ -301,9 +326,27 @@ export function getStructuredEnvVars(resolved: ResolverOutput): EnvVarGroup[] {
 
 	// ── OpenClaw Core group ──────────────────────────────────────────────────
 	const coreVars: EnvVarGroup["vars"] = [
-		{ key: "OPENCLAW_VERSION", description: "OpenClaw version to deploy", secret: false, required: true, defaultValue: "latest" },
-		{ key: "OPENCLAW_GATEWAY_TOKEN", description: "Authentication token for the OpenClaw gateway API", secret: true, required: true, defaultValue: "" },
-		{ key: "OPENCLAW_GATEWAY_PORT", description: "Port the OpenClaw gateway listens on", secret: false, required: true, defaultValue: "18789" },
+		{
+			key: "OPENCLAW_VERSION",
+			description: "OpenClaw version to deploy",
+			secret: false,
+			required: true,
+			defaultValue: "latest",
+		},
+		{
+			key: "OPENCLAW_GATEWAY_TOKEN",
+			description: "Authentication token for the OpenClaw gateway API",
+			secret: true,
+			required: true,
+			defaultValue: "",
+		},
+		{
+			key: "OPENCLAW_GATEWAY_PORT",
+			description: "Port the OpenClaw gateway listens on",
+			secret: false,
+			required: true,
+			defaultValue: "18789",
+		},
 	];
 
 	for (const v of coreVars) {
@@ -319,10 +362,7 @@ export function getStructuredEnvVars(resolved: ResolverOutput): EnvVarGroup[] {
 
 	// ── Per-service groups ───────────────────────────────────────────────────
 	for (const { definition } of resolved.services) {
-		const allEnvVars = [
-			...definition.environment,
-			...definition.openclawEnvVars,
-		];
+		const allEnvVars = [...definition.environment, ...definition.openclawEnvVars];
 
 		const vars: EnvVarGroup["vars"] = [];
 

@@ -113,9 +113,7 @@ export function Hero() {
 					variants={fadeUp}
 					className="mx-auto max-w-4xl text-center text-4xl font-extrabold tracking-tight text-foreground md:text-5xl lg:text-6xl"
 				>
-					Build your{" "}
-					<span className="text-gradient">OpenClaw superstack</span> in
-					seconds
+					Build your <span className="text-gradient">OpenClaw superstack</span> in seconds
 				</motion.h1>
 
 				{/* ── Subtitle ────────────────────────────────────────────────── */}
@@ -123,8 +121,8 @@ export function Hero() {
 					variants={fadeUp}
 					className="mx-auto mt-6 max-w-2xl text-center text-lg text-muted-foreground md:text-xl"
 				>
-					Generate production-ready Docker&nbsp;Compose stacks with 58+
-					companion services, pre-wired skills, and one command.
+					Generate production-ready Docker&nbsp;Compose stacks with 58+ companion services,
+					pre-wired skills, and one command.
 				</motion.p>
 
 				{/* ── CTA buttons ─────────────────────────────────────────────── */}
@@ -147,10 +145,7 @@ export function Hero() {
 				</motion.div>
 
 				{/* ── Terminal mockup ─────────────────────────────────────────── */}
-				<motion.div
-					variants={fadeUp}
-					className="mx-auto mt-14 max-w-3xl"
-				>
+				<motion.div variants={fadeUp} className="mx-auto mt-14 max-w-3xl">
 					<div className="overflow-hidden rounded-xl border border-border bg-[#0d1117] shadow-2xl dark:bg-surface">
 						{/* Title bar */}
 						<div className="flex items-center gap-2 border-b border-border/40 bg-[#161b22] px-4 py-3 dark:bg-surface/80">
@@ -165,17 +160,12 @@ export function Hero() {
 						{/* Lines */}
 						<div className="p-5 font-mono text-sm leading-relaxed md:p-6">
 							{terminalLines.map((line, i) => (
-								<div
-									key={i}
-									className={`min-h-[1.5em] ${line.style}`}
-								>
+								<div key={i} className={`min-h-[1.5em] ${line.style}`}>
 									{typed[i] ?? ""}
 									{/* blinking cursor on the line currently being typed */}
-									{i === typed.length - 1 &&
-										(typed[i]?.length ?? 0) <
-											line.text.length && (
-											<span className="ml-0.5 inline-block h-4 w-[7px] animate-pulse bg-foreground/60 align-middle" />
-										)}
+									{i === typed.length - 1 && (typed[i]?.length ?? 0) < line.text.length && (
+										<span className="ml-0.5 inline-block h-4 w-[7px] animate-pulse bg-foreground/60 align-middle" />
+									)}
 								</div>
 							))}
 						</div>
@@ -189,12 +179,8 @@ export function Hero() {
 				>
 					{stats.map((s) => (
 						<div key={s.label} className="text-center">
-							<p className="font-mono text-3xl font-bold text-foreground">
-								{s.count}
-							</p>
-							<p className="mt-1 text-sm text-muted-foreground">
-								{s.label}
-							</p>
+							<p className="font-mono text-3xl font-bold text-foreground">{s.count}</p>
+							<p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
 						</div>
 					))}
 				</motion.div>

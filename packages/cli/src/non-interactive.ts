@@ -1,14 +1,14 @@
-import pc from "picocolors";
+import type { GenerationInput, Platform, ProxyType } from "@better-openclaw/core";
 import {
 	generate,
-	getAllServices,
-	getPresetById,
 	getAllPresets,
+	getAllServices,
+	getAllSkillPacks,
+	getPresetById,
 	getServiceById,
 	getSkillPackById,
-	getAllSkillPacks,
 } from "@better-openclaw/core";
-import type { GenerationInput, ProxyType, Platform } from "@better-openclaw/core";
+import pc from "picocolors";
 import { writeProject } from "./writer.js";
 
 export interface NonInteractiveOptions {
@@ -49,9 +49,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 			const available = getAllPresets()
 				.map((p) => p.id)
 				.join(", ");
-			throw new Error(
-				`Unknown preset: "${options.preset}". Available presets: ${available}`,
-			);
+			throw new Error(`Unknown preset: "${options.preset}". Available presets: ${available}`);
 		}
 		serviceIds = [...preset.services];
 		skillPackIds = [...preset.skillPacks];
@@ -72,9 +70,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 				const available = getAllServices()
 					.map((s) => s.id)
 					.join(", ");
-				throw new Error(
-					`Unknown service: "${id}". Available services: ${available}`,
-				);
+				throw new Error(`Unknown service: "${id}". Available services: ${available}`);
 			}
 		}
 
@@ -93,9 +89,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 				const available = getAllSkillPacks()
 					.map((p) => p.id)
 					.join(", ");
-				throw new Error(
-					`Unknown skill pack: "${id}". Available skill packs: ${available}`,
-				);
+				throw new Error(`Unknown skill pack: "${id}". Available skill packs: ${available}`);
 			}
 		}
 
@@ -115,9 +109,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 	// Validate proxy type
 	const proxy = (options.proxy ?? "none") as ProxyType;
 	if (!["none", "caddy", "traefik"].includes(proxy)) {
-		throw new Error(
-			`Invalid proxy type: "${options.proxy}". Valid options: none, caddy, traefik`,
-		);
+		throw new Error(`Invalid proxy type: "${options.proxy}". Valid options: none, caddy, traefik`);
 	}
 
 	// Validate platform
@@ -146,7 +138,9 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 	console.log("");
 	console.log(pc.bold("Generating stack..."));
 	console.log(pc.dim(`  Services: ${serviceIds.length > 0 ? serviceIds.join(", ") : "(none)"}`));
-	console.log(pc.dim(`  Skill packs: ${skillPackIds.length > 0 ? skillPackIds.join(", ") : "(none)"}`));
+	console.log(
+		pc.dim(`  Skill packs: ${skillPackIds.length > 0 ? skillPackIds.join(", ") : "(none)"}`),
+	);
 	console.log(pc.dim(`  Proxy: ${proxy}`));
 	if (options.domain) {
 		console.log(pc.dim(`  Domain: ${options.domain}`));
