@@ -11,8 +11,8 @@ export default function CliReferencePage() {
 		<>
 			<h1>CLI Reference</h1>
 			<p>
-				The <code>create-better-openclaw</code> CLI is the primary way to generate OpenClaw stacks. It
-				supports both an <Link href="/docs/cli/wizard">interactive wizard</Link> and a fully
+				The <code>create-better-openclaw</code> CLI is the primary way to generate OpenClaw stacks.
+				It supports both an <Link href="/docs/cli/wizard">interactive wizard</Link> and a fully
 				non-interactive mode for CI/CD pipelines.
 			</p>
 
