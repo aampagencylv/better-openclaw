@@ -17,7 +17,7 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "@better-openclaw/cli": {
+    "create-better-openclaw": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },

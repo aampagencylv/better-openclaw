@@ -91,7 +91,7 @@ docker compose version`}</code>
 			</p>
 			<pre>
 				<code>{`# With automatic HTTPS via Caddy (recommended)
-npx @better-openclaw/cli my-stack \\
+npx create-better-openclaw my-stack \\
   --preset researcher \\
   --proxy caddy \\
   --domain openclaw.example.com \\
@@ -101,7 +101,7 @@ npx @better-openclaw/cli my-stack \\
 
 			<h3>Alternative: Traefik</h3>
 			<pre>
-				<code>{`npx @better-openclaw/cli my-stack \\
+				<code>{`npx create-better-openclaw my-stack \\
   --preset researcher \\
   --proxy traefik \\
   --domain openclaw.example.com \\

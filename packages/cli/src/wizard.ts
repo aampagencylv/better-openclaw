@@ -50,7 +50,7 @@ function ensureNotCancelled<T>(value: T | symbol): T {
  *  8. Outro with next steps
  */
 export async function runWizard(initialProjectDir?: string): Promise<void> {
-	intro(pc.bgCyan(pc.black(" @better-openclaw/cli ")));
+	intro(pc.bgCyan(pc.black(" create-better-openclaw ")));
 
 	// ── Step 1: Project Setup ─────────────────────────────────────────────────
 

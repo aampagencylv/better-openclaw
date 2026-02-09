@@ -48,7 +48,7 @@ pnpm --filter cli dev -- test-stack --preset minimal --dry-run`}</code>
 │   │   │   ├── generator/ # Stack generation engine
 │   │   │   └── validator/ # Configuration validation
 │   │   └── package.json
-│   ├── cli/               # CLI tool (@better-openclaw/cli)
+│   ├── cli/               # CLI tool (create-better-openclaw)
 │   │   ├── src/
 │   │   │   ├── wizard/    # Interactive prompts
 │   │   │   ├── commands/  # Command handlers

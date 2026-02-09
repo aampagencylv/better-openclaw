@@ -122,7 +122,7 @@ better-openclaw/
 ```
 @better-openclaw/web ──┐
 @better-openclaw/api ──┤──▶ @better-openclaw/core
-@better-openclaw/cli ┘
+create-better-openclaw ┘
 ```
 
 ### Key Technologies

@@ -24,15 +24,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm lint --filter @better-openclaw/cli
+      - run: pnpm lint --filter create-better-openclaw
 
-      - run: pnpm typecheck --filter @better-openclaw/cli
+      - run: pnpm typecheck --filter create-better-openclaw
 
-      - run: pnpm test --filter @better-openclaw/cli
+      - run: pnpm test --filter create-better-openclaw
 
-      - run: pnpm build --filter @better-openclaw/cli
+      - run: pnpm build --filter create-better-openclaw
 
       - name: Publish CLI to npm
-        run: pnpm publish --filter @better-openclaw/cli --no-git-checks --access public
+        run: pnpm publish --filter create-better-openclaw --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

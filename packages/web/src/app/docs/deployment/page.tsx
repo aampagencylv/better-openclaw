@@ -26,7 +26,7 @@ export default function DeploymentPage() {
 			<h2>Quick Start</h2>
 			<pre>
 				<code>{`# Generate your stack
-npx @better-openclaw/cli my-stack --preset researcher --yes
+npx create-better-openclaw my-stack --preset researcher --yes
 
 # Start it up
 cd my-stack

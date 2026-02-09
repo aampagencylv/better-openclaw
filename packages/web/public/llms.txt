@@ -9,7 +9,7 @@ better-openclaw generates complete Docker Compose stacks pre-wired with OpenClaw
 ## How to Use
 
 1. **Web UI**: Visit https://better-openclaw.dev/new for the visual stack builder
-2. **CLI**: Run `pnpm create better-openclaw@latest` or `npx @better-openclaw/cli`
+2. **CLI**: Run `pnpm create better-openclaw@latest` or `npx create-better-openclaw`
 3. **API**: POST to the generate endpoint with your stack configuration
 
 ## CLI Commands

@@ -69,7 +69,7 @@ export default function QuickStartPage() {
 
 			<h3>Using npx</h3>
 			<pre>
-				<code>{`npx @better-openclaw/cli@latest my-stack`}</code>
+				<code>{`npx create-better-openclaw@latest my-stack`}</code>
 			</pre>
 
 			<h3>Using bun</h3>
@@ -89,13 +89,13 @@ export default function QuickStartPage() {
 			</p>
 			<pre>
 				<code>{`# Research stack: OpenClaw + Qdrant + SearXNG + Browserless
-npx @better-openclaw/cli my-stack --preset researcher --yes
+npx create-better-openclaw my-stack --preset researcher --yes
 
 # DevOps stack: OpenClaw + n8n + Grafana + monitoring
-npx @better-openclaw/cli my-stack --preset devops --yes
+npx create-better-openclaw my-stack --preset devops --yes
 
 # Full stack: everything enabled
-npx @better-openclaw/cli my-stack --preset full --yes`}</code>
+npx create-better-openclaw my-stack --preset full --yes`}</code>
 			</pre>
 
 			<p>Available presets:</p>

@@ -23,7 +23,7 @@ const examples: Example[] = [
 		title: "Default Stack",
 		commands: {
 			pnpm: "pnpm create better-openclaw my-stack",
-			npx: "npx @better-openclaw/cli my-stack",
+			npx: "npx create-better-openclaw my-stack",
 			bun: "bun create better-openclaw my-stack",
 		},
 	},
@@ -31,7 +31,7 @@ const examples: Example[] = [
 		title: "Research Stack",
 		commands: {
 			pnpm: "pnpm create better-openclaw my-stack --preset researcher --yes",
-			npx: "npx @better-openclaw/cli my-stack --preset researcher --yes",
+			npx: "npx create-better-openclaw my-stack --preset researcher --yes",
 			bun: "bun create better-openclaw my-stack --preset researcher --yes",
 		},
 	},
@@ -39,7 +39,7 @@ const examples: Example[] = [
 		title: "AI Stack",
 		commands: {
 			pnpm: "pnpm create better-openclaw my-stack --services ollama,open-webui,qdrant --yes",
-			npx: "npx @better-openclaw/cli my-stack --services ollama,open-webui,qdrant --yes",
+			npx: "npx create-better-openclaw my-stack --services ollama,open-webui,qdrant --yes",
 			bun: "bun create better-openclaw my-stack --services ollama,open-webui,qdrant --yes",
 		},
 	},

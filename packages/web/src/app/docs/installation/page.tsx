@@ -66,7 +66,7 @@ export default function InstallationPage() {
 				the latest version automatically:
 			</p>
 			<pre>
-				<code>{`npx @better-openclaw/cli@latest my-stack`}</code>
+				<code>{`npx create-better-openclaw@latest my-stack`}</code>
 			</pre>
 			<p>
 				This always fetches the latest published version. Use this if you only generate stacks
@@ -89,29 +89,29 @@ export default function InstallationPage() {
 			</p>
 			<pre>
 				<code>{`# With npm
-npm install -g @better-openclaw/cli
+npm install -g create-better-openclaw
 
 # With pnpm
-pnpm add -g @better-openclaw/cli
+pnpm add -g create-better-openclaw
 
 # With bun
-bun add -g @better-openclaw/cli`}</code>
+bun add -g create-better-openclaw`}</code>
 			</pre>
 			<p>Then run directly:</p>
 			<pre>
-				<code>{`@better-openclaw/cli my-stack`}</code>
+				<code>{`create-better-openclaw my-stack`}</code>
 			</pre>
 
 			<h3>Updating a Global Install</h3>
 			<pre>
 				<code>{`# Check current version
-@better-openclaw/cli --version
+create-better-openclaw --version
 
 # Update to latest
-npm update -g @better-openclaw/cli
+npm update -g create-better-openclaw
 
 # Or reinstall
-npm install -g @better-openclaw/cli@latest`}</code>
+npm install -g create-better-openclaw@latest`}</code>
 			</pre>
 
 			<h2>Verify Installation</h2>
@@ -127,13 +127,13 @@ docker info
 docker compose version
 
 # Test the CLI
-npx @better-openclaw/cli --help`}</code>
+npx create-better-openclaw --help`}</code>
 			</pre>
 			<p>
 				Expected output from <code>--help</code>:
 			</p>
 			<pre>
-				<code>{`@better-openclaw/cli <project-name>
+				<code>{`create-better-openclaw <project-name>
 
 Generate a production-ready OpenClaw stack with Docker Compose
 
@@ -191,7 +191,7 @@ echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 
 # Then install again
-npm install -g @better-openclaw/cli`}</code>
+npm install -g create-better-openclaw`}</code>
 			</pre>
 
 			<h3>WSL2 Docker Integration</h3>

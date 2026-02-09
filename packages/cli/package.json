@@ -1,5 +1,5 @@
 {
-  "name": "@better-openclaw/cli",
+  "name": "create-better-openclaw",
   "version": "0.0.1",
   "description": "CLI tool for scaffolding production-ready OpenClaw stacks with Docker Compose",
   "type": "module",
@@ -45,7 +45,7 @@
     "clawexa",
     "openclaw",
     "better-openclaw",
-    "@better-openclaw/cli",
+    "create-better-openclaw",
     "create-better-openclaw",
     "better-openclaw-cli",
     "docker",
