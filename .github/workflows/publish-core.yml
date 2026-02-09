@@ -24,13 +24,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm lint
+      - run: pnpm lint --filter @better-openclaw/core
 
-      - run: pnpm typecheck
+      - run: pnpm typecheck --filter @better-openclaw/core
 
-      - run: pnpm test
+      - run: pnpm test --filter @better-openclaw/core
 
-      - run: pnpm build
+      - run: pnpm build --filter @better-openclaw/core
 
       - name: Publish Core to npm
         run: pnpm publish --filter @better-openclaw/core --no-git-checks --access public
