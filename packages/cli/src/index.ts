@@ -5,7 +5,7 @@ import { runNonInteractive } from "./non-interactive.js";
 import { runWizard } from "./wizard.js";
 
 const program = new Command()
-	.name("create-better-openclaw")
+	.name("@better-openclaw/cli")
 	.description("Scaffold production-ready OpenClaw stacks with Docker Compose")
 	.version("1.0.0")
 	.argument("[project-directory]", "Directory name for the generated project")

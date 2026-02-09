@@ -36,7 +36,7 @@ pnpm dev
 better-openclaw/
   packages/
     core/     # Shared logic: schemas, services, resolver, composer, generators
-    cli/      # Interactive CLI tool (npm: create-better-openclaw)
+    cli/      # Interactive CLI tool (npm: @better-openclaw/cli)
     api/      # REST API server (Hono)
     web/      # Website + visual stack builder (Next.js)
   skills/     # SKILL.md templates for OpenClaw

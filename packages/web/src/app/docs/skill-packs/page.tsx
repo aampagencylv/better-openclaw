@@ -159,10 +159,10 @@ export default function SkillPacksPage() {
 			<h2>Using Skill Packs</h2>
 			<pre>
 				<code>{`# Via CLI flags
-npx create-better-openclaw my-stack --skills researcher,memory --yes
+npx @better-openclaw/cli my-stack --skills researcher,memory --yes
 
 # Via the interactive wizard — select during step 4
-npx create-better-openclaw my-stack
+npx @better-openclaw/cli my-stack
 
 # Via the API
 curl -X POST https://better-openclaw.dev/api/v1/generate \\
@@ -232,7 +232,7 @@ curl -X POST https://better-openclaw.dev/api/v1/generate \\
 			</p>
 			<pre>
 				<code>{`# Researcher + Memory + Automation
-npx create-better-openclaw my-stack \\
+npx @better-openclaw/cli my-stack \\
   --skills researcher,memory,automation \\
   --yes
 

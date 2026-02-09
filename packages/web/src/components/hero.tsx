@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 /* ── Typewriter terminal lines ─────────────────────────────────────────────── */
 const terminalLines = [
-	{ text: "$ npx create-better-openclaw my-stack", style: "text-foreground" },
+	{ text: "$ npx @better-openclaw/cli my-stack", style: "text-foreground" },
 	{ text: "✓ Selected: Redis, Qdrant, n8n, FFmpeg", style: "text-accent" },
 	{
 		text: "✓ Resolved 2 dependencies: PostgreSQL, Prometheus",

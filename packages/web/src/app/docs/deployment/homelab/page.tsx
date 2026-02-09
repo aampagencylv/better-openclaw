@@ -65,7 +65,7 @@ export default function HomelabDeploymentPage() {
 				ensure compatibility:
 			</p>
 			<pre>
-				<code>{`npx create-better-openclaw my-stack \\
+				<code>{`npx @better-openclaw/cli my-stack \\
   --preset minimal \\
   --platform linux/arm64 \\
   --yes`}</code>
@@ -94,7 +94,7 @@ sudo usermod -aG docker $USER
 sudo apt install -y docker-compose-plugin
 
 # Generate a lightweight stack
-npx create-better-openclaw pi-stack \\
+npx @better-openclaw/cli pi-stack \\
   --services redis,searxng \\
   --skills researcher \\
   --platform linux/arm64 \\
@@ -141,7 +141,7 @@ docker run --rm --gpus all nvidia/cuda:12.0-base nvidia-smi`}</code>
 
 			<h3>Generate a GPU-Enabled Stack</h3>
 			<pre>
-				<code>{`npx create-better-openclaw ai-stack \\
+				<code>{`npx @better-openclaw/cli ai-stack \\
   --services ollama,whisper,redis,qdrant \\
   --skills local-ai,memory,voice \\
   --gpu \\
@@ -182,7 +182,7 @@ image: ollama/ollama:rocm`}</code>
 cd /mnt/user/appdata/
 
 # Generate the stack
-npx create-better-openclaw openclaw-stack \\
+npx @better-openclaw/cli openclaw-stack \\
   --preset researcher \\
   --yes
 
@@ -222,7 +222,7 @@ curl -fsSL https://get.docker.com | sh
 apt install -y docker-compose-plugin
 
 # Generate and start your stack
-npx create-better-openclaw my-stack --preset researcher --yes
+npx @better-openclaw/cli my-stack --preset researcher --yes
 cd my-stack && docker compose up -d`}</code>
 			</pre>
 

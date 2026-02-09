@@ -11,14 +11,14 @@ export default function CliReferencePage() {
 		<>
 			<h1>CLI Reference</h1>
 			<p>
-				The <code>create-better-openclaw</code> CLI is the primary way to generate OpenClaw stacks.
+				The <code>@better-openclaw/cli</code> CLI is the primary way to generate OpenClaw stacks.
 				It supports both an <Link href="/docs/cli/wizard">interactive wizard</Link> and a fully
 				non-interactive mode for CI/CD pipelines.
 			</p>
 
 			<h2>Basic Usage</h2>
 			<pre>
-				<code>{`create-better-openclaw <project-name> [options]`}</code>
+				<code>{`@better-openclaw/cli <project-name> [options]`}</code>
 			</pre>
 			<p>
 				If no options are provided, the CLI launches the interactive wizard. If <code>--yes</code>{" "}
@@ -171,10 +171,10 @@ export default function CliReferencePage() {
 			</p>
 			<pre>
 				<code>{`# Minimal stack with no prompts
-npx create-better-openclaw my-stack --preset minimal --yes
+npx @better-openclaw/cli my-stack --preset minimal --yes
 
 # Custom service selection
-npx create-better-openclaw my-stack \\
+npx @better-openclaw/cli my-stack \\
   --services qdrant,redis,n8n,searxng \\
   --skills researcher,automation \\
   --proxy caddy \\
@@ -182,7 +182,7 @@ npx create-better-openclaw my-stack \\
   --yes
 
 # Dry run to preview
-npx create-better-openclaw my-stack \\
+npx @better-openclaw/cli my-stack \\
   --preset full \\
   --dry-run`}</code>
 			</pre>
@@ -191,7 +191,7 @@ npx create-better-openclaw my-stack \\
 
 			<h3>Research Assistant Stack</h3>
 			<pre>
-				<code>{`npx create-better-openclaw research-stack \\
+				<code>{`npx @better-openclaw/cli research-stack \\
   --preset researcher \\
   --proxy caddy \\
   --domain research.example.com \\
@@ -200,7 +200,7 @@ npx create-better-openclaw my-stack \\
 
 			<h3>Local-Only AI (No Cloud APIs)</h3>
 			<pre>
-				<code>{`npx create-better-openclaw local-ai \\
+				<code>{`npx @better-openclaw/cli local-ai \\
   --services ollama,whisper,redis,qdrant \\
   --skills local-ai,memory \\
   --gpu \\
@@ -209,7 +209,7 @@ npx create-better-openclaw my-stack \\
 
 			<h3>Production VPS Deployment</h3>
 			<pre>
-				<code>{`npx create-better-openclaw prod-stack \\
+				<code>{`npx @better-openclaw/cli prod-stack \\
   --preset devops \\
   --proxy caddy \\
   --domain openclaw.mycompany.com \\
@@ -219,7 +219,7 @@ npx create-better-openclaw my-stack \\
 
 			<h3>ARM64 Homelab (Raspberry Pi / Apple Silicon)</h3>
 			<pre>
-				<code>{`npx create-better-openclaw homelab-stack \\
+				<code>{`npx @better-openclaw/cli homelab-stack \\
   --preset minimal \\
   --platform linux/arm64 \\
   --yes`}</code>
@@ -227,7 +227,7 @@ npx create-better-openclaw my-stack \\
 
 			<h3>Custom Output Directory</h3>
 			<pre>
-				<code>{`npx create-better-openclaw my-stack \\
+				<code>{`npx @better-openclaw/cli my-stack \\
   --preset researcher \\
   --output ~/projects/ai-stacks/my-stack \\
   --yes`}</code>

@@ -11,14 +11,14 @@ export default function WizardPage() {
 		<>
 			<h1>Interactive Wizard</h1>
 			<p>
-				When you run <code>create-better-openclaw</code> without the <code>--yes</code> flag, the
+				When you run <code>@better-openclaw/cli</code> without the <code>--yes</code> flag, the
 				interactive wizard guides you through configuring your stack step by step. This page
 				explains each prompt and how your choices affect the generated output.
 			</p>
 
 			<h2>Launching the Wizard</h2>
 			<pre>
-				<code>{`npx create-better-openclaw@latest my-stack`}</code>
+				<code>{`npx @better-openclaw/cli@latest my-stack`}</code>
 			</pre>
 			<p>
 				The wizard runs in your terminal and asks a series of questions. You can press{" "}
@@ -34,7 +34,7 @@ export default function WizardPage() {
 			<p>
 				Enter the name for your project directory. This is also used as the Docker Compose project
 				name. If you already passed a name as an argument (e.g.{" "}
-				<code>create-better-openclaw my-stack</code>), this step is skipped.
+				<code>@better-openclaw/cli my-stack</code>), this step is skipped.
 			</p>
 			<ul>
 				<li>Must be a valid directory name (no spaces or special characters)</li>
