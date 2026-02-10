@@ -18,7 +18,12 @@ const program = new Command()
 	.option("--monitoring", "Include monitoring stack")
 	.option("--no-monitoring", "Exclude monitoring")
 	.option("--gpu", "Enable GPU passthrough for AI services")
-	.option("--platform <arch>", "Target platform", "linux/amd64")
+	.option("--deployment-type <type>", "Deployment type: docker or bare-metal", "docker")
+	.option(
+		"--platform <arch>",
+		"Target platform (linux/amd64, linux/arm64, windows/amd64, macos/amd64, macos/arm64)",
+		"linux/amd64",
+	)
 	.option("--output-format <fmt>", "Output format: directory, tar, zip", "directory")
 	.option("--dry-run", "Show what would be generated without writing files")
 	.option("--open", "Open web UI stack builder in browser")
@@ -73,6 +78,7 @@ const program = new Command()
 					domain: options.domain as string | undefined,
 					gpu: options.gpu as boolean | undefined,
 					monitoring: options.monitoring as boolean | undefined,
+					deploymentType: options.deploymentType as string | undefined,
 					platform: options.platform as string | undefined,
 					dryRun: options.dryRun as boolean | undefined,
 					yes: options.yes as boolean | undefined,

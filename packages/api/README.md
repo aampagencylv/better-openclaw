@@ -13,7 +13,7 @@ Base path: `/v1`
 | GET | `/skills` | List skill packs (`?services=id1,id2`) |
 | GET | `/presets` | List preset configurations |
 | POST | `/validate` | Validate stack configuration |
-| POST | `/generate` | Generate stack (returns files + metadata) |
+| POST | `/generate` | Generate stack (returns files + metadata). Body: `projectName`, `services`, `skillPacks?`, `proxy?`, `domain?`, `gpu?`, `platform?`, `deployment?`, `deploymentType?` (docker \| bare-metal; bare-metal = native + Docker hybrid with platform-specific install scripts), `monitoring?` |
 | GET | `/openapi.json` | OpenAPI specification |
 
 ## Run

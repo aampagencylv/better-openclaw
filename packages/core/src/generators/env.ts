@@ -9,6 +9,8 @@ export interface EnvGeneratorOptions {
 	generateSecrets: boolean;
 	domain?: string;
 	openclawVersion?: string;
+	/** When set, host-like vars (e.g. REDIS_HOST) for these services use host.docker.internal so gateway in Docker can reach native services on host. */
+	nativeServiceIds?: Set<string>;
 }
 
 /**
@@ -230,18 +232,28 @@ export function generateEnvFiles(
 			actualValue: "",
 		});
 
+		const isNative = options.nativeServiceIds?.has(definition.id);
+
 		for (const envVar of allEnvVars) {
 			if (seenKeys.has(envVar.key)) continue;
 			seenKeys.add(envVar.key);
 
 			const secretValue = options.generateSecrets ? randomBytes(24).toString("hex") : "";
 
-			const exampleValue = envVar.secret
-				? `your_${envVar.key.toLowerCase()}_here`
-				: envVar.defaultValue;
+			// For native services, host-like vars must point to host so gateway (in Docker) can reach them
+			const isHostVar = envVar.key.endsWith("_HOST");
+			const hostValue = isNative && isHostVar ? "host.docker.internal" : null;
+
+			const exampleValue = hostValue
+				? hostValue
+				: envVar.secret
+					? `your_${envVar.key.toLowerCase()}_here`
+					: envVar.defaultValue;
 
 			let actualValue: string;
-			if (envVar.secret) {
+			if (hostValue) {
+				actualValue = hostValue;
+			} else if (envVar.secret) {
 				actualValue = envVar.defaultValue.startsWith("${") ? envVar.defaultValue : secretValue;
 			} else {
 				actualValue = envVar.defaultValue;

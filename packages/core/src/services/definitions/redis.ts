@@ -79,4 +79,21 @@ export const redisDefinition: ServiceDefinition = {
 
 	minMemoryMB: 128,
 	gpuRequired: false,
+
+	nativeSupported: true,
+	nativeRecipes: [
+		{
+			platform: "linux",
+			installSteps: [
+				'command -v redis-server >/dev/null 2>&1 || (command -v apt-get >/dev/null 2>&1 && sudo apt-get update -qq && sudo apt-get install -y -qq redis-server)',
+				'command -v redis-server >/dev/null 2>&1 || (command -v dnf >/dev/null 2>&1 && sudo dnf install -y redis)',
+			],
+			startCommand: "sudo systemctl start redis-server 2>/dev/null || sudo systemctl start redis",
+			stopCommand: "sudo systemctl stop redis-server 2>/dev/null || sudo systemctl stop redis",
+			configPath: "/etc/redis/redis.conf",
+			configTemplate:
+				"# Generated for OpenClaw bare-metal\nport 6379\nrequirepass ${REDIS_PASSWORD}\nbind 127.0.0.1 ::1\n",
+			systemdUnit: "redis-server",
+		},
+	],
 };

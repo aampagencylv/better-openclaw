@@ -6,24 +6,40 @@ import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 import { generatePostgresInit } from "./generators/postgres-init.js";
 import { generatePrometheusConfig } from "./generators/prometheus.js";
 import { generateReadme } from "./generators/readme.js";
+import {
+	partitionBareMetal,
+	platformToNativePlatform,
+	resolvedWithOnlyServices,
+} from "./bare-metal-partition.js";
+import { generateBareMetalInstall } from "./generators/bare-metal-install.js";
+import { generateNativeInstallScripts } from "./generators/native-services.js";
 import { generateScripts } from "./generators/scripts.js";
 import { generateSkillFiles } from "./generators/skills.js";
 import { resolve } from "./resolver.js";
 import type { GeneratedFiles, GenerationInput, GenerationResult, ResolverInput } from "./types.js";
+import type { Platform } from "./types.js";
 import { validate } from "./validator.js";
+
+/** Resolver/compose only support linux image platforms; normalize for bare-metal (windows/macos). */
+function getComposePlatform(platform: Platform): "linux/amd64" | "linux/arm64" {
+	if (platform === "linux/amd64" || platform === "linux/arm64") return platform;
+	return "linux/amd64";
+}
 
 /**
  * Main orchestration function: takes generation input, resolves dependencies,
  * generates all files, validates, and returns the complete file tree.
  */
 export function generate(input: GenerationInput): GenerationResult {
+	const composePlatform = getComposePlatform(input.platform);
+
 	// 1. Resolve dependencies
 	const resolverInput: ResolverInput = {
 		services: input.services,
 		skillPacks: input.skillPacks,
 		proxy: input.proxy,
 		gpu: input.gpu,
-		platform: input.platform,
+		platform: composePlatform,
 		monitoring: input.monitoring,
 	};
 	const resolved = resolve(resolverInput);
@@ -34,20 +50,37 @@ export function generate(input: GenerationInput): GenerationResult {
 		);
 	}
 
+	const isBareMetal = input.deploymentType === "bare-metal";
+	let resolvedForCompose = resolved;
+	let nativeIds = new Set<string>();
+	let nativeServices: typeof resolved.services = [];
+	let dockerOnlyServices: typeof resolved.services = [];
+
+	if (isBareMetal) {
+		const partition = partitionBareMetal(resolved, input.platform);
+		nativeServices = partition.nativeServices;
+		dockerOnlyServices = partition.dockerOnlyServices;
+		nativeIds = partition.nativeIds;
+		if (nativeServices.length > 0) {
+			resolvedForCompose = resolvedWithOnlyServices(resolved, dockerOnlyServices);
+		}
+	}
+
 	// 2. Generate Docker Compose YAML (multi-file)
 	const composeOptions = {
 		projectName: input.projectName,
 		proxy: input.proxy,
 		domain: input.domain,
 		gpu: input.gpu,
-		platform: input.platform,
+		platform: composePlatform,
 		deployment: input.deployment,
 		openclawVersion: input.openclawVersion,
+		bareMetalNativeHost: isBareMetal && nativeIds.size > 0,
 	};
-	const composeResult = composeMultiFile(resolved, composeOptions);
+	const composeResult = composeMultiFile(resolvedForCompose, composeOptions);
 
 	// 3. Validate (using the base docker-compose.yml)
-	const validation = validate(resolved, composeResult.files["docker-compose.yml"] ?? "", {
+	const validation = validate(resolvedForCompose, composeResult.files["docker-compose.yml"] ?? "", {
 		domain: input.domain,
 		generateSecrets: input.generateSecrets,
 	});
@@ -63,11 +96,12 @@ export function generate(input: GenerationInput): GenerationResult {
 		files[filename] = content;
 	}
 
-	// Environment files
+	// Environment files (when bare-metal with native services, host vars use host.docker.internal)
 	const envFiles = generateEnvFiles(resolved, {
 		generateSecrets: input.generateSecrets,
 		domain: input.domain,
 		openclawVersion: input.openclawVersion,
+		nativeServiceIds: isBareMetal ? nativeIds : undefined,
 	});
 	files[".env.example"] = envFiles.envExample;
 	files[".env"] = envFiles.env;
@@ -92,6 +126,8 @@ export function generate(input: GenerationInput): GenerationResult {
 		projectName: input.projectName,
 		domain: input.domain,
 		proxy: input.proxy,
+		deploymentType: input.deploymentType,
+		hasNativeServices: isBareMetal && nativeServices.length > 0,
 	});
 
 	// Scripts
@@ -144,6 +180,29 @@ export function generate(input: GenerationInput): GenerationResult {
 
 	// SERVICES.md documentation
 	files["docs/SERVICES.md"] = generateServicesDoc(resolved);
+
+	// Bare-metal: native install scripts + top-level installer
+	if (isBareMetal) {
+		if (nativeServices.length > 0) {
+			const nativePlatform = platformToNativePlatform(input.platform);
+			const nativeScripts = generateNativeInstallScripts({
+				nativeServices,
+				platform: nativePlatform,
+				projectName: input.projectName,
+			});
+			for (const [path, content] of Object.entries(nativeScripts)) {
+				files[path] = content;
+			}
+		}
+		const bareMetalFiles = generateBareMetalInstall({
+			platform: input.platform,
+			projectName: input.projectName,
+			hasNativeServices: nativeServices.length > 0,
+		});
+		for (const [path, content] of Object.entries(bareMetalFiles)) {
+			files[path] = content;
+		}
+	}
 
 	// 5. Calculate metadata
 	const skillCount = resolved.services.reduce((sum, s) => sum + s.definition.skills.length, 0);

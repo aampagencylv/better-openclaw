@@ -4,7 +4,7 @@ Next.js web application for better-openclaw: visual stack builder, documentation
 
 ## Features
 
-- **Visual Stack Builder** (`/new`) — Pick services, add skill packs, live preview, one-click download
+- **Visual Stack Builder** (`/new`) — Pick services, add skill packs, live preview; choose Docker (all containers) or bare-metal (native + Docker hybrid) and platform before download
 - **Documentation** (`/docs`) — Installation, CLI, API, services, skill packs, deployment
 - **API Reference** (`/api-docs`) — REST endpoints with curl examples
 - **Showcase** (`/showcase`) — Example stacks and project gallery

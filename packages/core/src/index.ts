@@ -16,18 +16,26 @@ export { generateSkillFiles } from "./generators/skills.js";
 // ─── Presets ────────────────────────────────────────────────────────────────
 export { getAllPresets, getPresetById, presetRegistry } from "./presets/registry.js";
 // ─── Core Engines ───────────────────────────────────────────────────────────
+export {
+	partitionBareMetal,
+	platformToNativePlatform,
+	resolvedWithOnlyServices,
+} from "./bare-metal-partition.js";
 export { resolve } from "./resolver.js";
 export {
 	AddedDependencySchema,
 	ApiErrorSchema,
 	ComposeOptionsSchema,
 	DeploymentTargetSchema,
+	DeploymentTypeSchema,
 	DeploySchema,
 	EnvVariableSchema,
 	ErrorSchema,
 	GenerationInputSchema,
 	HealthCheckSchema,
 	MaturitySchema,
+	NativePlatformSchema,
+	NativeRecipeSchema,
 	OutputFormatSchema,
 	PlatformSchema,
 	PortMappingSchema,
@@ -68,7 +76,10 @@ export type {
 	ComposeOptions,
 	Deploy,
 	DeploymentTarget,
+	DeploymentType,
 	EnvVariable,
+	NativePlatform,
+	NativeRecipe,
 	GeneratedFiles,
 	GenerationInput,
 	GenerationMetadata,

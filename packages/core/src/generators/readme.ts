@@ -7,6 +7,10 @@ export interface ReadmeOptions {
 	projectName: string;
 	domain?: string;
 	proxy?: string;
+	/** When "bare-metal", the stack uses native + Docker hybrid. */
+	deploymentType?: "docker" | "bare-metal";
+	/** True when some services run natively on the host (bare-metal only). */
+	hasNativeServices?: boolean;
 }
 
 /**
@@ -16,7 +20,7 @@ export interface ReadmeOptions {
  * service URLs, skill packs, and scripts documentation.
  */
 export function generateReadme(resolved: ResolverOutput, options: ReadmeOptions): string {
-	const { projectName, domain, proxy } = options;
+	const { projectName, domain, proxy, deploymentType, hasNativeServices } = options;
 	const sections: string[] = [];
 
 	// ── Title & Description ─────────────────────────────────────────────────
@@ -26,6 +30,7 @@ export function generateReadme(resolved: ResolverOutput, options: ReadmeOptions)
 > Self-hosted AI agent infrastructure powered by [OpenClaw](https://openclaw.dev).
 
 This project provides a fully configured Docker Compose stack with ${resolved.services.length} services, ready to deploy on any server.
+${deploymentType === "bare-metal" && hasNativeServices ? "\n\n**Bare-metal (native + Docker):** Some services run natively on the host; the rest (including the OpenClaw gateway) run in Docker. Use the top-level `install.sh` or `install.ps1` to install/start native services first, then start the Docker stack." : ""}
 
 ---`);
 

@@ -4,12 +4,15 @@ import type {
 	ApiErrorSchema,
 	ComposeOptionsSchema,
 	DeploymentTargetSchema,
+	DeploymentTypeSchema,
 	DeploySchema,
 	EnvVariableSchema,
 	ErrorSchema,
 	GenerationInputSchema,
 	HealthCheckSchema,
 	MaturitySchema,
+	NativePlatformSchema,
+	NativeRecipeSchema,
 	OutputFormatSchema,
 	PlatformSchema,
 	PortMappingSchema,
@@ -37,6 +40,9 @@ export type Platform = z.infer<typeof PlatformSchema>;
 export type RestartPolicy = z.infer<typeof RestartPolicySchema>;
 export type ProxyType = z.infer<typeof ProxyTypeSchema>;
 export type DeploymentTarget = z.infer<typeof DeploymentTargetSchema>;
+export type DeploymentType = z.infer<typeof DeploymentTypeSchema>;
+export type NativePlatform = z.infer<typeof NativePlatformSchema>;
+export type NativeRecipe = z.infer<typeof NativeRecipeSchema>;
 export type OutputFormat = z.infer<typeof OutputFormatSchema>;
 
 export type PortMapping = z.infer<typeof PortMappingSchema>;

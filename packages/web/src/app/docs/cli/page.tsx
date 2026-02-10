@@ -107,6 +107,22 @@ export default function CliReferencePage() {
 					</tr>
 					<tr>
 						<td>
+							<code>--deployment-type &lt;type&gt;</code>
+						</td>
+						<td>string</td>
+						<td>
+							<code>docker</code>
+						</td>
+						<td>
+							<strong>docker</strong>: all services in containers. <strong>bare-metal</strong>: native + Docker
+							hybrid — services with a native recipe (e.g. Redis on Linux) get install scripts in{" "}
+							<code>native/</code>; top-level <code>install.sh</code> / <code>install.ps1</code> runs
+							native first, then <code>docker compose up</code>. See{" "}
+							<Link href="/docs/deployment#bare-metal">Bare-metal deployment</Link>.
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<code>--generateSecrets</code>
 						</td>
 						<td>boolean</td>
@@ -232,6 +248,20 @@ npx create-better-openclaw my-stack \\
   --output ~/projects/ai-stacks/my-stack \\
   --yes`}</code>
 			</pre>
+
+			<h3>Bare-metal (native + Docker)</h3>
+			<pre>
+				<code>{`npx create-better-openclaw my-stack \\
+  --preset minimal \\
+  --deployment-type bare-metal \\
+  --platform linux/amd64 \\
+  --yes`}</code>
+			</pre>
+			<p>
+				Generates <code>native/install-linux.sh</code> (or Windows/macOS), <code>install.sh</code>/<code>install.ps1</code>, and a
+				Docker Compose file for the remaining services. See{" "}
+				<Link href="/docs/deployment#bare-metal">Deployment → Bare-metal</Link> for details.
+			</p>
 
 			<h2>Exit Codes</h2>
 			<table>

@@ -37,6 +37,13 @@ export default function NewStackPage() {
 	const [generateError, setGenerateError] = useState<string | null>(null);
 	const [downloadComplete, setDownloadComplete] = useState(false);
 	const [pendingRemovalId, setPendingRemovalId] = useState<string | null>(null);
+	const [showDeploymentModal, setShowDeploymentModal] = useState(false);
+	const [deploymentType, setDeploymentType] = useState<"docker" | "bare-metal">("docker");
+	const [platform, setPlatform] = useState<string>("linux/amd64");
+	const [lastDownloadOptions, setLastDownloadOptions] = useState<{
+		deploymentType: "docker" | "bare-metal";
+		platform: string;
+	} | null>(null);
 
 	// Load all services and presets from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
@@ -163,55 +170,58 @@ export default function NewStackPage() {
 		setGenerateError(null);
 	}, []);
 
-	// Download generated stack as a real ZIP file
-	const handleDownload = useCallback(async () => {
-		if (selectedServices.size === 0) return;
-		setIsGenerating(true);
-		setGenerateError(null);
-		setDownloadComplete(false);
-		try {
-			const name = projectName || "my-stack";
+	// Download generated stack as a real ZIP file (optionally with deployment type and platform from modal)
+	const handleDownload = useCallback(
+		async (opts?: { deploymentType: "docker" | "bare-metal"; platform: string }) => {
+			if (selectedServices.size === 0) return;
+			const deploymentType = opts?.deploymentType ?? "docker";
+			const platform = opts?.platform ?? "linux/amd64";
+			setLastDownloadOptions({ deploymentType, platform });
+			setIsGenerating(true);
+			setGenerateError(null);
+			setDownloadComplete(false);
+			try {
+				const name = projectName || "my-stack";
 
-			// 1. Call the generation API to get the files map
-			const result = await generateStack({
-				projectName: name,
-				services: Array.from(selectedServices),
-				skillPacks: [],
-				proxy: "none",
-				gpu: false,
-				platform: "linux/amd64",
-				deployment: "local",
-				monitoring: false,
-			});
+				const result = await generateStack({
+					projectName: name,
+					services: Array.from(selectedServices),
+					skillPacks: [],
+					proxy: "none",
+					gpu: false,
+					platform,
+					deployment: "local",
+					deploymentType,
+					monitoring: false,
+				});
 
-			// 2. Build a real ZIP archive client-side using JSZip
-			const zip = new JSZip();
-			const folder = zip.folder(name);
-			if (folder) {
-				for (const [path, content] of Object.entries(result.files)) {
-					folder.file(path, content);
+				const zip = new JSZip();
+				const folder = zip.folder(name);
+				if (folder) {
+					for (const [path, content] of Object.entries(result.files)) {
+						folder.file(path, content);
+					}
 				}
+
+				const blob = await zip.generateAsync({ type: "blob" });
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement("a");
+				a.href = url;
+				a.download = `${name}.zip`;
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				URL.revokeObjectURL(url);
+
+				setDownloadComplete(true);
+			} catch (err) {
+				setGenerateError(err instanceof Error ? err.message : "Failed to generate stack");
+			} finally {
+				setIsGenerating(false);
 			}
-
-			// 3. Generate ZIP blob and trigger browser download
-			const blob = await zip.generateAsync({ type: "blob" });
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement("a");
-			a.href = url;
-			a.download = `${name}.zip`;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
-			URL.revokeObjectURL(url);
-
-			// 4. Show post-download instructions
-			setDownloadComplete(true);
-		} catch (err) {
-			setGenerateError(err instanceof Error ? err.message : "Failed to generate stack");
-		} finally {
-			setIsGenerating(false);
-		}
-	}, [selectedServices, projectName]);
+		},
+		[selectedServices, projectName],
+	);
 
 	return (
 		<div className="flex min-h-screen flex-col">
@@ -260,7 +270,7 @@ export default function NewStackPage() {
 
 						<button
 							type="button"
-							onClick={handleDownload}
+							onClick={() => setShowDeploymentModal(true)}
 							disabled={selectedServices.size === 0 || isGenerating}
 							className={cn(
 								"flex items-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-semibold transition-all",
@@ -303,11 +313,23 @@ export default function NewStackPage() {
 								<p className="mt-1 text-sm text-muted-foreground">
 									Extract the ZIP and follow these steps:
 								</p>
+								{lastDownloadOptions?.deploymentType === "bare-metal" && (
+									<p className="mt-2 rounded bg-surface/80 px-3 py-2 font-mono text-xs text-foreground">
+										{lastDownloadOptions.platform === "windows/amd64"
+											? ".\\install.ps1"
+											: "./install.sh"}{" "}
+										— Run on your server to install Docker and start the stack.
+									</p>
+								)}
 								<div className="mt-3 space-y-2">
 									{[
 										`cd ${projectName || "my-stack"}`,
 										"cp .env.example .env        # Edit with your API keys",
-										"docker compose up -d        # Start everything",
+										lastDownloadOptions?.deploymentType === "bare-metal"
+											? (lastDownloadOptions.platform === "windows/amd64"
+													? ".\\install.ps1        # Install Docker and start (Windows)"
+													: "./install.sh          # Install Docker and start (Linux/macOS)")
+											: "docker compose up -d        # Start everything",
 										"docker compose logs -f openclaw-gateway   # Watch OpenClaw boot",
 									].map((cmd) => (
 										<div
@@ -443,6 +465,107 @@ export default function NewStackPage() {
 					)}
 				</div>
 			</div>
+
+			{/* Deployment options modal (before building) */}
+			{showDeploymentModal && (
+				<div
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby="deployment-modal-title"
+				>
+					<div className="w-full max-w-md rounded-xl border border-border bg-background p-5 shadow-lg">
+						<h2 id="deployment-modal-title" className="text-lg font-semibold text-foreground">
+							Deployment options
+						</h2>
+						<p className="mt-1 text-sm text-muted-foreground">
+							Choose how you want to run the stack and your target platform.
+						</p>
+
+						<div className="mt-4">
+							<label className="block text-sm font-medium text-foreground">Deployment</label>
+							<div className="mt-2 flex gap-4">
+								<label className="flex cursor-pointer items-center gap-2">
+									<input
+										type="radio"
+										name="deploymentType"
+										checked={deploymentType === "docker"}
+										onChange={() => {
+											setDeploymentType("docker");
+											if (platform.startsWith("windows/") || platform.startsWith("macos/")) {
+												setPlatform("linux/amd64");
+											}
+										}}
+										className="h-4 w-4 border-border text-primary focus:ring-primary"
+									/>
+									<span className="text-sm text-foreground">Docker</span>
+								</label>
+								<label className="flex cursor-pointer items-center gap-2">
+									<input
+										type="radio"
+										name="deploymentType"
+										checked={deploymentType === "bare-metal"}
+										onChange={() => setDeploymentType("bare-metal")}
+										className="h-4 w-4 border-border text-primary focus:ring-primary"
+									/>
+									<span className="text-sm text-foreground">Bare-metal (native + Docker)</span>
+								</label>
+							</div>
+							<p className="mt-1.5 text-xs text-muted-foreground">
+								Docker: all services in containers. Bare-metal: some services (e.g. Redis) run natively on the host; the rest run in Docker. You get <code className="rounded bg-muted px-1">install.sh</code> / <code className="rounded bg-muted px-1">install.ps1</code> and <code className="rounded bg-muted px-1">native/</code> scripts.
+							</p>
+						</div>
+
+						<div className="mt-4">
+							<label htmlFor="platform-select" className="block text-sm font-medium text-foreground">
+								Platform
+							</label>
+							<select
+								id="platform-select"
+								value={platform}
+								onChange={(e) => setPlatform(e.target.value)}
+								className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+							>
+								{deploymentType === "docker" ? (
+									<>
+										<option value="linux/amd64">Linux (amd64)</option>
+										<option value="linux/arm64">Linux (arm64)</option>
+									</>
+								) : (
+									<>
+										<option value="linux/amd64">Linux (amd64)</option>
+										<option value="linux/arm64">Linux (arm64)</option>
+										<option value="windows/amd64">Windows</option>
+										<option value="macos/amd64">macOS (Intel)</option>
+										<option value="macos/arm64">macOS (Apple Silicon)</option>
+									</>
+								)}
+							</select>
+						</div>
+
+						<div className="mt-6 flex justify-end gap-2">
+							<button
+								type="button"
+								onClick={() => setShowDeploymentModal(false)}
+								className="rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
+							>
+								Cancel
+							</button>
+							<button
+								type="button"
+								onClick={() => {
+									setShowDeploymentModal(false);
+									handleDownload({ deploymentType, platform });
+								}}
+								disabled={isGenerating}
+								className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							>
+								Generate and download
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Mandatory service removal confirmation */}
 			{pendingRemovalId && (() => {

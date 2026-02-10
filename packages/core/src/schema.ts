@@ -24,7 +24,18 @@ export const ServiceCategorySchema = z.enum([
 
 export const MaturitySchema = z.enum(["stable", "beta", "experimental"]);
 
-export const PlatformSchema = z.enum(["linux/amd64", "linux/arm64"]);
+export const PlatformSchema = z.enum([
+	"linux/amd64",
+	"linux/arm64",
+	"windows/amd64",
+	"macos/amd64",
+	"macos/arm64",
+]);
+
+/** Platform for Docker image arch only (used by resolver/compose). */
+export const ComposePlatformSchema = z.enum(["linux/amd64", "linux/arm64"]);
+
+export const DeploymentTypeSchema = z.enum(["docker", "bare-metal"]);
 
 export const RestartPolicySchema = z.enum(["unless-stopped", "always", "on-failure", "no"]);
 
@@ -87,6 +98,19 @@ export const SkillBindingSchema = z.object({
 	configOverrides: z.record(z.string(), z.string()).optional(),
 });
 
+/** Platform for native install (linux, windows, macos — no arch). */
+export const NativePlatformSchema = z.enum(["linux", "windows", "macos"]);
+
+export const NativeRecipeSchema = z.object({
+	platform: NativePlatformSchema,
+	installSteps: z.array(z.string()).min(1),
+	startCommand: z.string(),
+	stopCommand: z.string().optional(),
+	configPath: z.string().optional(),
+	configTemplate: z.string().optional(),
+	systemdUnit: z.string().optional(),
+});
+
 // ─── Service Definition ─────────────────────────────────────────────────────
 
 export const ServiceDefinitionSchema = z.object({
@@ -136,6 +160,10 @@ export const ServiceDefinitionSchema = z.object({
 	platforms: z.array(PlatformSchema).optional(),
 	minMemoryMB: z.number().int().min(0).optional(),
 	gpuRequired: z.boolean().default(false),
+
+	// Bare-metal native (install/run on host when no Docker)
+	nativeSupported: z.boolean().optional(),
+	nativeRecipes: z.array(NativeRecipeSchema).optional(),
 });
 
 // ─── Skill Pack ─────────────────────────────────────────────────────────────
@@ -185,6 +213,7 @@ export const GenerationInputSchema = z.object({
 	gpu: z.boolean().default(false),
 	platform: PlatformSchema.default("linux/amd64"),
 	deployment: DeploymentTargetSchema.default("local"),
+	deploymentType: DeploymentTypeSchema.default("docker"),
 	generateSecrets: z.boolean().default(true),
 	openclawVersion: z.string().default("latest"),
 	monitoring: z.boolean().default(false),
@@ -232,6 +261,8 @@ export const ComposeOptionsSchema = z.object({
 	platform: PlatformSchema.default("linux/amd64"),
 	deployment: DeploymentTargetSchema.default("local"),
 	openclawVersion: z.string().default("latest"),
+	/** When true, gateway gets extra_hosts so it can reach host-run (native) services. */
+	bareMetalNativeHost: z.boolean().optional(),
 });
 
 // ─── API Request/Response ───────────────────────────────────────────────────

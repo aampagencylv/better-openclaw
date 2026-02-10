@@ -8,6 +8,7 @@
 <p align="center">
   <a href="#quick-start">Quick Start</a> &bull;
   <a href="#features">Features</a> &bull;
+  <a href="#deployment">Deployment</a> &bull;
   <a href="#service-catalog">Services</a> &bull;
   <a href="#skill-packs">Skill Packs</a> &bull;
   <a href="#architecture">Architecture</a> &bull;
@@ -53,6 +54,19 @@ pnpm create better-openclaw@latest --preset researcher --output ./my-stack
 - **Environment files** -- secure `.env` generation with random secrets
 - **Validation engine** -- port conflicts, resource limits, and configuration checks
 - **Multi-platform support** -- linux/amd64 and linux/arm64
+- **Bare-metal deployment** -- hybrid native + Docker: run supported services natively on the host and use Docker only for the rest (see [Deployment](#deployment))
+
+## Deployment
+
+You can generate stacks for **Docker** (default) or **bare-metal**:
+
+- **Docker** — All services run in containers. Use `docker compose up` to start everything.
+- **Bare-metal** — A **native + Docker hybrid**: services that have a **native recipe** (install/run on the host) run natively; the rest run in Docker. The generator outputs:
+  - One **docker-compose** for Docker-only services plus the OpenClaw gateway.
+  - **Native install/run scripts** (e.g. `native/install-linux.sh`) for services that support native install on the chosen platform.
+  - A **top-level installer** (`install.sh` or `install.ps1`) that installs and starts native services first, then runs `docker compose up` for the rest.
+
+Only services with a native recipe run on the host; others remain in Docker. Currently **Redis** supports a native Linux recipe (apt/dnf + systemd). More services (e.g. PostgreSQL, Caddy, Prometheus) may be added over time. Node/Python apps, La Suite Meet, Ollama, and similar stay Docker-only.
 
 ## Service Catalog
 

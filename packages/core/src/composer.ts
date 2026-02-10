@@ -100,6 +100,10 @@ function buildGatewayServices(
 		],
 	};
 
+	if (options.bareMetalNativeHost) {
+		gateway.extra_hosts = ["host.docker.internal:host-gateway"];
+	}
+
 	if (dependsOn && Object.keys(dependsOn).length > 0) {
 		gateway.depends_on = dependsOn;
 	}

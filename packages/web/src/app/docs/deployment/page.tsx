@@ -1,15 +1,22 @@
 import Link from "next/link";
 
 export const metadata = {
-	title: "Local Deployment — better-openclaw Docs",
+	title: "Deployment — better-openclaw Docs",
 	description:
-		"Deploy your OpenClaw stack locally with Docker Desktop. Development setup, configuration, and maintenance.",
+		"Docker and bare-metal (native + Docker hybrid) deployment. Local setup, configuration, and native install scripts.",
 };
 
 export default function DeploymentPage() {
 	return (
 		<>
-			<h1>Local / Docker Desktop</h1>
+			<h1>Deployment</h1>
+			<p>
+				You can run your stack in two ways: <strong>Docker</strong> (all services in containers) or{" "}
+				<strong>bare-metal</strong> (native + Docker hybrid). This page covers the default Docker
+				workflow. For bare-metal, see the section below.
+			</p>
+
+			<h2>Local / Docker Desktop</h2>
 			<p>
 				The simplest way to run your OpenClaw stack. Ideal for development, testing, and personal
 				use. Requires{" "}
@@ -23,7 +30,7 @@ export default function DeploymentPage() {
 				(macOS/Windows) or Docker Engine (Linux).
 			</p>
 
-			<h2>Quick Start</h2>
+			<h3>Quick Start</h3>
 			<pre>
 				<code>{`# Generate your stack
 npx create-better-openclaw my-stack --preset researcher --yes
@@ -57,7 +64,7 @@ N8N_BASIC_AUTH_USER=admin
 N8N_BASIC_AUTH_PASSWORD=      # Auto-generated if --generateSecrets`}</code>
 			</pre>
 
-			<h3>Ports</h3>
+			<h4>Ports</h4>
 			<p>Default port assignments for common services:</p>
 			<table>
 				<thead>
@@ -125,7 +132,7 @@ N8N_BASIC_AUTH_PASSWORD=      # Auto-generated if --generateSecrets`}</code>
 				</tbody>
 			</table>
 
-			<h2>Common Operations</h2>
+			<h3>Common Operations</h3>
 			<pre>
 				<code>{`# Start all services
 docker compose up -d
@@ -146,7 +153,7 @@ docker compose logs -f n8n
 docker compose up -d --scale worker=3`}</code>
 			</pre>
 
-			<h2>Helper Scripts</h2>
+			<h3>Helper Scripts</h3>
 			<p>
 				Generated stacks include convenience scripts in the <code>scripts/</code> directory:
 			</p>
@@ -193,7 +200,7 @@ docker compose up -d --scale worker=3`}</code>
 
 			<h2>Troubleshooting</h2>
 
-			<h3>Port Conflict</h3>
+			<h4>Port Conflict</h4>
 			<p>
 				If a port is already in use, edit <code>docker-compose.yml</code> and change the host port:
 			</p>
@@ -204,7 +211,7 @@ docker compose up -d --scale worker=3`}</code>
       - "6334:6333"  # Changed host port to 6334`}</code>
 			</pre>
 
-			<h3>Service Won&apos;t Start</h3>
+			<h4>Service Won&apos;t Start</h4>
 			<pre>
 				<code>{`# Check the service logs
 docker compose logs qdrant
@@ -217,7 +224,7 @@ docker compose down
 docker compose up -d`}</code>
 			</pre>
 
-			<h3>Insufficient Memory</h3>
+			<h4>Insufficient Memory</h4>
 			<p>
 				Docker Desktop has a default memory limit. Increase it in Docker Desktop → Settings →
 				Resources → Memory.
@@ -227,6 +234,42 @@ docker compose up -d`}</code>
 				<li>Standard stack: 4 GB</li>
 				<li>Full stack or AI services: 8 GB+</li>
 			</ul>
+
+			<h2 id="bare-metal">Bare-metal (native + Docker hybrid)</h2>
+			<p>
+				With <code>--deployment-type bare-metal</code> (or by choosing &quot;Bare-metal&quot; in the{" "}
+				<Link href="/new">stack builder</Link>), you get a <strong>native + Docker hybrid</strong>:
+			</p>
+			<ul>
+				<li>
+					<strong>Services that have a native recipe</strong> (e.g. Redis on Linux) run on the host
+					via install/run scripts in <code>native/</code> (e.g. <code>native/install-linux.sh</code>).
+				</li>
+				<li>
+					<strong>All other services</strong> (including the OpenClaw gateway) run in Docker. The
+					generated <code>docker-compose.yml</code> only includes those; the gateway connects to
+					native services via <code>host.docker.internal</code>.
+				</li>
+				<li>
+					A <strong>top-level installer</strong> (<code>install.sh</code> or <code>install.ps1</code>)
+					installs and starts native services first, then runs <code>docker compose up</code> for the
+					rest.
+				</li>
+			</ul>
+			<p>
+				Currently <strong>Redis</strong> supports a native Linux recipe (apt/dnf + systemd). More
+				services may be added over time. Node/Python apps, La Suite Meet, Ollama, and similar remain
+				Docker-only.
+			</p>
+			<pre>
+				<code>{`# Generate a bare-metal stack (e.g. Redis native, rest in Docker)
+npx create-better-openclaw my-stack --preset minimal --deployment-type bare-metal --platform linux/amd64 --yes
+
+cd my-stack
+cp .env.example .env
+./install.sh          # Linux/macOS: installs native services, then docker compose up
+# or: .\\install.ps1  # Windows`}</code>
+			</pre>
 
 			<h2>Security Notes</h2>
 			<ul>

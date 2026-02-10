@@ -149,8 +149,28 @@ describe("GenerationInputSchema", () => {
 		expect(result.gpu).toBe(false);
 		expect(result.platform).toBe("linux/amd64");
 		expect(result.deployment).toBe("local");
+		expect(result.deploymentType).toBe("docker");
 		expect(result.generateSecrets).toBe(true);
 		expect(result.openclawVersion).toBe("latest");
+	});
+
+	it("accepts deploymentType bare-metal and extended platform", () => {
+		const result = GenerationInputSchema.parse({
+			projectName: "my-stack",
+			services: ["redis"],
+			deploymentType: "bare-metal",
+			platform: "windows/amd64",
+		});
+		expect(result.deploymentType).toBe("bare-metal");
+		expect(result.platform).toBe("windows/amd64");
+	});
+
+	it("accepts platform macos/arm64", () => {
+		const result = GenerationInputSchema.parse({
+			projectName: "my-stack",
+			platform: "macos/arm64",
+		});
+		expect(result.platform).toBe("macos/arm64");
 	});
 });
 
@@ -212,6 +232,27 @@ describe("ServiceDefinitionSchema", () => {
 	it("omitting mandatory leaves it undefined or false (schema default false)", () => {
 		const result = ServiceDefinitionSchema.parse(validDef);
 		expect(result.mandatory !== true).toBe(true); // false or undefined both mean not mandatory
+	});
+
+	it("accepts nativeSupported and nativeRecipes for bare-metal", () => {
+		const withNative = {
+			...validDef,
+			nativeSupported: true,
+			nativeRecipes: [
+				{
+					platform: "linux",
+					installSteps: ["apt-get install -y redis-server"],
+					startCommand: "systemctl start redis-server",
+					stopCommand: "systemctl stop redis-server",
+					systemdUnit: "redis-server",
+				},
+			],
+		};
+		const result = ServiceDefinitionSchema.parse(withNative);
+		expect(result.nativeSupported).toBe(true);
+		expect(result.nativeRecipes).toHaveLength(1);
+		expect(result.nativeRecipes![0].platform).toBe("linux");
+		expect(result.nativeRecipes![0].startCommand).toBe("systemctl start redis-server");
 	});
 });
 

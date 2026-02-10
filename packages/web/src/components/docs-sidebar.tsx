@@ -70,6 +70,7 @@ const navigation: NavSection[] = [
 		icon: <Rocket className="h-4 w-4" />,
 		items: [
 			{ title: "Local / Docker", href: "/docs/deployment" },
+			{ title: "Bare-metal", href: "/docs/deployment#bare-metal" },
 			{ title: "VPS / Cloud", href: "/docs/deployment/vps" },
 			{ title: "Homelab", href: "/docs/deployment/homelab" },
 		],

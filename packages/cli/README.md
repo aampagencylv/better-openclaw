@@ -25,6 +25,8 @@ pnpm create better-openclaw@latest --services ollama,qdrant,n8n --skills ollama-
 | `--domain <domain>` | Domain for reverse proxy auto-SSL |
 | `--monitoring` | Include Grafana + Prometheus |
 | `--gpu` | Enable GPU passthrough for AI services |
+| `--deployment-type <type>` | **docker** (default): all services in containers. **bare-metal**: native + Docker hybrid — services with a native recipe (e.g. Redis on Linux) get install/run scripts in `native/`, and a top-level `install.sh` or `install.ps1` runs native services first, then `docker compose up` for the rest. |
+| `--platform <arch>` | Target platform: linux/amd64, linux/arm64, windows/amd64, macos/amd64, macos/arm64 |
 | `--dry-run` | Preview without writing files |
 | `--open` | Open web UI stack builder in browser |
 

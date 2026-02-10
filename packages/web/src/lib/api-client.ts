@@ -102,6 +102,7 @@ export async function generateStack(config: {
 	gpu?: boolean;
 	platform?: string;
 	deployment?: string;
+	deploymentType?: "docker" | "bare-metal";
 	monitoring?: boolean;
 }): Promise<GenerateResponse> {
 	return apiFetch<GenerateResponse>("/generate", {

@@ -118,7 +118,7 @@ const endpoints: Endpoint[] = [
 		method: "POST",
 		path: "/v1/generate",
 		description:
-			"Generate a complete Docker Compose stack. Returns a ZIP archive with all configuration files.",
+			"Generate a complete Docker Compose stack (or bare-metal: native + Docker hybrid). Returns a ZIP archive with all configuration files. Use deploymentType: 'bare-metal' for install scripts and native services.",
 		body: {
 			projectName: "my-stack",
 			services: ["qdrant", "ollama", "n8n"],
@@ -128,6 +128,7 @@ const endpoints: Endpoint[] = [
 			gpu: false,
 			platform: "linux/amd64",
 			deployment: "docker-compose",
+			deploymentType: "docker",
 			generateSecrets: true,
 		},
 		response: {
@@ -136,7 +137,7 @@ const endpoints: Endpoint[] = [
 		},
 		curl: `curl -X POST ${BASE_URL}/generate \\
   -H "Content-Type: application/json" \\
-  -d '{"projectName":"my-stack","services":["qdrant","ollama","n8n"],"skillPacks":["researcher"],"proxy":"traefik","domain":"mystack.local","gpu":false,"platform":"linux/amd64","deployment":"docker-compose","generateSecrets":true}' \\
+  -d '{"projectName":"my-stack","services":["qdrant","ollama","n8n"],"skillPacks":["researcher"],"proxy":"traefik","domain":"mystack.local","gpu":false,"platform":"linux/amd64","deployment":"docker-compose","deploymentType":"docker","generateSecrets":true}' \\
   -o stack.zip`,
 	},
 	{

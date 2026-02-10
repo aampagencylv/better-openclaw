@@ -81,6 +81,9 @@ export const myServiceDefinition: ServiceDefinition = {
   conflictsWith: [],
   minMemoryMB: 256,
   gpuRequired: false,
+  // Optional: enable native install on host (bare-metal deployment)
+  // nativeSupported: true,
+  // nativeRecipes: [{ platform: "linux", installSteps: ["apt install ..."], startCommand: "systemctl start ...", configPath: "/etc/...", configTemplate: "..." }],
 };
 ```
 
@@ -92,6 +95,10 @@ export const myServiceDefinition: ServiceDefinition = {
 3. Run tests: `pnpm test`
 
 4. If the service has an OpenClaw skill, create a `skills/<skill-id>/SKILL.md` template.
+
+### Native recipes (bare-metal)
+
+For services that can run natively on the host (e.g. Redis, PostgreSQL), you can add `nativeSupported: true` and a `nativeRecipes` array. Each recipe specifies `platform` (linux, windows, macos), `installSteps`, `startCommand`, and optionally `configPath`, `configTemplate`, `stopCommand`, `systemdUnit`. When users generate a bare-metal stack, those services get install/run scripts in `native/` and are excluded from the Docker Compose file; the gateway connects to them via `host.docker.internal`. See `packages/core/src/schema.ts` for `NativeRecipeSchema` and `packages/core/src/services/definitions/redis.ts` for an example.
 
 ## Adding a Skill Pack
 

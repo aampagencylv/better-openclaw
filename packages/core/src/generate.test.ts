@@ -190,6 +190,79 @@ describe("generate (end-to-end)", () => {
 		expect(result.metadata.serviceCount).toBe(lasuiteMeetServices.length);
 	});
 
+	it("generates bare-metal installer for Windows (install.ps1)", () => {
+		const result = generate({
+			projectName: "win-stack",
+			services: ["redis"],
+			skillPacks: [],
+			proxy: "none",
+			gpu: false,
+			platform: "windows/amd64",
+			deployment: "local",
+			deploymentType: "bare-metal",
+			generateSecrets: true,
+			openclawVersion: "latest",
+		});
+		expect(result.files).toHaveProperty("install.ps1");
+		expect(result.files["install.ps1"]).toContain("docker compose");
+		expect(result.files["install.ps1"]).toContain("PowerShell");
+	});
+
+	it("generates bare-metal installer for Linux/macOS (install.sh)", () => {
+		const result = generate({
+			projectName: "linux-stack",
+			services: ["redis"],
+			skillPacks: [],
+			proxy: "none",
+			gpu: false,
+			platform: "linux/amd64",
+			deployment: "local",
+			deploymentType: "bare-metal",
+			generateSecrets: true,
+			openclawVersion: "latest",
+		});
+		expect(result.files).toHaveProperty("install.sh");
+		expect(result.files["install.sh"]).toContain("docker");
+		expect(result.files["install.sh"]).toContain("compose");
+	});
+
+	it("bare-metal with redis on Linux: native script, compose excludes redis, gateway has extra_hosts", () => {
+		const result = generate({
+			projectName: "bare-metal-redis",
+			services: ["redis"],
+			skillPacks: [],
+			proxy: "none",
+			gpu: false,
+			platform: "linux/amd64",
+			deployment: "local",
+			deploymentType: "bare-metal",
+			generateSecrets: true,
+			openclawVersion: "latest",
+		});
+
+		// Native install script for Linux
+		expect(result.files).toHaveProperty("native/install-linux.sh");
+		expect(result.files["native/install-linux.sh"]).toContain("redis");
+
+		// Docker compose must NOT include redis (native); only gateway/openclaw
+		const composed = parse(result.files["docker-compose.yml"]!);
+		expect(composed.services).not.toHaveProperty("redis");
+		expect(composed.services).toHaveProperty("openclaw-gateway");
+
+		// Gateway must have extra_hosts for host.docker.internal
+		const gateway = composed.services["openclaw-gateway"];
+		expect(gateway).toBeDefined();
+		expect(gateway.extra_hosts).toBeDefined();
+		expect(
+			(gateway.extra_hosts as string[]).some(
+				(h: string) => h.includes("host.docker.internal") && h.includes("host-gateway"),
+			),
+		).toBe(true);
+
+		// .env should set REDIS_HOST to host.docker.internal for gateway to reach native Redis
+		expect(result.files[".env"]).toContain("REDIS_HOST=host.docker.internal");
+	});
+
 	it("throws on conflicting services", () => {
 		expect(() =>
 			generate({

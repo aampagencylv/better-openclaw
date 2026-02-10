@@ -1,4 +1,5 @@
 import type { GenerationInput, Platform, ProxyType } from "@better-openclaw/core";
+import type { DeploymentType } from "@better-openclaw/core";
 import {
 	generate,
 	getAllPresets,
@@ -20,6 +21,7 @@ export interface NonInteractiveOptions {
 	domain?: string;
 	gpu?: boolean;
 	monitoring?: boolean;
+	deploymentType?: string;
 	platform?: string;
 	dryRun?: boolean;
 	yes?: boolean;
@@ -112,11 +114,23 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		throw new Error(`Invalid proxy type: "${options.proxy}". Valid options: none, caddy, traefik`);
 	}
 
-	// Validate platform
-	const platform = (options.platform ?? "linux/amd64") as Platform;
-	if (!["linux/amd64", "linux/arm64"].includes(platform)) {
+	// Validate deployment type
+	const deploymentType = (options.deploymentType ?? "docker") as DeploymentType;
+	if (!["docker", "bare-metal"].includes(deploymentType)) {
 		throw new Error(
-			`Invalid platform: "${options.platform}". Valid options: linux/amd64, linux/arm64`,
+			`Invalid deployment type: "${options.deploymentType}". Valid options: docker, bare-metal`,
+		);
+	}
+
+	// Validate platform
+	const validPlatforms =
+		deploymentType === "docker"
+			? ["linux/amd64", "linux/arm64"]
+			: ["linux/amd64", "linux/arm64", "windows/amd64", "macos/amd64", "macos/arm64"];
+	const platform = (options.platform ?? "linux/amd64") as Platform;
+	if (!validPlatforms.includes(platform)) {
+		throw new Error(
+			`Invalid platform: "${options.platform}". Valid options: ${validPlatforms.join(", ")}`,
 		);
 	}
 
@@ -130,6 +144,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		gpu: options.gpu ?? false,
 		platform,
 		deployment: "local",
+		deploymentType,
 		generateSecrets: true,
 		openclawVersion: "latest",
 		monitoring: options.monitoring ?? false,
@@ -142,6 +157,8 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		pc.dim(`  Skill packs: ${skillPackIds.length > 0 ? skillPackIds.join(", ") : "(none)"}`),
 	);
 	console.log(pc.dim(`  Proxy: ${proxy}`));
+	console.log(pc.dim(`  Deployment: ${deploymentType}`));
+	console.log(pc.dim(`  Platform: ${platform}`));
 	if (options.domain) {
 		console.log(pc.dim(`  Domain: ${options.domain}`));
 	}
@@ -171,6 +188,12 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		console.log("");
 		console.log("Next steps:");
 		console.log(pc.dim(`  cd ${projectDir}`));
-		console.log(pc.dim("  docker compose up -d"));
+		if (deploymentType === "bare-metal") {
+			console.log(
+				pc.dim(platform === "windows/amd64" ? "  .\\install.ps1" : "  ./install.sh"),
+			);
+		} else {
+			console.log(pc.dim("  docker compose up -d"));
+		}
 	}
 }

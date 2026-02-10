@@ -82,6 +82,41 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		}),
 	);
 
+	const deploymentType = ensureNotCancelled(
+		await select({
+			message: "Deployment type:",
+			options: [
+				{ value: "docker" as const, label: "Docker", hint: "compose + start scripts" },
+				{
+					value: "bare-metal" as const,
+					label: "Bare metal (VPS / computer)",
+					hint: "includes platform-specific installer script",
+				},
+			],
+		}),
+	);
+
+	const platformOptions =
+		deploymentType === "docker"
+			? [
+					{ value: "linux/amd64" as const, label: "Linux (amd64)" },
+					{ value: "linux/arm64" as const, label: "Linux (arm64)" },
+				]
+			: [
+					{ value: "linux/amd64" as const, label: "Linux (amd64)" },
+					{ value: "linux/arm64" as const, label: "Linux (arm64)" },
+					{ value: "windows/amd64" as const, label: "Windows" },
+					{ value: "macos/amd64" as const, label: "macOS (Intel)" },
+					{ value: "macos/arm64" as const, label: "macOS (Apple Silicon)" },
+				];
+
+	const platform = ensureNotCancelled(
+		await select({
+			message: "Platform:",
+			options: platformOptions,
+		}),
+	);
+
 	// ── Step 2: Service Selection ─────────────────────────────────────────────
 
 	const allServices = getAllServices();
@@ -250,6 +285,8 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 	const summaryLines = [
 		`${pc.bold("Project:")}       ${projectDir}`,
 		`${pc.bold("Deployment:")}    ${String(deployment)}`,
+		`${pc.bold("Deploy type:")}   ${String(deploymentType)}`,
+		`${pc.bold("Platform:")}      ${String(platform)}`,
 		`${pc.bold("Services:")}`,
 		`  ${serviceNames || pc.dim("(none)")}`,
 		`${pc.bold("Skill Packs:")}`,
@@ -286,8 +323,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		proxy: String(proxy) as GenerationInput["proxy"],
 		domain,
 		gpu,
-		platform: "linux/amd64",
+		platform: platform as GenerationInput["platform"],
 		deployment: String(deployment) as GenerationInput["deployment"],
+		deploymentType: deploymentType as GenerationInput["deploymentType"],
 		generateSecrets,
 		openclawVersion: "latest",
 		monitoring: enableMonitoring,
@@ -308,10 +346,17 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 	// ── Step 8: Outro ─────────────────────────────────────────────────────────
 
+	const startCommand =
+		deploymentType === "bare-metal"
+			? platform === "windows/amd64"
+				? ".\\install.ps1  # install Docker and start (Windows)"
+				: "./install.sh    # install Docker and start (Linux/macOS)"
+			: "docker compose up -d";
+
 	const nextSteps = [
 		`cd ${String(projectDir)}`,
 		"cp .env.example .env  # review and customize",
-		"docker compose up -d",
+		startCommand,
 	].join("\n");
 
 	note(nextSteps, "Next steps");

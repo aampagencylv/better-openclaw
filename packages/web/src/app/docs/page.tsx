@@ -212,7 +212,7 @@ open http://localhost:3000`}</code>
 					<Link href="/docs/skill-packs">Skill packs</Link> — curated bundles for common tasks
 				</li>
 				<li>
-					<Link href="/docs/deployment">Deployment guides</Link> — VPS, homelab, production tips
+					<Link href="/docs/deployment">Deployment guides</Link> — Docker, bare-metal (native + Docker), VPS, homelab
 				</li>
 			</ul>
 		</>
