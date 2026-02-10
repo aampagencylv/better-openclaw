@@ -15,7 +15,7 @@ route.post("/", async (c) => {
 					error: {
 						code: "VALIDATION_ERROR",
 						message: "Invalid request body",
-						details: parsed.error.issues.map((issue) => ({
+						details: parsed.error.issues.map((issue: { path: PropertyKey[]; message: string }) => ({
 							field: issue.path.join("."),
 							message: issue.message,
 						})),
@@ -38,7 +38,7 @@ route.post("/", async (c) => {
 
 		return c.json({
 			valid: resolved.isValid,
-			resolvedServices: resolved.services.map((s) => s.definition.id),
+			resolvedServices: resolved.services.map((s: { definition: { id: string } }) => s.definition.id),
 			addedDependencies: resolved.addedDependencies,
 			warnings: resolved.warnings,
 			conflicts: resolved.errors,

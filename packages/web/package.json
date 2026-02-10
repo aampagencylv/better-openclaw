@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3654",
-    "build": "next build",
+    "dev": "next dev --port 3654 --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "biome check src/",
     "lint:fix": "biome check --write src/",

@@ -1,4 +1,12 @@
-import type { DeploymentType, GenerationInput, Platform, ProxyType } from "@better-openclaw/core";
+import type {
+	DeploymentType,
+	GenerationInput,
+	Platform,
+	Preset,
+	ProxyType,
+	ServiceDefinition,
+	SkillPack,
+} from "@better-openclaw/core";
 import {
 	generate,
 	getAllPresets,
@@ -48,7 +56,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		const preset = getPresetById(options.preset);
 		if (!preset) {
 			const available = getAllPresets()
-				.map((p) => p.id)
+				.map((p: Preset) => p.id)
 				.join(", ");
 			throw new Error(`Unknown preset: "${options.preset}". Available presets: ${available}`);
 		}
@@ -69,7 +77,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		for (const id of parsed) {
 			if (!getServiceById(id)) {
 				const available = getAllServices()
-					.map((s) => s.id)
+					.map((s: ServiceDefinition) => s.id)
 					.join(", ");
 				throw new Error(`Unknown service: "${id}". Available services: ${available}`);
 			}
@@ -88,7 +96,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		for (const id of parsed) {
 			if (!getSkillPackById(id)) {
 				const available = getAllSkillPacks()
-					.map((p) => p.id)
+					.map((p: SkillPack) => p.id)
 					.join(", ");
 				throw new Error(`Unknown skill pack: "${id}". Available skill packs: ${available}`);
 			}

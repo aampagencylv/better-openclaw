@@ -1,4 +1,4 @@
-import type { ServiceCategory } from "@better-openclaw/core";
+import type { ServiceCategory, ServiceDefinition } from "@better-openclaw/core";
 import { getAllServices, getServicesByCategory, SERVICE_CATEGORIES } from "@better-openclaw/core";
 import { Hono } from "hono";
 
@@ -13,7 +13,7 @@ route.get("/", (c) => {
 
 		// Filter by maturity if provided
 		if (maturity) {
-			services = services.filter((s) => s.maturity === maturity);
+			services = services.filter((s: ServiceDefinition) => s.maturity === maturity);
 		}
 
 		return c.json({

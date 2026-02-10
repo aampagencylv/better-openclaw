@@ -15,7 +15,7 @@ route.post("/", async (c) => {
 					error: {
 						code: "VALIDATION_ERROR",
 						message: "Invalid generation input",
-						details: parsed.error.issues.map((issue) => ({
+						details: parsed.error.issues.map((issue: { path: PropertyKey[]; message: string }) => ({
 							field: issue.path.join("."),
 							message: issue.message,
 						})),

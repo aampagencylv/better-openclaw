@@ -1,4 +1,4 @@
-import type { GenerationInput } from "@better-openclaw/core";
+import type { GenerationInput, ServiceDefinition, SkillPack } from "@better-openclaw/core";
 import {
 	generate,
 	getAllServices,
@@ -59,8 +59,8 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 			message: "Project directory name:",
 			placeholder: "my-openclaw-stack",
 			initialValue: initialProjectDir ?? "",
-			validate(value: string) {
-				if (!value || value.trim().length === 0) {
+			validate(value: string | undefined) {
+				if (value === undefined || !value.trim().length) {
 					return "Project directory is required.";
 				}
 				if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$/.test(value.trim())) {
@@ -125,9 +125,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 	const serviceGroups: Record<string, { value: string; label: string; hint?: string }[]> = {};
 
 	for (const cat of SERVICE_CATEGORIES) {
-		const services = allServices.filter((s) => s.category === cat.id);
+		const services = allServices.filter((s: ServiceDefinition) => s.category === cat.id);
 		if (services.length === 0) continue;
-		serviceGroups[`${cat.icon} ${cat.name}`] = services.map((s) => ({
+		serviceGroups[`${cat.icon} ${cat.name}`] = services.map((s: ServiceDefinition) => ({
 			value: s.id,
 			label: s.name,
 			hint: s.description,
@@ -159,7 +159,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 	if (resolved.addedDependencies.length > 0) {
 		const depList = resolved.addedDependencies
-			.map((d) => `  ${pc.cyan(d.service)} - ${pc.dim(d.reason)}`)
+			.map((d: { service: string; reason: string }) => `  ${pc.cyan(d.service)} - ${pc.dim(d.reason)}`)
 			.join("\n");
 
 		note(
@@ -176,7 +176,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 		if (acceptDeps) {
 			finalServiceIds = [
-				...new Set([...serviceIds, ...resolved.addedDependencies.map((d) => d.service)]),
+				...new Set([...serviceIds, ...resolved.addedDependencies.map((d: { service: string; reason: string }) => d.service)]),
 			];
 		}
 	}
@@ -190,7 +190,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		const skillPackChoice = ensureNotCancelled(
 			await multiselect({
 				message: "Select skill packs (filtered to compatible):",
-				options: compatiblePacks.map((p) => ({
+				options: compatiblePacks.map((p: SkillPack) => ({
 					value: p.id,
 					label: `${p.icon ?? "📦"} ${p.name}`,
 					hint: p.description,
@@ -234,7 +234,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 	// Check if any selected service requires GPU
 	const hasGpuServices = finalServiceIds.some((id) => {
-		const def = allServices.find((s) => s.id === id);
+		const def = allServices.find((s: ServiceDefinition) => s.id === id);
 		return def?.gpuRequired;
 	});
 
@@ -266,7 +266,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 	const serviceNames = finalServiceIds
 		.map((id) => {
-			const def = allServices.find((s) => s.id === id);
+			const def = allServices.find((s: ServiceDefinition) => s.id === id);
 			return def ? `${def.icon} ${def.name}` : id;
 		})
 		.join("\n  ");
@@ -274,9 +274,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 	const allPacks = getAllSkillPacks();
 	const skillPackNames =
 		selectedSkillPacks.length > 0
-			? selectedSkillPacks
+			? 		selectedSkillPacks
 					.map((id) => {
-						const pack = allPacks.find((p) => p.id === id);
+						const pack = allPacks.find((p: SkillPack) => p.id === id);
 						return pack ? `${pack.icon ?? "📦"} ${pack.name}` : id;
 					})
 					.join("\n  ")

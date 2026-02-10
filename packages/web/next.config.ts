@@ -1,4 +1,8 @@
+import path from "node:path";
 import type { NextConfig } from "next";
+
+// Resolve workspace core package (monorepo: core is built before web)
+const coreDist = path.resolve(process.cwd(), "..", "core", "dist");
 
 const nextConfig: NextConfig = {
 	transpilePackages: ["@better-openclaw/core"],
@@ -10,8 +14,13 @@ const nextConfig: NextConfig = {
 	// We strip the `node:` protocol prefix so webpack can apply its normal
 	// fallback logic, then set `crypto: false` to resolve it to an empty module.
 	webpack: (config, { isServer }) => {
+		config.resolve = config.resolve ?? {};
+		// Resolve workspace package to built output (monorepo build order: core before web)
+		config.resolve.alias = {
+			...(config.resolve.alias ?? {}),
+			"@better-openclaw/core": coreDist,
+		};
 		if (!isServer) {
-			config.resolve = config.resolve ?? {};
 			config.resolve.fallback = {
 				...(config.resolve.fallback ?? {}),
 				crypto: false,
