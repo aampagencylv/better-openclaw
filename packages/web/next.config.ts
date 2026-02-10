@@ -1,8 +1,13 @@
+import fs from "node:fs";
 import path from "node:path";
 import type { NextConfig } from "next";
 
-// Resolve workspace core package (monorepo: core is built before web)
-const coreDist = path.resolve(process.cwd(), "..", "core", "dist");
+// Support both: build from repo root (e.g. Railpack/turbo, cwd = root) and from packages/web (cwd = web)
+const cwd = process.cwd();
+const coreDistFromRoot = path.join(cwd, "packages", "core", "dist");
+const coreDistFromWeb = path.resolve(cwd, "..", "core", "dist");
+const coreDist =
+	fs.existsSync(coreDistFromRoot) ? coreDistFromRoot : coreDistFromWeb;
 
 const nextConfig: NextConfig = {
 	transpilePackages: ["@better-openclaw/core"],
@@ -15,7 +20,7 @@ const nextConfig: NextConfig = {
 	// fallback logic, then set `crypto: false` to resolve it to an empty module.
 	webpack: (config, { isServer }) => {
 		config.resolve = config.resolve ?? {};
-		// Resolve workspace package to built output (monorepo build order: core before web)
+		// Resolve workspace package to built output (monorepo: core must be built before web)
 		config.resolve.alias = {
 			...(config.resolve.alias ?? {}),
 			"@better-openclaw/core": coreDist,
