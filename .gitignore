@@ -39,4 +39,4 @@ pnpm-debug.log*
 
 
 # Core package
-packages/core/*
+packages/core/

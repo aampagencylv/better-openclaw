@@ -2,7 +2,7 @@
   "name": "@better-openclaw/core",
   "version": "1.0.1",
   "private": false,
-  "description": "Core logic for better-openclaw: schemas, service registry, resolver, composer, validators",
+  "description": "Core logic for better-openclaw: schemas, service registry, resolver, composer, validators and more",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.js",
