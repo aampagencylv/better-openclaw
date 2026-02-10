@@ -92,7 +92,7 @@ function buildWindowsNativeScript(nativeServices: ResolvedService[]): string {
 
 		lines.push(`# ${def.name}`);
 		for (const step of recipe.installSteps) {
-			lines.push(`Invoke-Expression \"${step.replace(/"/g, '`"')}\"`);
+			lines.push(`Invoke-Expression "${step.replace(/"/g, '`"')}"`);
 		}
 		lines.push(recipe.startCommand);
 		lines.push("");

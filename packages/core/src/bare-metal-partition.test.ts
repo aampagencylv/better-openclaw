@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { partitionBareMetal, platformToNativePlatform, resolvedWithOnlyServices } from "./bare-metal-partition.js";
+import {
+	partitionBareMetal,
+	platformToNativePlatform,
+	resolvedWithOnlyServices,
+} from "./bare-metal-partition.js";
 import { resolve } from "./resolver.js";
 
 describe("bare-metal partition", () => {

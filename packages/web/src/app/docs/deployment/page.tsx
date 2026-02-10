@@ -243,7 +243,8 @@ docker compose up -d`}</code>
 			<ul>
 				<li>
 					<strong>Services that have a native recipe</strong> (e.g. Redis on Linux) run on the host
-					via install/run scripts in <code>native/</code> (e.g. <code>native/install-linux.sh</code>).
+					via install/run scripts in <code>native/</code> (e.g. <code>native/install-linux.sh</code>
+					).
 				</li>
 				<li>
 					<strong>All other services</strong> (including the OpenClaw gateway) run in Docker. The
@@ -251,9 +252,9 @@ docker compose up -d`}</code>
 					native services via <code>host.docker.internal</code>.
 				</li>
 				<li>
-					A <strong>top-level installer</strong> (<code>install.sh</code> or <code>install.ps1</code>)
-					installs and starts native services first, then runs <code>docker compose up</code> for the
-					rest.
+					A <strong>top-level installer</strong> (<code>install.sh</code> or{" "}
+					<code>install.ps1</code>) installs and starts native services first, then runs{" "}
+					<code>docker compose up</code> for the rest.
 				</li>
 			</ul>
 			<p>

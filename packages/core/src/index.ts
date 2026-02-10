@@ -1,5 +1,11 @@
 // ─── Schemas ────────────────────────────────────────────────────────────────
 
+// ─── Core Engines ───────────────────────────────────────────────────────────
+export {
+	partitionBareMetal,
+	platformToNativePlatform,
+	resolvedWithOnlyServices,
+} from "./bare-metal-partition.js";
 export type { ComposeResult } from "./composer.js";
 export { compose, composeMultiFile } from "./composer.js";
 export { generate } from "./generate.js";
@@ -15,12 +21,6 @@ export { generateScripts } from "./generators/scripts.js";
 export { generateSkillFiles } from "./generators/skills.js";
 // ─── Presets ────────────────────────────────────────────────────────────────
 export { getAllPresets, getPresetById, presetRegistry } from "./presets/registry.js";
-// ─── Core Engines ───────────────────────────────────────────────────────────
-export {
-	partitionBareMetal,
-	platformToNativePlatform,
-	resolvedWithOnlyServices,
-} from "./bare-metal-partition.js";
 export { resolve } from "./resolver.js";
 export {
 	AddedDependencySchema,
@@ -78,14 +78,14 @@ export type {
 	DeploymentTarget,
 	DeploymentType,
 	EnvVariable,
-	NativePlatform,
-	NativeRecipe,
 	GeneratedFiles,
 	GenerationInput,
 	GenerationMetadata,
 	GenerationResult,
 	HealthCheck,
 	Maturity,
+	NativePlatform,
+	NativeRecipe,
 	OutputFormat,
 	Platform,
 	PortMapping,

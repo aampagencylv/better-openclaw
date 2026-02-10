@@ -1,5 +1,4 @@
-import type { GenerationInput, Platform, ProxyType } from "@better-openclaw/core";
-import type { DeploymentType } from "@better-openclaw/core";
+import type { DeploymentType, GenerationInput, Platform, ProxyType } from "@better-openclaw/core";
 import {
 	generate,
 	getAllPresets,
@@ -189,9 +188,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		console.log("Next steps:");
 		console.log(pc.dim(`  cd ${projectDir}`));
 		if (deploymentType === "bare-metal") {
-			console.log(
-				pc.dim(platform === "windows/amd64" ? "  .\\install.ps1" : "  ./install.sh"),
-			);
+			console.log(pc.dim(platform === "windows/amd64" ? "  .\\install.ps1" : "  ./install.sh"));
 		} else {
 			console.log(pc.dim("  docker compose up -d"));
 		}

@@ -326,9 +326,9 @@ export default function NewStackPage() {
 										`cd ${projectName || "my-stack"}`,
 										"cp .env.example .env        # Edit with your API keys",
 										lastDownloadOptions?.deploymentType === "bare-metal"
-											? (lastDownloadOptions.platform === "windows/amd64"
-													? ".\\install.ps1        # Install Docker and start (Windows)"
-													: "./install.sh          # Install Docker and start (Linux/macOS)")
+											? lastDownloadOptions.platform === "windows/amd64"
+												? ".\\install.ps1        # Install Docker and start (Windows)"
+												: "./install.sh          # Install Docker and start (Linux/macOS)"
 											: "docker compose up -d        # Start everything",
 										"docker compose logs -f openclaw-gateway   # Watch OpenClaw boot",
 									].map((cmd) => (
@@ -512,12 +512,19 @@ export default function NewStackPage() {
 								</label>
 							</div>
 							<p className="mt-1.5 text-xs text-muted-foreground">
-								Docker: all services in containers. Bare-metal: some services (e.g. Redis) run natively on the host; the rest run in Docker. You get <code className="rounded bg-muted px-1">install.sh</code> / <code className="rounded bg-muted px-1">install.ps1</code> and <code className="rounded bg-muted px-1">native/</code> scripts.
+								Docker: all services in containers. Bare-metal: some services (e.g. Redis) run
+								natively on the host; the rest run in Docker. You get{" "}
+								<code className="rounded bg-muted px-1">install.sh</code> /{" "}
+								<code className="rounded bg-muted px-1">install.ps1</code> and{" "}
+								<code className="rounded bg-muted px-1">native/</code> scripts.
 							</p>
 						</div>
 
 						<div className="mt-4">
-							<label htmlFor="platform-select" className="block text-sm font-medium text-foreground">
+							<label
+								htmlFor="platform-select"
+								className="block text-sm font-medium text-foreground"
+							>
 								Platform
 							</label>
 							<select
@@ -568,38 +575,44 @@ export default function NewStackPage() {
 			)}
 
 			{/* Mandatory service removal confirmation */}
-			{pendingRemovalId && (() => {
-				const svc = allServices.find((s) => s.id === pendingRemovalId);
-				const name = svc?.name ?? pendingRemovalId;
-				return (
-					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="mandatory-removal-title">
-						<div className="w-full max-w-sm rounded-xl border border-border bg-background p-5 shadow-lg">
-							<h2 id="mandatory-removal-title" className="text-lg font-semibold text-foreground">
-								Remove {name}?
-							</h2>
-							<p className="mt-2 text-sm text-muted-foreground">
-								{name} is recommended for secure access to your stack. Remove anyway?
-							</p>
-							<div className="mt-5 flex justify-end gap-2">
-								<button
-									type="button"
-									onClick={cancelMandatoryRemoval}
-									className="rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
-								>
-									Cancel
-								</button>
-								<button
-									type="button"
-									onClick={confirmMandatoryRemoval}
-									className="rounded-lg bg-destructive px-3 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
-								>
-									Remove
-								</button>
+			{pendingRemovalId &&
+				(() => {
+					const svc = allServices.find((s) => s.id === pendingRemovalId);
+					const name = svc?.name ?? pendingRemovalId;
+					return (
+						<div
+							className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+							role="dialog"
+							aria-modal="true"
+							aria-labelledby="mandatory-removal-title"
+						>
+							<div className="w-full max-w-sm rounded-xl border border-border bg-background p-5 shadow-lg">
+								<h2 id="mandatory-removal-title" className="text-lg font-semibold text-foreground">
+									Remove {name}?
+								</h2>
+								<p className="mt-2 text-sm text-muted-foreground">
+									{name} is recommended for secure access to your stack. Remove anyway?
+								</p>
+								<div className="mt-5 flex justify-end gap-2">
+									<button
+										type="button"
+										onClick={cancelMandatoryRemoval}
+										className="rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
+									>
+										Cancel
+									</button>
+									<button
+										type="button"
+										onClick={confirmMandatoryRemoval}
+										className="rounded-lg bg-destructive px-3 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
+									>
+										Remove
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-				);
-			})()}
+					);
+				})()}
 		</div>
 	);
 }

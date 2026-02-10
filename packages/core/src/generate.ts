@@ -1,23 +1,28 @@
-import { composeMultiFile } from "./composer.js";
-import { generateCaddyfile } from "./generators/caddy.js";
-import { generateEnvFiles } from "./generators/env.js";
-import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
-import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
-import { generatePostgresInit } from "./generators/postgres-init.js";
-import { generatePrometheusConfig } from "./generators/prometheus.js";
-import { generateReadme } from "./generators/readme.js";
 import {
 	partitionBareMetal,
 	platformToNativePlatform,
 	resolvedWithOnlyServices,
 } from "./bare-metal-partition.js";
+import { composeMultiFile } from "./composer.js";
 import { generateBareMetalInstall } from "./generators/bare-metal-install.js";
+import { generateCaddyfile } from "./generators/caddy.js";
+import { generateEnvFiles } from "./generators/env.js";
+import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
+import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 import { generateNativeInstallScripts } from "./generators/native-services.js";
+import { generatePostgresInit } from "./generators/postgres-init.js";
+import { generatePrometheusConfig } from "./generators/prometheus.js";
+import { generateReadme } from "./generators/readme.js";
 import { generateScripts } from "./generators/scripts.js";
 import { generateSkillFiles } from "./generators/skills.js";
 import { resolve } from "./resolver.js";
-import type { GeneratedFiles, GenerationInput, GenerationResult, ResolverInput } from "./types.js";
-import type { Platform } from "./types.js";
+import type {
+	GeneratedFiles,
+	GenerationInput,
+	GenerationResult,
+	Platform,
+	ResolverInput,
+} from "./types.js";
 import { validate } from "./validator.js";
 
 /** Resolver/compose only support linux image platforms; normalize for bare-metal (windows/macos). */

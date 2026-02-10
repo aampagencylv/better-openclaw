@@ -85,8 +85,8 @@ export const redisDefinition: ServiceDefinition = {
 		{
 			platform: "linux",
 			installSteps: [
-				'command -v redis-server >/dev/null 2>&1 || (command -v apt-get >/dev/null 2>&1 && sudo apt-get update -qq && sudo apt-get install -y -qq redis-server)',
-				'command -v redis-server >/dev/null 2>&1 || (command -v dnf >/dev/null 2>&1 && sudo dnf install -y redis)',
+				"command -v redis-server >/dev/null 2>&1 || (command -v apt-get >/dev/null 2>&1 && sudo apt-get update -qq && sudo apt-get install -y -qq redis-server)",
+				"command -v redis-server >/dev/null 2>&1 || (command -v dnf >/dev/null 2>&1 && sudo dnf install -y redis)",
 			],
 			startCommand: "sudo systemctl start redis-server 2>/dev/null || sudo systemctl start redis",
 			stopCommand: "sudo systemctl stop redis-server 2>/dev/null || sudo systemctl stop redis",

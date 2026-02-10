@@ -462,8 +462,9 @@ export default function EndpointsPage() {
 						<td>string</td>
 						<td>No</td>
 						<td>
-							<code>docker</code> (default) or <code>bare-metal</code>. Bare-metal produces a native + Docker
-							hybrid: install scripts in <code>native/</code> and <code>install.sh</code>/<code>install.ps1</code>; see{" "}
+							<code>docker</code> (default) or <code>bare-metal</code>. Bare-metal produces a native
+							+ Docker hybrid: install scripts in <code>native/</code> and <code>install.sh</code>/
+							<code>install.ps1</code>; see{" "}
 							<Link href="/docs/deployment#bare-metal">Deployment → Bare-metal</Link>.
 						</td>
 					</tr>
