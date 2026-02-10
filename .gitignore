@@ -39,4 +39,6 @@ pnpm-debug.log*
 
 
 # Core package
-packages/core/
+packages/core/.git
+packages/core/.github
+packages/core/.gitignore
