@@ -32,12 +32,14 @@ jobs:
 
       - run: pnpm build --filter create-better-openclaw
 
+
       # - name: Publish Core to npm
       #   run: pnpm publish --filter @better-openclaw/core --no-git-checks --access public
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish CLI to npm
-        run: pnpm publish --filter create-better-openclaw --no-git-checks --access public
+        run: npm publish --access=public
+        # run: pnpm publish --filter create-better-openclaw --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

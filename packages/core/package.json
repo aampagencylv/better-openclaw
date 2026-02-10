@@ -1,22 +1,28 @@
 {
   "name": "@better-openclaw/core",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "private": false,
   "description": "Core logic for better-openclaw: schemas, service registry, resolver, composer, validators and more",
-  "type": "module",
   "packageManager": "pnpm@9.15.4",
   "sideEffects": false,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "default": "./dist/index.mjs"
+        },
+        "./*": {
+            "types": "./dist/*.d.ts",
+            "import": "./dist/*.mjs",
+            "default": "./dist/*.mjs"
+        }
+    },
   "scripts": {
-    "prepublishOnly": "pnpm run build",
-    "build": "tsc",
+    "build": "tsdown",
+    "build:tsc": "tsc",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:unit": "vitest run",
@@ -32,7 +38,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
     "@types/node": "^25.2.2",
+    "tsdown": "^0.20.3",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }
