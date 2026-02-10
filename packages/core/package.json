@@ -1,7 +1,7 @@
 {
   "name": "@better-openclaw/core",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "description": "Core logic for better-openclaw: schemas, service registry, resolver, composer, validators",
   "type": "module",
   "sideEffects": false,

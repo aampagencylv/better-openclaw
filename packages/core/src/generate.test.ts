@@ -151,6 +151,45 @@ describe("generate (end-to-end)", () => {
 		expect(promConfig).toBeDefined();
 	});
 
+	it("generates La Suite Meet stack with all expected services", () => {
+		const lasuiteMeetServices = [
+			"postgresql",
+			"redis",
+			"livekit",
+			"lasuite-meet-backend",
+			"lasuite-meet-frontend",
+			"lasuite-meet-agents",
+		];
+		const result = generate({
+			projectName: "lasuite-meet-stack",
+			services: lasuiteMeetServices,
+			skillPacks: [],
+			proxy: "none",
+			gpu: false,
+			platform: "linux/amd64",
+			deployment: "local",
+			generateSecrets: true,
+			openclawVersion: "latest",
+		});
+
+		// Services may be split across main and profile compose files
+		const allServiceIds = new Set<string>();
+		for (const [filename, content] of Object.entries(result.files)) {
+			if (filename.endsWith(".yml") && content) {
+				const doc = parse(content);
+				if (doc?.services && typeof doc.services === "object") {
+					for (const id of Object.keys(doc.services)) {
+						allServiceIds.add(id);
+					}
+				}
+			}
+		}
+		for (const id of lasuiteMeetServices) {
+			expect(allServiceIds.has(id), `missing service ${id}`).toBe(true);
+		}
+		expect(result.metadata.serviceCount).toBe(lasuiteMeetServices.length);
+	});
+
 	it("throws on conflicting services", () => {
 		expect(() =>
 			generate({

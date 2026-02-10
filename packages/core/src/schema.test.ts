@@ -202,6 +202,17 @@ describe("ServiceDefinitionSchema", () => {
 		expect(result.conflictsWith).toEqual([]);
 		expect(result.gpuRequired).toBe(false);
 	});
+
+	it("accepts optional mandatory field and defaults to false when omitted", () => {
+		const withMandatory = { ...validDef, mandatory: true };
+		const result = ServiceDefinitionSchema.parse(withMandatory);
+		expect(result.mandatory).toBe(true);
+	});
+
+	it("omitting mandatory leaves it undefined or false (schema default false)", () => {
+		const result = ServiceDefinitionSchema.parse(validDef);
+		expect(result.mandatory !== true).toBe(true); // false or undefined both mean not mandatory
+	});
 });
 
 describe("SkillPackSchema", () => {

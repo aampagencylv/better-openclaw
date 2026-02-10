@@ -7,9 +7,9 @@ import {
 } from "../services/registry.js";
 
 describe("service registry", () => {
-	it("has at least 23 services registered", () => {
+	it("has at least 60 services registered", () => {
 		const services = getAllServices();
-		expect(services.length).toBeGreaterThanOrEqual(23);
+		expect(services.length).toBeGreaterThanOrEqual(60);
 	});
 
 	it("finds redis by ID", () => {
@@ -22,6 +22,22 @@ describe("service registry", () => {
 	it("returns undefined for unknown ID", () => {
 		const result = getServiceById("nonexistent");
 		expect(result).toBeUndefined();
+	});
+
+	it("finds tailscale and it is mandatory", () => {
+		const tailscale = getServiceById("tailscale");
+		expect(tailscale).toBeDefined();
+		expect(tailscale!.id).toBe("tailscale");
+		expect(tailscale!.mandatory).toBe(true);
+	});
+
+	it("finds coolify, dokploy, livekit, and La Suite Meet services by ID", () => {
+		expect(getServiceById("coolify")).toBeDefined();
+		expect(getServiceById("dokploy")).toBeDefined();
+		expect(getServiceById("livekit")).toBeDefined();
+		expect(getServiceById("lasuite-meet-backend")).toBeDefined();
+		expect(getServiceById("lasuite-meet-frontend")).toBeDefined();
+		expect(getServiceById("lasuite-meet-agents")).toBeDefined();
 	});
 
 	it("filters by category", () => {

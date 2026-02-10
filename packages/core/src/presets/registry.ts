@@ -90,6 +90,21 @@ const presets: Preset[] = [
 		skillPacks: ["coding-team"],
 		estimatedMemoryMB: 2560,
 	},
+	{
+		id: "lasuite-meet",
+		name: "La Suite Meet",
+		description: "Open-source video conferencing from La Suite numérique (Django + LiveKit)",
+		services: [
+			"postgresql",
+			"redis",
+			"livekit",
+			"lasuite-meet-backend",
+			"lasuite-meet-frontend",
+			"lasuite-meet-agents",
+		],
+		skillPacks: [],
+		estimatedMemoryMB: 2048,
+	},
 ];
 
 const presetMap = new Map<string, Preset>();

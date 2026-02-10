@@ -29,13 +29,14 @@ import { generateStack } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 
 export default function NewStackPage() {
-	const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set());
+	const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set(["tailscale"]));
 	const [projectName, setProjectName] = useState("my-stack");
 	const [searchQuery, setSearchQuery] = useState("");
 	const [activePreset, setActivePreset] = useState<string | null>(null);
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [generateError, setGenerateError] = useState<string | null>(null);
 	const [downloadComplete, setDownloadComplete] = useState(false);
+	const [pendingRemovalId, setPendingRemovalId] = useState<string | null>(null);
 
 	// Load all services and presets from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
@@ -95,18 +96,46 @@ export default function NewStackPage() {
 		}
 	}, [resolverOutput, projectName]);
 
-	// Toggle a service selection
-	const handleToggle = useCallback((id: string) => {
-		setSelectedServices((prev) => {
-			const next = new Set(prev);
-			if (next.has(id)) {
-				next.delete(id);
-			} else {
-				next.add(id);
+	// Toggle a service selection (mandatory services require confirmation to remove)
+	const handleToggle = useCallback(
+		(id: string) => {
+			const service = allServices.find((s) => s.id === id);
+			const isMandatory = service?.mandatory === true;
+			const isDeselecting = selectedServices.has(id);
+
+			if (isDeselecting && isMandatory) {
+				setPendingRemovalId(id);
+				return;
 			}
-			return next;
-		});
-		setActivePreset(null);
+
+			setSelectedServices((prev) => {
+				const next = new Set(prev);
+				if (next.has(id)) {
+					next.delete(id);
+				} else {
+					next.add(id);
+				}
+				return next;
+			});
+			setActivePreset(null);
+		},
+		[allServices, selectedServices],
+	);
+
+	const confirmMandatoryRemoval = useCallback(() => {
+		if (pendingRemovalId) {
+			setSelectedServices((prev) => {
+				const next = new Set(prev);
+				next.delete(pendingRemovalId);
+				return next;
+			});
+			setActivePreset(null);
+			setPendingRemovalId(null);
+		}
+	}, [pendingRemovalId]);
+
+	const cancelMandatoryRemoval = useCallback(() => {
+		setPendingRemovalId(null);
 	}, []);
 
 	// Apply a preset
@@ -414,6 +443,40 @@ export default function NewStackPage() {
 					)}
 				</div>
 			</div>
+
+			{/* Mandatory service removal confirmation */}
+			{pendingRemovalId && (() => {
+				const svc = allServices.find((s) => s.id === pendingRemovalId);
+				const name = svc?.name ?? pendingRemovalId;
+				return (
+					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="mandatory-removal-title">
+						<div className="w-full max-w-sm rounded-xl border border-border bg-background p-5 shadow-lg">
+							<h2 id="mandatory-removal-title" className="text-lg font-semibold text-foreground">
+								Remove {name}?
+							</h2>
+							<p className="mt-2 text-sm text-muted-foreground">
+								{name} is recommended for secure access to your stack. Remove anyway?
+							</p>
+							<div className="mt-5 flex justify-end gap-2">
+								<button
+									type="button"
+									onClick={cancelMandatoryRemoval}
+									className="rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
+								>
+									Cancel
+								</button>
+								<button
+									type="button"
+									onClick={confirmMandatoryRemoval}
+									className="rounded-lg bg-destructive px-3 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
+								>
+									Remove
+								</button>
+							</div>
+						</div>
+					</div>
+				);
+			})()}
 		</div>
 	);
 }

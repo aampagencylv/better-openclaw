@@ -130,6 +130,7 @@ export const ServiceDefinitionSchema = z.object({
 	requires: z.array(z.string()).default([]),
 	recommends: z.array(z.string()).default([]),
 	conflictsWith: z.array(z.string()).default([]),
+	mandatory: z.boolean().default(false).optional(),
 
 	// Platform Constraints
 	platforms: z.array(PlatformSchema).optional(),

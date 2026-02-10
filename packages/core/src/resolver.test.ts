@@ -140,4 +140,65 @@ describe("resolve", () => {
 		const gpuWarnings = result.warnings.filter((w) => w.type === "gpu");
 		expect(gpuWarnings).toHaveLength(0);
 	});
+
+	it("resolves tailscale as single service with no dependencies", () => {
+		const result = resolve({ services: ["tailscale"], skillPacks: [] });
+		expect(result.services).toHaveLength(1);
+		expect(result.services[0]!.definition.id).toBe("tailscale");
+		expect(result.isValid).toBe(true);
+	});
+
+	it("resolves coolify and dokploy as single services", () => {
+		const result = resolve({ services: ["coolify", "dokploy"], skillPacks: [] });
+		const ids = result.services.map((s) => s.definition.id);
+		expect(ids).toContain("coolify");
+		expect(ids).toContain("dokploy");
+		expect(result.isValid).toBe(true);
+	});
+
+	it("auto-adds postgresql, redis, and livekit when lasuite-meet-backend is selected", () => {
+		const result = resolve({ services: ["lasuite-meet-backend"], skillPacks: [] });
+		const ids = result.services.map((s) => s.definition.id);
+		expect(ids).toContain("lasuite-meet-backend");
+		expect(ids).toContain("postgresql");
+		expect(ids).toContain("redis");
+		expect(ids).toContain("livekit");
+		expect(result.addedDependencies.some((a) => a.service === "postgresql")).toBe(true);
+		expect(result.isValid).toBe(true);
+	});
+
+	it("resolves La Suite Meet preset (postgresql, redis, livekit, backend, frontend, agents)", () => {
+		const lasuiteMeetServices = [
+			"postgresql",
+			"redis",
+			"livekit",
+			"lasuite-meet-backend",
+			"lasuite-meet-frontend",
+			"lasuite-meet-agents",
+		];
+		const result = resolve({ services: lasuiteMeetServices, skillPacks: [] });
+		const ids = result.services.map((s) => s.definition.id);
+		for (const id of lasuiteMeetServices) {
+			expect(ids).toContain(id);
+		}
+		expect(result.isValid).toBe(true);
+	});
+
+	it("orders lasuite-meet-backend after postgresql, redis, and livekit", () => {
+		const result = resolve({
+			services: ["lasuite-meet-backend", "lasuite-meet-frontend"],
+			skillPacks: [],
+		});
+		const ids = result.services.map((s) => s.definition.id);
+		const pgIdx = ids.indexOf("postgresql");
+		const redisIdx = ids.indexOf("redis");
+		const livekitIdx = ids.indexOf("livekit");
+		const backendIdx = ids.indexOf("lasuite-meet-backend");
+		const frontendIdx = ids.indexOf("lasuite-meet-frontend");
+		expect(pgIdx).toBeGreaterThanOrEqual(0);
+		expect(backendIdx).toBeGreaterThan(pgIdx);
+		expect(backendIdx).toBeGreaterThan(redisIdx);
+		expect(backendIdx).toBeGreaterThan(livekitIdx);
+		expect(frontendIdx).toBeGreaterThan(backendIdx);
+	});
 });
