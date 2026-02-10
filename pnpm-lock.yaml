@@ -27,8 +27,8 @@ importers:
   packages/api:
     dependencies:
       '@better-openclaw/core':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.2
+        version: 1.0.2
       '@hono/node-server':
         specifier: ^1.19.9
         version: 1.19.9(hono@4.11.9)
@@ -55,8 +55,8 @@ importers:
   packages/cli:
     dependencies:
       '@better-openclaw/core':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.2
+        version: 1.0.2
       '@clack/prompts':
         specifier: ^1.0.0
         version: 1.0.0
@@ -102,8 +102,8 @@ importers:
   packages/web:
     dependencies:
       '@better-openclaw/core':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.2
+        version: 1.0.2
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.13)(react@19.2.4)
@@ -171,8 +171,8 @@ packages:
     peerDependencies:
       zod: ^4.0.0
 
-  '@better-openclaw/core@1.0.1':
-    resolution: {integrity: sha512-sXYlVHbq/FLS36I+AHfNOu4WaYYb8Kiucy1cfQKIAkb6Li9wIDUyIfjsYNH9prORJ/kZgEKxkkcAF0Gty28pIg==}
+  '@better-openclaw/core@1.0.2':
+    resolution: {integrity: sha512-yE3QYIm8HvWGhcr5jysDLf89S4It/iv/Sv9MFK6AHPIXiJjvfGWJBEK30JZzl78OqG6MUntc1cQ7qtLmbRqVLw==}
 
   '@biomejs/biome@2.3.14':
     resolution: {integrity: sha512-QMT6QviX0WqXJCaiqVMiBUCr5WRQ1iFSjvOLoTk6auKukJMvnMzWucXpwZB0e8F00/1/BsS9DzcKgWH+CLqVuA==}
@@ -1686,7 +1686,7 @@ snapshots:
       openapi3-ts: 4.5.0
       zod: 4.3.6
 
-  '@better-openclaw/core@1.0.1':
+  '@better-openclaw/core@1.0.2':
     dependencies:
       handlebars: 4.7.8
       yaml: 2.8.2
