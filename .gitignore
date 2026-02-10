@@ -36,3 +36,7 @@ pnpm-debug.log*
 
 # Generated
 *.generated.*
+
+
+# Core package
+packages/core/*
