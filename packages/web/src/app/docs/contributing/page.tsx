@@ -153,7 +153,7 @@ pnpm --filter web dev`}</code>
 				<li>
 					Check{" "}
 					<a
-						href="https://github.com/diopisemou/better-openclaw/issues"
+						href="https://github.com/bidewio/better-openclaw/issues"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -282,7 +282,7 @@ curl http://localhost:3000/api/v1/services | jq`}</code>
 			<ul>
 				<li>
 					<a
-						href="https://github.com/diopisemou/better-openclaw/issues"
+						href="https://github.com/bidewio/better-openclaw/issues"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -299,7 +299,7 @@ curl http://localhost:3000/api/v1/services | jq`}</code>
 				<li>
 					Check{" "}
 					<a
-						href="https://github.com/diopisemou/better-openclaw/pulls"
+						href="https://github.com/bidewio/better-openclaw/pulls"
 						target="_blank"
 						rel="noopener noreferrer"
 					>

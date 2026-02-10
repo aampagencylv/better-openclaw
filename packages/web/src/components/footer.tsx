@@ -9,7 +9,7 @@ const productLinks = [
 
 const resourceLinks = [
 	{
-		href: "https://github.com/diopisemou/better-openclaw",
+		href: "https://github.com/bidewio/better-openclaw",
 		label: "GitHub",
 		external: true,
 	},
@@ -28,7 +28,7 @@ const resourceLinks = [
 const communityLinks = [
 	{ href: "/showcase#submit", label: "Submit a Stack" },
 	{
-		href: "https://github.com/diopisemou/better-openclaw/issues/new",
+		href: "https://github.com/bidewio/better-openclaw/issues/new",
 		label: "Propose a Service",
 		external: true,
 	},

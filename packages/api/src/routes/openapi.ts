@@ -9,7 +9,7 @@ route.get("/", (c) => {
 			title: "better-openclaw API",
 			description: "REST API for generating production-ready OpenClaw Docker Compose stacks",
 			version: "1.0.0",
-			contact: { name: "Bachir @ bidew.io" },
+			contact: { name: "bachir@bidew.io" },
 		},
 		servers: [{ url: "/v1", description: "API v1" }],
 		paths: {

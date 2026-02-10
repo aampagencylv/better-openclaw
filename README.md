@@ -162,7 +162,7 @@ create-better-openclaw ┘
 
 ```bash
 # Clone the repository
-git clone https://github.com/diopisemou/better-openclaw.git
+git clone https://github.com/bidewio/better-openclaw.git
 cd better-openclaw
 
 # Install dependencies
@@ -218,5 +218,5 @@ Contributions are welcome! Please see the [Contributing Guide](CONTRIBUTING.md) 
 ---
 
 <p align="center">
-  Made with care by <a href="https://bidew.io">Bachir @ bidew.io</a>
+  Made with care by <a href="https://bidew.io">bachir@bidew.io</a>
 </p>

@@ -14,7 +14,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/better-openclaw.git
+git clone https://github.com/bidewio/better-openclaw.git
 cd better-openclaw
 
 # Install dependencies (pnpm is enforced)

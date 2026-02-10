@@ -43,7 +43,7 @@ export function Navbar() {
 				<div className="flex items-center gap-2">
 					<ThemeToggle />
 					<a
-						href="https://github.com/diopisemou/better-openclaw"
+						href="https://github.com/bidewio/better-openclaw"
 						target="_blank"
 						rel="noopener noreferrer"
 						className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"

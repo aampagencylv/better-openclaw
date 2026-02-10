@@ -52,7 +52,7 @@ export default function SubmitPage() {
 			.filter(Boolean)
 			.join("\n");
 
-		const url = `https://github.com/diopisemou/better-openclaw/issues/new?title=${encodeURIComponent(
+		const url = `https://github.com/bidewio/better-openclaw/issues/new?title=${encodeURIComponent(
 			`[Showcase] ${stackName}`,
 		)}&body=${encodeURIComponent(body)}&labels=showcase`;
 
@@ -74,7 +74,7 @@ export default function SubmitPage() {
 			serviceWhy,
 		].join("\n");
 
-		const url = `https://github.com/diopisemou/better-openclaw/issues/new?title=${encodeURIComponent(
+		const url = `https://github.com/bidewio/better-openclaw/issues/new?title=${encodeURIComponent(
 			`[Service] ${serviceName}`,
 		)}&body=${encodeURIComponent(body)}&labels=service-proposal`;
 
