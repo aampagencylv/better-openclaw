@@ -2,12 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import type { NextConfig } from "next";
 
-// Support both: build from repo root (e.g. Railpack/turbo, cwd = root) and from packages/web (cwd = web)
+// Support: (1) monorepo build from root with turbo, (2) build from packages/web, (3) deploy-only web (e.g. Railpack) with @better-openclaw/core from npm
 const cwd = process.cwd();
 const coreDistFromRoot = path.join(cwd, "packages", "core", "dist");
 const coreDistFromWeb = path.resolve(cwd, "..", "core", "dist");
-const coreDist =
-	fs.existsSync(coreDistFromRoot) ? coreDistFromRoot : coreDistFromWeb;
+const coreDist = fs.existsSync(coreDistFromRoot)
+	? coreDistFromRoot
+	: fs.existsSync(coreDistFromWeb)
+		? coreDistFromWeb
+		: null;
 
 const nextConfig: NextConfig = {
 	transpilePackages: ["@better-openclaw/core"],
@@ -20,10 +23,10 @@ const nextConfig: NextConfig = {
 	// fallback logic, then set `crypto: false` to resolve it to an empty module.
 	webpack: (config, { isServer }) => {
 		config.resolve = config.resolve ?? {};
-		// Resolve workspace package to built output (monorepo: core must be built before web)
+		// Resolve workspace package to built output only when local core dist exists (monorepo); otherwise use node_modules (e.g. published @better-openclaw/core on Railpack)
 		config.resolve.alias = {
 			...(config.resolve.alias ?? {}),
-			"@better-openclaw/core": coreDist,
+			...(coreDist ? { "@better-openclaw/core": coreDist } : {}),
 		};
 		if (!isServer) {
 			config.resolve.fallback = {
