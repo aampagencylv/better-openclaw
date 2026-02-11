@@ -25,8 +25,15 @@ import { useCallback, useMemo, useState } from "react";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
-import { generateStack } from "@/lib/api-client";
+import {
+	generateStack,
+	generateStackAsZip,
+	generateStackComplete,
+} from "@/lib/api-client";
 import { cn } from "@/lib/utils";
+
+const CLAWEXA_DEPLOY_URL = process.env.NEXT_PUBLIC_CLAWEXA_DEPLOY_URL ?? "";
+const CLAWEXA_SITE = "https://clawexa.net";
 
 export default function NewStackPage() {
 	const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set(["tailscale"]));
@@ -44,6 +51,8 @@ export default function NewStackPage() {
 		deploymentType: "docker" | "bare-metal";
 		platform: string;
 	} | null>(null);
+	const [showClawexaModal, setShowClawexaModal] = useState(false);
+	const [clawexaAction, setClawexaAction] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
 	// Load all services and presets from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
@@ -270,6 +279,14 @@ export default function NewStackPage() {
 
 						<button
 							type="button"
+							onClick={() => setShowClawexaModal(true)}
+							disabled={selectedServices.size === 0}
+							className="hidden text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 sm:block"
+						>
+							Deploy to clawexa.net
+						</button>
+						<button
+							type="button"
 							onClick={() => setShowDeploymentModal(true)}
 							disabled={selectedServices.size === 0 || isGenerating}
 							className={cn(
@@ -351,14 +368,172 @@ export default function NewStackPage() {
 										</div>
 									))}
 								</div>
+								<div className="mt-3 flex flex-wrap items-center gap-2">
+									<button
+										type="button"
+										onClick={() => setDownloadComplete(false)}
+										className="text-xs text-muted-foreground hover:text-foreground"
+									>
+										Dismiss
+									</button>
+									<span className="text-muted-foreground">·</span>
+									<button
+										type="button"
+										onClick={() => setShowClawexaModal(true)}
+										className="text-xs text-primary hover:underline"
+									>
+										Deploy to clawexa.net
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Deploy to clawexa.net modal */}
+			{showClawexaModal && (
+				<div
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby="clawexa-modal-title"
+				>
+					<div className="w-full max-w-md rounded-xl border border-border bg-background p-5 shadow-lg">
+						<h2 id="clawexa-modal-title" className="text-lg font-semibold text-foreground">
+							Deploy to clawexa.net
+						</h2>
+						<p className="mt-1 text-sm text-muted-foreground">
+							Download as ZIP, copy complete JSON, or send to the clawexa.net endpoint (when configured).
+						</p>
+						<div className="mt-4 flex flex-col gap-2">
+							<button
+								type="button"
+								disabled={isGenerating}
+								onClick={async () => {
+									if (selectedServices.size === 0) return;
+									setIsGenerating(true);
+									setGenerateError(null);
+									try {
+										const blob = await generateStackAsZip({
+											projectName: projectName || "my-stack",
+											services: Array.from(selectedServices),
+											skillPacks: [],
+											proxy: "none",
+											gpu: false,
+											platform: "linux/amd64",
+											deployment: "local",
+											deploymentType: "docker",
+											monitoring: false,
+										});
+										const url = URL.createObjectURL(blob);
+										const a = document.createElement("a");
+										a.href = url;
+										a.download = `${projectName || "my-stack"}.zip`;
+										a.click();
+										URL.revokeObjectURL(url);
+									} catch (err) {
+										setGenerateError(err instanceof Error ? err.message : "Failed to get ZIP");
+									} finally {
+										setIsGenerating(false);
+									}
+								}}
+								className="rounded-lg border border-border bg-surface px-3 py-2 text-left text-sm font-medium text-foreground hover:bg-surface/80 disabled:opacity-50"
+							>
+								Download ZIP
+							</button>
+							<button
+								type="button"
+								disabled={isGenerating}
+								onClick={async () => {
+									if (selectedServices.size === 0) return;
+									setIsGenerating(true);
+									setGenerateError(null);
+									try {
+										const complete = await generateStackComplete({
+											projectName: projectName || "my-stack",
+											services: Array.from(selectedServices),
+											skillPacks: [],
+											proxy: "none",
+											gpu: false,
+											platform: "linux/amd64",
+											deployment: "local",
+											deploymentType: "docker",
+											monitoring: false,
+										});
+										await navigator.clipboard.writeText(JSON.stringify(complete, null, 2));
+										setShowClawexaModal(false);
+									} catch (err) {
+										setGenerateError(err instanceof Error ? err.message : "Failed to copy JSON");
+									} finally {
+										setIsGenerating(false);
+									}
+								}}
+								className="rounded-lg border border-border bg-surface px-3 py-2 text-left text-sm font-medium text-foreground hover:bg-surface/80 disabled:opacity-50"
+							>
+								Copy complete JSON
+							</button>
+							<a
+								href={CLAWEXA_SITE}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="rounded-lg border border-border bg-surface px-3 py-2 text-center text-sm font-medium text-primary hover:bg-surface/80"
+							>
+								Open clawexa.net
+							</a>
+							{CLAWEXA_DEPLOY_URL && (
 								<button
 									type="button"
-									onClick={() => setDownloadComplete(false)}
-									className="mt-3 text-xs text-muted-foreground hover:text-foreground"
+									disabled={isGenerating || clawexaAction === "sent"}
+									onClick={async () => {
+										if (selectedServices.size === 0) return;
+										setClawexaAction("loading");
+										setGenerateError(null);
+										try {
+											const complete = await generateStackComplete({
+												projectName: projectName || "my-stack",
+												services: Array.from(selectedServices),
+												skillPacks: [],
+												proxy: "none",
+												gpu: false,
+												platform: "linux/amd64",
+												deployment: "local",
+												deploymentType: "docker",
+												monitoring: false,
+											});
+											const res = await fetch(CLAWEXA_DEPLOY_URL, {
+												method: "POST",
+												headers: { "Content-Type": "application/json" },
+												body: JSON.stringify(complete),
+											});
+											if (!res.ok) throw new Error(`Deploy failed: ${res.status}`);
+											setClawexaAction("sent");
+										} catch (err) {
+											setGenerateError(err instanceof Error ? err.message : "Send failed");
+											setClawexaAction("error");
+										}
+									}}
+									className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 								>
-									Dismiss
+									{clawexaAction === "loading"
+										? "Sending..."
+										: clawexaAction === "sent"
+											? "Sent"
+											: "Send to clawexa.net"}
 								</button>
-							</div>
+							)}
+						</div>
+						<div className="mt-4 flex justify-end">
+							<button
+								type="button"
+								onClick={() => {
+									setShowClawexaModal(false);
+									setClawexaAction("idle");
+								}}
+								className="rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
+							>
+								Close
+							</button>
 						</div>
 					</div>
 				</div>
@@ -591,7 +766,9 @@ export default function NewStackPage() {
 									Remove {name}?
 								</h2>
 								<p className="mt-2 text-sm text-muted-foreground">
-									{name} is recommended for secure access to your stack. Remove anyway?
+									{svc?.removalWarning ??
+										`${name} is recommended for your stack. Removing it may affect functionality.`}{" "}
+									Remove anyway?
 								</p>
 								<div className="mt-5 flex justify-end gap-2">
 									<button

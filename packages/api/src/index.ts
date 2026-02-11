@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { rateLimiter } from "./middleware/rate-limit.js";
+import { generateRateLimiter, rateLimiter } from "./middleware/rate-limit.js";
 import { generateRoute } from "./routes/generate.js";
 import { healthRoute } from "./routes/health.js";
 import { openapiRoute } from "./routes/openapi.js";
@@ -15,6 +15,7 @@ const app = new Hono().basePath("/v1");
 // Middleware
 app.use("/*", cors());
 app.use("/*", rateLimiter());
+app.use("/generate", generateRateLimiter());
 
 // Error handler
 app.onError((err, c) => {

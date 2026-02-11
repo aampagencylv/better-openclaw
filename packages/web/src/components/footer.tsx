@@ -96,6 +96,13 @@ export function Footer() {
 					<FooterColumn title="Product" links={productLinks} />
 					<FooterColumn title="Resources" links={resourceLinks} />
 					<FooterColumn title="Community" links={communityLinks} />
+					<FooterColumn
+						title="Legal"
+						links={[
+							{ href: "/privacy", label: "Privacy Policy" },
+							{ href: "/terms", label: "Terms of Service" },
+						]}
+					/>
 				</div>
 
 				{/* Bottom bar */}

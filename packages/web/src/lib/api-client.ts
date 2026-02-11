@@ -93,6 +93,14 @@ export interface GenerateResponse {
 	};
 }
 
+/** Complete stack payload for clawexa.net: input + files + metadata. */
+export interface GenerateCompleteResponse {
+	formatVersion: string;
+	input: Record<string, unknown>;
+	files: Record<string, string>;
+	metadata: GenerateResponse["metadata"];
+}
+
 export async function generateStack(config: {
 	projectName: string;
 	services: string[];
@@ -109,4 +117,30 @@ export async function generateStack(config: {
 		method: "POST",
 		body: JSON.stringify(config),
 	});
+}
+
+/** Same as generateStack but returns full payload (input + files + metadata) for export / clawexa.net. */
+export async function generateStackComplete(
+	config: Parameters<typeof generateStack>[0],
+): Promise<GenerateCompleteResponse> {
+	return apiFetch<GenerateCompleteResponse>("/generate?format=complete", {
+		method: "POST",
+		body: JSON.stringify(config),
+	});
+}
+
+/** Generate stack and return as ZIP blob. */
+export async function generateStackAsZip(
+	config: Parameters<typeof generateStack>[0],
+): Promise<Blob> {
+	const res = await fetch(`${API_BASE}/generate`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json", Accept: "application/zip" },
+		body: JSON.stringify(config),
+	});
+	if (!res.ok) {
+		const body = await res.json().catch(() => null);
+		throw new Error(body?.error?.message ?? `API error: ${res.status} ${res.statusText}`);
+	}
+	return res.blob();
 }
