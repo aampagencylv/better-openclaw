@@ -6,16 +6,33 @@ import { CommonSetups } from "@/components/common-setups";
 import { FeaturesGrid } from "@/components/features-grid";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
+import { HeroAlternative } from "@/components/hero-alternative";
 import { Navbar } from "@/components/navbar";
 import { PresetsSection } from "@/components/presets-section";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
+	const [useAltHero, setUseAltHero] = useState(false);
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+		// Randomly select hero variant on client mount
+		if (Math.random() > 0.5) {
+			setUseAltHero(true);
+		}
+	}, []);
+
+	// Default to main Hero during SSR/hydration to prevent mismatches
+	// Then switch to alternative if selected
+	const HeroComponent = mounted && useAltHero ? HeroAlternative : Hero;
+
 	return (
 		<div className="min-h-screen bg-background text-foreground">
 			<Navbar />
 
 			<main>
-				<Hero />
+				<HeroComponent />
 				<FeaturesGrid />
 				<PresetsSection />
 				<CommonSetups />

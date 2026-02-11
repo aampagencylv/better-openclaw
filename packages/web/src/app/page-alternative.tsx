@@ -5,11 +5,11 @@ import Link from "next/link";
 import { CommonSetups } from "@/components/common-setups";
 import { ComparisonSection } from "@/components/comparison-section";
 import { FaqSection } from "@/components/faq-section";
-import { FeaturesGrid } from "@/components/features-grid";
-import { Footer } from "@/components/footer";
-import { Hero } from "@/components/hero";
 import { Navbar } from "@/components/navbar";
 import { PresetsSection } from "@/components/presets-section";
+import { FeaturesGridAlternative } from "@/components/features-grid-alternative";
+import { HeroAlternative } from "@/components/hero-alternative";
+import { FooterAlternative } from "@/components/footer-alternative";
 
 export default function HomePageAlternative() {
 	return (
@@ -17,8 +17,8 @@ export default function HomePageAlternative() {
 			<Navbar />
 
 			<main>
-				<Hero />
-				<FeaturesGrid />
+				<HeroAlternative />
+				<FeaturesGridAlternative />
 				<ComparisonSection />
 				<PresetsSection />
 				<CommonSetups />
@@ -56,7 +56,7 @@ export default function HomePageAlternative() {
 				</section>
 			</main>
 
-			<Footer />
+			<FooterAlternative />
 		</div>
 	);
 }
