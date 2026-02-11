@@ -27,8 +27,8 @@ importers:
   packages/api:
     dependencies:
       '@better-openclaw/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^1.0.7
+        version: 1.0.7
       '@hono/node-server':
         specifier: ^1.19.9
         version: 1.19.9(hono@4.11.9)
@@ -64,8 +64,8 @@ importers:
   packages/cli:
     dependencies:
       '@better-openclaw/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^1.0.7
+        version: 1.0.7
       '@clack/prompts':
         specifier: ^1.0.0
         version: 1.0.0
@@ -178,8 +178,8 @@ importers:
   packages/web:
     dependencies:
       '@better-openclaw/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^1.0.7
+        version: 1.0.7
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.13))(@types/react@19.2.13)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -367,6 +367,9 @@ packages:
   '@babel/types@8.0.0-rc.1':
     resolution: {integrity: sha512-ubmJ6TShyaD69VE9DQrlXcdkvJbmwWPB8qYj0H2kaJi29O7vJT9ajSdBd2W8CG34pwL9pYA74fi7RHC1qbLoVQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
+
+  '@better-openclaw/core@1.0.7':
+    resolution: {integrity: sha512-iqD88XVejt1h2ZvkfU6OMVuhwtSV7S53J3zOAnklHsmg1DqgwvfOdt2rWSK+PH0Kf2kc/HLFP6m0x4zL0jXt1w==}
 
   '@biomejs/biome@2.3.14':
     resolution: {integrity: sha512-QMT6QviX0WqXJCaiqVMiBUCr5WRQ1iFSjvOLoTk6auKukJMvnMzWucXpwZB0e8F00/1/BsS9DzcKgWH+CLqVuA==}
@@ -3167,6 +3170,12 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 8.0.0-rc.1
       '@babel/helper-validator-identifier': 8.0.0-rc.1
+
+  '@better-openclaw/core@1.0.7':
+    dependencies:
+      handlebars: 4.7.8
+      yaml: 2.8.2
+      zod: 4.3.6
 
   '@biomejs/biome@2.3.14':
     optionalDependencies:
