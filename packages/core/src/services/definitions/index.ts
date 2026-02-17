@@ -3,13 +3,16 @@ export { appflowyDefinition } from "./appflowy.js";
 export { beszelDefinition } from "./beszel.js";
 export { browserlessDefinition } from "./browserless.js";
 export { caddyDefinition } from "./caddy.js";
+export { calComDefinition } from "./cal-com.js";
 export { chromadbDefinition } from "./chromadb.js";
 export { claudeCodeDefinition } from "./claude-code.js";
 export { codeServerDefinition } from "./code-server.js";
+export { comfyuiDefinition } from "./comfyui.js";
 export { convexDefinition } from "./convex.js";
 export { convexDashboardDefinition } from "./convex-dashboard.js";
 export { codexDefinition } from "./codex.js";
 export { coolifyDefinition } from "./coolify.js";
+export { desktopEnvironmentDefinition } from "./desktop-environment.js";
 export { difyDefinition } from "./dify.js";
 export { docsgptDefinition } from "./docsgpt.js";
 export { dokployDefinition } from "./dokploy.js";
@@ -37,6 +40,7 @@ export { minioDefinition } from "./minio.js";
 export { mixpostDefinition } from "./mixpost.js";
 export { motionCanvasDefinition } from "./motion-canvas.js";
 export { n8nDefinition } from "./n8n.js";
+export { neo4jDefinition } from "./neo4j.js";
 export { nocodbDefinition } from "./nocodb.js";
 export { ntfyDefinition } from "./ntfy.js";
 export { ollamaDefinition } from "./ollama.js";
@@ -57,6 +61,7 @@ export { rocketchatDefinition } from "./rocketchat.js";
 export { searxngDefinition } from "./searxng.js";
 export { stableDiffusionDefinition } from "./stable-diffusion.js";
 export { steelBrowserDefinition } from "./steel-browser.js";
+export { streamGatewayDefinition } from "./stream-gateway.js";
 export { tailscaleDefinition } from "./tailscale.js";
 export { temporalDefinition } from "./temporal.js";
 export { traefikDefinition } from "./traefik.js";
@@ -74,13 +79,16 @@ import { appflowyDefinition } from "./appflowy.js";
 import { beszelDefinition } from "./beszel.js";
 import { browserlessDefinition } from "./browserless.js";
 import { caddyDefinition } from "./caddy.js";
+import { calComDefinition } from "./cal-com.js";
 import { chromadbDefinition } from "./chromadb.js";
 import { claudeCodeDefinition } from "./claude-code.js";
 import { codeServerDefinition } from "./code-server.js";
+import { comfyuiDefinition } from "./comfyui.js";
 import { convexDefinition } from "./convex.js";
 import { convexDashboardDefinition } from "./convex-dashboard.js";
 import { codexDefinition } from "./codex.js";
 import { coolifyDefinition } from "./coolify.js";
+import { desktopEnvironmentDefinition } from "./desktop-environment.js";
 import { difyDefinition } from "./dify.js";
 import { docsgptDefinition } from "./docsgpt.js";
 import { dokployDefinition } from "./dokploy.js";
@@ -108,6 +116,7 @@ import { minioDefinition } from "./minio.js";
 import { mixpostDefinition } from "./mixpost.js";
 import { motionCanvasDefinition } from "./motion-canvas.js";
 import { n8nDefinition } from "./n8n.js";
+import { neo4jDefinition } from "./neo4j.js";
 import { nocodbDefinition } from "./nocodb.js";
 import { ntfyDefinition } from "./ntfy.js";
 import { ollamaDefinition } from "./ollama.js";
@@ -128,6 +137,7 @@ import { rocketchatDefinition } from "./rocketchat.js";
 import { searxngDefinition } from "./searxng.js";
 import { stableDiffusionDefinition } from "./stable-diffusion.js";
 import { steelBrowserDefinition } from "./steel-browser.js";
+import { streamGatewayDefinition } from "./stream-gateway.js";
 import { tailscaleDefinition } from "./tailscale.js";
 import { temporalDefinition } from "./temporal.js";
 import { traefikDefinition } from "./traefik.js";
@@ -173,6 +183,7 @@ export const allServiceDefinitions: ServiceDefinition[] = [
 	rocketchatDefinition,
 	mattermostDefinition,
 	stableDiffusionDefinition,
+	comfyuiDefinition,
 	playwrightServerDefinition,
 	openWebuiDefinition,
 	librechatDefinition,
@@ -209,4 +220,8 @@ export const allServiceDefinitions: ServiceDefinition[] = [
 	lasuiteMeetBackendDefinition,
 	lasuiteMeetFrontendDefinition,
 	lasuiteMeetAgentsDefinition,
+	desktopEnvironmentDefinition,
+	streamGatewayDefinition,
+	neo4jDefinition,
+	calComDefinition,
 ];

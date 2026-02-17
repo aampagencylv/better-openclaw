@@ -1,21 +1,15 @@
 import { resolve, ValidateRequestSchema } from "@better-openclaw/core";
-import { Hono } from "hono";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
-const route = new Hono();
-
-route.post("/", async (c) => {
-	try {
-		const body = await c.req.json();
-
-		// Validate request body against schema
-		const parsed = ValidateRequestSchema.safeParse(body);
-		if (!parsed.success) {
+const route = new OpenAPIHono({
+	defaultHook: (result, c) => {
+		if (!result.success) {
 			return c.json(
 				{
 					error: {
-						code: "VALIDATION_ERROR",
+						code: "VALIDATION_ERROR" as const,
 						message: "Invalid request body",
-						details: parsed.error.issues.map((issue: { path: PropertyKey[]; message: string }) => ({
+						details: result.error.issues.map((issue) => ({
 							field: issue.path.join("."),
 							message: issue.message,
 						})),
@@ -24,10 +18,71 @@ route.post("/", async (c) => {
 				400,
 			);
 		}
+	},
+});
 
-		const { services, skillPacks, proxy, gpu, platform } = parsed.data;
+const validatePost = createRoute({
+	method: "post",
+	path: "/",
+	tags: ["Validation"],
+	summary: "Validate a stack configuration",
+	request: {
+		body: {
+			required: true,
+			content: {
+				"application/json": {
+					schema: ValidateRequestSchema,
+				},
+			},
+		},
+	},
+	responses: {
+		200: {
+			description: "Validation result",
+			content: {
+				"application/json": {
+					schema: z.object({
+						valid: z.boolean(),
+						resolvedServices: z.array(z.string()),
+						addedDependencies: z.array(z.any()),
+						warnings: z.array(z.any()),
+						conflicts: z.array(z.any()),
+						estimatedMemoryMB: z.number(),
+					}),
+				},
+			},
+		},
+		400: {
+			description: "Validation error",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({
+							code: z.string(),
+							message: z.string(),
+							details: z.array(z.object({ field: z.string(), message: z.string() })).optional(),
+						}),
+					}),
+				},
+			},
+		},
+		500: {
+			description: "Internal error",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
 
-		// Run resolver
+route.openapi(validatePost, (c) => {
+	try {
+		const { services, skillPacks, proxy, gpu, platform } = c.req.valid("json");
+
 		const resolved = resolve({
 			services,
 			skillPacks,
@@ -49,7 +104,7 @@ route.post("/", async (c) => {
 		return c.json(
 			{
 				error: {
-					code: "INTERNAL_ERROR",
+					code: "INTERNAL_ERROR" as const,
 					message,
 				},
 			},

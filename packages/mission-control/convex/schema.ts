@@ -22,6 +22,7 @@ export default defineSchema({
 		orgId: v.optional(v.string()),
 		workspaceId: v.optional(v.string()),
 		tenantId: v.optional(v.string()),
+		updatedAt: v.optional(v.number()),
 	}).index("by_tenant", ["tenantId"]),
 	tasks: defineTable({
 		title: v.string(),
@@ -44,6 +45,7 @@ export default defineSchema({
 		orgId: v.optional(v.string()),
 		workspaceId: v.optional(v.string()),
 		tenantId: v.optional(v.string()),
+		updatedAt: v.optional(v.number()),
 	}).index("by_tenant", ["tenantId"]),
 	messages: defineTable({
 		taskId: v.id("tasks"),
@@ -53,6 +55,7 @@ export default defineSchema({
 		orgId: v.optional(v.string()),
 		workspaceId: v.optional(v.string()),
 		tenantId: v.optional(v.string()),
+		updatedAt: v.optional(v.number()),
 	})
 		.index("by_tenant", ["tenantId"])
 		.index("by_tenant_task", ["tenantId", "taskId"]),
@@ -78,6 +81,7 @@ export default defineSchema({
 		orgId: v.optional(v.string()),
 		workspaceId: v.optional(v.string()),
 		tenantId: v.optional(v.string()),
+		updatedAt: v.optional(v.number()),
 	})
 		.index("by_tenant", ["tenantId"])
 		.index("by_tenant_task", ["tenantId", "taskId"]),

@@ -1,6 +1,6 @@
 # better-openclaw
 
-> CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks with Docker Compose. 58+ services, 10 skill packs, one command.
+> CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks with Docker Compose. 74 services, 10 skill packs, one command.
 
 ## Project Description
 
@@ -43,7 +43,8 @@ Base URL (standalone API): `https://api.better-openclaw.dev/v1` (or configured A
 | GET | /v1/presets | List preset stacks |
 | POST | /v1/validate | Validate stack config before generation |
 | POST | /v1/generate | Generate stack (returns files + metadata) |
-| GET | /v1/openapi.json | OpenAPI specification |
+| GET | /v1/openapi.json | Auto-generated OpenAPI 3.1 specification |
+| GET | /v1/docs | Interactive Swagger UI documentation |
 
 Web API (Next.js): `POST https://better-openclaw.dev/api/generate` — generates stack directly
 
@@ -63,14 +64,26 @@ Web API (Next.js): `POST https://better-openclaw.dev/api/generate` — generates
 
 ## Service Catalog Summary
 
-Categories: Database & Caching, Vector Databases, Automation & Workflows, Media & Video, Object Storage, Reverse Proxy, Monitoring, Browser Automation, Search, AI/Local Models, Notifications, and more. 58+ services including PostgreSQL, Redis, Qdrant, n8n, FFmpeg, MinIO, Caddy, Traefik, Grafana, Ollama, Whisper, and others.
+19 categories, 74 services including: PostgreSQL, Redis, Neo4j, Qdrant, ChromaDB, Weaviate, n8n, Temporal, FFmpeg, Remotion, MinIO, Caddy, Traefik, Grafana, Prometheus, Ollama, Whisper, Stable Diffusion, Open WebUI, LibreChat, Dify, AnythingLLM, Cal.com, Gitea, Outline, and many more.
+
+Categories: AI Coding Agents, AI Platforms & Chat UIs, AI / Local Models, Automation & Workflows, Vector Databases, Media & Video, Social Media, Analytics, Knowledge & Documents, Object Storage, Database & Caching, Developer Tools, Reverse Proxy, Monitoring, Browser Automation, Search, Notifications, Desktop Environment, Streaming & Relay.
 
 ## Skill Packs
 
-Pre-bundled OpenClaw skills: redis-cache, qdrant-memory, n8n-trigger, ffmpeg-process, minio-storage, browserless-browse, searxng-search, whisper-transcribe, ollama-local-llm, remotion-render, steel-browse, lightpanda-browse.
+Pre-bundled OpenClaw skills: video-creator, research-agent, social-media, dev-ops, knowledge-base, local-ai, content-creator, ai-playground, coding-team, knowledge-hub.
+
+## Key Features
+
+- Traefik label generation with auto-SSL and HTTP-to-HTTPS redirect
+- Distributed rate limiting with optional Redis backend
+- Config migration utilities for forward compatibility
+- Smart dependency resolution and conflict detection
+- Bare-metal deployment support (hybrid native + Docker)
+- Monitoring dashboards with Grafana + Prometheus
 
 ## Documentation
 
 - Docs: https://better-openclaw.dev/docs
 - API Reference: https://better-openclaw.dev/api-docs
-- Showcase: https://better-openclaw.dev/showcase
+- Swagger UI: /v1/docs (live interactive API documentation)
+- Full AI-friendly docs: /llms-full.txt

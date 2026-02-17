@@ -7,61 +7,119 @@
       "id": "redis-cache",
       "path": "redis-cache/SKILL.md",
       "emoji": "🔴",
-      "services": ["redis"]
+      "services": [
+        "redis"
+      ]
     },
     {
       "id": "qdrant-memory",
       "path": "qdrant-memory/SKILL.md",
       "emoji": "🧠",
-      "services": ["qdrant"]
+      "services": [
+        "qdrant"
+      ]
     },
     {
       "id": "n8n-trigger",
       "path": "n8n-trigger/SKILL.md",
       "emoji": "⚡",
-      "services": ["n8n"]
+      "services": [
+        "n8n"
+      ]
     },
     {
       "id": "ffmpeg-process",
       "path": "ffmpeg-process/SKILL.md",
       "emoji": "🎬",
-      "services": ["ffmpeg"]
+      "services": [
+        "ffmpeg"
+      ]
     },
     {
       "id": "minio-storage",
       "path": "minio-storage/SKILL.md",
       "emoji": "📦",
-      "services": ["minio"]
+      "services": [
+        "minio"
+      ]
     },
     {
       "id": "browserless-browse",
       "path": "browserless-browse/SKILL.md",
       "emoji": "🌐",
-      "services": ["browserless"]
+      "services": [
+        "browserless"
+      ]
     },
     {
       "id": "searxng-search",
       "path": "searxng-search/SKILL.md",
       "emoji": "🔍",
-      "services": ["searxng"]
+      "services": [
+        "searxng"
+      ]
     },
     {
       "id": "whisper-transcribe",
       "path": "whisper-transcribe/SKILL.md",
       "emoji": "🎙️",
-      "services": ["whisper"]
+      "services": [
+        "whisper"
+      ]
     },
     {
       "id": "ollama-local-llm",
       "path": "ollama-local-llm/SKILL.md",
       "emoji": "🦙",
-      "services": ["ollama"]
+      "services": [
+        "ollama"
+      ]
     },
     {
       "id": "remotion-render",
       "path": "remotion-render/SKILL.md",
       "emoji": "🎥",
-      "services": ["remotion"]
+      "services": [
+        "remotion"
+      ]
+    },
+    {
+      "id": "comfyui-generate",
+      "path": "comfyui-generate/SKILL.md",
+      "emoji": "🎨",
+      "services": [
+        "comfyui"
+      ]
+    },
+    {
+      "id": "desktop-use",
+      "path": "desktop-use/SKILL.md",
+      "emoji": "🖥️",
+      "services": [
+        "desktop-environment"
+      ]
+    },
+    {
+      "id": "lightpanda-browse",
+      "path": "lightpanda-browse/SKILL.md",
+      "emoji": "🐼",
+      "services": [
+        "lightpanda"
+      ]
+    },
+    {
+      "id": "steel-browse",
+      "path": "steel-browse/SKILL.md",
+      "emoji": "🦾",
+      "services": [
+        "steel"
+      ]
+    },
+    {
+      "id": "better-openclaw",
+      "path": "better-openclaw/SKILL.md",
+      "emoji": "🦞",
+      "services": []
     }
   ]
 }

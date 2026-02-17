@@ -1,9 +1,5 @@
 import type { MiddlewareHandler } from "hono";
-
-interface RateLimitEntry {
-	count: number;
-	resetAt: number;
-}
+import { createRateLimitStore, type RateLimitStore } from "./rate-limit-store.js";
 
 interface RateLimitConfig {
 	windowMs: number;
@@ -31,30 +27,10 @@ function getConfig(prefix: string): RateLimitConfig {
 	return { windowMs, maxAnon, maxApiKey };
 }
 
-const stores = new Map<string, Map<string, RateLimitEntry>>();
-
-function getStore(prefix: string): Map<string, RateLimitEntry> {
-	let store = stores.get(prefix);
-	if (!store) {
-		store = new Map();
-		stores.set(prefix, store);
-		// Cleanup expired entries every 5 minutes
-		setInterval(
-			() => {
-				const now = Date.now();
-				for (const [key, entry] of store!) {
-					if (entry.resetAt <= now) store!.delete(key);
-				}
-			},
-			5 * 60 * 1000,
-		);
-	}
-	return store;
-}
+const store: RateLimitStore = createRateLimitStore();
 
 function createRateLimiter(keyPrefix: string, configOverrides?: Partial<RateLimitConfig>): MiddlewareHandler {
 	const config = { ...getConfig(keyPrefix), ...configOverrides };
-	const store = getStore(keyPrefix);
 
 	return async (c, next): Promise<Response | void> => {
 		const apiKey = c.req.header("X-API-Key");
@@ -64,26 +40,19 @@ function createRateLimiter(keyPrefix: string, configOverrides?: Partial<RateLimi
 			c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
 			c.req.header("x-real-ip") ||
 			"unknown";
-		const key = apiKey ? `key:${apiKey}` : `ip:${ip}`;
+		const key = apiKey ? `${keyPrefix}key:${apiKey}` : `${keyPrefix}ip:${ip}`;
+
+		const { count, resetAt } = await store.increment(key, config.windowMs);
 
 		const now = Date.now();
-		let entry = store.get(key);
-
-		if (!entry || entry.resetAt <= now) {
-			entry = { count: 0, resetAt: now + config.windowMs };
-			store.set(key, entry);
-		}
-
-		entry.count++;
-
-		const remaining = Math.max(0, limit - entry.count);
-		const resetSeconds = Math.ceil((entry.resetAt - now) / 1000);
+		const remaining = Math.max(0, limit - count);
+		const resetSeconds = Math.ceil((resetAt - now) / 1000);
 
 		c.header("X-RateLimit-Limit", String(limit));
 		c.header("X-RateLimit-Remaining", String(remaining));
 		c.header("X-RateLimit-Reset", String(resetSeconds));
 
-		if (entry.count > limit) {
+		if (count > limit) {
 			return c.json(
 				{
 					error: {

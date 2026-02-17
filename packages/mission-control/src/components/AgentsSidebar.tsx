@@ -1,6 +1,5 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { TENANT_ID } from "../lib/tenant";
 import { IconPlus, IconPlayerPlay, IconX } from "@tabler/icons-react";
 
 interface AgentsSidebarProps {
@@ -42,7 +41,7 @@ export default function AgentsSidebar({
 	onAddAgent,
 	onSelectAgent,
 }: AgentsSidebarProps) {
-	const agents = useQuery(api.queries.listAgents, { tenantId: TENANT_ID });
+	const agents = useQuery(api.queries.listAgents, {});
 
 	const sidebarClasses = [
 		"flex flex-col bg-sidebar border-r border-sidebar-border overflow-y-auto",

@@ -1,21 +1,10 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
-
-function requireTenant<T extends { tenantId?: string }>(
-	record: T | null,
-	tenantId: string,
-	entityName: string,
-): T {
-	if (!record || record.tenantId !== tenantId) {
-		throw new Error(`${entityName} not found`);
-	}
-	return record;
-}
+import { requireAuthTenantId, requireTenant } from "./lib/tenant";
 
 export const updateStatus = mutation({
 	args: {
 		taskId: v.id("tasks"),
-		tenantId: v.string(),
 		status: v.union(
 			v.literal("inbox"),
 			v.literal("assigned"),
@@ -27,22 +16,23 @@ export const updateStatus = mutation({
 		agentId: v.id("agents"),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const task = requireTenant(
 			await ctx.db.get(args.taskId),
-			args.tenantId,
+			tenantId,
 			"Task",
 		);
 
-		requireTenant(await ctx.db.get(args.agentId), args.tenantId, "Agent");
+		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
-		await ctx.db.patch(args.taskId, { status: args.status });
+		await ctx.db.patch(args.taskId, { status: args.status, updatedAt: Date.now() });
 
 		await ctx.db.insert("activities", {
 			type: "status_update",
 			agentId: args.agentId,
 			message: `changed status of "${task.title}" to ${args.status}`,
 			targetId: args.taskId,
-			tenantId: args.tenantId,
+			tenantId,
 		});
 	},
 });
@@ -50,35 +40,35 @@ export const updateStatus = mutation({
 export const updateAssignees = mutation({
 	args: {
 		taskId: v.id("tasks"),
-		tenantId: v.string(),
 		assigneeIds: v.array(v.id("agents")),
 		agentId: v.id("agents"),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const task = requireTenant(
 			await ctx.db.get(args.taskId),
-			args.tenantId,
+			tenantId,
 			"Task",
 		);
 
-		requireTenant(await ctx.db.get(args.agentId), args.tenantId, "Agent");
+		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
 		for (const assigneeId of args.assigneeIds) {
 			requireTenant(
 				await ctx.db.get(assigneeId),
-				args.tenantId,
+				tenantId,
 				"Assignee",
 			);
 		}
 
-		await ctx.db.patch(args.taskId, { assigneeIds: args.assigneeIds });
+		await ctx.db.patch(args.taskId, { assigneeIds: args.assigneeIds, updatedAt: Date.now() });
 
 		await ctx.db.insert("activities", {
 			type: "assignees_update",
 			agentId: args.agentId,
 			message: `updated assignees for "${task.title}"`,
 			targetId: args.taskId,
-			tenantId: args.tenantId,
+			tenantId,
 		});
 	},
 });
@@ -90,9 +80,9 @@ export const createTask = mutation({
 		status: v.string(),
 		tags: v.array(v.string()),
 		borderColor: v.optional(v.string()),
-		tenantId: v.string(),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const taskId = await ctx.db.insert("tasks", {
 			title: args.title,
 			description: args.description,
@@ -101,7 +91,8 @@ export const createTask = mutation({
 			assigneeIds: [],
 			tags: args.tags,
 			borderColor: args.borderColor,
-			tenantId: args.tenantId,
+			tenantId,
+			updatedAt: Date.now(),
 		});
 		return taskId;
 	},
@@ -110,26 +101,26 @@ export const createTask = mutation({
 export const archiveTask = mutation({
 	args: {
 		taskId: v.id("tasks"),
-		tenantId: v.string(),
 		agentId: v.id("agents"),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const task = requireTenant(
 			await ctx.db.get(args.taskId),
-			args.tenantId,
+			tenantId,
 			"Task",
 		);
 
-		requireTenant(await ctx.db.get(args.agentId), args.tenantId, "Agent");
+		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
-		await ctx.db.patch(args.taskId, { status: "archived" });
+		await ctx.db.patch(args.taskId, { status: "archived", updatedAt: Date.now() });
 
 		await ctx.db.insert("activities", {
 			type: "status_update",
 			agentId: args.agentId,
 			message: `archived "${task.title}"`,
 			targetId: args.taskId,
-			tenantId: args.tenantId,
+			tenantId,
 		});
 	},
 });
@@ -138,39 +129,53 @@ export const linkRun = mutation({
 	args: {
 		taskId: v.id("tasks"),
 		openclawRunId: v.string(),
-		tenantId: v.string(),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		requireTenant(
 			await ctx.db.get(args.taskId),
-			args.tenantId,
+			tenantId,
 			"Task",
 		);
 
 		await ctx.db.patch(args.taskId, {
 			openclawRunId: args.openclawRunId,
 			startedAt: Date.now(),
+			updatedAt: Date.now(),
 		});
+	},
+});
+
+export const deleteTask = mutation({
+	args: { taskId: v.id("tasks") },
+	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
+		requireTenant(
+			await ctx.db.get(args.taskId),
+			tenantId,
+			"Task",
+		);
+		await ctx.db.delete(args.taskId);
 	},
 });
 
 export const updateTask = mutation({
 	args: {
 		taskId: v.id("tasks"),
-		tenantId: v.string(),
 		title: v.optional(v.string()),
 		description: v.optional(v.string()),
 		tags: v.optional(v.array(v.string())),
 		agentId: v.id("agents"),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const task = requireTenant(
 			await ctx.db.get(args.taskId),
-			args.tenantId,
+			tenantId,
 			"Task",
 		);
 
-		requireTenant(await ctx.db.get(args.agentId), args.tenantId, "Agent");
+		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
 		// biome-ignore lint: dynamic field updates
 		const fields: any = {};
@@ -189,6 +194,7 @@ export const updateTask = mutation({
 			updates.push("tags");
 		}
 
+		fields.updatedAt = Date.now();
 		await ctx.db.patch(args.taskId, fields);
 
 		if (updates.length > 0) {
@@ -197,7 +203,7 @@ export const updateTask = mutation({
 				agentId: args.agentId,
 				message: `updated ${updates.join(", ")} of "${task.title}"`,
 				targetId: args.taskId,
-				tenantId: args.tenantId,
+				tenantId,
 			});
 		}
 	},

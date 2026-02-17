@@ -1,9 +1,39 @@
 import { getAllPresets } from "@better-openclaw/core";
-import { Hono } from "hono";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
-const route = new Hono();
+const route = new OpenAPIHono();
 
-route.get("/", (c) => {
+const presetsGet = createRoute({
+	method: "get",
+	path: "/",
+	tags: ["Presets"],
+	summary: "List preset configurations",
+	responses: {
+		200: {
+			description: "List of presets",
+			content: {
+				"application/json": {
+					schema: z.object({
+						presets: z.array(z.any()),
+						total: z.number().int(),
+					}),
+				},
+			},
+		},
+		500: {
+			description: "Internal error",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
+
+route.openapi(presetsGet, (c) => {
 	try {
 		const presets = getAllPresets();
 		return c.json({

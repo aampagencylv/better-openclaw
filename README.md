@@ -49,7 +49,10 @@ pnpm create better-openclaw@latest --preset researcher --output ./my-stack
 - **Smart dependency resolution** -- automatically adds required services (e.g., n8n adds PostgreSQL)
 - **Preset stacks** -- pre-configured templates for common use cases
 - **Skill packs** -- bundles of agent skills wired to their backing services
-- **Reverse proxy configs** -- auto-generated Caddy or Traefik configuration
+- **Reverse proxy configs** -- auto-generated Caddy or Traefik configuration with label generation
+- **Auto-generated OpenAPI spec** -- live Swagger UI at `/v1/docs`
+- **Distributed rate limiting** -- optional Redis-backed rate limiter for production
+- **Config migrations** -- forward-compatible configuration versioning
 - **Monitoring dashboards** -- Grafana + Prometheus pre-wired with service exporters
 - **Environment files** -- secure `.env` generation with random secrets
 - **Validation engine** -- port conflicts, resource limits, and configuration checks
@@ -70,21 +73,29 @@ Only services with a native recipe run on the host; others remain in Docker. Cur
 
 ## Service Catalog
 
-23 services across 11 categories, ready to compose:
+74 services across 19 categories, ready to compose:
 
 | Category | Services |
 |---|---|
-| **Database & Caching** | PostgreSQL, Redis, Valkey |
+| **AI Coding Agents** | Claude Code, Codex, Gemini CLI, OpenCode |
+| **AI Platforms & Chat UIs** | AnythingLLM, Dify, Flowise, Kimi, LibreChat, LiteLLM, Open WebUI |
+| **AI / Local Models** | Ollama, Stable Diffusion, Whisper |
+| **Automation & Workflows** | Cal.com, n8n, Temporal |
+| **Database & Caching** | Convex, Neo4j, PostgreSQL, Redis, Valkey |
 | **Vector Databases** | Qdrant, ChromaDB, Weaviate |
-| **Automation & Workflows** | n8n |
-| **Media & Video** | FFmpeg, Remotion, Motion Canvas |
+| **Media & Video** | ComfyUI, FFmpeg, Motion Canvas, Remotion |
+| **Social Media** | Mixpost, Postiz, UseSend |
+| **Analytics** | Matomo, OpenPanel, Umami |
+| **Knowledge & Documents** | DocsGPT, NocoDB, Outline, Paperless-ngx |
 | **Object Storage** | MinIO |
+| **Developer Tools** | AppFlowy, Beszel, Code Server, Coolify, Dokploy, Dozzle, Gitea, Mission Control, Portainer, Watchtower |
 | **Reverse Proxy** | Caddy, Traefik |
 | **Monitoring** | Grafana, Prometheus, Uptime Kuma |
-| **Browser Automation** | Browserless |
+| **Browser Automation** | Browserless, LightPanda, Playwright Server, Steel Browser |
 | **Search** | SearXNG, Meilisearch |
-| **AI / Local Models** | Ollama, Whisper |
 | **Notifications** | Gotify, ntfy |
+| **Communication** | Matrix Synapse, Mattermost, Rocket.Chat |
+| **Streaming & Relay** | LiveKit, Stream Gateway, Tailscale |
 
 Each service definition includes Docker image, ports, volumes, health checks, environment variables, resource limits, and dependency declarations.
 
@@ -100,6 +111,10 @@ Skill packs bundle agent skills with their required infrastructure:
 | **DevOps** | Monitoring, automation, and alerting | n8n, Redis, Uptime Kuma, Grafana, Prometheus |
 | **Knowledge Base** | Document indexing with vector + full-text search | Qdrant, PostgreSQL, Meilisearch |
 | **Local AI** | Local LLM inference and speech-to-text | Ollama, Whisper |
+| **Content Creator** | AI-powered image and video generation | FFmpeg, Remotion, MinIO, Stable Diffusion |
+| **AI Playground** | Multi-model AI experimentation | Ollama, Open WebUI, Qdrant, LiteLLM |
+| **Coding Team** | AI coding agents with shared state | Claude Code, Codex, Redis, PostgreSQL |
+| **Knowledge Hub** | Wiki and document search | Outline, Qdrant, Meilisearch, PostgreSQL |
 
 ## Presets
 
@@ -111,7 +126,11 @@ Pre-configured stack templates for quick starts:
 | **Creator** | FFmpeg, Remotion, MinIO, Redis | ~2 GB |
 | **Researcher** | Qdrant, SearXNG, Browserless, Redis | ~2.5 GB |
 | **DevOps** | n8n, PostgreSQL, Redis, Uptime Kuma, Grafana, Prometheus | ~3 GB |
-| **Full Stack** | All 17 core services + all skill packs | ~8 GB |
+| **Content Creator** | FFmpeg, Remotion, MinIO, Redis, Stable Diffusion | ~4 GB |
+| **AI Playground** | Ollama, Open WebUI, Qdrant, LiteLLM, Redis | ~6 GB |
+| **Coding Team** | Claude Code, Codex, Redis, PostgreSQL | ~3 GB |
+| **La Suite Meet** | Meet frontend/backend/agents, Redis, PostgreSQL, LiveKit | ~4 GB |
+| **Full Stack** | All core services + all skill packs | ~8 GB |
 
 ## Architecture
 

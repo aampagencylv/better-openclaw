@@ -1,6 +1,5 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { TENANT_ID } from "../lib/tenant";
 import type { Id } from "../../convex/_generated/dataModel";
 import KanbanColumn from "./KanbanColumn";
 
@@ -21,8 +20,8 @@ export default function MissionQueue({
 	selectedTaskId,
 	onSelectTask,
 }: MissionQueueProps) {
-	const tasks = useQuery(api.queries.listTasks, { tenantId: TENANT_ID });
-	const agents = useQuery(api.queries.listAgents, { tenantId: TENANT_ID });
+	const tasks = useQuery(api.queries.listTasks, {});
+	const agents = useQuery(api.queries.listAgents, {});
 
 	const tasksByStatus = (status: string) =>
 		(tasks ?? []).filter((t) => t.status === status);

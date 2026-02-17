@@ -1,6 +1,5 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { TENANT_ID } from "../../lib/tenant";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { IconX } from "@tabler/icons-react";
 
@@ -17,7 +16,6 @@ export default function DocumentPreviewTray({
 }: DocumentPreviewTrayProps) {
 	const docContext = useQuery(api.documents.getWithContext, {
 		documentId,
-		tenantId: TENANT_ID,
 	});
 
 	if (!docContext) return null;

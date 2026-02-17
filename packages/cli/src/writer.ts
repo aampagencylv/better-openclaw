@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
-import { chmod, mkdir, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { chmod, mkdir, readdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import pc from "picocolors";
 
@@ -11,11 +12,12 @@ import pc from "picocolors";
  * - Makes `.sh` files executable (chmod +x)
  * - In dry-run mode, only logs what would be created
  * - Optionally creates a tar.gz or zip archive of the output
+ * - Refuses to overwrite a non-empty directory unless `force` is set
  */
 export async function writeProject(
 	projectDir: string,
 	files: Record<string, string>,
-	options?: { dryRun?: boolean; outputFormat?: string },
+	options?: { dryRun?: boolean; outputFormat?: string; force?: boolean },
 ): Promise<void> {
 	const sortedPaths = Object.keys(files).sort();
 
@@ -26,6 +28,21 @@ export async function writeProject(
 		}
 		console.log(pc.dim(`\n  Total: ${sortedPaths.length} files`));
 		return;
+	}
+
+	// Overwrite protection: refuse to write into a non-empty directory unless --force
+	if (!options?.force && existsSync(projectDir)) {
+		try {
+			const entries = await readdir(projectDir);
+			if (entries.length > 0) {
+				throw new Error(
+					`Directory "${projectDir}" already exists and is not empty. Use --force to overwrite.`,
+				);
+			}
+		} catch (err) {
+			if (err instanceof Error && err.message.includes("--force")) throw err;
+			// readdir failed for another reason, continue
+		}
 	}
 
 	// Create root project directory

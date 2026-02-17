@@ -43,18 +43,40 @@ export interface ValidateResponse {
 	estimatedMemoryMB: number;
 }
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-	const res = await fetch(`${API_BASE}${path}`, {
-		headers: { "Content-Type": "application/json" },
-		...options,
-	});
+const API_TIMEOUT_MS = 30_000;
+const MAX_RETRIES = 1;
 
-	if (!res.ok) {
-		const body = await res.json().catch(() => null);
-		throw new Error(body?.error?.message ?? `API error: ${res.status} ${res.statusText}`);
+async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+	let lastError: Error | undefined;
+
+	for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+		const controller = new AbortController();
+		const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+		try {
+			const res = await fetch(`${API_BASE}${path}`, {
+				headers: { "Content-Type": "application/json" },
+				...options,
+				signal: controller.signal,
+			});
+
+			if (!res.ok) {
+				const body = await res.json().catch(() => null);
+				throw new Error(body?.error?.message ?? `API error: ${res.status} ${res.statusText}`);
+			}
+
+			return res.json() as Promise<T>;
+		} catch (err) {
+			lastError = err instanceof Error ? err : new Error(String(err));
+			// Only retry on network errors (not HTTP errors or aborts)
+			const isNetworkError = lastError.name === "TypeError" || lastError.name === "AbortError";
+			if (!isNetworkError || attempt >= MAX_RETRIES) throw lastError;
+		} finally {
+			clearTimeout(timeout);
+		}
 	}
 
-	return res.json() as Promise<T>;
+	throw lastError ?? new Error("API request failed");
 }
 
 export async function fetchServices(): Promise<ServiceResponse[]> {

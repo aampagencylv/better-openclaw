@@ -1,6 +1,5 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { TENANT_ID } from "../lib/tenant";
 import type { Id } from "../../convex/_generated/dataModel";
 import { IconX } from "@tabler/icons-react";
 
@@ -13,10 +12,9 @@ export default function AgentDetailTray({
 	agentId,
 	onClose,
 }: AgentDetailTrayProps) {
-	const agents = useQuery(api.queries.listAgents, { tenantId: TENANT_ID });
-	const tasks = useQuery(api.queries.listTasks, { tenantId: TENANT_ID });
+	const agents = useQuery(api.queries.listAgents, {});
+	const tasks = useQuery(api.queries.listTasks, {});
 	const activities = useQuery(api.queries.listActivities, {
-		tenantId: TENANT_ID,
 		agentId: agentId ?? undefined,
 	});
 

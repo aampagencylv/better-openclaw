@@ -18,6 +18,7 @@ const program = new Command()
 	.option("--monitoring", "Include monitoring stack")
 	.option("--no-monitoring", "Exclude monitoring")
 	.option("--gpu", "Enable GPU passthrough for AI services")
+	.option("--deployment <target>", "Deployment target: local, vps, homelab, clawexa", "local")
 	.option("--deployment-type <type>", "Deployment type: docker or bare-metal", "docker")
 	.option(
 		"--platform <arch>",
@@ -25,6 +26,7 @@ const program = new Command()
 		"linux/amd64",
 	)
 	.option("--output-format <fmt>", "Output format: directory, tar, zip", "directory")
+	.option("--force", "Overwrite existing project directory")
 	.option("--dry-run", "Show what would be generated without writing files")
 	.option("--open", "Open web UI stack builder in browser")
 	.action(async (projectDirectory: string | undefined, options: Record<string, unknown>) => {
@@ -78,6 +80,7 @@ const program = new Command()
 					domain: options.domain as string | undefined,
 					gpu: options.gpu as boolean | undefined,
 					monitoring: options.monitoring as boolean | undefined,
+					deployment: options.deployment as string | undefined,
 					deploymentType: options.deploymentType as string | undefined,
 					platform: options.platform as string | undefined,
 					dryRun: options.dryRun as boolean | undefined,

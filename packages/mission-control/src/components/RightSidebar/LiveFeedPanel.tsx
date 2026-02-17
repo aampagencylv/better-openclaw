@@ -1,6 +1,5 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { TENANT_ID } from "../../lib/tenant";
 
 function timeAgo(timestamp: number): string {
 	const seconds = Math.floor((Date.now() - timestamp) / 1000);
@@ -23,9 +22,7 @@ const activityIcon: Record<string, string> = {
 };
 
 export default function LiveFeedPanel() {
-	const activities = useQuery(api.queries.listActivities, {
-		tenantId: TENANT_ID,
-	});
+	const activities = useQuery(api.queries.listActivities, {});
 
 	return (
 		<div className="p-3 space-y-2">

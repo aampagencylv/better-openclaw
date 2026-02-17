@@ -1,6 +1,5 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { TENANT_ID } from "../lib/tenant";
 import type { Id } from "../../convex/_generated/dataModel";
 import { IconX, IconArrowRight, IconFile } from "@tabler/icons-react";
 import { useState } from "react";
@@ -26,13 +25,11 @@ export default function TaskDetailPanel({
 }: TaskDetailPanelProps) {
 	const messages = useQuery(api.queries.listMessages, {
 		taskId,
-		tenantId: TENANT_ID,
 	});
-	const tasks = useQuery(api.queries.listTasks, { tenantId: TENANT_ID });
-	const agents = useQuery(api.queries.listAgents, { tenantId: TENANT_ID });
+	const tasks = useQuery(api.queries.listTasks, {});
+	const agents = useQuery(api.queries.listAgents, {});
 	const documents = useQuery(api.documents.listByTask, {
 		taskId,
-		tenantId: TENANT_ID,
 	});
 	const updateStatus = useMutation(api.tasks.updateStatus);
 	const sendMessage = useMutation(api.messages.send);
@@ -53,7 +50,6 @@ export default function TaskDetailPanel({
 		await updateStatus({
 			taskId,
 			status: newStatus as "inbox" | "assigned" | "in_progress" | "review" | "done" | "archived",
-			tenantId: TENANT_ID,
 			agentId: agent._id,
 		});
 	};
@@ -65,7 +61,6 @@ export default function TaskDetailPanel({
 		await sendMessage({
 			taskId,
 			agentId: agent._id,
-			tenantId: TENANT_ID,
 			content: newMessage.trim(),
 		});
 		setNewMessage("");

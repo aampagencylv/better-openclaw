@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
@@ -93,7 +94,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				/>
 			</head>
 			<body className="bg-background text-foreground font-sans antialiased min-h-screen">
-				<ThemeProvider>{children}</ThemeProvider>
+				<ErrorBoundary>
+					<ThemeProvider>{children}</ThemeProvider>
+				</ErrorBoundary>
 
 				{/* Umami Analytics (only in production) */}
 				{umamiUrl && umamiId && process.env.NODE_ENV === "production" && (

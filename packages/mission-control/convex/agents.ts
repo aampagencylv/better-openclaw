@@ -1,20 +1,10 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
-
-function assertTenant(
-	record: { tenantId?: string } | null,
-	tenantId: string,
-	entityName: string,
-) {
-	if (!record || record.tenantId !== tenantId) {
-		throw new Error(`${entityName} not found`);
-	}
-}
+import { requireAuthTenantId, assertTenant } from "./lib/tenant";
 
 export const updateStatus = mutation({
 	args: {
 		id: v.id("agents"),
-		tenantId: v.string(),
 		status: v.union(
 			v.literal("idle"),
 			v.literal("active"),
@@ -22,9 +12,10 @@ export const updateStatus = mutation({
 		),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const agent = await ctx.db.get(args.id);
-		assertTenant(agent, args.tenantId, "Agent");
-		await ctx.db.patch(args.id, { status: args.status });
+		assertTenant(agent, tenantId, "Agent");
+		await ctx.db.patch(args.id, { status: args.status, updatedAt: Date.now() });
 	},
 });
 
@@ -42,9 +33,9 @@ export const createAgent = mutation({
 		systemPrompt: v.optional(v.string()),
 		character: v.optional(v.string()),
 		lore: v.optional(v.string()),
-		tenantId: v.string(),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		return await ctx.db.insert("agents", {
 			name: args.name,
 			role: args.role,
@@ -54,7 +45,8 @@ export const createAgent = mutation({
 			systemPrompt: args.systemPrompt,
 			character: args.character,
 			lore: args.lore,
-			tenantId: args.tenantId,
+			tenantId,
+			updatedAt: Date.now(),
 		});
 	},
 });
@@ -62,7 +54,6 @@ export const createAgent = mutation({
 export const updateAgent = mutation({
 	args: {
 		id: v.id("agents"),
-		tenantId: v.string(),
 		name: v.optional(v.string()),
 		role: v.optional(v.string()),
 		level: v.optional(
@@ -81,10 +72,11 @@ export const updateAgent = mutation({
 		lore: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const agent = await ctx.db.get(args.id);
-		assertTenant(agent, args.tenantId, "Agent");
+		assertTenant(agent, tenantId, "Agent");
 
-		const { id: _id, tenantId: _tenantId, ...updates } = args;
+		const { id: _id, ...updates } = args;
 		// biome-ignore lint: dynamic field filtering
 		const filteredUpdates: Record<string, any> = {};
 		for (const [key, value] of Object.entries(updates)) {
@@ -93,15 +85,17 @@ export const updateAgent = mutation({
 			}
 		}
 
+		filteredUpdates.updatedAt = Date.now();
 		await ctx.db.patch(args.id, filteredUpdates);
 	},
 });
 
 export const deleteAgent = mutation({
-	args: { id: v.id("agents"), tenantId: v.string() },
+	args: { id: v.id("agents") },
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const agent = await ctx.db.get(args.id);
-		assertTenant(agent, args.tenantId, "Agent");
+		assertTenant(agent, tenantId, "Agent");
 		await ctx.db.delete(args.id);
 	},
 });

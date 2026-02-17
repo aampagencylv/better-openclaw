@@ -1,42 +1,45 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { requireAuthTenantId, requireTenant } from "./lib/tenant";
 
-function requireTenant<T extends { tenantId?: string }>(
-	record: T | null,
-	tenantId: string,
-	entityName: string,
-): T {
-	if (!record || record.tenantId !== tenantId) {
-		throw new Error(`${entityName} not found`);
-	}
-	return record;
-}
+export const deleteMessage = mutation({
+	args: { messageId: v.id("messages") },
+	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
+		requireTenant(
+			await ctx.db.get(args.messageId),
+			tenantId,
+			"Message",
+		);
+		await ctx.db.delete(args.messageId);
+	},
+});
 
 export const send = mutation({
 	args: {
 		taskId: v.id("tasks"),
 		agentId: v.id("agents"),
-		tenantId: v.string(),
 		content: v.string(),
 		attachments: v.optional(v.array(v.id("documents"))),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const task = requireTenant(
 			await ctx.db.get(args.taskId),
-			args.tenantId,
+			tenantId,
 			"Task",
 		);
 
 		requireTenant(
 			await ctx.db.get(args.agentId),
-			args.tenantId,
+			tenantId,
 			"Agent",
 		);
 
 		for (const attachmentId of args.attachments || []) {
 			requireTenant(
 				await ctx.db.get(attachmentId),
-				args.tenantId,
+				tenantId,
 				"Document",
 			);
 		}
@@ -46,7 +49,8 @@ export const send = mutation({
 			fromAgentId: args.agentId,
 			content: args.content,
 			attachments: args.attachments || [],
-			tenantId: args.tenantId,
+			tenantId,
+			updatedAt: Date.now(),
 		});
 
 		await ctx.db.insert("activities", {
@@ -54,7 +58,7 @@ export const send = mutation({
 			agentId: args.agentId,
 			message: `commented on "${task.title}"`,
 			targetId: args.taskId,
-			tenantId: args.tenantId,
+			tenantId,
 		});
 	},
 });

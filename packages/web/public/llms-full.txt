@@ -1,0 +1,327 @@
+# better-openclaw — Full Documentation
+
+> Comprehensive AI-friendly reference for the better-openclaw stack generator.
+> 74 services, 10 skill packs, 9 presets, 19 categories.
+
+---
+
+## 1. Project Overview
+
+better-openclaw is a TypeScript monorepo that generates production-ready Docker Compose stacks pre-wired with OpenClaw agent skills. It provides:
+
+- **CLI** (create-better-openclaw): Interactive wizard + non-interactive mode
+- **REST API** (@better-openclaw/api): Hono-based API with OpenAPI 3.1 spec
+- **Web UI** (@better-openclaw/web): Next.js 15 visual stack builder
+- **Core** (@better-openclaw/core): Schemas, registry, resolver, composer, generators
+
+### Architecture Pipeline
+
+```
+User Input → Resolve → Partition → Compose → Validate → Generate
+```
+
+1. **Resolve**: Expands services, adds dependencies (requires/recommends), resolves skill packs, adds proxy and monitoring services, detects conflicts
+2. **Partition** (bare-metal only): Splits services into native vs Docker groups
+3. **Compose**: Generates docker-compose.yml, .env, reverse proxy configs, skill files
+4. **Validate**: Checks port conflicts, resource limits, platform compatibility
+5. **Generate**: Outputs files as JSON, ZIP, or directory
+
+---
+
+## 2. API Reference
+
+Base: `/v1`
+
+### GET /v1/health
+Returns API status, version, uptime, service count, memory usage.
+
+### GET /v1/services
+Query params: `category` (string), `maturity` (stable|beta|experimental)
+Returns: `{ services: ServiceDefinition[], categories: CategoryInfo[], total: number }`
+
+### GET /v1/skills
+Query params: `services` (comma-separated IDs to filter compatible packs)
+Returns: `{ skillPacks: SkillPack[], total: number, filteredBy?: string[] }`
+
+### GET /v1/presets
+Returns: `{ presets: Preset[], total: number }`
+
+### POST /v1/validate
+Body (ValidateRequestSchema):
+```json
+{
+  "services": ["redis", "postgresql"],
+  "skillPacks": [],
+  "proxy": "none",
+  "domain": "example.com",
+  "gpu": false,
+  "platform": "linux/amd64"
+}
+```
+Returns: `{ valid: boolean, resolvedServices: string[], addedDependencies, warnings, conflicts, estimatedMemoryMB }`
+
+### POST /v1/generate
+Body (GenerationInputSchema):
+```json
+{
+  "projectName": "my-stack",
+  "services": ["ollama", "qdrant", "n8n"],
+  "skillPacks": ["ollama-local-llm"],
+  "proxy": "caddy",
+  "domain": "example.com",
+  "gpu": false,
+  "platform": "linux/amd64",
+  "deployment": "local",
+  "deploymentType": "docker",
+  "generateSecrets": true,
+  "openclawVersion": "latest",
+  "monitoring": false
+}
+```
+Query params: `format` (json|zip|complete)
+Headers: `Accept: application/zip` for ZIP output
+Returns: `{ files: Record<string, string>, metadata: GenerationMetadata }`
+Or with `?format=complete`: `{ formatVersion: "1", input, files, metadata }`
+Or with `?format=zip`: Binary ZIP file
+
+### GET /v1/openapi.json
+Auto-generated OpenAPI 3.1 specification (via @hono/zod-openapi)
+
+### GET /v1/docs
+Interactive Swagger UI for the API
+
+### Rate Limiting
+- Global: 30 req/min anonymous, 300 req/min with X-API-Key header
+- Generate endpoint: 5 req/min anonymous, 10 req/min with key
+- Headers: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
+- Optional Redis backend (set REDIS_URL env var) for distributed rate limiting
+
+---
+
+## 3. Service Catalog (74 services)
+
+### AI Coding Agents
+- claude-code: Claude Code AI coding agent (anthropic/claude-code:latest, port 8080)
+- codex: OpenAI Codex CLI agent (openai/codex:latest, port 8081)
+- gemini-cli: Google Gemini CLI agent (google/gemini-cli:latest, port 8082)
+- opencode: OpenCode AI coding agent (opencode/opencode:latest, port 8083)
+
+### AI Platforms & Chat UIs
+- anything-llm: AnythingLLM knowledge base + chat (mintplexlabs/anythingllm, port 3001)
+- dify: Dify AI workflow platform (langgenius/dify, port 3100)
+- flowise: Flowise low-code AI builder (flowiseai/flowise, port 3200)
+- kimi: Kimi AI assistant interface (kimi-ai/kimi, port 3300)
+- librechat: LibreChat multi-model AI chat (ghcr.io/danny-avila/librechat, port 3080)
+- litellm: LiteLLM proxy for LLM APIs (ghcr.io/berriai/litellm, port 4000)
+- open-webui: Open WebUI for Ollama (ghcr.io/open-webui/open-webui, port 3000)
+
+### AI / Local Models
+- ollama: Ollama local LLM server (ollama/ollama, port 11434)
+- stable-diffusion: Stable Diffusion WebUI (ghcr.io/automatic1111/stable-diffusion-webui, port 7860)
+- whisper: OpenAI Whisper speech-to-text (onerahmet/openai-whisper-asr-webservice, port 9000)
+
+### Automation & Workflows
+- cal-com: Cal.com scheduling platform (calcom/cal.com, port 3005→3000)
+- n8n: n8n workflow automation (n8nio/n8n, port 5678)
+- temporal: Temporal workflow orchestration (temporalio/auto-setup, port 7233)
+
+### Vector Databases
+- chromadb: ChromaDB vector database (chromadb/chroma, port 8000)
+- qdrant: Qdrant vector search engine (qdrant/qdrant, port 6333/6334)
+- weaviate: Weaviate vector database (cr.weaviate.io/semitechnologies/weaviate, port 8082)
+
+### Media & Video
+- comfyui: ComfyUI node-based AI image generation (comfyui/comfyui, port 8188)
+- ffmpeg: FFmpeg media processing (linuxserver/ffmpeg, no exposed ports)
+- motion-canvas: Motion Canvas animation (motioncanvas/motion-canvas, port 9001)
+- remotion: Remotion video rendering (remotion-dev/remotion, port 8011)
+
+### Social Media
+- mixpost: Mixpost social media management (inovector/mixpost, port 9000)
+- postiz: Postiz social media scheduler (ghcr.io/gitroomhq/postiz-app, port 5000)
+- usesend: UseSend email marketing (usesend/usesend, port 3000)
+
+### Analytics
+- matomo: Matomo web analytics (matomo, port 8080)
+- openpanel: OpenPanel web analytics (openpanel/openpanel, port 3000)
+- umami: Umami web analytics (ghcr.io/umami-software/umami, port 3000)
+
+### Knowledge & Documents
+- docsgpt: DocsGPT document AI assistant (arc53/docsgpt, port 5173)
+- nocodb: NocoDB no-code database (nocodb/nocodb, port 8080)
+- outline: Outline wiki and knowledge base (outlinewiki/outline, port 3000)
+- paperless-ngx: Paperless-ngx document management (ghcr.io/paperless-ngx/paperless-ngx, port 8000)
+
+### Object Storage
+- minio: MinIO S3-compatible storage (minio/minio, port 9000/9001)
+
+### Database & Caching
+- convex: Convex reactive database (convex-dev/convex, port 3210)
+- convex-dashboard: Convex Dashboard (convex-dev/convex-dashboard, port 6791)
+- neo4j: Neo4j graph database (neo4j:5-community, port 7474/7687)
+- postgresql: PostgreSQL relational database (postgres:16-alpine, port 5432)
+- redis: Redis in-memory store (redis:7-alpine, port 6379)
+- valkey: Valkey Redis-compatible store (valkey/valkey:8-alpine, port 6379)
+
+### Developer Tools
+- appflowy: AppFlowy project management (appflowy-cloud/appflowy-cloud, port 9001)
+- beszel: Beszel server monitoring (henrygd/beszel, port 8090)
+- code-server: Code Server VS Code in browser (linuxserver/code-server, port 8443)
+- coolify: Coolify self-hosted PaaS (coollabsio/coolify, port 8000)
+- dokploy: Dokploy deployment platform (dokploy/dokploy, port 3000)
+- dozzle: Dozzle Docker log viewer (amir20/dozzle, port 8080)
+- gitea: Gitea self-hosted Git service (gitea/gitea, port 3000/22)
+- mission-control: Mission Control dashboard (mission-control/mission-control, port 3100)
+- portainer: Portainer Docker management (portainer/portainer-ce, port 9443)
+- watchtower: Watchtower Docker auto-updater (containrrr/watchtower, no exposed ports)
+
+### Reverse Proxy
+- caddy: Caddy reverse proxy with auto-SSL (caddy:2-alpine, port 80/443)
+- traefik: Traefik reverse proxy with auto-SSL (traefik:v3.3, port 80/443/8080)
+
+### Monitoring
+- grafana: Grafana dashboards (grafana/grafana, port 3456)
+- prometheus: Prometheus metrics (prom/prometheus, port 9090)
+- uptime-kuma: Uptime Kuma monitoring (louislam/uptime-kuma, port 3001)
+
+### Browser Automation
+- browserless: Browserless Chrome (browserless/chrome, port 3100)
+- lightpanda: LightPanda headless browser (lightpanda/lightpanda, port 9222)
+- playwright-server: Playwright browser server (mcr.microsoft.com/playwright, port 3000)
+- steel-browser: Steel Browser automation (steel-dev/steel-browser, port 3200)
+
+### Search
+- meilisearch: Meilisearch search engine (getmeili/meilisearch, port 7700)
+- searxng: SearXNG meta-search engine (searxng/searxng, port 8080)
+
+### Notifications
+- gotify: Gotify push notifications (gotify/server, port 8083)
+- ntfy: ntfy push notifications (binwiederhier/ntfy, port 8080)
+
+### Communication
+- matrix-synapse: Matrix Synapse homeserver (matrixdotorg/synapse, port 8008)
+- mattermost: Mattermost team chat (mattermost/mattermost-team-edition, port 8065)
+- rocketchat: Rocket.Chat communication (rocket.chat, port 3000)
+
+### Desktop Environment
+- desktop-environment: Desktop environment (various, port 6080/5900)
+
+### Streaming & Relay
+- livekit: LiveKit real-time communication (livekit/livekit-server, port 7880/7881)
+- stream-gateway: Stream gateway relay (stream-gateway, port 8080)
+- tailscale: Tailscale VPN (tailscale/tailscale, no exposed ports)
+
+### La Suite Meet (multi-service)
+- lasuite-meet-frontend: La Suite Meet frontend (port 8082)
+- lasuite-meet-backend: La Suite Meet backend (port 8083)
+- lasuite-meet-agents: La Suite Meet AI agents (port 8090)
+
+---
+
+## 4. Skill Packs (10)
+
+| ID | Name | Required Services | Skills |
+|----|------|-------------------|--------|
+| video-creator | Video Creator | ffmpeg, remotion, minio | ffmpeg-process, remotion-render, minio-storage |
+| research-agent | Research Agent | qdrant, searxng, browserless | qdrant-memory, searxng-search, browserless-browse |
+| social-media | Social Media | ffmpeg, redis, minio | ffmpeg-process, redis-cache, minio-storage |
+| dev-ops | DevOps | n8n, redis, uptime-kuma, grafana, prometheus | n8n-trigger, redis-cache |
+| knowledge-base | Knowledge Base | qdrant, postgresql, meilisearch | qdrant-memory, meilisearch-search |
+| local-ai | Local AI | ollama, whisper | ollama-local-llm, whisper-transcribe |
+| content-creator | Content Creator | ffmpeg, remotion, minio, stable-diffusion | ffmpeg-process, remotion-render, minio-storage |
+| ai-playground | AI Playground | ollama, open-webui, qdrant, litellm | ollama-local-llm, qdrant-memory |
+| coding-team | Coding Team | claude-code, codex, redis, postgresql | redis-cache |
+| knowledge-hub | Knowledge Hub | outline, qdrant, meilisearch, postgresql | qdrant-memory, meilisearch-search |
+
+---
+
+## 5. Presets (9)
+
+| ID | Name | Services | Est. Memory |
+|----|------|----------|-------------|
+| minimal | Minimal | redis | ~1 GB |
+| creator | Creator | ffmpeg, remotion, minio, redis | ~2 GB |
+| researcher | Researcher | qdrant, searxng, browserless, redis | ~2.5 GB |
+| devops | DevOps | n8n, postgresql, redis, uptime-kuma, grafana, prometheus | ~3 GB |
+| full | Full Stack | All core services + all skill packs | ~8 GB |
+| content-creator | Content Creator | ffmpeg, remotion, minio, redis, stable-diffusion | ~4 GB |
+| ai-playground | AI Playground | ollama, open-webui, qdrant, litellm, redis | ~6 GB |
+| coding-team | Coding Team | claude-code, codex, redis, postgresql | ~3 GB |
+| lasuite-meet | La Suite Meet | lasuite-meet-frontend, lasuite-meet-backend, lasuite-meet-agents, redis, postgresql, livekit | ~4 GB |
+
+---
+
+## 6. Configuration Schema
+
+### GenerationInput (POST /v1/generate body)
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| configVersion | number (int, >=1) | optional | Config version for migration support |
+| projectName | string (1-64, kebab) | required | Project directory name |
+| services | string[] | [] | Service IDs to include |
+| skillPacks | string[] | [] | Skill pack IDs to include |
+| proxy | "none" \| "caddy" \| "traefik" | "none" | Reverse proxy type |
+| domain | string | optional | Domain for SSL (requires proxy) |
+| gpu | boolean | false | Enable GPU support for AI services |
+| platform | enum | "linux/amd64" | Target platform (linux/amd64, linux/arm64, etc.) |
+| deployment | "local" \| "vps" \| "homelab" \| "clawexa" | "local" | Deployment target |
+| deploymentType | "docker" \| "bare-metal" | "docker" | Docker or hybrid native+Docker |
+| generateSecrets | boolean | true | Generate random secrets in .env |
+| openclawVersion | string | "latest" | OpenClaw gateway version |
+| monitoring | boolean | false | Include Grafana + Prometheus |
+
+### ServiceDefinition Schema
+
+Each service has: id, name, description, category, icon, image, imageTag, ports[], volumes[], environment[], healthcheck, command, dependsOn[], restartPolicy, networks[], labels, deploy, skills[], openclawEnvVars[], docsUrl, tags[], maturity, requires[], recommends[], conflictsWith[], minMemoryMB, gpuRequired.
+
+---
+
+## 7. CLI Reference
+
+```bash
+pnpm create better-openclaw@latest [directory] [options]
+
+Options:
+  --yes, -y              Use defaults (non-interactive)
+  --preset <name>        Use a preset: minimal, creator, researcher, devops, full, content-creator, ai-playground, coding-team, lasuite-meet
+  --services <ids>       Comma-separated service IDs
+  --skills <packs>       Comma-separated skill pack IDs
+  --proxy <type>         none, caddy, traefik
+  --domain <domain>      Domain for auto-SSL
+  --monitoring           Include monitoring (Grafana + Prometheus)
+  --gpu                  Enable GPU for AI services
+  --platform <arch>      linux/amd64, linux/arm64
+  --deployment <target>  local, vps, homelab, clawexa
+  --deployment-type <t>  docker, bare-metal
+  --dry-run              Preview files without writing
+  --open                 Open web UI in browser
+  --output <dir>         Output directory (default: ./<projectName>)
+```
+
+---
+
+## 8. Reverse Proxy Support
+
+### Caddy
+Auto-generated Caddyfile with:
+- Per-service subdomain routing (e.g., `n8n.example.com`)
+- Automatic HTTPS via Let's Encrypt
+- Root domain routes to OpenClaw gateway
+
+### Traefik
+Auto-generated traefik.yml static config + per-service Docker labels:
+- `traefik.http.routers.<service>.rule=Host(\`<service>.<domain>\`)`
+- Automatic HTTPS via Let's Encrypt ACME
+- HTTP-to-HTTPS redirect middleware
+- Root domain routes to OpenClaw gateway (port 18789)
+- Docker provider with `exposedByDefault: false`
+
+---
+
+## 9. Config Migrations
+
+Configs include an optional `configVersion` field. The migration system automatically upgrades old configs:
+- Version 1 → 2: Adds `deploymentType: "docker"` default
+- Future migrations will be added as the schema evolves
+- Configs without `configVersion` are treated as v1

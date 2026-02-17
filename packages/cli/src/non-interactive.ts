@@ -28,8 +28,10 @@ export interface NonInteractiveOptions {
 	domain?: string;
 	gpu?: boolean;
 	monitoring?: boolean;
+	deployment?: string;
 	deploymentType?: string;
 	platform?: string;
+	force?: boolean;
 	dryRun?: boolean;
 	yes?: boolean;
 	outputFormat?: string;
@@ -150,7 +152,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		domain: options.domain,
 		gpu: options.gpu ?? false,
 		platform,
-		deployment: "local",
+		deployment: (options.deployment ?? "local") as "local" | "vps" | "homelab" | "clawexa",
 		deploymentType,
 		generateSecrets: true,
 		openclawVersion: "latest",
@@ -180,6 +182,7 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 	// Write files or dry-run
 	await writeProject(projectDir, result.files, {
 		dryRun: options.dryRun,
+		force: options.force,
 		outputFormat: options.outputFormat,
 	});
 

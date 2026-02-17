@@ -4,13 +4,16 @@ import {
 	composeMultiFile,
 	getAllPresets,
 	getAllServices,
+	getAllSkillPacks,
 	type ResolverOutput,
 	resolve,
 	SERVICE_CATEGORIES,
 	type ServiceDefinition,
+	type SkillPack,
 } from "@better-openclaw/core";
 import JSZip from "jszip";
 import {
+	AlertTriangle,
 	ArrowLeft,
 	CheckCircle,
 	Copy,
@@ -53,10 +56,13 @@ export default function NewStackPage() {
 	} | null>(null);
 	const [showClawexaModal, setShowClawexaModal] = useState(false);
 	const [clawexaAction, setClawexaAction] = useState<"idle" | "loading" | "sent" | "error">("idle");
+	const [selectedSkillPacks, setSelectedSkillPacks] = useState<Set<string>>(new Set());
+	const [resolverError, setResolverError] = useState<string | null>(null);
 
-	// Load all services and presets from core registry
+	// Load all services, presets, and skill packs from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
 	const allPresets = useMemo(() => getAllPresets(), []);
+	const allSkillPacks: SkillPack[] = useMemo(() => getAllSkillPacks(), []);
 
 	// Filter services based on search query
 	const filteredServices = useMemo(() => {
@@ -72,20 +78,30 @@ export default function NewStackPage() {
 
 	// Resolve dependencies in real-time
 	const resolverOutput: ResolverOutput | null = useMemo(() => {
-		if (selectedServices.size === 0) return null;
+		if (selectedServices.size === 0 && selectedSkillPacks.size === 0) {
+			setResolverError(null);
+			return null;
+		}
 		try {
-			return resolve({
+			const result = resolve({
 				services: Array.from(selectedServices),
-				skillPacks: [],
+				skillPacks: Array.from(selectedSkillPacks),
 				proxy: "none",
 				gpu: false,
 				platform: "linux/amd64",
 				monitoring: false,
 			});
-		} catch {
+			if (!result.isValid) {
+				setResolverError(result.errors.map((e) => e.message).join("; "));
+			} else {
+				setResolverError(null);
+			}
+			return result;
+		} catch (err) {
+			setResolverError(err instanceof Error ? err.message : "Resolution failed");
 			return null;
 		}
-	}, [selectedServices]);
+	}, [selectedServices, selectedSkillPacks]);
 
 	// Build a set of all resolved service IDs (including auto-added deps)
 	const resolvedServiceIds = useMemo(() => {
@@ -174,9 +190,11 @@ export default function NewStackPage() {
 	// Reset all selections
 	const handleReset = useCallback(() => {
 		setSelectedServices(new Set());
+		setSelectedSkillPacks(new Set());
 		setActivePreset(null);
 		setSearchQuery("");
 		setGenerateError(null);
+		setResolverError(null);
 	}, []);
 
 	// Download generated stack as a real ZIP file (optionally with deployment type and platform from modal)
@@ -195,7 +213,7 @@ export default function NewStackPage() {
 				const result = await generateStack({
 					projectName: name,
 					services: Array.from(selectedServices),
-					skillPacks: [],
+					skillPacks: Array.from(selectedSkillPacks),
 					proxy: "none",
 					gpu: false,
 					platform,
@@ -312,10 +330,16 @@ export default function NewStackPage() {
 				</div>
 			</header>
 
-			{/* Error banner */}
+			{/* Error banners */}
 			{generateError && (
 				<div className="border-b border-red-500/20 bg-red-500/5 px-6 py-3 text-center text-sm text-red-400">
 					{generateError}
+				</div>
+			)}
+			{resolverError && (
+				<div className="flex items-center justify-center gap-2 border-b border-amber-500/20 bg-amber-500/5 px-6 py-3 text-center text-sm text-amber-400">
+					<AlertTriangle className="h-4 w-4 shrink-0" />
+					{resolverError}
 				</div>
 			)}
 
@@ -590,6 +614,49 @@ export default function NewStackPage() {
 							</button>
 						))}
 					</div>
+
+					{/* Skill Pack selection */}
+					{allSkillPacks.length > 0 && (
+						<div className="mb-6">
+							<h3 className="mb-2 text-sm font-semibold text-foreground">Skill Packs</h3>
+							<p className="mb-3 text-xs text-muted-foreground">
+								Pre-configured bundles of services for common use cases.
+							</p>
+							<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+								{allSkillPacks.map((pack) => {
+									const isSelected = selectedSkillPacks.has(pack.id);
+									return (
+										<button
+											key={pack.id}
+											type="button"
+											onClick={() => {
+												setSelectedSkillPacks((prev) => {
+													const next = new Set(prev);
+													if (next.has(pack.id)) {
+														next.delete(pack.id);
+													} else {
+														next.add(pack.id);
+													}
+													return next;
+												});
+											}}
+											className={cn(
+												"rounded-lg border p-2.5 text-left text-xs transition-all",
+												isSelected
+													? "border-primary/40 bg-primary/10 text-primary"
+													: "border-border bg-surface/50 text-muted-foreground hover:border-primary/20 hover:bg-surface",
+											)}
+										>
+											<div className="font-medium">{pack.icon ?? ""} {pack.name}</div>
+											<div className="mt-1 text-[10px] opacity-70">
+												{pack.requiredServices.length} services
+											</div>
+										</button>
+									);
+								})}
+							</div>
+						</div>
+					)}
 
 					<ServiceGrid
 						services={filteredServices}

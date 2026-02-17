@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(git -C /c/Users/diopi/source/repos/diopisemou/better-openclaw log --oneline -10)",
+      "Bash(ls:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(node -e:*)",
+      "Bash(node --loader ts-node/esm:*)",
+      "Bash(npx tsx:*)"
+    ]
+  }
+}

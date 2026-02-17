@@ -1,9 +1,27 @@
 import { GenerationInputSchema, generate } from "@better-openclaw/core";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import archiver from "archiver";
-import { Hono } from "hono";
 import { Writable } from "node:stream";
 
-const route = new Hono();
+const route = new OpenAPIHono({
+	defaultHook: (result, c) => {
+		if (!result.success) {
+			return c.json(
+				{
+					error: {
+						code: "VALIDATION_ERROR" as const,
+						message: "Invalid generation input",
+						details: result.error.issues.map((issue) => ({
+							field: issue.path.join("."),
+							message: issue.message,
+						})),
+					},
+				},
+				400,
+			);
+		}
+	},
+});
 
 /** Build a ZIP buffer from generated files (projectName as root folder). */
 function buildZipBuffer(
@@ -30,36 +48,90 @@ function buildZipBuffer(
 	});
 }
 
-route.post("/", async (c) => {
-	try {
-		const body = await c.req.json();
-
-		const parsed = GenerationInputSchema.safeParse(body);
-		if (!parsed.success) {
-			return c.json(
-				{
-					error: {
-						code: "VALIDATION_ERROR",
-						message: "Invalid generation input",
-						details: parsed.error.issues.map((issue: { path: PropertyKey[]; message: string }) => ({
-							field: issue.path.join("."),
-							message: issue.message,
-						})),
-					},
+const generatePost = createRoute({
+	method: "post",
+	path: "/",
+	tags: ["Generation"],
+	summary: "Generate a complete stack",
+	description:
+		"Generates Docker Compose files, environment configs, and supporting files for an OpenClaw stack. " +
+		"Supports JSON (default), complete JSON (?format=complete), and ZIP (?format=zip or Accept: application/zip) output formats.",
+	request: {
+		query: z.object({
+			format: z.string().optional(),
+		}),
+		body: {
+			required: true,
+			content: {
+				"application/json": {
+					schema: GenerationInputSchema,
 				},
-				400,
-			);
-		}
+			},
+		},
+	},
+	responses: {
+		200: {
+			description: "Generated stack files (JSON or ZIP)",
+			content: {
+				"application/json": {
+					schema: z.object({
+						files: z.record(z.string()).optional(),
+						metadata: z.any().optional(),
+						formatVersion: z.string().optional(),
+						input: z.any().optional(),
+					}),
+				},
+			},
+		},
+		400: {
+			description: "Validation error",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({
+							code: z.string(),
+							message: z.string(),
+							details: z.array(z.object({ field: z.string(), message: z.string() })).optional(),
+						}),
+					}),
+				},
+			},
+		},
+		409: {
+			description: "Conflict error (e.g. conflicting services)",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+		500: {
+			description: "Generation error",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
 
-		const result = generate(parsed.data);
+route.openapi(generatePost, async (c) => {
+	try {
+		const input = c.req.valid("json");
+		const result = generate(input);
 		const accept = c.req.header("Accept") ?? "";
-		const format = c.req.query("format");
+		const { format } = c.req.valid("query");
 
 		// ZIP: return binary ZIP (Accept: application/zip or ?format=zip)
 		const wantsZip =
 			accept.includes("application/zip") || format?.toLowerCase() === "zip";
 		if (wantsZip) {
-			const projectName = parsed.data.projectName ?? "project";
+			const projectName = input.projectName ?? "project";
 			const zipBuffer = await buildZipBuffer(projectName, result.files);
 			return c.body(new Uint8Array(zipBuffer), 200, {
 				"Content-Disposition": `attachment; filename="${projectName}.zip"`,
@@ -74,7 +146,7 @@ route.post("/", async (c) => {
 		if (wantsComplete) {
 			return c.json({
 				formatVersion: "1",
-				input: parsed.data,
+				input,
 				files: result.files,
 				metadata: result.metadata,
 			});
@@ -87,17 +159,16 @@ route.post("/", async (c) => {
 		});
 	} catch (err) {
 		const message = err instanceof Error ? err.message : "Generation failed";
+		const errName = err instanceof Error ? err.name : "";
 		const isConfigError =
-			message.includes("Invalid stack configuration") || message.includes("Validation failed");
-		return c.json(
-			{
-				error: {
-					code: isConfigError ? "CONFLICT_ERROR" : "GENERATION_ERROR",
-					message,
-				},
-			},
-			isConfigError ? 409 : 500,
-		);
+			errName === "StackConfigError" ||
+			errName === "ValidationError" ||
+			message.includes("Invalid stack configuration") ||
+			message.includes("Validation failed");
+		if (isConfigError) {
+			return c.json({ error: { code: "CONFLICT_ERROR" as const, message } }, 409);
+		}
+		return c.json({ error: { code: "GENERATION_ERROR" as const, message } }, 500);
 	}
 });
 

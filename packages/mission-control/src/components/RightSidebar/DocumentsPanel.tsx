@@ -1,6 +1,5 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { TENANT_ID } from "../../lib/tenant";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { IconFile, IconCode, IconFileText, IconPhoto } from "@tabler/icons-react";
 
@@ -32,9 +31,7 @@ export default function DocumentsPanel({
 	onSelectDocument,
 	onPreviewDocument,
 }: DocumentsPanelProps) {
-	const documents = useQuery(api.documents.listAll, {
-		tenantId: TENANT_ID,
-	});
+	const documents = useQuery(api.documents.listAll, {});
 
 	return (
 		<div className="p-3 space-y-1.5">

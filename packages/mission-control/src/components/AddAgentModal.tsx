@@ -1,6 +1,5 @@
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { TENANT_ID } from "../lib/tenant";
 import { useState } from "react";
 import { IconX } from "@tabler/icons-react";
 
@@ -33,7 +32,6 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				level,
 				avatar,
 				status: "idle",
-				tenantId: TENANT_ID,
 			});
 			onCreated();
 		} catch (err) {

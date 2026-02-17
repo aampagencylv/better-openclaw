@@ -30,4 +30,7 @@ COPY --from=builder /app/packages/web/public ./packages/web/public
 COPY --from=builder /app/packages/web/package.json ./packages/web/
 COPY --from=builder /app/node_modules ./node_modules
 EXPOSE 3654 3456
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+	CMD wget --no-verbose --tries=1 --spider http://localhost:3654/health || exit 1
+USER node
 CMD ["node", "packages/api/dist/index.js"]

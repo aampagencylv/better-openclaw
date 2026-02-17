@@ -1,11 +1,47 @@
 import { getAllSkillPacks, getCompatibleSkillPacks } from "@better-openclaw/core";
-import { Hono } from "hono";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
-const route = new Hono();
+const route = new OpenAPIHono();
 
-route.get("/", (c) => {
+const skillsGet = createRoute({
+	method: "get",
+	path: "/",
+	tags: ["Skills"],
+	summary: "List available skill packs",
+	request: {
+		query: z.object({
+			services: z.string().optional(),
+		}),
+	},
+	responses: {
+		200: {
+			description: "List of skill packs",
+			content: {
+				"application/json": {
+					schema: z.object({
+						skillPacks: z.array(z.any()),
+						total: z.number().int(),
+						filteredBy: z.array(z.string()).optional(),
+					}),
+				},
+			},
+		},
+		500: {
+			description: "Internal error",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
+
+route.openapi(skillsGet, (c) => {
 	try {
-		const servicesParam = c.req.query("services");
+		const { services: servicesParam } = c.req.valid("query");
 
 		if (servicesParam) {
 			const serviceIds = servicesParam

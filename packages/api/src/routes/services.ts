@@ -1,17 +1,52 @@
 import type { ServiceCategory, ServiceDefinition } from "@better-openclaw/core";
 import { getAllServices, getServicesByCategory, SERVICE_CATEGORIES } from "@better-openclaw/core";
-import { Hono } from "hono";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
-const route = new Hono();
+const route = new OpenAPIHono();
 
-route.get("/", (c) => {
+const servicesGet = createRoute({
+	method: "get",
+	path: "/",
+	tags: ["Services"],
+	summary: "List all available services",
+	request: {
+		query: z.object({
+			category: z.string().optional(),
+			maturity: z.string().optional(),
+		}),
+	},
+	responses: {
+		200: {
+			description: "List of services with categories and total count",
+			content: {
+				"application/json": {
+					schema: z.object({
+						services: z.array(z.any()),
+						categories: z.array(z.any()),
+						total: z.number().int(),
+					}),
+				},
+			},
+		},
+		500: {
+			description: "Internal error",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
+
+route.openapi(servicesGet, (c) => {
 	try {
-		const category = c.req.query("category");
-		const maturity = c.req.query("maturity");
+		const { category, maturity } = c.req.valid("query");
 
 		let services = category ? getServicesByCategory(category as ServiceCategory) : getAllServices();
 
-		// Filter by maturity if provided
 		if (maturity) {
 			services = services.filter((s: ServiceDefinition) => s.maturity === maturity);
 		}

@@ -1,36 +1,25 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
-
-function assertTenant(
-	record: { tenantId?: string } | null,
-	tenantId: string,
-	entityName: string,
-) {
-	if (!record || record.tenantId !== tenantId) {
-		throw new Error(`${entityName} not found`);
-	}
-}
+import { requireAuthTenantId, assertTenant, requireTenant } from "./lib/tenant";
 
 export const listAgents = query({
-	args: {
-		tenantId: v.string(),
-	},
-	handler: async (ctx, args) => {
+	args: {},
+	handler: async (ctx) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		return await ctx.db
 			.query("agents")
-			.withIndex("by_tenant", (q) => q.eq("tenantId", args.tenantId))
+			.withIndex("by_tenant", (q) => q.eq("tenantId", tenantId))
 			.collect();
 	},
 });
 
 export const listTasks = query({
-	args: {
-		tenantId: v.string(),
-	},
-	handler: async (ctx, args) => {
+	args: {},
+	handler: async (ctx) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const tasks = await ctx.db
 			.query("tasks")
-			.withIndex("by_tenant", (q) => q.eq("tenantId", args.tenantId))
+			.withIndex("by_tenant", (q) => q.eq("tenantId", tenantId))
 			.collect();
 
 		// Enrich tasks with last message time
@@ -39,7 +28,7 @@ export const listTasks = query({
 				const lastMessage = await ctx.db
 					.query("messages")
 					.withIndex("by_tenant_task", (q) =>
-						q.eq("tenantId", args.tenantId).eq("taskId", task._id),
+						q.eq("tenantId", tenantId).eq("taskId", task._id),
 					)
 					.order("desc")
 					.first();
@@ -57,15 +46,15 @@ export const listTasks = query({
 
 export const listActivities = query({
 	args: {
-		tenantId: v.string(),
 		agentId: v.optional(v.id("agents")),
 		type: v.optional(v.string()),
 		taskId: v.optional(v.id("tasks")),
 	},
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		let activitiesQuery = ctx.db
 			.query("activities")
-			.withIndex("by_tenant", (q) => q.eq("tenantId", args.tenantId))
+			.withIndex("by_tenant", (q) => q.eq("tenantId", tenantId))
 			.order("desc");
 
 		if (args.agentId || args.type || args.taskId) {
@@ -111,7 +100,7 @@ export const listActivities = query({
 		const enrichedFeed = await Promise.all(
 			activities.map(async (activity) => {
 				const agent = await ctx.db.get(activity.agentId);
-				assertTenant(agent, args.tenantId, "Agent");
+				assertTenant(agent, tenantId, "Agent");
 				return {
 					...activity,
 					agentName: agent?.name ?? "Unknown Agent",
@@ -123,16 +112,53 @@ export const listActivities = query({
 	},
 });
 
-export const listMessages = query({
-	args: { taskId: v.id("tasks"), tenantId: v.string() },
+export const getAgent = query({
+	args: { agentId: v.id("agents") },
 	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
+		return requireTenant(
+			await ctx.db.get(args.agentId),
+			tenantId,
+			"Agent",
+		);
+	},
+});
+
+export const getTask = query({
+	args: { taskId: v.id("tasks") },
+	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
+		return requireTenant(
+			await ctx.db.get(args.taskId),
+			tenantId,
+			"Task",
+		);
+	},
+});
+
+export const getDocument = query({
+	args: { documentId: v.id("documents") },
+	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
+		return requireTenant(
+			await ctx.db.get(args.documentId),
+			tenantId,
+			"Document",
+		);
+	},
+});
+
+export const listMessages = query({
+	args: { taskId: v.id("tasks") },
+	handler: async (ctx, args) => {
+		const tenantId = await requireAuthTenantId(ctx);
 		const task = await ctx.db.get(args.taskId);
-		assertTenant(task, args.tenantId, "Task");
+		assertTenant(task, tenantId, "Task");
 
 		const messages = await ctx.db
 			.query("messages")
 			.withIndex("by_tenant_task", (q) =>
-				q.eq("tenantId", args.tenantId).eq("taskId", args.taskId),
+				q.eq("tenantId", tenantId).eq("taskId", args.taskId),
 			)
 			.collect();
 
@@ -140,7 +166,7 @@ export const listMessages = query({
 		const enrichedMessages = await Promise.all(
 			messages.map(async (msg) => {
 				const agent = await ctx.db.get(msg.fromAgentId);
-				assertTenant(agent, args.tenantId, "Agent");
+				assertTenant(agent, tenantId, "Agent");
 				return {
 					...msg,
 					agentName: agent?.name ?? "Unknown",

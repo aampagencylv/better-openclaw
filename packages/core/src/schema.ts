@@ -20,6 +20,8 @@ export const ServiceCategorySchema = z.enum([
 	"ai-platform",
 	"dev-tools",
 	"knowledge",
+	"desktop",
+	"streaming",
 ]);
 
 export const MaturitySchema = z.enum(["stable", "beta", "experimental"]);
@@ -199,6 +201,7 @@ export const PresetSchema = z.object({
 // ─── Generation Input ───────────────────────────────────────────────────────
 
 export const GenerationInputSchema = z.object({
+	configVersion: z.number().int().min(1).optional(),
 	projectName: z
 		.string()
 		.min(1)

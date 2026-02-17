@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { TENANT_ID } from "../lib/tenant";
 import type { Id } from "../../convex/_generated/dataModel";
 import { useState } from "react";
 import { IconX } from "@tabler/icons-react";
@@ -40,7 +39,7 @@ export default function AddTaskModal({
 }: AddTaskModalProps) {
 	const createTask = useMutation(api.tasks.createTask);
 	const updateAssignees = useMutation(api.tasks.updateAssignees);
-	const agents = useQuery(api.queries.listAgents, { tenantId: TENANT_ID });
+	const agents = useQuery(api.queries.listAgents, {});
 
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
@@ -60,7 +59,6 @@ export default function AddTaskModal({
 				status: initialAssigneeId ? "assigned" : "inbox",
 				tags,
 				borderColor,
-				tenantId: TENANT_ID,
 			});
 
 			if (initialAssigneeId && agents) {
@@ -70,7 +68,6 @@ export default function AddTaskModal({
 						taskId,
 						assigneeIds: [agent._id],
 						agentId: agent._id,
-						tenantId: TENANT_ID,
 					});
 				}
 			}
