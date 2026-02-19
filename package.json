@@ -28,6 +28,9 @@
     "format": "biome format --write .",
     "check": "biome check .",
     "clean": "turbo run clean",
+    "video:dev": "pnpm --filter @better-openclaw/promo-video dev",
+    "video:render": "pnpm --filter @better-openclaw/promo-video render:all",
+    "video:prompts": "pnpm --filter @better-openclaw/promo-video generate:prompts",
     "preinstall": "npx only-allow pnpm"
   },
   "devDependencies": {

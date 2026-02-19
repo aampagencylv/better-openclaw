@@ -73,14 +73,14 @@ Only services with a native recipe run on the host; others remain in Docker. Cur
 
 ## Service Catalog
 
-74 services across 19 categories, ready to compose:
+75 services across 19 categories, ready to compose:
 
 | Category | Services |
 |---|---|
 | **AI Coding Agents** | Claude Code, Codex, Gemini CLI, OpenCode |
 | **AI Platforms & Chat UIs** | AnythingLLM, Dify, Flowise, Kimi, LibreChat, LiteLLM, Open WebUI |
 | **AI / Local Models** | Ollama, Stable Diffusion, Whisper |
-| **Automation & Workflows** | Cal.com, n8n, Temporal |
+| **Automation & Workflows** | Cal.com, n8n, Temporal, xyOps |
 | **Database & Caching** | Convex, Neo4j, PostgreSQL, Redis, Valkey |
 | **Vector Databases** | Qdrant, ChromaDB, Weaviate |
 | **Media & Video** | ComfyUI, FFmpeg, Motion Canvas, Remotion |

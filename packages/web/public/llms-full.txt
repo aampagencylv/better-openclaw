@@ -1,7 +1,7 @@
 # better-openclaw — Full Documentation
 
 > Comprehensive AI-friendly reference for the better-openclaw stack generator.
-> 74 services, 10 skill packs, 9 presets, 19 categories.
+> 75 services, 10 skill packs, 9 presets, 19 categories.
 
 ---
 
@@ -98,7 +98,7 @@ Interactive Swagger UI for the API
 
 ---
 
-## 3. Service Catalog (74 services)
+## 3. Service Catalog (75 services)
 
 ### AI Coding Agents
 - claude-code: Claude Code AI coding agent (anthropic/claude-code:latest, port 8080)
@@ -124,6 +124,7 @@ Interactive Swagger UI for the API
 - cal-com: Cal.com scheduling platform (calcom/cal.com, port 3005→3000)
 - n8n: n8n workflow automation (n8nio/n8n, port 5678)
 - temporal: Temporal workflow orchestration (temporalio/auto-setup, port 7233)
+- xyops: xyOps job scheduling, workflow automation, and monitoring (ghcr.io/pixlcore/xyops, port 5522/5523)
 
 ### Vector Databases
 - chromadb: ChromaDB vector database (chromadb/chroma, port 8000)

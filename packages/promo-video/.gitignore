@@ -1,0 +1,16 @@
+# Rendered video output
+out/
+
+# AI-generated video assets (too large for git)
+src/assets/ai-generated/*.mp4
+src/assets/ai-generated/*.webm
+
+# Audio assets (source separately)
+src/assets/audio/*.mp3
+src/assets/audio/*.wav
+src/assets/audio/*.ogg
+
+# Remotion build artifacts
+build/
+dist/
+node_modules/
