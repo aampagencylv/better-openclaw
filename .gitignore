@@ -42,3 +42,9 @@ pnpm-debug.log*
 packages/core/.git
 packages/core/.github
 packages/core/.gitignore
+
+cursor_mcp_backup.json
+packages/promo-video/
+packages/promo-video/src
+packages/promo-video/scripts
+packages/promo-video/utils
