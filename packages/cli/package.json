@@ -1,6 +1,7 @@
 {
   "name": "create-better-openclaw",
   "version": "0.0.2",
+  "private": false,
   "description": "CLI tool for scaffolding production-ready OpenClaw stacks with Docker Compose",
   "main": "dist/index.mjs",
   "types": "dist/index.d.ts",
