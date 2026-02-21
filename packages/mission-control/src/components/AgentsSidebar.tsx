@@ -1,6 +1,6 @@
+import { IconPlayerPlay, IconPlus, IconX } from "@tabler/icons-react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { IconPlus, IconPlayerPlay, IconX } from "@tabler/icons-react";
 
 interface AgentsSidebarProps {
 	isOpen: boolean;
@@ -24,13 +24,11 @@ const levelBadge: Record<string, { text: string; className: string }> = {
 	},
 	INT: {
 		text: "INT",
-		className:
-			"bg-[var(--status-int)]/20 text-[var(--status-int)] border-[var(--status-int)]/30",
+		className: "bg-[var(--status-int)]/20 text-[var(--status-int)] border-[var(--status-int)]/30",
 	},
 	SPC: {
 		text: "SPC",
-		className:
-			"bg-[var(--status-spc)]/20 text-[var(--status-spc)] border-[var(--status-spc)]/30",
+		className: "bg-[var(--status-spc)]/20 text-[var(--status-spc)] border-[var(--status-spc)]/30",
 	},
 };
 
@@ -102,9 +100,7 @@ export default function AgentsSidebar({
 										</span>
 									)}
 								</div>
-								<p className="text-xs text-muted-foreground truncate">
-									{agent.role}
-								</p>
+								<p className="text-xs text-muted-foreground truncate">{agent.role}</p>
 							</div>
 							<button
 								onClick={(e) => {
@@ -121,9 +117,7 @@ export default function AgentsSidebar({
 				})}
 
 				{agents?.length === 0 && (
-					<p className="text-sm text-muted-foreground text-center py-8">
-						No agents yet
-					</p>
+					<p className="text-sm text-muted-foreground text-center py-8">No agents yet</p>
 				)}
 			</div>
 		</aside>

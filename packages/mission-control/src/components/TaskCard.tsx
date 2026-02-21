@@ -31,15 +31,8 @@ function timeAgo(timestamp: number): string {
 	return `${days}d ago`;
 }
 
-export default function TaskCard({
-	task,
-	agents,
-	isSelected,
-	onClick,
-}: TaskCardProps) {
-	const assignedAgents = agents.filter((a) =>
-		task.assigneeIds.includes(a._id),
-	);
+export default function TaskCard({ task, agents, isSelected, onClick }: TaskCardProps) {
+	const assignedAgents = agents.filter((a) => task.assigneeIds.includes(a._id));
 
 	const isRunning = task.status === "in_progress";
 
@@ -59,13 +52,9 @@ export default function TaskCard({
 				borderLeftColor: task.borderColor || undefined,
 			}}
 		>
-			<h4 className="text-sm font-medium text-card-foreground mb-1 line-clamp-2">
-				{task.title}
-			</h4>
+			<h4 className="text-sm font-medium text-card-foreground mb-1 line-clamp-2">{task.title}</h4>
 
-			<p className="text-xs text-muted-foreground line-clamp-2 mb-2">
-				{task.description}
-			</p>
+			<p className="text-xs text-muted-foreground line-clamp-2 mb-2">{task.description}</p>
 
 			{task.tags.length > 0 && (
 				<div className="flex flex-wrap gap-1 mb-2">
@@ -83,24 +72,16 @@ export default function TaskCard({
 			<div className="flex items-center justify-between">
 				<div className="flex items-center -space-x-1">
 					{assignedAgents.map((agent) => (
-						<span
-							key={agent._id}
-							className="text-sm"
-							title={agent.name}
-						>
+						<span key={agent._id} className="text-sm" title={agent.name}>
 							{agent.avatar}
 						</span>
 					))}
 					{assignedAgents.length === 0 && (
-						<span className="text-xs text-muted-foreground">
-							Unassigned
-						</span>
+						<span className="text-xs text-muted-foreground">Unassigned</span>
 					)}
 				</div>
 				{task.lastMessageTime && (
-					<span className="text-[10px] text-muted-foreground">
-						{timeAgo(task.lastMessageTime)}
-					</span>
+					<span className="text-[10px] text-muted-foreground">{timeAgo(task.lastMessageTime)}</span>
 				)}
 			</div>
 		</div>

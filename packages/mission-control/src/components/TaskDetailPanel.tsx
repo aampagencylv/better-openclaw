@@ -1,8 +1,8 @@
-import { useQuery, useMutation } from "convex/react";
+import { IconArrowRight, IconFile, IconX } from "@tabler/icons-react";
+import { useMutation, useQuery } from "convex/react";
+import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
-import { IconX, IconArrowRight, IconFile } from "@tabler/icons-react";
-import { useState } from "react";
 
 interface TaskDetailPanelProps {
 	taskId: Id<"tasks">;
@@ -40,9 +40,7 @@ export default function TaskDetailPanel({
 
 	if (!task) return null;
 
-	const assignedAgents = (agents ?? []).filter((a) =>
-		task.assigneeIds.includes(a._id),
-	);
+	const assignedAgents = (agents ?? []).filter((a) => task.assigneeIds.includes(a._id));
 
 	const handleStatusChange = async (newStatus: string) => {
 		const agent = agents?.[0];
@@ -70,9 +68,7 @@ export default function TaskDetailPanel({
 		<div className="fixed top-(--header-height) right-0 bottom-0 w-[480px] max-w-full z-50 bg-card border-l border-border shadow-xl flex flex-col">
 			{/* Header */}
 			<div className="flex items-center justify-between p-4 border-b border-border">
-				<h2 className="text-base font-semibold text-card-foreground truncate pr-4">
-					{task.title}
-				</h2>
+				<h2 className="text-base font-semibold text-card-foreground truncate pr-4">{task.title}</h2>
 				<button
 					aria-label="Close task detail panel"
 					onClick={onClose}
@@ -101,9 +97,7 @@ export default function TaskDetailPanel({
 				</div>
 
 				<div className="flex items-center gap-2">
-					<span className="text-xs text-muted-foreground w-16">
-						Assigned
-					</span>
+					<span className="text-xs text-muted-foreground w-16">Assigned</span>
 					<div className="flex items-center gap-1.5">
 						{assignedAgents.map((a) => (
 							<span
@@ -114,18 +108,14 @@ export default function TaskDetailPanel({
 							</span>
 						))}
 						{assignedAgents.length === 0 && (
-							<span className="text-xs text-muted-foreground">
-								None
-							</span>
+							<span className="text-xs text-muted-foreground">None</span>
 						)}
 					</div>
 				</div>
 
 				{task.tags.length > 0 && (
 					<div className="flex items-center gap-2">
-						<span className="text-xs text-muted-foreground w-16">
-							Tags
-						</span>
+						<span className="text-xs text-muted-foreground w-16">Tags</span>
 						<div className="flex flex-wrap gap-1">
 							{task.tags.map((tag) => (
 								<span
@@ -139,17 +129,13 @@ export default function TaskDetailPanel({
 					</div>
 				)}
 
-				<p className="text-xs text-muted-foreground leading-relaxed">
-					{task.description}
-				</p>
+				<p className="text-xs text-muted-foreground leading-relaxed">{task.description}</p>
 			</div>
 
 			{/* Documents */}
 			{documents && documents.length > 0 && (
 				<div className="p-3 border-b border-border">
-					<h4 className="text-xs font-semibold text-muted-foreground uppercase mb-2">
-						Documents
-					</h4>
+					<h4 className="text-xs font-semibold text-muted-foreground uppercase mb-2">Documents</h4>
 					<div className="space-y-1">
 						{documents.map((doc) => (
 							<button
@@ -158,9 +144,7 @@ export default function TaskDetailPanel({
 								className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-accent text-left transition-colors"
 							>
 								<IconFile size={14} className="text-muted-foreground" />
-								<span className="text-xs text-foreground truncate">
-									{doc.title}
-								</span>
+								<span className="text-xs text-foreground truncate">{doc.title}</span>
 								<IconArrowRight size={12} className="ml-auto text-muted-foreground" />
 							</button>
 						))}
@@ -172,14 +156,10 @@ export default function TaskDetailPanel({
 			<div className="flex-1 overflow-y-auto p-4 space-y-3">
 				{messages?.map((msg) => (
 					<div key={msg._id} className="flex gap-2">
-						<span className="text-lg shrink-0">
-							{msg.agentAvatar ?? "🤖"}
-						</span>
+						<span className="text-lg shrink-0">{msg.agentAvatar ?? "🤖"}</span>
 						<div className="flex-1 min-w-0">
 							<div className="flex items-center gap-2 mb-0.5">
-								<span className="text-xs font-medium text-foreground">
-									{msg.agentName}
-								</span>
+								<span className="text-xs font-medium text-foreground">{msg.agentName}</span>
 								<span className="text-[10px] text-muted-foreground">
 									{new Date(msg._creationTime).toLocaleTimeString([], {
 										hour: "2-digit",

@@ -25,8 +25,7 @@ export async function POST(request: Request) {
 		const format = url.searchParams.get("format")?.toLowerCase();
 		const accept = request.headers.get("Accept") ?? "";
 
-		const wantsZip =
-			accept.includes("application/zip") || format === "zip";
+		const wantsZip = accept.includes("application/zip") || format === "zip";
 		if (wantsZip) {
 			const projectName = parsed.data.projectName ?? "project";
 			const zip = new JSZip();
@@ -37,13 +36,16 @@ export async function POST(request: Request) {
 				}
 			}
 			const buf = await zip.generateAsync({ type: "uint8array" });
-			return new NextResponse(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer, {
-				status: 200,
-				headers: {
-					"Content-Type": "application/zip",
-					"Content-Disposition": `attachment; filename="${projectName}.zip"`,
+			return new NextResponse(
+				buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer,
+				{
+					status: 200,
+					headers: {
+						"Content-Type": "application/zip",
+						"Content-Disposition": `attachment; filename="${projectName}.zip"`,
+					},
 				},
-			});
+			);
 		}
 
 		const wantsComplete =

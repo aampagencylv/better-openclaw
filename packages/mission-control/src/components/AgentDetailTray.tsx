@@ -1,17 +1,14 @@
+import { IconX } from "@tabler/icons-react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
-import { IconX } from "@tabler/icons-react";
 
 interface AgentDetailTrayProps {
 	agentId: Id<"agents"> | null;
 	onClose: () => void;
 }
 
-export default function AgentDetailTray({
-	agentId,
-	onClose,
-}: AgentDetailTrayProps) {
+export default function AgentDetailTray({ agentId, onClose }: AgentDetailTrayProps) {
 	const agents = useQuery(api.queries.listAgents, {});
 	const tasks = useQuery(api.queries.listTasks, {});
 	const activities = useQuery(api.queries.listActivities, {
@@ -19,9 +16,7 @@ export default function AgentDetailTray({
 	});
 
 	const agent = agents?.find((a) => a._id === agentId);
-	const agentTasks = tasks?.filter((t) =>
-		agent ? t.assigneeIds.includes(agent._id) : false,
-	);
+	const agentTasks = tasks?.filter((t) => (agent ? t.assigneeIds.includes(agent._id) : false));
 
 	return (
 		<div className={`agent-tray ${agentId ? "is-open" : ""}`}>
@@ -33,12 +28,8 @@ export default function AgentDetailTray({
 							<div className="flex items-center gap-3">
 								<span className="text-4xl">{agent.avatar}</span>
 								<div>
-									<h3 className="text-lg font-semibold text-foreground">
-										{agent.name}
-									</h3>
-									<p className="text-sm text-muted-foreground">
-										{agent.role}
-									</p>
+									<h3 className="text-lg font-semibold text-foreground">{agent.name}</h3>
+									<p className="text-sm text-muted-foreground">{agent.role}</p>
 								</div>
 							</div>
 							<button
@@ -87,15 +78,11 @@ export default function AgentDetailTray({
 													? "🔍"
 													: "📋"}
 									</span>
-									<span className="text-sm text-foreground truncate">
-										{task.title}
-									</span>
+									<span className="text-sm text-foreground truncate">{task.title}</span>
 								</div>
 							))}
 							{agentTasks?.length === 0 && (
-								<p className="text-xs text-muted-foreground py-2">
-									No tasks assigned
-								</p>
+								<p className="text-xs text-muted-foreground py-2">No tasks assigned</p>
 							)}
 						</div>
 					</div>
@@ -108,16 +95,12 @@ export default function AgentDetailTray({
 						<div className="space-y-2">
 							{activities?.slice(0, 10).map((activity) => (
 								<div key={activity._id} className="text-xs text-muted-foreground">
-									<span className="text-foreground font-medium">
-										{activity.agentName}
-									</span>{" "}
+									<span className="text-foreground font-medium">{activity.agentName}</span>{" "}
 									{activity.message}
 								</div>
 							))}
 							{(!activities || activities.length === 0) && (
-								<p className="text-xs text-muted-foreground py-2">
-									No recent activity
-								</p>
+								<p className="text-xs text-muted-foreground py-2">No recent activity</p>
 							)}
 						</div>
 					</div>

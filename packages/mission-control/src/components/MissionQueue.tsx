@@ -16,21 +16,14 @@ const COLUMNS = [
 	{ key: "done", title: "Done", icon: "✅" },
 ];
 
-export default function MissionQueue({
-	selectedTaskId,
-	onSelectTask,
-}: MissionQueueProps) {
+export default function MissionQueue({ selectedTaskId, onSelectTask }: MissionQueueProps) {
 	const tasks = useQuery(api.queries.listTasks, {});
 	const agents = useQuery(api.queries.listAgents, {});
 
-	const tasksByStatus = (status: string) =>
-		(tasks ?? []).filter((t) => t.status === status);
+	const tasksByStatus = (status: string) => (tasks ?? []).filter((t) => t.status === status);
 
 	return (
-		<section
-			className="flex-1 overflow-hidden p-4"
-			style={{ gridArea: "main" }}
-		>
+		<section className="flex-1 overflow-hidden p-4" style={{ gridArea: "main" }}>
 			<div className="flex gap-4 h-full overflow-x-auto">
 				{COLUMNS.map((col) => (
 					<KanbanColumn

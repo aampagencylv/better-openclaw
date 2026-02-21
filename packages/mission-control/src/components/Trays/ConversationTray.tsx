@@ -1,7 +1,7 @@
+import { IconEye, IconX } from "@tabler/icons-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
-import { IconX, IconEye } from "@tabler/icons-react";
 
 interface ConversationTrayProps {
 	documentId: Id<"documents">;
@@ -34,9 +34,7 @@ export default function ConversationTray({
 							{docContext.taskTitle ?? docContext.title}
 						</h3>
 						{docContext.taskTitle && (
-							<p className="text-xs text-muted-foreground truncate">
-								{docContext.title}
-							</p>
+							<p className="text-xs text-muted-foreground truncate">{docContext.title}</p>
 						)}
 					</div>
 					<div className="flex items-center gap-1">
@@ -63,9 +61,7 @@ export default function ConversationTray({
 				<div className="flex-1 overflow-y-auto p-4 space-y-3">
 					{docContext.conversationMessages.map((msg) => (
 						<div key={msg._id} className="flex gap-2 items-start">
-							<span className="text-lg shrink-0">
-								{msg.agentAvatar ?? "🤖"}
-							</span>
+							<span className="text-lg shrink-0">{msg.agentAvatar ?? "🤖"}</span>
 							<div className="flex-1 min-w-0">
 								<div className="flex items-center gap-2 mb-0.5">
 									<span className="text-xs font-medium text-foreground">
@@ -94,16 +90,10 @@ export default function ConversationTray({
 				{/* Document Info */}
 				<div className="p-3 border-t border-border bg-secondary/30">
 					<div className="flex items-center gap-2 text-xs text-muted-foreground">
-						{docContext.agentAvatar && (
-							<span>{docContext.agentAvatar}</span>
-						)}
-						<span>
-							Created by {docContext.agentName ?? "Unknown"}
-						</span>
+						{docContext.agentAvatar && <span>{docContext.agentAvatar}</span>}
+						<span>Created by {docContext.agentName ?? "Unknown"}</span>
 						{docContext.path && (
-							<span className="truncate ml-auto text-[10px]">
-								{docContext.path}
-							</span>
+							<span className="truncate ml-auto text-[10px]">{docContext.path}</span>
 						)}
 					</div>
 				</div>

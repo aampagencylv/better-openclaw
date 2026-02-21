@@ -93,7 +93,9 @@ route.openapi(validatePost, (c) => {
 
 		return c.json({
 			valid: resolved.isValid,
-			resolvedServices: resolved.services.map((s: { definition: { id: string } }) => s.definition.id),
+			resolvedServices: resolved.services.map(
+				(s: { definition: { id: string } }) => s.definition.id,
+			),
 			addedDependencies: resolved.addedDependencies,
 			warnings: resolved.warnings,
 			conflicts: resolved.errors,

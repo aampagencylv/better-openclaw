@@ -31,15 +31,10 @@ export default function LiveFeedPanel() {
 					key={activity._id}
 					className="flex items-start gap-2 p-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
 				>
-					<span className="text-sm mt-0.5">
-						{activityIcon[activity.type] ?? "📌"}
-					</span>
+					<span className="text-sm mt-0.5">{activityIcon[activity.type] ?? "📌"}</span>
 					<div className="flex-1 min-w-0">
 						<p className="text-xs text-sidebar-foreground">
-							<span className="font-medium">
-								{activity.agentName}
-							</span>{" "}
-							{activity.message}
+							<span className="font-medium">{activity.agentName}</span> {activity.message}
 						</p>
 						<span className="text-[10px] text-muted-foreground">
 							{timeAgo(activity._creationTime)}
@@ -48,9 +43,7 @@ export default function LiveFeedPanel() {
 				</div>
 			))}
 			{(!activities || activities.length === 0) && (
-				<p className="text-xs text-muted-foreground text-center py-8">
-					No activity yet
-				</p>
+				<p className="text-xs text-muted-foreground text-center py-8">No activity yet</p>
 			)}
 		</div>
 	);

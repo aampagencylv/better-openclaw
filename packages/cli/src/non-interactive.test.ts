@@ -1,6 +1,6 @@
 import { rm } from "node:fs/promises";
-import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { runNonInteractive } from "./non-interactive.js";
 
@@ -19,21 +19,21 @@ afterEach(async () => {
 
 describe("runNonInteractive", () => {
 	it("throws on unknown preset", async () => {
-		await expect(
-			runNonInteractive({ preset: "nonexistent-preset-xyz" }),
-		).rejects.toThrow(/Unknown preset/);
+		await expect(runNonInteractive({ preset: "nonexistent-preset-xyz" })).rejects.toThrow(
+			/Unknown preset/,
+		);
 	});
 
 	it("throws on unknown service", async () => {
-		await expect(
-			runNonInteractive({ services: "nonexistent-service-xyz" }),
-		).rejects.toThrow(/Unknown service/);
+		await expect(runNonInteractive({ services: "nonexistent-service-xyz" })).rejects.toThrow(
+			/Unknown service/,
+		);
 	});
 
 	it("throws on unknown skill pack", async () => {
-		await expect(
-			runNonInteractive({ skills: "nonexistent-pack-xyz" }),
-		).rejects.toThrow(/Unknown skill pack/);
+		await expect(runNonInteractive({ skills: "nonexistent-pack-xyz" })).rejects.toThrow(
+			/Unknown skill pack/,
+		);
 	});
 
 	it("throws on invalid proxy type", async () => {

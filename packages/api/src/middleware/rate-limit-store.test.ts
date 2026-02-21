@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MemoryRateLimitStore, RedisRateLimitStore, createRateLimitStore } from "./rate-limit-store.js";
+import {
+	createRateLimitStore,
+	MemoryRateLimitStore,
+	RedisRateLimitStore,
+} from "./rate-limit-store.js";
 
 describe("MemoryRateLimitStore", () => {
 	it("returns count=1 on first call", async () => {

@@ -1,8 +1,4 @@
-import {
-	IconMenu2,
-	IconLayoutSidebar,
-	IconBell,
-} from "@tabler/icons-react";
+import { IconBell, IconLayoutSidebar, IconMenu2 } from "@tabler/icons-react";
 import SignOut from "./Signout";
 
 interface HeaderProps {
@@ -27,12 +23,8 @@ export default function Header({ onOpenAgents, onOpenLiveFeed }: HeaderProps) {
 				</button>
 				<span className="text-2xl">🎯</span>
 				<div>
-					<h1 className="text-lg font-semibold text-foreground leading-tight">
-						Mission Control
-					</h1>
-					<p className="text-xs text-muted-foreground">
-						Better OpenClaw • Agent Dashboard
-					</p>
+					<h1 className="text-lg font-semibold text-foreground leading-tight">Mission Control</h1>
+					<p className="text-xs text-muted-foreground">Better OpenClaw • Agent Dashboard</p>
 				</div>
 			</div>
 
@@ -44,10 +36,7 @@ export default function Header({ onOpenAgents, onOpenLiveFeed }: HeaderProps) {
 				>
 					<IconLayoutSidebar size={20} />
 				</button>
-				<button
-					className="relative p-2 hover:bg-accent rounded-lg"
-					aria-label="Notifications"
-				>
+				<button className="relative p-2 hover:bg-accent rounded-lg" aria-label="Notifications">
 					<IconBell size={20} />
 				</button>
 				<SignOut />

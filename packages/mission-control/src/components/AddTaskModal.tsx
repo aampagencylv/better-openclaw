@@ -1,8 +1,8 @@
+import { IconX } from "@tabler/icons-react";
 import { useMutation, useQuery } from "convex/react";
+import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
-import { useState } from "react";
-import { IconX } from "@tabler/icons-react";
 
 interface AddTaskModalProps {
 	onClose: () => void;
@@ -10,16 +10,7 @@ interface AddTaskModalProps {
 	initialAssigneeId?: string;
 }
 
-const TAG_PRESETS = [
-	"openclaw",
-	"bug",
-	"feature",
-	"infra",
-	"docs",
-	"ui",
-	"api",
-	"security",
-];
+const TAG_PRESETS = ["openclaw", "bug", "feature", "infra", "docs", "ui", "api", "security"];
 
 const BORDER_COLORS = [
 	"#3b82f6",
@@ -32,11 +23,7 @@ const BORDER_COLORS = [
 	"#06b6d4",
 ];
 
-export default function AddTaskModal({
-	onClose,
-	onCreated,
-	initialAssigneeId,
-}: AddTaskModalProps) {
+export default function AddTaskModal({ onClose, onCreated, initialAssigneeId }: AddTaskModalProps) {
 	const createTask = useMutation(api.tasks.createTask);
 	const updateAssignees = useMutation(api.tasks.updateAssignees);
 	const agents = useQuery(api.queries.listAgents, {});
@@ -62,7 +49,7 @@ export default function AddTaskModal({
 			});
 
 			if (initialAssigneeId && agents) {
-				const agent = agents.find((a: { _id: string; }) => a._id === initialAssigneeId);
+				const agent = agents.find((a: { _id: string }) => a._id === initialAssigneeId);
 				if (agent) {
 					await updateAssignees({
 						taskId,
@@ -81,25 +68,18 @@ export default function AddTaskModal({
 	};
 
 	const toggleTag = (tag: string) => {
-		setTags((prev) =>
-			prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-		);
+		setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
 	};
 
 	return (
 		<div className="fixed inset-0 z-200 flex items-center justify-center">
-			<div
-				className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-				onClick={onClose}
-			/>
+			<div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 			<form
 				onSubmit={handleSubmit}
 				className="relative z-10 bg-card border border-border rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4"
 			>
 				<div className="flex items-center justify-between">
-					<h3 className="text-lg font-semibold text-card-foreground">
-						New Task
-					</h3>
+					<h3 className="text-lg font-semibold text-card-foreground">New Task</h3>
 					<button
 						aria-label="Close modal"
 						type="button"
@@ -111,9 +91,7 @@ export default function AddTaskModal({
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Title
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Title</label>
 					<input
 						type="text"
 						value={title}
@@ -126,9 +104,7 @@ export default function AddTaskModal({
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Description
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Description</label>
 					<textarea
 						value={description}
 						onChange={(e) => setDescription(e.target.value)}
@@ -139,9 +115,7 @@ export default function AddTaskModal({
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Tags
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Tags</label>
 					<div className="flex flex-wrap gap-1.5">
 						{TAG_PRESETS.map((tag) => (
 							<button
@@ -162,9 +136,7 @@ export default function AddTaskModal({
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Color
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Color</label>
 					<div className="flex gap-2">
 						{BORDER_COLORS.map((color) => (
 							<button
@@ -174,7 +146,9 @@ export default function AddTaskModal({
 								onClick={() => setBorderColor(borderColor === color ? undefined : color)}
 								className={[
 									"w-6 h-6 rounded-full transition-transform",
-									borderColor === color ? "ring-2 ring-offset-2 ring-offset-card ring-primary scale-110" : "",
+									borderColor === color
+										? "ring-2 ring-offset-2 ring-offset-card ring-primary scale-110"
+										: "",
 								].join(" ")}
 								style={{ backgroundColor: color }}
 							/>

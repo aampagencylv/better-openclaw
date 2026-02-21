@@ -24,11 +24,7 @@ export default function TrayContainer({
 	return (
 		<div className="tray-container">
 			{(showConversation || showPreview) && (
-				<div
-					className="tray-backdrop"
-					onClick={onCloseConversation}
-					aria-hidden="true"
-				/>
+				<div className="tray-backdrop" onClick={onCloseConversation} aria-hidden="true" />
 			)}
 			<ConversationTray
 				documentId={selectedDocumentId}

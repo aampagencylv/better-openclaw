@@ -1,7 +1,7 @@
+import { Writable } from "node:stream";
 import { GenerationInputSchema, generate } from "@better-openclaw/core";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import archiver from "archiver";
-import { Writable } from "node:stream";
 
 const route = new OpenAPIHono({
 	defaultHook: (result, c) => {
@@ -24,10 +24,7 @@ const route = new OpenAPIHono({
 });
 
 /** Build a ZIP buffer from generated files (projectName as root folder). */
-function buildZipBuffer(
-	projectName: string,
-	files: Record<string, string>,
-): Promise<Buffer> {
+function buildZipBuffer(projectName: string, files: Record<string, string>): Promise<Buffer> {
 	return new Promise((resolve, reject) => {
 		const archive = archiver("zip", { zlib: { level: 9 } });
 		const chunks: Buffer[] = [];
@@ -128,8 +125,7 @@ route.openapi(generatePost, async (c) => {
 		const { format } = c.req.valid("query");
 
 		// ZIP: return binary ZIP (Accept: application/zip or ?format=zip)
-		const wantsZip =
-			accept.includes("application/zip") || format?.toLowerCase() === "zip";
+		const wantsZip = accept.includes("application/zip") || format?.toLowerCase() === "zip";
 		if (wantsZip) {
 			const projectName = input.projectName ?? "project";
 			const zipBuffer = await buildZipBuffer(projectName, result.files);

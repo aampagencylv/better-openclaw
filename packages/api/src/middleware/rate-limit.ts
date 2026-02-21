@@ -13,10 +13,14 @@ function getConfig(prefix: string): RateLimitConfig {
 	const defaultMaxApiKey = 300;
 
 	const windowMs = Number(
-		process.env[`${prefix}RATE_LIMIT_WINDOW_MS`] ?? process.env.RATE_LIMIT_WINDOW_MS ?? defaultWindowMs,
+		process.env[`${prefix}RATE_LIMIT_WINDOW_MS`] ??
+			process.env.RATE_LIMIT_WINDOW_MS ??
+			defaultWindowMs,
 	);
 	const maxAnon = Number(
-		process.env[`${prefix}RATE_LIMIT_MAX_ANON`] ?? process.env.RATE_LIMIT_MAX_ANON ?? defaultMaxAnon,
+		process.env[`${prefix}RATE_LIMIT_MAX_ANON`] ??
+			process.env.RATE_LIMIT_MAX_ANON ??
+			defaultMaxAnon,
 	);
 	const maxApiKey = Number(
 		process.env[`${prefix}RATE_LIMIT_MAX_API_KEY`] ??
@@ -29,7 +33,10 @@ function getConfig(prefix: string): RateLimitConfig {
 
 const store: RateLimitStore = createRateLimitStore();
 
-function createRateLimiter(keyPrefix: string, configOverrides?: Partial<RateLimitConfig>): MiddlewareHandler {
+function createRateLimiter(
+	keyPrefix: string,
+	configOverrides?: Partial<RateLimitConfig>,
+): MiddlewareHandler {
 	const config = { ...getConfig(keyPrefix), ...configOverrides };
 
 	return async (c, next): Promise<Response | void> => {
@@ -76,7 +83,9 @@ export function rateLimiter(): MiddlewareHandler {
 
 /** Stricter rate limiter for expensive routes (e.g. POST /generate). Uses RATE_LIMIT_GENERATE_* or same env; defaults 5/min anon, 10/min with key. */
 export function generateRateLimiter(): MiddlewareHandler {
-	const windowMs = Number(process.env.RATE_LIMIT_GENERATE_WINDOW_MS ?? process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
+	const windowMs = Number(
+		process.env.RATE_LIMIT_GENERATE_WINDOW_MS ?? process.env.RATE_LIMIT_WINDOW_MS ?? 60_000,
+	);
 	const maxAnon = Number(process.env.RATE_LIMIT_GENERATE_MAX_ANON ?? 5);
 	const maxApiKey = Number(process.env.RATE_LIMIT_GENERATE_MAX_API_KEY ?? 10);
 	return createRateLimiter("generate_", { windowMs, maxAnon, maxApiKey });

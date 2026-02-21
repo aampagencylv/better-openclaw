@@ -5,11 +5,11 @@ import Link from "next/link";
 import { CommonSetups } from "@/components/common-setups";
 import { ComparisonSection } from "@/components/comparison-section";
 import { FaqSection } from "@/components/faq-section";
+import { FeaturesGridAlternative } from "@/components/features-grid-alternative";
+import { FooterAlternative } from "@/components/footer-alternative";
+import { HeroAlternative } from "@/components/hero-alternative";
 import { Navbar } from "@/components/navbar";
 import { PresetsSection } from "@/components/presets-section";
-import { FeaturesGridAlternative } from "@/components/features-grid-alternative";
-import { HeroAlternative } from "@/components/hero-alternative";
-import { FooterAlternative } from "@/components/footer-alternative";
 
 export default function HomePageAlternative() {
 	return (

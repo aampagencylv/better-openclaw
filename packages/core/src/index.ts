@@ -8,6 +8,8 @@ export {
 } from "./bare-metal-partition.js";
 export type { ComposeResult } from "./composer.js";
 export { compose, composeMultiFile } from "./composer.js";
+// ─── Errors ─────────────────────────────────────────────────────────────────
+export { StackConfigError, ValidationError } from "./errors.js";
 export { generate, generateServicesDoc } from "./generate.js";
 export { generateCaddyfile } from "./generators/caddy.js";
 export type { EnvVarGroup } from "./generators/env.js";
@@ -19,6 +21,8 @@ export { generatePrometheusConfig } from "./generators/prometheus.js";
 export { generateReadme } from "./generators/readme.js";
 export { generateScripts } from "./generators/scripts.js";
 export { generateSkillFiles } from "./generators/skills.js";
+// ─── Config Migrations ──────────────────────────────────────────────────────
+export { CURRENT_CONFIG_VERSION, migrateConfig, needsMigration } from "./migrations.js";
 // ─── Presets ────────────────────────────────────────────────────────────────
 export { getAllPresets, getPresetById, presetRegistry } from "./presets/registry.js";
 export { resolve } from "./resolver.js";
@@ -108,12 +112,6 @@ export type {
 } from "./types.js";
 export { SERVICE_CATEGORIES } from "./types.js";
 export { validate } from "./validator.js";
-
-// ─── Config Migrations ──────────────────────────────────────────────────────
-export { migrateConfig, needsMigration, CURRENT_CONFIG_VERSION } from "./migrations.js";
-
-// ─── Errors ─────────────────────────────────────────────────────────────────
-export { StackConfigError, ValidationError } from "./errors.js";
 
 // ─── Version Manager ────────────────────────────────────────────────────────
 export {

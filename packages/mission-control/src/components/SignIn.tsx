@@ -16,11 +16,7 @@ export default function SignInForm() {
 		try {
 			await signIn("password", { email, password, flow });
 		} catch {
-			setError(
-				flow === "signIn"
-					? "Invalid email or password"
-					: "Could not create account",
-			);
+			setError(flow === "signIn" ? "Invalid email or password" : "Could not create account");
 		} finally {
 			setLoading(false);
 		}
@@ -30,12 +26,8 @@ export default function SignInForm() {
 		<div className="dark min-h-screen flex items-center justify-center bg-background p-4">
 			<div className="w-full max-w-md">
 				<div className="text-center mb-8">
-					<h1 className="text-3xl font-bold text-foreground">
-						🎯 Mission Control
-					</h1>
-					<p className="text-muted-foreground mt-2">
-						Better OpenClaw Agent Dashboard
-					</p>
+					<h1 className="text-3xl font-bold text-foreground">🎯 Mission Control</h1>
+					<p className="text-muted-foreground mt-2">Better OpenClaw Agent Dashboard</p>
 				</div>
 
 				<form
@@ -53,9 +45,7 @@ export default function SignInForm() {
 					)}
 
 					<div>
-						<label className="block text-sm text-muted-foreground mb-1">
-							Email
-						</label>
+						<label className="block text-sm text-muted-foreground mb-1">Email</label>
 						<input
 							type="email"
 							value={email}
@@ -67,9 +57,7 @@ export default function SignInForm() {
 					</div>
 
 					<div>
-						<label className="block text-sm text-muted-foreground mb-1">
-							Password
-						</label>
+						<label className="block text-sm text-muted-foreground mb-1">Password</label>
 						<input
 							type="password"
 							value={password}
@@ -85,11 +73,7 @@ export default function SignInForm() {
 						disabled={loading}
 						className="w-full py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
 					>
-						{loading
-							? "Loading..."
-							: flow === "signIn"
-								? "Sign In"
-								: "Create Account"}
+						{loading ? "Loading..." : flow === "signIn" ? "Sign In" : "Create Account"}
 					</button>
 
 					<p className="text-sm text-center text-muted-foreground">

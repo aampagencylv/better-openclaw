@@ -116,8 +116,7 @@ export class RedisRateLimitStore implements RateLimitStore {
 				await client.pexpire(key, windowMs);
 			}
 
-			const resetAt =
-				pttl > 0 ? Date.now() + pttl : Date.now() + windowMs;
+			const resetAt = pttl > 0 ? Date.now() + pttl : Date.now() + windowMs;
 
 			return { count, resetAt };
 		} catch {

@@ -1,7 +1,7 @@
-import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { useState } from "react";
 import { IconX } from "@tabler/icons-react";
+import { useMutation } from "convex/react";
+import { useState } from "react";
+import { api } from "../../convex/_generated/api";
 
 interface AddAgentModalProps {
 	onClose: () => void;
@@ -43,18 +43,13 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 
 	return (
 		<div className="fixed inset-0 z-200 flex items-center justify-center">
-			<div
-				className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-				onClick={onClose}
-			/>
+			<div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 			<form
 				onSubmit={handleSubmit}
 				className="relative z-10 bg-card border border-border rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-4"
 			>
 				<div className="flex items-center justify-between">
-					<h3 className="text-lg font-semibold text-card-foreground">
-						New Agent
-					</h3>
+					<h3 className="text-lg font-semibold text-card-foreground">New Agent</h3>
 					<button
 						aria-label="Close modal"
 						type="button"
@@ -66,9 +61,7 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Avatar
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Avatar</label>
 					<div className="flex flex-wrap gap-2">
 						{AVATARS.map((a) => (
 							<button
@@ -89,9 +82,7 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Name
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Name</label>
 					<input
 						type="text"
 						value={name}
@@ -104,9 +95,7 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Role
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Role</label>
 					<input
 						type="text"
 						value={role}
@@ -117,9 +106,7 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">
-						Level
-					</label>
+					<label className="block text-sm text-muted-foreground mb-1">Level</label>
 					<div className="flex gap-2">
 						{LEVELS.map((l) => (
 							<button

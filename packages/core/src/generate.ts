@@ -4,10 +4,10 @@ import {
 	resolvedWithOnlyServices,
 } from "./bare-metal-partition.js";
 import { composeMultiFile } from "./composer.js";
+import { StackConfigError, ValidationError } from "./errors.js";
 import { generateBareMetalInstall } from "./generators/bare-metal-install.js";
 import { generateCaddyfile } from "./generators/caddy.js";
 import { generateEnvFiles } from "./generators/env.js";
-import { generateTraefikConfig } from "./generators/traefik.js";
 import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
 import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 import { generateNativeInstallScripts } from "./generators/native-services.js";
@@ -16,6 +16,7 @@ import { generatePrometheusConfig } from "./generators/prometheus.js";
 import { generateReadme } from "./generators/readme.js";
 import { generateScripts } from "./generators/scripts.js";
 import { generateSkillFiles } from "./generators/skills.js";
+import { generateTraefikConfig } from "./generators/traefik.js";
 import { migrateConfig } from "./migrations.js";
 import { resolve } from "./resolver.js";
 import type {
@@ -25,7 +26,6 @@ import type {
 	Platform,
 	ResolverInput,
 } from "./types.js";
-import { StackConfigError, ValidationError } from "./errors.js";
 import { validate } from "./validator.js";
 
 /** Resolver/compose only support linux image platforms; normalize for bare-metal (windows/macos). */
@@ -103,7 +103,9 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 		generateSecrets: input.generateSecrets,
 	});
 	if (!validation.valid) {
-		throw new ValidationError(`Validation failed: ${validation.errors.map((e) => e.message).join("; ")}`);
+		throw new ValidationError(
+			`Validation failed: ${validation.errors.map((e) => e.message).join("; ")}`,
+		);
 	}
 
 	// 4. Generate all files

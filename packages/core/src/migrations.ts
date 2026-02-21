@@ -21,9 +21,7 @@ export function migrateConfig(input: Record<string, unknown>): Record<string, un
 	let version = (input.configVersion as number) ?? 1;
 
 	if (version > CURRENT_CONFIG_VERSION) {
-		throw new Error(
-			`No migration path from config version ${version}`,
-		);
+		throw new Error(`No migration path from config version ${version}`);
 	}
 
 	let current = { ...input };

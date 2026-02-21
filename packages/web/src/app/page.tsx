@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { CommonSetups } from "@/components/common-setups";
 import { FeaturesGrid } from "@/components/features-grid";
 import { Footer } from "@/components/footer";
@@ -9,7 +10,6 @@ import { Hero } from "@/components/hero";
 import { HeroAlternative } from "@/components/hero-alternative";
 import { Navbar } from "@/components/navbar";
 import { PresetsSection } from "@/components/presets-section";
-import { useEffect, useState } from "react";
 
 export default function HomePage() {
 	const [useAltHero, setUseAltHero] = useState(false);

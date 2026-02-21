@@ -1,7 +1,7 @@
+import { IconCode, IconFile, IconFileText, IconPhoto } from "@tabler/icons-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
-import { IconFile, IconCode, IconFileText, IconPhoto } from "@tabler/icons-react";
 
 interface DocumentsPanelProps {
 	selectedDocumentId: Id<"documents"> | null;
@@ -50,14 +50,8 @@ export default function DocumentsPanel({
 						{typeIcon[doc.type] ?? <IconFile size={14} />}
 					</span>
 					<div className="flex-1 min-w-0">
-						<p className="text-xs font-medium text-sidebar-foreground truncate">
-							{doc.title}
-						</p>
-						{doc.path && (
-							<p className="text-[10px] text-muted-foreground truncate">
-								{doc.path}
-							</p>
-						)}
+						<p className="text-xs font-medium text-sidebar-foreground truncate">{doc.title}</p>
+						{doc.path && <p className="text-[10px] text-muted-foreground truncate">{doc.path}</p>}
 						<div className="flex items-center gap-2 mt-0.5">
 							{doc.agentName && (
 								<span className="text-[10px] text-muted-foreground">
@@ -72,9 +66,7 @@ export default function DocumentsPanel({
 				</button>
 			))}
 			{(!documents || documents.length === 0) && (
-				<p className="text-xs text-muted-foreground text-center py-8">
-					No documents yet
-				</p>
+				<p className="text-xs text-muted-foreground text-center py-8">No documents yet</p>
 			)}
 		</div>
 	);

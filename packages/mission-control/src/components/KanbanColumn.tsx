@@ -54,9 +54,7 @@ export default function KanbanColumn({
 					/>
 				))}
 				{tasks.length === 0 && (
-					<p className="text-xs text-muted-foreground text-center py-6 opacity-50">
-						No tasks
-					</p>
+					<p className="text-xs text-muted-foreground text-center py-6 opacity-50">No tasks</p>
 				)}
 			</div>
 		</div>

@@ -1,16 +1,16 @@
 import { Authenticated, Unauthenticated } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Id } from "../convex/_generated/dataModel";
-import Header from "./components/Header";
+import AddAgentModal from "./components/AddAgentModal";
+import AddTaskModal from "./components/AddTaskModal";
+import AgentDetailTray from "./components/AgentDetailTray";
 import AgentsSidebar from "./components/AgentsSidebar";
+import Header from "./components/Header";
 import MissionQueue from "./components/MissionQueue";
 import RightSidebar from "./components/RightSidebar";
-import TrayContainer from "./components/Trays/TrayContainer";
 import SignInForm from "./components/SignIn";
 import TaskDetailPanel from "./components/TaskDetailPanel";
-import AddTaskModal from "./components/AddTaskModal";
-import AddAgentModal from "./components/AddAgentModal";
-import AgentDetailTray from "./components/AgentDetailTray";
+import TrayContainer from "./components/Trays/TrayContainer";
 
 export default function App() {
 	const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
@@ -39,38 +39,30 @@ export default function App() {
 		return () => document.removeEventListener("keydown", onKeyDown);
 	}, [closeSidebars, isAnySidebarOpen]);
 
-	const [selectedTaskId, setSelectedTaskId] = useState<Id<"tasks"> | null>(
-		null,
-	);
+	const [selectedTaskId, setSelectedTaskId] = useState<Id<"tasks"> | null>(null);
 	const [showAddTaskModal, setShowAddTaskModal] = useState(false);
-	const [addTaskPreselectedAgentId, setAddTaskPreselectedAgentId] = useState<
-		string | undefined
-	>(undefined);
-	const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | null>(
-		null,
+	const [addTaskPreselectedAgentId, setAddTaskPreselectedAgentId] = useState<string | undefined>(
+		undefined,
 	);
+	const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | null>(null);
 	const [showAddAgentModal, setShowAddAgentModal] = useState(false);
 
 	// Document tray state
-	const [selectedDocumentId, setSelectedDocumentId] =
-		useState<Id<"documents"> | null>(null);
+	const [selectedDocumentId, setSelectedDocumentId] = useState<Id<"documents"> | null>(null);
 	const [showConversationTray, setShowConversationTray] = useState(false);
 	const [showPreviewTray, setShowPreviewTray] = useState(false);
 
-	const handleSelectDocument = useCallback(
-		(id: Id<"documents"> | null) => {
-			if (id === null) {
-				setSelectedDocumentId(null);
-				setShowConversationTray(false);
-				setShowPreviewTray(false);
-			} else {
-				setSelectedDocumentId(id);
-				setShowConversationTray(true);
-				setShowPreviewTray(true);
-			}
-		},
-		[],
-	);
+	const handleSelectDocument = useCallback((id: Id<"documents"> | null) => {
+		if (id === null) {
+			setSelectedDocumentId(null);
+			setShowConversationTray(false);
+			setShowPreviewTray(false);
+		} else {
+			setSelectedDocumentId(id);
+			setShowConversationTray(true);
+			setShowPreviewTray(true);
+		}
+	}, []);
 
 	const handlePreviewDocument = useCallback((id: Id<"documents">) => {
 		setSelectedDocumentId(id);
@@ -108,11 +100,7 @@ export default function App() {
 					/>
 
 					{isAnySidebarOpen && (
-						<div
-							className="drawer-backdrop"
-							onClick={closeSidebars}
-							aria-hidden="true"
-						/>
+						<div className="drawer-backdrop" onClick={closeSidebars} aria-hidden="true" />
 					)}
 
 					<AgentsSidebar
@@ -123,14 +111,9 @@ export default function App() {
 							setShowAddTaskModal(true);
 						}}
 						onAddAgent={() => setShowAddAgentModal(true)}
-						onSelectAgent={(agentId) =>
-							setSelectedAgentId(agentId as Id<"agents">)
-						}
+						onSelectAgent={(agentId) => setSelectedAgentId(agentId as Id<"agents">)}
 					/>
-					<MissionQueue
-						selectedTaskId={selectedTaskId}
-						onSelectTask={setSelectedTaskId}
-					/>
+					<MissionQueue selectedTaskId={selectedTaskId} onSelectTask={setSelectedTaskId} />
 					<RightSidebar
 						isOpen={isRightSidebarOpen}
 						onClose={() => setIsRightSidebarOpen(false)}
@@ -167,10 +150,7 @@ export default function App() {
 							aria-hidden="true"
 						/>
 					)}
-					<AgentDetailTray
-						agentId={selectedAgentId}
-						onClose={() => setSelectedAgentId(null)}
-					/>
+					<AgentDetailTray agentId={selectedAgentId} onClose={() => setSelectedAgentId(null)} />
 					{showAddAgentModal && (
 						<AddAgentModal
 							onClose={() => setShowAddAgentModal(false)}

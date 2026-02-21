@@ -28,11 +28,7 @@ import { useCallback, useMemo, useState } from "react";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
-import {
-	generateStack,
-	generateStackAsZip,
-	generateStackComplete,
-} from "@/lib/api-client";
+import { generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 
 const CLAWEXA_DEPLOY_URL = process.env.NEXT_PUBLIC_CLAWEXA_DEPLOY_URL ?? "";
@@ -428,7 +424,8 @@ export default function NewStackPage() {
 							Deploy to clawexa.net
 						</h2>
 						<p className="mt-1 text-sm text-muted-foreground">
-							Download as ZIP, copy complete JSON, or send to the clawexa.net endpoint (when configured).
+							Download as ZIP, copy complete JSON, or send to the clawexa.net endpoint (when
+							configured).
 						</p>
 						<div className="mt-4 flex flex-col gap-2">
 							<button
@@ -647,7 +644,9 @@ export default function NewStackPage() {
 													: "border-border bg-surface/50 text-muted-foreground hover:border-primary/20 hover:bg-surface",
 											)}
 										>
-											<div className="font-medium">{pack.icon ?? ""} {pack.name}</div>
+											<div className="font-medium">
+												{pack.icon ?? ""} {pack.name}
+											</div>
 											<div className="mt-1 text-[10px] opacity-70">
 												{pack.requiredServices.length} services
 											</div>

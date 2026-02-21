@@ -159,7 +159,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 	if (resolved.addedDependencies.length > 0) {
 		const depList = resolved.addedDependencies
-			.map((d: { service: string; reason: string }) => `  ${pc.cyan(d.service)} - ${pc.dim(d.reason)}`)
+			.map(
+				(d: { service: string; reason: string }) => `  ${pc.cyan(d.service)} - ${pc.dim(d.reason)}`,
+			)
 			.join("\n");
 
 		note(
@@ -176,7 +178,10 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 		if (acceptDeps) {
 			finalServiceIds = [
-				...new Set([...serviceIds, ...resolved.addedDependencies.map((d: { service: string; reason: string }) => d.service)]),
+				...new Set([
+					...serviceIds,
+					...resolved.addedDependencies.map((d: { service: string; reason: string }) => d.service),
+				]),
 			];
 		}
 	}
@@ -274,7 +279,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 	const allPacks = getAllSkillPacks();
 	const skillPackNames =
 		selectedSkillPacks.length > 0
-			? 		selectedSkillPacks
+			? selectedSkillPacks
 					.map((id) => {
 						const pack = allPacks.find((p: SkillPack) => p.id === id);
 						return pack ? `${pack.icon ?? "📦"} ${pack.name}` : id;

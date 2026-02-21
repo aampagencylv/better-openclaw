@@ -1,6 +1,6 @@
+import { IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import type { Id } from "../../../convex/_generated/dataModel";
-import { IconX } from "@tabler/icons-react";
 import DocumentsPanel from "./DocumentsPanel";
 import LiveFeedPanel from "./LiveFeedPanel";
 

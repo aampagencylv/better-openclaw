@@ -1,7 +1,7 @@
+import { IconX } from "@tabler/icons-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
-import { IconX } from "@tabler/icons-react";
 
 interface DocumentPreviewTrayProps {
 	documentId: Id<"documents">;
@@ -24,20 +24,14 @@ export default function DocumentPreviewTray({
 	const isImage = docContext.type === "image";
 
 	return (
-		<div
-			className={`tray tray-preview ${isOpen ? "is-open" : ""}`}
-		>
+		<div className={`tray tray-preview ${isOpen ? "is-open" : ""}`}>
 			<div className="h-full flex flex-col">
 				{/* Header */}
 				<div className="flex items-center justify-between p-4 border-b border-border">
 					<div className="flex-1 min-w-0">
-						<h3 className="text-sm font-semibold text-foreground truncate">
-							{docContext.title}
-						</h3>
+						<h3 className="text-sm font-semibold text-foreground truncate">{docContext.title}</h3>
 						{docContext.path && (
-							<p className="text-xs text-muted-foreground truncate font-mono">
-								{docContext.path}
-							</p>
+							<p className="text-xs text-muted-foreground truncate font-mono">{docContext.path}</p>
 						)}
 					</div>
 					<button
@@ -72,14 +66,8 @@ export default function DocumentPreviewTray({
 
 				{/* Footer */}
 				<div className="p-3 border-t border-border text-xs text-muted-foreground flex items-center gap-3">
-					<span className="capitalize bg-secondary px-2 py-0.5 rounded">
-						{docContext.type}
-					</span>
-					{docContext.taskTitle && (
-						<span className="truncate">
-							Task: {docContext.taskTitle}
-						</span>
-					)}
+					<span className="capitalize bg-secondary px-2 py-0.5 rounded">{docContext.type}</span>
+					{docContext.taskTitle && <span className="truncate">Task: {docContext.taskTitle}</span>}
 				</div>
 			</div>
 		</div>
