@@ -738,6 +738,434 @@
       "path": "system-info/SKILL.md",
       "emoji": "🖥️",
       "services": []
+    },
+    {
+      "id": "firecrawl-scrape",
+      "path": "firecrawl-scrape/SKILL.md",
+      "emoji": "🔥",
+      "services": [
+        "firecrawl"
+      ]
+    },
+    {
+      "id": "langflow-build",
+      "path": "langflow-build/SKILL.md",
+      "emoji": "🌊",
+      "services": [
+        "langflow"
+      ]
+    },
+    {
+      "id": "open-interpreter-run",
+      "path": "open-interpreter-run/SKILL.md",
+      "emoji": "💻",
+      "services": []
+    },
+    {
+      "id": "supabase-query",
+      "path": "supabase-query/SKILL.md",
+      "emoji": "⚡",
+      "services": [
+        "supabase"
+      ]
+    },
+    {
+      "id": "nextcloud-files",
+      "path": "nextcloud-files/SKILL.md",
+      "emoji": "☁️",
+      "services": [
+        "nextcloud"
+      ]
+    },
+    {
+      "id": "vaultwarden-manage",
+      "path": "vaultwarden-manage/SKILL.md",
+      "emoji": "🔐",
+      "services": [
+        "vaultwarden"
+      ]
+    },
+    {
+      "id": "immich-photos",
+      "path": "immich-photos/SKILL.md",
+      "emoji": "📸",
+      "services": [
+        "immich"
+      ]
+    },
+    {
+      "id": "home-assistant-automate",
+      "path": "home-assistant-automate/SKILL.md",
+      "emoji": "🏠",
+      "services": [
+        "homeassistant"
+      ]
+    },
+    {
+      "id": "jellyfin-media",
+      "path": "jellyfin-media/SKILL.md",
+      "emoji": "🎬",
+      "services": [
+        "jellyfin"
+      ]
+    },
+    {
+      "id": "stirling-pdf-tools",
+      "path": "stirling-pdf-tools/SKILL.md",
+      "emoji": "📄",
+      "services": [
+        "stirling-pdf"
+      ]
+    },
+    {
+      "id": "langchain-agent",
+      "path": "langchain-agent/SKILL.md",
+      "emoji": "🦜",
+      "services": []
+    },
+    {
+      "id": "huginn-automate",
+      "path": "huginn-automate/SKILL.md",
+      "emoji": "🤖",
+      "services": [
+        "huginn"
+      ]
+    },
+    {
+      "id": "activepieces-flow",
+      "path": "activepieces-flow/SKILL.md",
+      "emoji": "🧩",
+      "services": [
+        "activepieces"
+      ]
+    },
+    {
+      "id": "traefik-proxy",
+      "path": "traefik-proxy/SKILL.md",
+      "emoji": "🔀",
+      "services": [
+        "traefik"
+      ]
+    },
+    {
+      "id": "authentik-auth",
+      "path": "authentik-auth/SKILL.md",
+      "emoji": "🛡️",
+      "services": [
+        "authentik"
+      ]
+    },
+    {
+      "id": "haystack-rag",
+      "path": "haystack-rag/SKILL.md",
+      "emoji": "🔍",
+      "services": []
+    },
+    {
+      "id": "llamaindex-query",
+      "path": "llamaindex-query/SKILL.md",
+      "emoji": "🦙",
+      "services": []
+    },
+    {
+      "id": "argocd-deploy",
+      "path": "argocd-deploy/SKILL.md",
+      "emoji": "🔄",
+      "services": [
+        "argocd"
+      ]
+    },
+    {
+      "id": "terraform-provision",
+      "path": "terraform-provision/SKILL.md",
+      "emoji": "🏗️",
+      "services": []
+    },
+    {
+      "id": "ansible-configure",
+      "path": "ansible-configure/SKILL.md",
+      "emoji": "📋",
+      "services": []
+    },
+    {
+      "id": "woodpecker-ci",
+      "path": "woodpecker-ci/SKILL.md",
+      "emoji": "🪶",
+      "services": [
+        "woodpecker"
+      ]
+    },
+    {
+      "id": "appwrite-backend",
+      "path": "appwrite-backend/SKILL.md",
+      "emoji": "🅰️",
+      "services": [
+        "appwrite"
+      ]
+    },
+    {
+      "id": "ragflow-pipeline",
+      "path": "ragflow-pipeline/SKILL.md",
+      "emoji": "📊",
+      "services": [
+        "ragflow"
+      ]
+    },
+    {
+      "id": "jenkins-pipeline",
+      "path": "jenkins-pipeline/SKILL.md",
+      "emoji": "🔧",
+      "services": [
+        "jenkins"
+      ]
+    },
+    {
+      "id": "milvus-vectors",
+      "path": "milvus-vectors/SKILL.md",
+      "emoji": "📐",
+      "services": [
+        "milvus"
+      ]
+    },
+    {
+      "id": "keycloak-auth",
+      "path": "keycloak-auth/SKILL.md",
+      "emoji": "🔑",
+      "services": [
+        "keycloak"
+      ]
+    },
+    {
+      "id": "netbird-vpn",
+      "path": "netbird-vpn/SKILL.md",
+      "emoji": "🕸️",
+      "services": [
+        "netbird"
+      ]
+    },
+    {
+      "id": "ghost-publish",
+      "path": "ghost-publish/SKILL.md",
+      "emoji": "👻",
+      "services": [
+        "ghost"
+      ]
+    },
+    {
+      "id": "forgejo-repo",
+      "path": "forgejo-repo/SKILL.md",
+      "emoji": "🍵",
+      "services": [
+        "forgejo"
+      ]
+    },
+    {
+      "id": "loki-logs",
+      "path": "loki-logs/SKILL.md",
+      "emoji": "📜",
+      "services": [
+        "loki"
+      ]
+    },
+    {
+      "id": "caddy-serve",
+      "path": "caddy-serve/SKILL.md",
+      "emoji": "🌐",
+      "services": [
+        "caddy"
+      ]
+    },
+    {
+      "id": "harbor-registry",
+      "path": "harbor-registry/SKILL.md",
+      "emoji": "🚢",
+      "services": [
+        "harbor"
+      ]
+    },
+    {
+      "id": "vault-secrets",
+      "path": "vault-secrets/SKILL.md",
+      "emoji": "🗝️",
+      "services": [
+        "vault"
+      ]
+    },
+    {
+      "id": "signoz-observe",
+      "path": "signoz-observe/SKILL.md",
+      "emoji": "📡",
+      "services": [
+        "signoz"
+      ]
+    },
+    {
+      "id": "crowdsec-protect",
+      "path": "crowdsec-protect/SKILL.md",
+      "emoji": "🛡️",
+      "services": [
+        "crowdsec"
+      ]
+    },
+    {
+      "id": "plausible-analytics",
+      "path": "plausible-analytics/SKILL.md",
+      "emoji": "📈",
+      "services": [
+        "plausible"
+      ]
+    },
+    {
+      "id": "gatus-health",
+      "path": "gatus-health/SKILL.md",
+      "emoji": "💓",
+      "services": [
+        "gatus"
+      ]
+    },
+    {
+      "id": "crewai-orchestrate",
+      "path": "crewai-orchestrate/SKILL.md",
+      "emoji": "👥",
+      "services": []
+    },
+    {
+      "id": "autogpt-autonomous",
+      "path": "autogpt-autonomous/SKILL.md",
+      "emoji": "🤯",
+      "services": []
+    },
+    {
+      "id": "elasticsearch-search",
+      "path": "elasticsearch-search/SKILL.md",
+      "emoji": "🔎",
+      "services": [
+        "elasticsearch"
+      ]
+    },
+    {
+      "id": "rabbitmq-queue",
+      "path": "rabbitmq-queue/SKILL.md",
+      "emoji": "🐰",
+      "services": [
+        "rabbitmq"
+      ]
+    },
+    {
+      "id": "excalidraw-draw",
+      "path": "excalidraw-draw/SKILL.md",
+      "emoji": "✏️",
+      "services": [
+        "excalidraw"
+      ]
+    },
+    {
+      "id": "bookstack-wiki",
+      "path": "bookstack-wiki/SKILL.md",
+      "emoji": "📚",
+      "services": [
+        "bookstack"
+      ]
+    },
+    {
+      "id": "paperless-ngx-docs",
+      "path": "paperless-ngx-docs/SKILL.md",
+      "emoji": "🗂️",
+      "services": [
+        "paperless-ngx"
+      ]
+    },
+    {
+      "id": "restic-backup",
+      "path": "restic-backup/SKILL.md",
+      "emoji": "💾",
+      "services": []
+    },
+    {
+      "id": "pocketbase-backend",
+      "path": "pocketbase-backend/SKILL.md",
+      "emoji": "📦",
+      "services": [
+        "pocketbase"
+      ]
+    },
+    {
+      "id": "infisical-secrets",
+      "path": "infisical-secrets/SKILL.md",
+      "emoji": "🤫",
+      "services": [
+        "infisical"
+      ]
+    },
+    {
+      "id": "chatwoot-support",
+      "path": "chatwoot-support/SKILL.md",
+      "emoji": "💬",
+      "services": [
+        "chatwoot"
+      ]
+    },
+    {
+      "id": "flagsmith-feature",
+      "path": "flagsmith-feature/SKILL.md",
+      "emoji": "🚩",
+      "services": [
+        "flagsmith"
+      ]
+    },
+    {
+      "id": "teleport-access",
+      "path": "teleport-access/SKILL.md",
+      "emoji": "🚀",
+      "services": [
+        "teleport"
+      ]
+    },
+    {
+      "id": "listmonk-email",
+      "path": "listmonk-email/SKILL.md",
+      "emoji": "📧",
+      "services": [
+        "listmonk"
+      ]
+    },
+    {
+      "id": "directus-cms",
+      "path": "directus-cms/SKILL.md",
+      "emoji": "🐇",
+      "services": [
+        "directus"
+      ]
+    },
+    {
+      "id": "strapi-cms",
+      "path": "strapi-cms/SKILL.md",
+      "emoji": "🎯",
+      "services": [
+        "strapi"
+      ]
+    },
+    {
+      "id": "dokku-deploy",
+      "path": "dokku-deploy/SKILL.md",
+      "emoji": "🐳",
+      "services": []
+    },
+    {
+      "id": "sentry-errors",
+      "path": "sentry-errors/SKILL.md",
+      "emoji": "🐛",
+      "services": [
+        "sentry"
+      ]
+    },
+    {
+      "id": "kong-gateway",
+      "path": "kong-gateway/SKILL.md",
+      "emoji": "🦍",
+      "services": [
+        "kong"
+      ]
     }
   ]
 }

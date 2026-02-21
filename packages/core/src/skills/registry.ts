@@ -283,6 +283,166 @@ const skillPacks: SkillPack[] = [
 		icon: "🤖",
 		tags: ["ai-coding", "agents", "development", "ide"],
 	},
+	// ── Internet-Verified Skill Packs ────────────────────────────────
+	{
+		id: "rag-pipeline",
+		name: "RAG Pipeline",
+		description:
+			"Build retrieval-augmented generation systems with LangChain, LlamaIndex, Haystack, and vector databases",
+		requiredServices: ["milvus"],
+		skills: [
+			"langchain-agent",
+			"llamaindex-query",
+			"haystack-rag",
+			"ragflow-pipeline",
+			"milvus-vectors",
+			"firecrawl-scrape",
+		],
+		icon: "🧠",
+		tags: ["rag", "ai", "embeddings", "search", "llm"],
+	},
+	{
+		id: "self-hosted-cloud",
+		name: "Self-Hosted Cloud",
+		description:
+			"Complete self-hosted infrastructure with cloud storage, photos, media streaming, and password management",
+		requiredServices: ["nextcloud", "immich", "jellyfin", "vaultwarden"],
+		skills: [
+			"nextcloud-files",
+			"immich-photos",
+			"jellyfin-media",
+			"vaultwarden-manage",
+		],
+		icon: "☁️",
+		tags: ["self-hosted", "cloud", "storage", "media", "security"],
+	},
+	{
+		id: "ai-agent-orchestra",
+		name: "AI Agent Orchestra",
+		description:
+			"Multi-agent AI orchestration with CrewAI, AutoGPT, LangChain, Langflow, and Open Interpreter",
+		requiredServices: [],
+		skills: [
+			"crewai-orchestrate",
+			"autogpt-autonomous",
+			"langchain-agent",
+			"langflow-build",
+			"open-interpreter-run",
+		],
+		icon: "🎭",
+		tags: ["ai", "agents", "multi-agent", "orchestration", "autonomous"],
+	},
+	{
+		id: "cicd-pipeline",
+		name: "CI/CD Pipeline",
+		description:
+			"Full CI/CD pipeline with Jenkins, ArgoCD, Woodpecker, and infrastructure as code",
+		requiredServices: ["jenkins"],
+		skills: [
+			"jenkins-pipeline",
+			"argocd-deploy",
+			"woodpecker-ci",
+			"terraform-provision",
+			"ansible-configure",
+		],
+		icon: "🔄",
+		tags: ["ci-cd", "devops", "gitops", "infrastructure"],
+	},
+	{
+		id: "zero-trust-security",
+		name: "Zero-Trust Security",
+		description:
+			"Enterprise security with SSO, secrets management, VPN, intrusion detection, and feature flags",
+		requiredServices: ["authentik", "crowdsec"],
+		skills: [
+			"authentik-auth",
+			"keycloak-auth",
+			"vault-secrets",
+			"infisical-secrets",
+			"netbird-vpn",
+			"teleport-access",
+			"crowdsec-protect",
+		],
+		icon: "🔒",
+		tags: ["security", "zero-trust", "sso", "secrets", "vpn"],
+	},
+	{
+		id: "content-platform",
+		name: "Content Platform",
+		description:
+			"Publishing and CMS platform with Ghost, Strapi, Directus, and newsletter management",
+		requiredServices: ["ghost"],
+		skills: [
+			"ghost-publish",
+			"strapi-cms",
+			"directus-cms",
+			"listmonk-email",
+			"plausible-analytics",
+		],
+		icon: "📝",
+		tags: ["cms", "publishing", "blog", "newsletter", "analytics"],
+	},
+	{
+		id: "backend-platform",
+		name: "Backend Platform",
+		description:
+			"Backend-as-a-service with Supabase, Appwrite, PocketBase, and API gateway",
+		requiredServices: ["supabase"],
+		skills: [
+			"supabase-query",
+			"appwrite-backend",
+			"pocketbase-backend",
+			"kong-gateway",
+			"rabbitmq-queue",
+		],
+		icon: "⚡",
+		tags: ["backend", "baas", "api", "database", "messaging"],
+	},
+	{
+		id: "observability-stack",
+		name: "Observability Stack",
+		description:
+			"Full observability with Loki logs, SigNoz APM, Sentry errors, Gatus health, and Elasticsearch",
+		requiredServices: ["loki", "signoz"],
+		skills: [
+			"loki-logs",
+			"signoz-observe",
+			"sentry-errors",
+			"gatus-health",
+			"elasticsearch-search",
+		],
+		icon: "📡",
+		tags: ["observability", "logs", "apm", "errors", "health"],
+	},
+	{
+		id: "document-hub",
+		name: "Document Hub",
+		description:
+			"Document management with Paperless-ngx, BookStack wiki, Stirling PDF tools, and Excalidraw",
+		requiredServices: ["paperless-ngx"],
+		skills: [
+			"paperless-ngx-docs",
+			"bookstack-wiki",
+			"stirling-pdf-tools",
+			"excalidraw-draw",
+		],
+		icon: "📑",
+		tags: ["documents", "wiki", "pdf", "collaboration"],
+	},
+	{
+		id: "smart-home",
+		name: "Smart Home",
+		description:
+			"Home automation and event-driven workflows with Home Assistant, Huginn, and Activepieces",
+		requiredServices: ["homeassistant"],
+		skills: [
+			"home-assistant-automate",
+			"huginn-automate",
+			"activepieces-flow",
+		],
+		icon: "🏠",
+		tags: ["iot", "automation", "smart-home", "workflows"],
+	},
 ];
 
 
