@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 /* ── Floating HUD Data ────────────────────────────────────────────────────── */
 const activeNodes = [
@@ -13,11 +13,11 @@ const activeNodes = [
 
 /* ── Stagger helpers ──────────────────────────────────────────────────────── */
 const fadeUp = {
-	hidden: { opacity: 0, y: 15 },
+	hidden: { opacity: 0, y: 25 },
 	show: {
 		opacity: 1,
 		y: 0,
-		transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+		transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
 	},
 };
 
@@ -25,53 +25,137 @@ const container = {
 	hidden: { opacity: 0 },
 	show: {
 		opacity: 1,
-		transition: { staggerChildren: 0.1 },
+		transition: { staggerChildren: 0.12, delayChildren: 0.3 },
 	},
 };
 
+/* ── Particle Component ───────────────────────────────────────────────────── */
+function Particles() {
+	return (
+		<div className="pointer-events-none absolute inset-0 overflow-hidden">
+			{/* Particle 1 */}
+			<div
+				className="absolute bottom-[20%] left-[30%] h-1 w-1 rounded-full bg-primary/80"
+				style={{ animation: "particle-drift-1 6s ease-out infinite" }}
+			/>
+			{/* Particle 2 */}
+			<div
+				className="absolute bottom-[15%] left-[50%] h-1.5 w-1.5 rounded-full bg-accent/60"
+				style={{ animation: "particle-drift-2 8s ease-out infinite 2s" }}
+			/>
+			{/* Particle 3 */}
+			<div
+				className="absolute bottom-[25%] left-[45%] h-0.5 w-0.5 rounded-full bg-primary/70"
+				style={{ animation: "particle-drift-3 7s ease-out infinite 1s" }}
+			/>
+			{/* Particle 4 */}
+			<div
+				className="absolute bottom-[10%] left-[55%] h-1 w-1 rounded-full bg-white/30"
+				style={{ animation: "particle-drift-1 9s ease-out infinite 3s" }}
+			/>
+			{/* Particle 5 */}
+			<div
+				className="absolute bottom-[30%] left-[40%] h-0.5 w-0.5 rounded-full bg-primary/50"
+				style={{ animation: "particle-drift-2 10s ease-out infinite 4s" }}
+			/>
+			{/* Particle 6 */}
+			<div
+				className="absolute bottom-[18%] left-[60%] h-1 w-1 rounded-full bg-accent/40"
+				style={{ animation: "particle-drift-3 8s ease-out infinite 5s" }}
+			/>
+		</div>
+	);
+}
+
 export function Hero() {
 	const [uptime, setUptime] = useState("99.99%");
+	const [latency, setLatency] = useState(12);
 
 	useEffect(() => {
-		// Animate the uptime decimals slightly to simulate live monitoring
 		const interval = setInterval(() => {
 			const r = Math.random();
 			if (r > 0.8) setUptime(`99.9${Math.floor(Math.random() * 9)}%`);
 			else setUptime("99.99%");
+			setLatency(Math.floor(8 + Math.random() * 8));
 		}, 3000);
 		return () => clearInterval(interval);
 	}, []);
 
 	return (
 		<div className="relative flex min-h-[calc(100vh-3.5rem)] w-full flex-col items-center justify-center overflow-hidden">
-			{/* Dramatic Central Glow replacing the orange beam wrapper */}
-			{/* Core Beam */}
-			<div className="absolute left-1/2 top-0 -z-10 h-full w-[20%] -translate-x-1/2 bg-[linear-gradient(to_bottom,rgba(163,135,95,0.4),rgba(163,135,95,0.05),transparent)] blur-[100px]" />
-			{/* Halo */}
-			<div className="absolute left-1/2 top-1/4 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(163,135,95,0.15)_0%,transparent_70%)] blur-[40px]" />
+			
+			{/* ─── Background Image Layer ─────────────────────────────────────── */}
+			<div className="absolute inset-0 -z-20">
+				<img
+					src="/hero-bg.png"
+					alt=""
+					className="h-full w-full object-cover opacity-60"
+				/>
+				{/* Dark vignette overlay */}
+				<div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
+				<div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
+			</div>
 
+			{/* ─── Animated Beam ───────────────────────────────────────────────── */}
+			<div
+				className="absolute left-1/2 top-0 -z-10 h-full w-[3px] -translate-x-1/2 bg-gradient-to-b from-primary/80 via-primary/20 to-transparent"
+				style={{ animation: "beam-pulse 4s ease-in-out infinite" }}
+			/>
+			{/* Beam Halo */}
+			<div
+				className="absolute left-1/2 top-0 -z-10 h-[70%] w-[200px] -translate-x-1/2 bg-gradient-to-b from-primary/15 via-primary/5 to-transparent blur-3xl"
+				style={{ animation: "beam-pulse 4s ease-in-out infinite" }}
+			/>
+
+			{/* ─── Concentric Rings ────────────────────────────────────────────── */}
+			<div className="absolute bottom-[10%] left-1/2 -z-10 -translate-x-1/2">
+				<div className="h-[300px] w-[300px] rounded-full border border-primary/10" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
+				<div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/5" />
+				<div className="absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/[0.03]" />
+			</div>
+
+			{/* ─── Floating Particles ──────────────────────────────────────────── */}
+			<Particles />
+
+			{/* ─── Scan Line Effect ────────────────────────────────────────────── */}
+			<div className="pointer-events-none absolute inset-0 overflow-hidden">
+				<div
+					className="absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"
+					style={{ animation: "scan-line 8s linear infinite" }}
+				/>
+			</div>
+
+			{/* ─── Content ────────────────────────────────────────────────────── */}
 			<motion.div
 				variants={container}
 				initial="hidden"
 				animate="show"
 				className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center xl:items-start"
 			>
-				{/* Top Status */}
-				<motion.div variants={fadeUp} className="mb-6 flex items-center gap-3">
-					<div className="h-[1px] w-8 bg-primary/50" />
-					<span className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+				{/* Status Bar */}
+				<motion.div variants={fadeUp} className="mb-8 flex items-center gap-3">
+					<div className="h-px w-10 bg-primary/50" />
+					<span className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
 						CLUSTER : READY // SYSTEM ONLINE
 					</span>
+					<div
+						className="ml-2 h-2 w-2 rounded-full bg-emerald-500"
+						style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
+					/>
 				</motion.div>
 
-				{/* Huge Axion-Style Typography */}
-				<motion.h1 variants={fadeUp} className="max-w-[800px] text-center xl:text-left">
-					<span className="block text-5xl font-bold tracking-tight text-white md:text-7xl lg:text-8xl">
+				{/* Huge Typography */}
+				<motion.h1 variants={fadeUp} className="max-w-[900px] text-center xl:text-left">
+					<span className="block text-6xl font-bold tracking-tight text-white md:text-8xl lg:text-9xl">
 						SCALE WITH
 					</span>
 					<span
-						className="block text-5xl font-bold tracking-tight text-transparent md:text-7xl lg:text-8xl"
-						style={{ WebkitTextStroke: "1px rgba(255,255,255,0.2)" }}
+						className="block text-6xl font-bold tracking-tight md:text-8xl lg:text-9xl"
+						style={{
+							color: "transparent",
+							WebkitTextStroke: "1.5px rgba(163,135,95,0.5)",
+							animation: "border-breathe 4s ease-in-out infinite",
+						}}
 					>
 						AUTONOMY
 					</span>
@@ -79,119 +163,136 @@ export function Hero() {
 
 				<motion.p
 					variants={fadeUp}
-					className="mt-8 max-w-[600px] text-center xl:text-left text-base text-zinc-400 md:text-lg leading-relaxed"
+					className="mt-10 max-w-[650px] text-center xl:text-left text-lg text-zinc-400 md:text-xl leading-relaxed"
 				>
 					Deploy autonomous agents optimized for infrastructure scalability. Engineered for
 					precision and zero-latency performance.
 				</motion.p>
 
 				{/* Tech Bullets */}
-				<motion.ul
-					variants={fadeUp}
-					className="mt-8 flex flex-col gap-3 font-mono text-[11px] font-medium tracking-widest uppercase text-zinc-300"
-				>
-					<li className="flex items-center gap-3">
-						<span className="h-1 w-1 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
-						GLOBAL DISTRIBUTED INFRASTRUCTURE
-					</li>
-					<li className="flex items-center gap-3">
-						<span className="h-1 w-1 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
-						AUTONOMOUS AGENT ORCHESTRATION
-					</li>
-					<li className="flex items-center gap-3">
-						<span className="h-1 w-1 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
-						SUB-10MS EXECUTION LATENCY
-					</li>
+				<motion.ul variants={fadeUp} className="mt-10 flex flex-col gap-4 font-mono text-sm font-medium tracking-widest uppercase text-zinc-300">
+					{["GLOBAL DISTRIBUTED INFRASTRUCTURE", "AUTONOMOUS AGENT ORCHESTRATION", "SUB-10MS EXECUTION LATENCY"].map((text, i) => (
+						<li key={text} className="flex items-center gap-3">
+							<span
+								className="h-1 w-1 bg-primary"
+								style={{ animation: `pulse-dot 2s ease-in-out infinite ${i * 0.3}s` }}
+							/>
+							{text}
+						</li>
+					))}
 				</motion.ul>
 
 				{/* CTAs */}
-				<motion.div
-					variants={fadeUp}
-					className="mt-12 flex flex-col sm:flex-row items-center gap-6"
-				>
+				<motion.div variants={fadeUp} className="mt-14 flex flex-col sm:flex-row items-center gap-6">
 					<Link
 						href="/new"
-						className="group relative flex h-14 items-center justify-center overflow-hidden bg-primary px-8 font-mono text-[11px] font-bold uppercase tracking-widest text-black transition-all hover:bg-[#b5986e]"
+						className="group relative flex h-16 items-center justify-center overflow-hidden bg-primary px-10 font-mono text-sm font-bold uppercase tracking-widest text-black transition-all hover:bg-[#b5986e] hover:shadow-[0_0_30px_rgba(163,135,95,0.3)]"
 					>
-						INITIALIZE BUILD &rarr;
+						{/* Shimmer sweep on hover */}
+						<span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+						<span className="relative">INITIALIZE BUILD &rarr;</span>
 					</Link>
 					<Link
 						href="/docs"
-						className="flex h-14 items-center justify-center border border-zinc-700 bg-transparent px-8 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-300 transition-all hover:bg-zinc-800/50 hover:text-white"
+						className="group flex h-16 items-center justify-center border border-zinc-700 bg-transparent px-10 font-mono text-sm font-bold uppercase tracking-widest text-zinc-300 transition-all hover:border-primary/40 hover:bg-zinc-800/50 hover:text-white"
+						style={{ animation: "border-breathe 6s ease-in-out infinite" }}
 					>
 						VIEW DOCUMENTATION
-						<span className="ml-3 flex h-5 w-5 items-center justify-center border border-zinc-600 rounded-sm text-[10px]">
-							?
-						</span>
+						<span className="ml-3 flex h-6 w-6 items-center justify-center border border-zinc-600 rounded-sm text-xs transition-colors group-hover:border-primary/40">?</span>
 					</Link>
 				</motion.div>
 
-				<motion.div variants={fadeUp} className="mt-8">
-					<span className="font-mono text-[9px] uppercase tracking-widest text-zinc-600">
+				<motion.div variants={fadeUp} className="mt-10">
+					<span className="font-mono text-[11px] uppercase tracking-widest text-zinc-600">
 						NO CREDIT CARD REQ. // INSTANT PROVISIONING
 					</span>
 				</motion.div>
 			</motion.div>
 
-			{/* Floating Widgets (simulating the right side of Axion header) */}
+			{/* ─── Floating HUD Widgets (right side) ──────────────────────────── */}
 			<motion.div
-				initial={{ opacity: 0, x: 20 }}
+				initial={{ opacity: 0, x: 40 }}
 				animate={{ opacity: 1, x: 0 }}
-				transition={{ duration: 1, delay: 0.5 }}
+				transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
 				className="hidden xl:flex absolute right-10 top-1/2 -translate-y-1/2 flex-col gap-6"
+				style={{ animation: "float-y-slow 6s ease-in-out infinite" }}
 			>
 				{/* Active Nodes Widget */}
-				<div className="w-[300px] border border-white/10 bg-black/40 p-5 backdrop-blur-md">
-					<div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
-						<span className="font-mono text-[10px] tracking-widest text-zinc-500 uppercase">
-							ACTIVE_NODES
-						</span>
+				<div
+					className="w-[340px] border border-white/10 bg-black/60 p-6 backdrop-blur-xl"
+					style={{ animation: "screen-flicker 10s ease-in-out infinite" }}
+				>
+					<div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+						<span className="font-mono text-xs tracking-widest text-zinc-500 uppercase">ACTIVE_NODES</span>
 						<span className="flex gap-1">
-							<span className="h-1 w-1 bg-zinc-500" />
-							<span className="h-1 w-1 bg-zinc-500" />
+							<span className="h-1 w-1 bg-zinc-500" style={{ animation: "pulse-dot 3s infinite" }} />
+							<span className="h-1 w-1 bg-zinc-500" style={{ animation: "pulse-dot 3s infinite 0.5s" }} />
 						</span>
 					</div>
-					<div className="flex flex-col gap-3 font-mono text-[11px] text-zinc-300">
-						{activeNodes.map((n) => (
-							<div key={n.region} className="flex justify-between items-center">
+					<div className="flex flex-col gap-4 font-mono text-sm text-zinc-300">
+						{activeNodes.map((n, i) => (
+							<motion.div
+								key={n.region}
+								initial={{ opacity: 0, x: 10 }}
+								animate={{ opacity: 1, x: 0 }}
+								transition={{ delay: 1.2 + i * 0.15 }}
+								className="flex justify-between items-center"
+							>
 								<span>{n.region}</span>
-								<span
-									className={
-										n.status === "ONLINE" ? "text-emerald-500" : "text-primary animate-pulse"
-									}
-								>
+								<span className={n.status === "ONLINE" ? "text-emerald-500" : "text-primary"} style={n.status === "SYNCING" ? { animation: "data-refresh 2s infinite" } : undefined}>
 									{n.status}
 								</span>
-							</div>
+							</motion.div>
 						))}
 					</div>
 				</div>
 
 				{/* System Health Widget */}
-				<div className="w-[300px] border border-white/10 bg-black/40 p-5 backdrop-blur-md relative overflow-hidden">
-					{/* Small top right accent */}
-					<div className="absolute right-3 top-3 h-4 w-4 border border-primary/30 flex items-center justify-center">
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 1.5, duration: 0.8 }}
+					className="w-[340px] border border-white/10 bg-black/60 p-6 backdrop-blur-xl relative overflow-hidden"
+				>
+					{/* Corner accent */}
+					<div
+						className="absolute right-3 top-3 h-4 w-4 border border-primary/30 flex items-center justify-center"
+						style={{ animation: "pulse-glow 4s ease-in-out infinite" }}
+					>
 						<span className="h-2 w-2 bg-primary" />
 					</div>
 
-					<span className="block font-mono text-[10px] tracking-widest text-zinc-500 uppercase mb-2">
-						SYSTEM_HEALTH
+					<span className="block font-mono text-xs tracking-widest text-zinc-500 uppercase mb-3">SYSTEM_HEALTH</span>
+					<span className="block text-5xl font-bold tracking-tight text-white mb-6" style={{ animation: "data-refresh 5s ease-in-out infinite" }}>
+						{uptime}
 					</span>
-					<span className="block text-4xl font-bold tracking-tight text-white mb-6">{uptime}</span>
 
 					<div className="flex flex-col gap-2">
 						<div className="flex justify-between font-mono text-[9px] text-zinc-500 uppercase">
 							<span>LOAD_STREAM</span>
 						</div>
-						<div className="h-1 w-full bg-zinc-800">
-							<div className="h-full w-[24%] bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
+						<div className="h-1 w-full bg-zinc-800 overflow-hidden">
+							<motion.div
+								className="h-full bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]"
+								initial={{ width: "0%" }}
+								animate={{ width: "24%" }}
+								transition={{ duration: 2, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
+							/>
 						</div>
 						<div className="flex justify-between font-mono text-[9px] uppercase mt-1">
-							<span className="text-zinc-400">LATENCY: 12ms</span>
+							<span className="text-zinc-400">LATENCY: {latency}ms</span>
 							<span className="text-emerald-500">OPTIMAL</span>
 						</div>
 					</div>
-				</div>
+
+					{/* Scan line inside widget */}
+					<div className="absolute inset-0 pointer-events-none overflow-hidden">
+						<div
+							className="absolute left-0 w-full h-px bg-primary/10"
+							style={{ animation: "scan-line 5s linear infinite 2s" }}
+						/>
+					</div>
+				</motion.div>
 			</motion.div>
 		</div>
 	);

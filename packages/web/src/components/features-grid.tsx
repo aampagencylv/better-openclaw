@@ -37,54 +37,60 @@ const features = [
 
 const container = {
 	hidden: { opacity: 0 },
-	show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+	show: { opacity: 1, transition: { staggerChildren: 0.15 } },
 };
 
 const card = {
-	hidden: { opacity: 0, y: 20 },
+	hidden: { opacity: 0, y: 30 },
 	show: {
 		opacity: 1,
 		y: 0,
-		transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+		transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
 	},
 };
 
 export function FeaturesGrid() {
 	return (
 		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-white/5">
-			{/* Background ambient glow matching Axion */}
-			<div className="absolute left-1/4 top-1/2 -z-10 h-[400px] w-[800px] -translate-y-1/2 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(163,135,95,0.1)_0%,transparent_60%)] blur-[80px]" />
+			{/* Background ambient image */}
+			<div className="absolute inset-0 -z-10">
+				<img src="/section-bg.png" alt="" className="h-full w-full object-cover opacity-30" />
+				<div className="absolute inset-0 bg-gradient-to-b from-black via-black/80 to-black" />
+			</div>
 
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+
 				{/* Header Section */}
 				<motion.div
-					initial={{ opacity: 0, y: 15 }}
+					initial={{ opacity: 0, y: 20 }}
 					whileInView={{ opacity: 1, y: 0 }}
 					viewport={{ once: true }}
-					transition={{ duration: 0.6 }}
+					transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
 					className="mb-16 flex flex-col gap-4"
 				>
 					<div className="flex items-center gap-3">
-						<span className="h-1.5 w-1.5 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
-						<span className="font-mono text-[10px] tracking-widest text-primary uppercase">
+						<span
+							className="h-2 w-2 bg-primary"
+							style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
+						/>
+						<span className="font-mono text-xs tracking-widest text-primary uppercase">
 							// CORE_CAPABILITIES
 						</span>
 					</div>
 
-					<h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
+					<h2 className="text-4xl font-bold tracking-tight text-white md:text-6xl">
 						INFRASTRUCTURE <span className="text-zinc-600">PRIMITIVES</span>
 					</h2>
 
-					<p className="max-w-xl text-sm leading-relaxed text-zinc-400 mt-2">
-						The four pillars of the better-openclaw engine. Modular, scalable, and secure by design.
+					<p className="max-w-xl text-base leading-relaxed text-zinc-400 mt-2">
+						The four pillars of the better-openclaw engine. Modular, scalable, and
+						secure by design.
 					</p>
 
 					<div className="absolute right-8 top-32 hidden lg:block">
-						<Link
-							href="/docs"
-							className="font-mono text-[9px] tracking-widest text-zinc-500 uppercase transition-colors hover:text-white"
-						>
-							EXPLORE ALL FEATURES &rarr;
+						<Link href="/docs" className="group font-mono text-[9px] tracking-widest text-zinc-500 uppercase transition-colors hover:text-white">
+							EXPLORE ALL FEATURES
+							<span className="ml-1 inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
 						</Link>
 					</div>
 				</motion.div>
@@ -103,31 +109,44 @@ export function FeaturesGrid() {
 							<motion.div
 								key={f.id}
 								variants={card}
-								className={`group relative flex min-h-[320px] flex-col justify-between border-white/5 bg-black/40 p-6 backdrop-blur-sm transition-colors hover:bg-zinc-900/50
+								whileHover={{
+									y: -4,
+									transition: { duration: 0.3 },
+								}}
+								className={`group relative flex min-h-[360px] flex-col justify-between border-white/5 bg-black/40 p-8 backdrop-blur-sm transition-all duration-500 hover:bg-zinc-900/60
 									${i === 0 ? "border border-r-0 lg:border-r" : ""}
 									${i > 0 && i < 3 ? "border-y border-r-0 lg:border-r lg:border-l-0" : ""}
 									${i === 3 ? "border lg:border-l-0" : ""}
 								`}
+								style={{ animation: `border-breathe 8s ease-in-out infinite ${i * 2}s` }}
 							>
 								{/* Hover Glow Edge Effect */}
-								<div className="absolute left-0 top-0 h-full w-[1px] bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100 shadow-[0_0_12px_rgba(163,135,95,0.8)]" />
+								<div className="absolute left-0 top-0 h-full w-px bg-primary opacity-0 transition-opacity duration-500 group-hover:opacity-100 shadow-[0_0_12px_rgba(163,135,95,0.8)]" />
+
+								{/* Scan line on hover */}
+								<div className="absolute inset-0 overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+									<div
+										className="absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/15 to-transparent"
+										style={{ animation: "scan-line 4s linear infinite" }}
+									/>
+								</div>
 
 								<div>
 									{/* Top Row: Fig Label + Icon */}
 									<div className="mb-8 flex items-center justify-between">
-										<div className="flex px-2 py-1 border border-zinc-800 rounded-sm">
+										<div className="flex px-2 py-1 border border-zinc-800 rounded-sm transition-colors duration-300 group-hover:border-primary/30">
 											<span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
 												FIG. {f.id}
 											</span>
 										</div>
-										<Icon className="h-4 w-4 text-zinc-600 transition-colors group-hover:text-primary" />
+										<Icon className="h-4 w-4 text-zinc-600 transition-all duration-500 group-hover:text-primary group-hover:drop-shadow-[0_0_8px_rgba(163,135,95,0.5)]" />
 									</div>
 
-									<h3 className="mb-4 font-sans text-sm font-bold uppercase tracking-wide text-white">
+									<h3 className="mb-4 font-sans text-base font-bold uppercase tracking-wide text-white transition-colors group-hover:text-primary/90">
 										{f.title}
 									</h3>
 
-									<p className="font-mono text-[10px] leading-relaxed text-zinc-500">
+									<p className="font-mono text-xs leading-relaxed text-zinc-500 transition-colors group-hover:text-zinc-400">
 										{f.description}
 									</p>
 								</div>
@@ -136,9 +155,10 @@ export function FeaturesGrid() {
 								<div className="mt-8">
 									<Link
 										href="/docs"
-										className="font-mono text-[9px] uppercase tracking-widest text-zinc-600 transition-colors group-hover:text-white"
+										className="group/link font-mono text-[9px] uppercase tracking-widest text-zinc-600 transition-colors group-hover:text-white"
 									>
-										READ SPECS &rarr;
+										READ SPECS
+										<span className="ml-1 inline-block transition-transform group-hover/link:translate-x-1">&rarr;</span>
 									</Link>
 								</div>
 							</motion.div>

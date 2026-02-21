@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CommonSetups } from "@/components/common-setups";
-import { FeaturesGrid } from "@/components/features-grid";
-import { Footer } from "@/components/footer";
-import { Hero } from "@/components/hero";
 import { Navbar } from "@/components/navbar";
+import { Hero } from "@/components/hero";
+import { FeaturesGrid } from "@/components/features-grid";
 import { PresetsSection } from "@/components/presets-section";
+import { CommonSetups } from "@/components/common-setups";
+import { Footer } from "@/components/footer";
 
 const SECTIONS = [
 	{ id: "hero", label: "01" },
@@ -17,14 +17,21 @@ const SECTIONS = [
 	{ id: "pricing", label: "06" },
 ];
 
+const TICKER_MESSAGES = [
+	"WARN: Latency_spike detected in zone_3 (resolved)",
+	"INFO: New node registered [US-WEST-2] — status: ONLINE",
+	"SYS: Auto-scaling triggered — +2 compute nodes allocated",
+	"OK: Health check passed — all 58 services nominal",
+	"INFO: Skill pack 'researcher' deployed to cluster_alpha",
+	"SYS: TLS certificates renewed — expires: 2027-02-21",
+];
+
 export default function HomePage() {
 	const [activeSection, setActiveSection] = useState("hero");
 
 	useEffect(() => {
-		// Dark mode enforcement on the landing page
 		document.documentElement.classList.add("dark");
 
-		// Intersection Observer for scroll spy
 		const observer = new IntersectionObserver(
 			(entries) => {
 				for (const entry of entries) {
@@ -33,7 +40,7 @@ export default function HomePage() {
 					}
 				}
 			},
-			{ threshold: 0.3 }, // Trigger when 30% of the section is visible
+			{ threshold: 0.3 }
 		);
 
 		for (const sec of SECTIONS) {
@@ -46,36 +53,42 @@ export default function HomePage() {
 
 	return (
 		<div className="relative min-h-screen bg-black text-foreground selection:bg-primary/20">
-			{/* Grid Background Overlay */}
+			{/* Grid Background Overlay with subtle animation */}
 			<div className="pointer-events-none fixed inset-0 z-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-			{/* Left Vertical Navigation (Axion-style) */}
-			<div className="fixed left-0 top-0 z-40 hidden h-full w-12 flex-col border-r border-white/5 bg-black/40 backdrop-blur-md lg:flex">
-				<div className="flex h-14 w-full items-center justify-center border-b border-white/5">
-					<span className="font-mono text-[10px] text-zinc-600">SYS</span>
+			{/* Left Vertical Navigation */}
+			<div className="fixed left-0 top-0 z-40 hidden h-full w-14 flex-col border-r border-white/5 bg-black/40 backdrop-blur-md lg:flex">
+				<div className="flex h-16 w-full items-center justify-center border-b border-white/5">
+					<span
+						className="font-mono text-xs text-zinc-600"
+						style={{ animation: "data-refresh 4s ease-in-out infinite" }}
+					>
+						SYS
+					</span>
 				</div>
 				<div className="flex flex-1 flex-col items-center justify-center gap-4 py-4">
 					{SECTIONS.map((sec) => (
 						<a
 							key={sec.id}
 							href={`#${sec.id}`}
-							className={`group relative flex h-6 w-6 items-center justify-center rounded-sm border border-white/5 transition-all
-								${activeSection === sec.id ? "bg-primary/10 border-primary/50 text-primary" : "text-zinc-600 hover:text-zinc-400"}
+							className={`group relative flex h-7 w-7 items-center justify-center rounded-sm border transition-all duration-300
+								${activeSection === sec.id
+									? "bg-primary/10 border-primary/50 text-primary shadow-[0_0_12px_rgba(163,135,95,0.3)]"
+									: "border-white/5 text-zinc-600 hover:text-zinc-400 hover:border-white/10"}
 							`}
 						>
-							<span className="font-mono text-[9px]">{sec.label}</span>
-							{/* Active Indicator Line */}
+							<span className="font-mono text-[11px]">{sec.label}</span>
 							{activeSection === sec.id && (
-								<div className="absolute -right-[1px] top-1/2 h-4 w-[2px] -translate-y-1/2 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
+								<div
+									className="absolute -right-px top-1/2 h-4 w-[2px] -translate-y-1/2 bg-primary"
+									style={{ animation: "pulse-glow 2s ease-in-out infinite" }}
+								/>
 							)}
 						</a>
 					))}
 				</div>
-				<div className="flex h-14 w-full items-end justify-center pb-4">
-					<span
-						className="font-mono text-[9px] text-zinc-600"
-						style={{ writingMode: "vertical-rl" }}
-					>
+				<div className="flex h-16 w-full items-end justify-center pb-4">
+					<span className="font-mono text-[11px] text-zinc-600 [writing-mode:vertical-rl]">
 						V1.0_LTS
 					</span>
 				</div>
@@ -83,9 +96,27 @@ export default function HomePage() {
 
 			<Navbar />
 
-			{/* Main Content Area (padding left on desktop to account for left nav) */}
-			<main className="relative z-10 lg:pl-12">
-				<section id="hero" className="min-h-screen pt-14">
+			{/* ─── Scrolling Notification Ticker ──────────────────────────────── */}
+			<div className="fixed top-16 left-0 right-0 z-30 h-8 overflow-hidden border-b border-white/5 bg-black/80 backdrop-blur-md lg:left-14">
+				<div
+					className="flex h-full items-center gap-12 whitespace-nowrap"
+					style={{ animation: "ticker-scroll 40s linear infinite" }}
+				>
+					{/* Double the messages for seamless loop */}
+					{[...TICKER_MESSAGES, ...TICKER_MESSAGES].map((msg, i) => (
+						<span key={i} className="flex items-center gap-3 font-mono text-xs tracking-wider">
+							<span className="text-zinc-600">{`${String(Math.floor(Math.random() * 24)).padStart(2, "0")}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}`}</span>
+							<span className={msg.startsWith("WARN") ? "text-amber-500" : msg.startsWith("OK") ? "text-emerald-500" : "text-zinc-400"}>
+								{msg}
+							</span>
+						</span>
+					))}
+				</div>
+			</div>
+
+			{/* Main Content Area */}
+			<main className="relative z-10 lg:pl-14">
+				<section id="hero" className="min-h-screen pt-[calc(4rem+2rem)]">
 					<Hero />
 				</section>
 
@@ -102,15 +133,15 @@ export default function HomePage() {
 				</section>
 
 				<section id="validation" className="min-h-[60vh]">
-					{/* Placeholder for Validation Console */}
+					{/* Validation Console is inside the Footer */}
 				</section>
 
 				<section id="pricing" className="min-h-[60vh]">
-					{/* Placeholder for Pricing Tier */}
+					{/* Pricing is inside the Footer */}
 				</section>
 			</main>
 
-			<div className="relative z-10 lg:pl-12">
+			<div className="relative z-10 lg:pl-14">
 				<Footer />
 			</div>
 		</div>

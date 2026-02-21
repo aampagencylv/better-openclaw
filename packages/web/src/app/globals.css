@@ -25,32 +25,16 @@
   --animate-slide-down: slide-down 0.4s ease-out;
 
   @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
   @keyframes slide-up {
-    from {
-      transform: translateY(24px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+    from { transform: translateY(24px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
   @keyframes slide-down {
-    from {
-      transform: translateY(-8px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+    from { transform: translateY(-8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 }
 
@@ -58,17 +42,17 @@
 .dark {
   --color-primary: #a3875f;
   --color-primary-foreground: #000000;
-  --color-secondary: #18181b; /* zinc-900 */
+  --color-secondary: #18181b;
   --color-secondary-foreground: #ffffff;
   --color-accent: #c2a67a;
   --color-accent-foreground: #000000;
-  --color-background: #000000; /* Pitch black for Axion feel */
+  --color-background: #000000;
   --color-foreground: #fafafa;
-  --color-surface: #09090b; /* zinc-950 */
+  --color-surface: #09090b;
   --color-surface-foreground: #fafafa;
   --color-muted: #18181b;
-  --color-muted-foreground: #a1a1aa; /* zinc-400 */
-  --color-border: #27272a; /* zinc-800 */
+  --color-muted-foreground: #a1a1aa;
+  --color-border: #27272a;
   --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
 }
@@ -78,17 +62,14 @@
   .glass {
     @apply backdrop-blur-xl bg-surface/60 border border-border/50;
   }
-
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+    @apply bg-clip-text text-transparent bg-linear-to-r from-primary to-accent;
   }
-
   .glow-primary {
-    box-shadow: 0 0 40px rgba(163, 135, 95, 0.15); /* #a3875f */
+    box-shadow: 0 0 40px rgba(163, 135, 95, 0.15);
   }
-
   .glow-accent {
-    box-shadow: 0 0 40px rgba(194, 166, 122, 0.1); /* #c2a67a */
+    box-shadow: 0 0 40px rgba(194, 166, 122, 0.1);
   }
 }
 
@@ -99,31 +80,130 @@ html {
 
 /* ── Selection ──────────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(255, 107, 53, 0.2);
+  background: rgba(163, 135, 95, 0.3);
   color: inherit;
 }
 
 /* ── Scrollbar (dark mode) ──────────────────────────────────────────────── */
-.dark ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.dark ::-webkit-scrollbar-track {
-  background: transparent;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
-  border-radius: 4px;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.3);
-}
+.dark ::-webkit-scrollbar { width: 6px; height: 6px; }
+.dark ::-webkit-scrollbar-track { background: transparent; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(163, 135, 95, 0.2); border-radius: 3px; }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(163, 135, 95, 0.35); }
 
 /* ── Utility: hide scrollbar ──────────────────────────────────────────── */
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   RICH ANIMATIONS & EFFECTS
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Floating Y oscillation ─────────────────────────────────────────────── */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
 }
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
+@keyframes float-y-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
+
+/* ── Pulsing glow ───────────────────────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(163,135,95,0.3), 0 0 40px rgba(163,135,95,0.1); }
+  50% { box-shadow: 0 0 24px rgba(163,135,95,0.5), 0 0 60px rgba(163,135,95,0.2); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.6); }
+}
+
+/* ── Ticker scroll ──────────────────────────────────────────────────────── */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Gradient shimmer across text or cards ───────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Hero beam pulse ────────────────────────────────────────────────────── */
+@keyframes beam-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+/* ── Particle drift ─────────────────────────────────────────────────────── */
+@keyframes particle-drift-1 {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.3; }
+  100% { transform: translate(120px, -300px) scale(0.3); opacity: 0; }
+}
+@keyframes particle-drift-2 {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.2; }
+  100% { transform: translate(-80px, -350px) scale(0.2); opacity: 0; }
+}
+@keyframes particle-drift-3 {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.7; }
+  80% { opacity: 0.1; }
+  100% { transform: translate(60px, -280px) scale(0.5); opacity: 0; }
+}
+
+/* ── Scan line sweep ────────────────────────────────────────────────────── */
+@keyframes scan-line {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.2; }
+  100% { transform: translateY(600%); opacity: 0; }
+}
+
+/* ── Typing cursor blink ───────────────────────────────────────────────── */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ── Breathing border glow ──────────────────────────────────────────────── */
+@keyframes border-breathe {
+  0%, 100% { border-color: rgba(163,135,95,0.1); }
+  50% { border-color: rgba(163,135,95,0.35); }
+}
+
+/* ── Spinning orbits (System Flow) ──────────────────────────────────────── */
+@keyframes orbit-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes orbit-spin-reverse {
+  from { transform: translate(-50%, -50%) rotate(360deg); }
+  to { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+/* ── Status bar data refresh ────────────────────────────────────────────── */
+@keyframes data-refresh {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+/* ── Progress bar fill animation ────────────────────────────────────────── */
+@keyframes progress-fill {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+/* ── Subtle screen flicker for HUD feel ─────────────────────────────────── */
+@keyframes screen-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.85; }
+  94% { opacity: 1; }
+}
+
