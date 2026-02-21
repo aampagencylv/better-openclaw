@@ -2,16 +2,16 @@
 
 /* ── Light mode (default) ───────────────────────────────────────────────── */
 @theme {
-  --color-primary: #ff6b35;
+  --color-primary: #a3875f; /* Dark beige */
   --color-primary-foreground: #ffffff;
   --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #0f172a;
-  --color-accent: #00d4aa;
-  --color-accent-foreground: #0f172a;
+  --color-secondary-foreground: #09090b;
+  --color-accent: #c2a67a; /* Lighter beige for accents */
+  --color-accent-foreground: #09090b;
   --color-background: #ffffff;
-  --color-foreground: #0f172a;
+  --color-foreground: #09090b;
   --color-surface: #f8fafc;
-  --color-surface-foreground: #0f172a;
+  --color-surface-foreground: #09090b;
   --color-muted: #f1f5f9;
   --color-muted-foreground: #64748b;
   --color-border: #e2e8f0;
@@ -25,34 +25,50 @@
   --animate-slide-down: slide-down 0.4s ease-out;
 
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes slide-up {
-    from { transform: translateY(24px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
   @keyframes slide-down {
-    from { transform: translateY(-8px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(-8px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 }
 
 /* ── Dark mode ──────────────────────────────────────────────────────────── */
 .dark {
-  --color-primary: #ff6b35;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #1e293b;
+  --color-primary: #a3875f;
+  --color-primary-foreground: #000000;
+  --color-secondary: #18181b; /* zinc-900 */
   --color-secondary-foreground: #ffffff;
-  --color-accent: #00d4aa;
-  --color-accent-foreground: #0a0f1c;
-  --color-background: #020617;
-  --color-foreground: #f8fafc;
-  --color-surface: #0f172a;
-  --color-surface-foreground: #f8fafc;
-  --color-muted: #1e293b;
-  --color-muted-foreground: #94a3b8;
-  --color-border: #1e293b;
+  --color-accent: #c2a67a;
+  --color-accent-foreground: #000000;
+  --color-background: #000000; /* Pitch black for Axion feel */
+  --color-foreground: #fafafa;
+  --color-surface: #09090b; /* zinc-950 */
+  --color-surface-foreground: #fafafa;
+  --color-muted: #18181b;
+  --color-muted-foreground: #a1a1aa; /* zinc-400 */
+  --color-border: #27272a; /* zinc-800 */
   --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
 }
@@ -68,11 +84,11 @@
   }
 
   .glow-primary {
-    box-shadow: 0 0 40px rgba(255, 107, 53, 0.15);
+    box-shadow: 0 0 40px rgba(163, 135, 95, 0.15); /* #a3875f */
   }
 
   .glow-accent {
-    box-shadow: 0 0 40px rgba(0, 212, 170, 0.1);
+    box-shadow: 0 0 40px rgba(194, 166, 122, 0.1); /* #c2a67a */
   }
 }
 
