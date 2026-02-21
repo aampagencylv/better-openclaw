@@ -120,6 +120,624 @@
       "path": "better-openclaw/SKILL.md",
       "emoji": "🦞",
       "services": []
+    },
+    {
+      "id": "postgresql-query",
+      "path": "postgresql-query/SKILL.md",
+      "emoji": "🐘",
+      "services": [
+        "postgresql"
+      ]
+    },
+    {
+      "id": "neo4j-graph",
+      "path": "neo4j-graph/SKILL.md",
+      "emoji": "🕸️",
+      "services": [
+        "neo4j"
+      ]
+    },
+    {
+      "id": "chromadb-embeddings",
+      "path": "chromadb-embeddings/SKILL.md",
+      "emoji": "🎨",
+      "services": [
+        "chromadb"
+      ]
+    },
+    {
+      "id": "weaviate-search",
+      "path": "weaviate-search/SKILL.md",
+      "emoji": "🔮",
+      "services": [
+        "weaviate"
+      ]
+    },
+    {
+      "id": "meilisearch-index",
+      "path": "meilisearch-index/SKILL.md",
+      "emoji": "🔎",
+      "services": [
+        "meilisearch"
+      ]
+    },
+    {
+      "id": "valkey-cache",
+      "path": "valkey-cache/SKILL.md",
+      "emoji": "💎",
+      "services": [
+        "valkey"
+      ]
+    },
+    {
+      "id": "convex-realtime",
+      "path": "convex-realtime/SKILL.md",
+      "emoji": "⚡",
+      "services": [
+        "convex"
+      ]
+    },
+    {
+      "id": "nocodb-manage",
+      "path": "nocodb-manage/SKILL.md",
+      "emoji": "📋",
+      "services": [
+        "nocodb"
+      ]
+    },
+    {
+      "id": "litellm-gateway",
+      "path": "litellm-gateway/SKILL.md",
+      "emoji": "🔀",
+      "services": [
+        "litellm"
+      ]
+    },
+    {
+      "id": "open-webui-chat",
+      "path": "open-webui-chat/SKILL.md",
+      "emoji": "💬",
+      "services": [
+        "open-webui"
+      ]
+    },
+    {
+      "id": "dify-workflow",
+      "path": "dify-workflow/SKILL.md",
+      "emoji": "🧩",
+      "services": [
+        "dify"
+      ]
+    },
+    {
+      "id": "flowise-chain",
+      "path": "flowise-chain/SKILL.md",
+      "emoji": "🌊",
+      "services": [
+        "flowise"
+      ]
+    },
+    {
+      "id": "librechat-converse",
+      "path": "librechat-converse/SKILL.md",
+      "emoji": "🗣️",
+      "services": [
+        "librechat"
+      ]
+    },
+    {
+      "id": "anythingllm-workspace",
+      "path": "anythingllm-workspace/SKILL.md",
+      "emoji": "📄",
+      "services": [
+        "anythingllm"
+      ]
+    },
+    {
+      "id": "stable-diffusion-generate",
+      "path": "stable-diffusion-generate/SKILL.md",
+      "emoji": "🖼️",
+      "services": [
+        "stable-diffusion"
+      ]
+    },
+    {
+      "id": "docsgpt-ask",
+      "path": "docsgpt-ask/SKILL.md",
+      "emoji": "📖",
+      "services": [
+        "docsgpt"
+      ]
+    },
+    {
+      "id": "temporal-orchestrate",
+      "path": "temporal-orchestrate/SKILL.md",
+      "emoji": "⏱️",
+      "services": [
+        "temporal"
+      ]
+    },
+    {
+      "id": "cal-schedule",
+      "path": "cal-schedule/SKILL.md",
+      "emoji": "📅",
+      "services": [
+        "calcom"
+      ]
+    },
+    {
+      "id": "xyops-automate",
+      "path": "xyops-automate/SKILL.md",
+      "emoji": "🔧",
+      "services": [
+        "xyops"
+      ]
+    },
+    {
+      "id": "grafana-dashboard",
+      "path": "grafana-dashboard/SKILL.md",
+      "emoji": "📊",
+      "services": [
+        "grafana"
+      ]
+    },
+    {
+      "id": "prometheus-query",
+      "path": "prometheus-query/SKILL.md",
+      "emoji": "🔥",
+      "services": [
+        "prometheus"
+      ]
+    },
+    {
+      "id": "uptime-kuma-monitor",
+      "path": "uptime-kuma-monitor/SKILL.md",
+      "emoji": "💓",
+      "services": [
+        "uptime-kuma"
+      ]
+    },
+    {
+      "id": "beszel-monitor",
+      "path": "beszel-monitor/SKILL.md",
+      "emoji": "📈",
+      "services": [
+        "beszel"
+      ]
+    },
+    {
+      "id": "gotify-notify",
+      "path": "gotify-notify/SKILL.md",
+      "emoji": "🔔",
+      "services": [
+        "gotify"
+      ]
+    },
+    {
+      "id": "ntfy-publish",
+      "path": "ntfy-publish/SKILL.md",
+      "emoji": "📣",
+      "services": [
+        "ntfy"
+      ]
+    },
+    {
+      "id": "matrix-message",
+      "path": "matrix-message/SKILL.md",
+      "emoji": "🟢",
+      "services": [
+        "matrix-synapse"
+      ]
+    },
+    {
+      "id": "mattermost-post",
+      "path": "mattermost-post/SKILL.md",
+      "emoji": "💬",
+      "services": [
+        "mattermost"
+      ]
+    },
+    {
+      "id": "rocketchat-send",
+      "path": "rocketchat-send/SKILL.md",
+      "emoji": "🚀",
+      "services": [
+        "rocketchat"
+      ]
+    },
+    {
+      "id": "postiz-schedule",
+      "path": "postiz-schedule/SKILL.md",
+      "emoji": "📱",
+      "services": [
+        "postiz"
+      ]
+    },
+    {
+      "id": "mixpost-publish",
+      "path": "mixpost-publish/SKILL.md",
+      "emoji": "📢",
+      "services": [
+        "mixpost"
+      ]
+    },
+    {
+      "id": "usesend-campaign",
+      "path": "usesend-campaign/SKILL.md",
+      "emoji": "✉️",
+      "services": [
+        "usesend"
+      ]
+    },
+    {
+      "id": "matomo-track",
+      "path": "matomo-track/SKILL.md",
+      "emoji": "📊",
+      "services": [
+        "matomo"
+      ]
+    },
+    {
+      "id": "umami-analytics",
+      "path": "umami-analytics/SKILL.md",
+      "emoji": "📉",
+      "services": [
+        "umami"
+      ]
+    },
+    {
+      "id": "openpanel-analyze",
+      "path": "openpanel-analyze/SKILL.md",
+      "emoji": "📐",
+      "services": [
+        "openpanel"
+      ]
+    },
+    {
+      "id": "gitea-repo",
+      "path": "gitea-repo/SKILL.md",
+      "emoji": "🫖",
+      "services": [
+        "gitea"
+      ]
+    },
+    {
+      "id": "code-server-develop",
+      "path": "code-server-develop/SKILL.md",
+      "emoji": "💻",
+      "services": [
+        "code-server"
+      ]
+    },
+    {
+      "id": "portainer-manage",
+      "path": "portainer-manage/SKILL.md",
+      "emoji": "🐳",
+      "services": [
+        "portainer"
+      ]
+    },
+    {
+      "id": "watchtower-update",
+      "path": "watchtower-update/SKILL.md",
+      "emoji": "🗼",
+      "services": [
+        "watchtower"
+      ]
+    },
+    {
+      "id": "dozzle-logs",
+      "path": "dozzle-logs/SKILL.md",
+      "emoji": "📜",
+      "services": [
+        "dozzle"
+      ]
+    },
+    {
+      "id": "coolify-deploy",
+      "path": "coolify-deploy/SKILL.md",
+      "emoji": "❄️",
+      "services": [
+        "coolify"
+      ]
+    },
+    {
+      "id": "dokploy-deploy",
+      "path": "dokploy-deploy/SKILL.md",
+      "emoji": "🚢",
+      "services": [
+        "dokploy"
+      ]
+    },
+    {
+      "id": "outline-wiki",
+      "path": "outline-wiki/SKILL.md",
+      "emoji": "📝",
+      "services": [
+        "outline"
+      ]
+    },
+    {
+      "id": "paperless-archive",
+      "path": "paperless-archive/SKILL.md",
+      "emoji": "🗂️",
+      "services": [
+        "paperless-ngx"
+      ]
+    },
+    {
+      "id": "appflowy-workspace",
+      "path": "appflowy-workspace/SKILL.md",
+      "emoji": "🌿",
+      "services": [
+        "appflowy"
+      ]
+    },
+    {
+      "id": "livekit-stream",
+      "path": "livekit-stream/SKILL.md",
+      "emoji": "🎥",
+      "services": [
+        "livekit"
+      ]
+    },
+    {
+      "id": "tailscale-network",
+      "path": "tailscale-network/SKILL.md",
+      "emoji": "🔒",
+      "services": [
+        "tailscale"
+      ]
+    },
+    {
+      "id": "stream-gateway-relay",
+      "path": "stream-gateway-relay/SKILL.md",
+      "emoji": "📡",
+      "services": [
+        "stream-gateway"
+      ]
+    },
+    {
+      "id": "playwright-automate",
+      "path": "playwright-automate/SKILL.md",
+      "emoji": "🎭",
+      "services": [
+        "playwright"
+      ]
+    },
+    {
+      "id": "motion-canvas-animate",
+      "path": "motion-canvas-animate/SKILL.md",
+      "emoji": "🎞️",
+      "services": [
+        "motion-canvas"
+      ]
+    },
+    {
+      "id": "claude-code-assist",
+      "path": "claude-code-assist/SKILL.md",
+      "emoji": "🤖",
+      "services": []
+    },
+    {
+      "id": "codex-generate",
+      "path": "codex-generate/SKILL.md",
+      "emoji": "⌨️",
+      "services": []
+    },
+    {
+      "id": "gemini-cli-query",
+      "path": "gemini-cli-query/SKILL.md",
+      "emoji": "♊",
+      "services": []
+    },
+    {
+      "id": "opencode-develop",
+      "path": "opencode-develop/SKILL.md",
+      "emoji": "🔓",
+      "services": []
+    },
+    {
+      "id": "mission-control-manage",
+      "path": "mission-control-manage/SKILL.md",
+      "emoji": "🎯",
+      "services": [
+        "mission-control"
+      ]
+    },
+    {
+      "id": "csv-transform",
+      "path": "csv-transform/SKILL.md",
+      "emoji": "📊",
+      "services": []
+    },
+    {
+      "id": "json-transform",
+      "path": "json-transform/SKILL.md",
+      "emoji": "🔤",
+      "services": []
+    },
+    {
+      "id": "xml-parse",
+      "path": "xml-parse/SKILL.md",
+      "emoji": "📰",
+      "services": []
+    },
+    {
+      "id": "pdf-extract",
+      "path": "pdf-extract/SKILL.md",
+      "emoji": "📕",
+      "services": []
+    },
+    {
+      "id": "excel-process",
+      "path": "excel-process/SKILL.md",
+      "emoji": "📗",
+      "services": []
+    },
+    {
+      "id": "markdown-convert",
+      "path": "markdown-convert/SKILL.md",
+      "emoji": "📝",
+      "services": []
+    },
+    {
+      "id": "text-summarize",
+      "path": "text-summarize/SKILL.md",
+      "emoji": "📋",
+      "services": [
+        "ollama"
+      ]
+    },
+    {
+      "id": "text-translate",
+      "path": "text-translate/SKILL.md",
+      "emoji": "🌐",
+      "services": [
+        "ollama"
+      ]
+    },
+    {
+      "id": "text-classify",
+      "path": "text-classify/SKILL.md",
+      "emoji": "🏷️",
+      "services": [
+        "ollama"
+      ]
+    },
+    {
+      "id": "text-embed",
+      "path": "text-embed/SKILL.md",
+      "emoji": "🧬",
+      "services": [
+        "ollama"
+      ]
+    },
+    {
+      "id": "image-resize",
+      "path": "image-resize/SKILL.md",
+      "emoji": "🖼️",
+      "services": []
+    },
+    {
+      "id": "image-convert",
+      "path": "image-convert/SKILL.md",
+      "emoji": "🔄",
+      "services": []
+    },
+    {
+      "id": "image-ocr",
+      "path": "image-ocr/SKILL.md",
+      "emoji": "👁️",
+      "services": []
+    },
+    {
+      "id": "http-request",
+      "path": "http-request/SKILL.md",
+      "emoji": "🌐",
+      "services": []
+    },
+    {
+      "id": "api-webhook",
+      "path": "api-webhook/SKILL.md",
+      "emoji": "🪝",
+      "services": []
+    },
+    {
+      "id": "graphql-query",
+      "path": "graphql-query/SKILL.md",
+      "emoji": "◼️",
+      "services": []
+    },
+    {
+      "id": "file-manage",
+      "path": "file-manage/SKILL.md",
+      "emoji": "📁",
+      "services": []
+    },
+    {
+      "id": "archive-compress",
+      "path": "archive-compress/SKILL.md",
+      "emoji": "🗜️",
+      "services": []
+    },
+    {
+      "id": "jwt-manage",
+      "path": "jwt-manage/SKILL.md",
+      "emoji": "🔑",
+      "services": []
+    },
+    {
+      "id": "hash-generate",
+      "path": "hash-generate/SKILL.md",
+      "emoji": "🔐",
+      "services": []
+    },
+    {
+      "id": "ssl-check",
+      "path": "ssl-check/SKILL.md",
+      "emoji": "🛡️",
+      "services": []
+    },
+    {
+      "id": "dns-lookup",
+      "path": "dns-lookup/SKILL.md",
+      "emoji": "🔍",
+      "services": []
+    },
+    {
+      "id": "port-scan",
+      "path": "port-scan/SKILL.md",
+      "emoji": "🔌",
+      "services": []
+    },
+    {
+      "id": "ping-check",
+      "path": "ping-check/SKILL.md",
+      "emoji": "📡",
+      "services": []
+    },
+    {
+      "id": "cron-schedule",
+      "path": "cron-schedule/SKILL.md",
+      "emoji": "⏰",
+      "services": []
+    },
+    {
+      "id": "timezone-convert",
+      "path": "timezone-convert/SKILL.md",
+      "emoji": "🕐",
+      "services": []
+    },
+    {
+      "id": "math-calculate",
+      "path": "math-calculate/SKILL.md",
+      "emoji": "🧮",
+      "services": []
+    },
+    {
+      "id": "unit-convert",
+      "path": "unit-convert/SKILL.md",
+      "emoji": "📏",
+      "services": []
+    },
+    {
+      "id": "email-send",
+      "path": "email-send/SKILL.md",
+      "emoji": "📧",
+      "services": []
+    },
+    {
+      "id": "calendar-manage",
+      "path": "calendar-manage/SKILL.md",
+      "emoji": "📆",
+      "services": []
+    },
+    {
+      "id": "system-info",
+      "path": "system-info/SKILL.md",
+      "emoji": "🖥️",
+      "services": []
     }
   ]
 }
