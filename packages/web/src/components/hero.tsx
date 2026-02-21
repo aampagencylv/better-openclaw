@@ -84,37 +84,7 @@ export function Hero() {
 	return (
 		<div className="relative flex min-h-[calc(100vh-3.5rem)] w-full flex-col items-center justify-center overflow-hidden">
 			
-			{/* ─── AXION-STYLE ACCRETION DISK & BEAM BACKGROUND ──────────────────────── */}
-			<div className="absolute inset-0 -z-20 overflow-hidden bg-black">
-				{/* Deep Ambient Space */}
-				<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(30,20,10,1)_0%,rgba(0,0,0,1)_100%)]" />
 
-				{/* 1. The Core Horizon (Intense bottom glow) */}
-				<div className="absolute bottom-0 left-1/2 w-[1200px] h-[600px] -translate-x-1/2 translate-y-1/2 rounded-[100%] bg-[radial-gradient(closest-side,rgba(255,200,100,0.8)_0%,rgba(200,100,20,0.4)_40%,transparent_100%)] blur-[80px]" />
-				
-				{/* 2. Concentric Accretion Rings (Ellipses) */}
-				<div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[60%] w-[140vw] min-w-[1200px] aspect-[2.5/1] flex items-center justify-center">
-					{/* Outer Ring */}
-					<div className="absolute w-full h-full rounded-[100%] border-[2px] border-primary/20 shadow-[0_0_100px_rgba(163,135,95,0.2)_inset]" />
-					{/* Mid Ring */}
-					<div className="absolute w-[80%] h-[80%] rounded-[100%] border-[4px] border-[#c2a67a]/40 shadow-[0_0_80px_rgba(194,166,122,0.3)_inset]" style={{ animation: "pulse-glow 8s ease-in-out infinite" }} />
-					{/* Inner Ring (Intense) */}
-					<div className="absolute w-[60%] h-[60%] rounded-[100%] border-[8px] border-[#ffb347]/60 shadow-[0_0_120px_rgba(255,179,71,0.5)_inset,0_0_120px_rgba(255,179,71,0.5)]" style={{ animation: "pulse-glow 4s ease-in-out infinite" }} />
-					{/* Core Ring */}
-					<div className="absolute w-[40%] h-[40%] rounded-[100%] bg-[#ff9b26]/5 border-[16px] border-[#ffecd2]/80 shadow-[0_0_150px_rgba(255,236,210,0.8)_inset,0_0_150px_rgba(255,236,210,0.8)] blur-[2px]" />
-				</div>
-
-				{/* 3. The Vertical Light Beam */}
-				{/* Main bright core */}
-				<div className="absolute top-0 left-1/2 w-[4px] h-[100%] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#ffecd2] to-[#ffecd2]" style={{ animation: "beam-pulse 3s ease-in-out infinite" }} />
-				{/* Inner glow */}
-				<div className="absolute top-0 left-1/2 w-[40px] h-[100%] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#ffb347]/40 to-[#ffb347]/80 blur-[8px]" />
-				{/* Outer wide beam */}
-				<div className="absolute top-0 left-1/2 w-[300px] h-[100%] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#a3875f]/10 to-[#ffb347]/30 blur-[40px]" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
-				
-				{/* 4. Vignette / Darkening overlay for contrast at top and edges */}
-				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_center,transparent_0%,rgba(0,0,0,0.8)_100%)] pointer-events-none" />
-			</div>
 
 			{/* ─── Floating Particles ──────────────────────────────────────────── */}
 			<Particles />

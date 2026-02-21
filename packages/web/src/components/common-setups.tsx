@@ -31,7 +31,7 @@ export function CommonSetups() {
 	}, []);
 
 	return (
-		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-white/5 bg-black">
+		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-white/5">
 			{/* Ambient Center Glow */}
 			<div className="absolute left-1/2 top-1/2 -z-10 h-[500px] w-[800px] -translate-y-1/2 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(163,135,95,0.12)_0%,transparent_60%)] blur-3xl" />
 

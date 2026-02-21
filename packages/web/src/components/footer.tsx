@@ -66,7 +66,7 @@ function FooterColumn({
 
 export function Footer() {
 	return (
-		<footer className="w-full bg-black">
+		<footer className="w-full">
 			{/* Validation Console Pre-Footer */}
 			<div className="border-t border-white/5 py-24 pl-4 sm:pl-6 lg:pl-8 pr-4 sm:pr-6 lg:pr-8">
 				<div className="mx-auto max-w-7xl">
