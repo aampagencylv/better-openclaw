@@ -73,10 +73,7 @@ export const receiveAgentEvent = mutation({
 		let systemAgent = await ctx.db
 			.query("agents")
 			.filter((q) =>
-				q.and(
-					q.eq(q.field("name"), SYSTEM_AGENT_NAME),
-					q.eq(q.field("tenantId"), tenantId),
-				),
+				q.and(q.eq(q.field("name"), SYSTEM_AGENT_NAME), q.eq(q.field("tenantId"), tenantId)),
 			)
 			.first();
 
@@ -96,10 +93,7 @@ export const receiveAgentEvent = mutation({
 			? await ctx.db
 					.query("agents")
 					.filter((q) =>
-						q.and(
-							q.eq(q.field("name"), args.agentId),
-							q.eq(q.field("tenantId"), tenantId),
-						),
+						q.and(q.eq(q.field("name"), args.agentId), q.eq(q.field("tenantId"), tenantId)),
 					)
 					.first()
 			: null;
@@ -113,8 +107,7 @@ export const receiveAgentEvent = mutation({
 					? summarizePrompt(args.prompt)
 					: `Agent task ${args.runId.slice(0, 8)}`;
 
-				const description =
-					args.prompt || `OpenClaw agent task\nRun ID: ${args.runId}`;
+				const description = args.prompt || `OpenClaw agent task\nRun ID: ${args.runId}`;
 
 				const taskId = await ctx.db.insert("tasks", {
 					title,
@@ -170,11 +163,7 @@ export const receiveAgentEvent = mutation({
 			});
 
 			// Flag coding tool usage based on tool:start events
-			if (
-				args.eventType === "tool:start" &&
-				args.message &&
-				!task.usedCodingTools
-			) {
+			if (args.eventType === "tool:start" && args.message && !task.usedCodingTools) {
 				const toolMatch = args.message.match(/Using tool:\s*(\S+)/);
 				if (toolMatch && CODING_TOOLS.includes(toolMatch[1]!)) {
 					await ctx.db.patch(task._id, { usedCodingTools: true });
@@ -186,9 +175,7 @@ export const receiveAgentEvent = mutation({
 			// - Coding tools (edit, exec, bash) were used, or
 			// - Code-type documents were created for this task
 			// Otherwise, mark as done.
-			const needsFeedback = args.response
-				? args.response.includes("?")
-				: false;
+			const needsFeedback = args.response ? args.response.includes("?") : false;
 
 			let isCodingTask = task.usedCodingTools ?? false;
 			if (!isCodingTask) {
@@ -205,8 +192,7 @@ export const receiveAgentEvent = mutation({
 				isCodingTask = codeDocs !== null;
 			}
 
-			const endStatus =
-				needsFeedback || isCodingTask ? "review" : "done";
+			const endStatus = needsFeedback || isCodingTask ? "review" : "done";
 			await ctx.db.patch(task._id, { status: endStatus });
 
 			// Calculate duration

@@ -17,11 +17,7 @@ export const updateStatus = mutation({
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		const task = requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		const task = requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 
 		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
@@ -45,20 +41,12 @@ export const updateAssignees = mutation({
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		const task = requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		const task = requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 
 		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
 		for (const assigneeId of args.assigneeIds) {
-			requireTenant(
-				await ctx.db.get(assigneeId),
-				tenantId,
-				"Assignee",
-			);
+			requireTenant(await ctx.db.get(assigneeId), tenantId, "Assignee");
 		}
 
 		await ctx.db.patch(args.taskId, { assigneeIds: args.assigneeIds, updatedAt: Date.now() });
@@ -105,11 +93,7 @@ export const archiveTask = mutation({
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		const task = requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		const task = requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 
 		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
@@ -132,11 +116,7 @@ export const linkRun = mutation({
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 
 		await ctx.db.patch(args.taskId, {
 			openclawRunId: args.openclawRunId,
@@ -150,11 +130,7 @@ export const deleteTask = mutation({
 	args: { taskId: v.id("tasks") },
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 		await ctx.db.delete(args.taskId);
 	},
 });
@@ -169,11 +145,7 @@ export const updateTask = mutation({
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		const task = requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		const task = requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 
 		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 

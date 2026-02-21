@@ -10,9 +10,7 @@ export const listByTask = query({
 
 		return await ctx.db
 			.query("documents")
-			.withIndex("by_tenant_task", (q) =>
-				q.eq("tenantId", tenantId).eq("taskId", args.taskId),
-			)
+			.withIndex("by_tenant_task", (q) => q.eq("tenantId", tenantId).eq("taskId", args.taskId))
 			.collect();
 	},
 });
@@ -34,14 +32,8 @@ export const listAll = query({
 		}
 
 		if (args.agentId) {
-			requireTenant(
-				await ctx.db.get(args.agentId),
-				tenantId,
-				"Agent",
-			);
-			documents = documents.filter(
-				(doc) => doc.createdByAgentId === args.agentId,
-			);
+			requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
+			documents = documents.filter((doc) => doc.createdByAgentId === args.agentId);
 		}
 
 		documents.sort((a, b) => b._creationTime - a._creationTime);
@@ -49,9 +41,7 @@ export const listAll = query({
 		// Join with agent info
 		const documentsWithAgent = await Promise.all(
 			documents.map(async (doc) => {
-				const agent = doc.createdByAgentId
-					? await ctx.db.get(doc.createdByAgentId)
-					: null;
+				const agent = doc.createdByAgentId ? await ctx.db.get(doc.createdByAgentId) : null;
 				if (agent) {
 					requireTenant(agent, tenantId, "Agent");
 				}
@@ -75,23 +65,17 @@ export const getWithContext = query({
 		if (!document) return null;
 		requireTenant(document, tenantId, "Document");
 
-		const agent = document.createdByAgentId
-			? await ctx.db.get(document.createdByAgentId)
-			: null;
+		const agent = document.createdByAgentId ? await ctx.db.get(document.createdByAgentId) : null;
 		if (agent) {
 			requireTenant(agent, tenantId, "Agent");
 		}
 
-		const task = document.taskId
-			? await ctx.db.get(document.taskId)
-			: null;
+		const task = document.taskId ? await ctx.db.get(document.taskId) : null;
 		if (task) {
 			requireTenant(task, tenantId, "Task");
 		}
 
-		const message = document.messageId
-			? await ctx.db.get(document.messageId)
-			: null;
+		const message = document.messageId ? await ctx.db.get(document.messageId) : null;
 		if (message) {
 			requireTenant(message, tenantId, "Message");
 		}
@@ -109,9 +93,7 @@ export const getWithContext = query({
 		if (documentTaskId) {
 			const taskMessages = await ctx.db
 				.query("messages")
-				.withIndex("by_tenant_task", (q) =>
-					q.eq("tenantId", tenantId).eq("taskId", documentTaskId),
-				)
+				.withIndex("by_tenant_task", (q) => q.eq("tenantId", tenantId).eq("taskId", documentTaskId))
 				.order("asc")
 				.collect();
 
@@ -150,11 +132,7 @@ export const deleteDocument = mutation({
 	args: { documentId: v.id("documents") },
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		requireTenant(
-			await ctx.db.get(args.documentId),
-			tenantId,
-			"Document",
-		);
+		requireTenant(await ctx.db.get(args.documentId), tenantId, "Document");
 		await ctx.db.delete(args.documentId);
 	},
 });
@@ -171,26 +149,14 @@ export const create = mutation({
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		requireTenant(
-			await ctx.db.get(args.agentId),
-			tenantId,
-			"Agent",
-		);
+		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
 		if (args.taskId) {
-			requireTenant(
-				await ctx.db.get(args.taskId),
-				tenantId,
-				"Task",
-			);
+			requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 		}
 
 		if (args.messageId) {
-			requireTenant(
-				await ctx.db.get(args.messageId),
-				tenantId,
-				"Message",
-			);
+			requireTenant(await ctx.db.get(args.messageId), tenantId, "Message");
 		}
 
 		const docId = await ctx.db.insert("documents", {

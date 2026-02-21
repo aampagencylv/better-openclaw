@@ -6,11 +6,7 @@ export const deleteMessage = mutation({
 	args: { messageId: v.id("messages") },
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		requireTenant(
-			await ctx.db.get(args.messageId),
-			tenantId,
-			"Message",
-		);
+		requireTenant(await ctx.db.get(args.messageId), tenantId, "Message");
 		await ctx.db.delete(args.messageId);
 	},
 });
@@ -24,24 +20,12 @@ export const send = mutation({
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		const task = requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		const task = requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 
-		requireTenant(
-			await ctx.db.get(args.agentId),
-			tenantId,
-			"Agent",
-		);
+		requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 
 		for (const attachmentId of args.attachments || []) {
-			requireTenant(
-				await ctx.db.get(attachmentId),
-				tenantId,
-				"Document",
-			);
+			requireTenant(await ctx.db.get(attachmentId), tenantId, "Document");
 		}
 
 		await ctx.db.insert("messages", {

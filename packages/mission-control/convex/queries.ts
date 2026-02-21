@@ -27,9 +27,7 @@ export const listTasks = query({
 			tasks.map(async (task) => {
 				const lastMessage = await ctx.db
 					.query("messages")
-					.withIndex("by_tenant_task", (q) =>
-						q.eq("tenantId", tenantId).eq("taskId", task._id),
-					)
+					.withIndex("by_tenant_task", (q) => q.eq("tenantId", tenantId).eq("taskId", task._id))
 					.order("desc")
 					.first();
 
@@ -60,10 +58,8 @@ export const listActivities = query({
 		if (args.agentId || args.type || args.taskId) {
 			activitiesQuery = activitiesQuery.filter((q) => {
 				const filters = [];
-				if (args.agentId)
-					filters.push(q.eq(q.field("agentId"), args.agentId));
-				if (args.taskId)
-					filters.push(q.eq(q.field("targetId"), args.taskId));
+				if (args.agentId) filters.push(q.eq(q.field("agentId"), args.agentId));
+				if (args.taskId) filters.push(q.eq(q.field("targetId"), args.taskId));
 
 				if (args.type) {
 					if (args.type === "tasks") {
@@ -76,10 +72,7 @@ export const listActivities = query({
 						);
 					} else if (args.type === "comments") {
 						filters.push(
-							q.or(
-								q.eq(q.field("type"), "message"),
-								q.eq(q.field("type"), "commented"),
-							),
+							q.or(q.eq(q.field("type"), "message"), q.eq(q.field("type"), "commented")),
 						);
 					} else if (args.type === "docs") {
 						filters.push(q.eq(q.field("type"), "document_created"));
@@ -116,11 +109,7 @@ export const getAgent = query({
 	args: { agentId: v.id("agents") },
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		return requireTenant(
-			await ctx.db.get(args.agentId),
-			tenantId,
-			"Agent",
-		);
+		return requireTenant(await ctx.db.get(args.agentId), tenantId, "Agent");
 	},
 });
 
@@ -128,11 +117,7 @@ export const getTask = query({
 	args: { taskId: v.id("tasks") },
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		return requireTenant(
-			await ctx.db.get(args.taskId),
-			tenantId,
-			"Task",
-		);
+		return requireTenant(await ctx.db.get(args.taskId), tenantId, "Task");
 	},
 });
 
@@ -140,11 +125,7 @@ export const getDocument = query({
 	args: { documentId: v.id("documents") },
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
-		return requireTenant(
-			await ctx.db.get(args.documentId),
-			tenantId,
-			"Document",
-		);
+		return requireTenant(await ctx.db.get(args.documentId), tenantId, "Document");
 	},
 });
 
@@ -157,9 +138,7 @@ export const listMessages = query({
 
 		const messages = await ctx.db
 			.query("messages")
-			.withIndex("by_tenant_task", (q) =>
-				q.eq("tenantId", tenantId).eq("taskId", args.taskId),
-			)
+			.withIndex("by_tenant_task", (q) => q.eq("tenantId", tenantId).eq("taskId", args.taskId))
 			.collect();
 
 		// Join with agents to get names/avatars

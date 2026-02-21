@@ -5,11 +5,7 @@ import { requireAuthTenantId, assertTenant } from "./lib/tenant";
 export const updateStatus = mutation({
 	args: {
 		id: v.id("agents"),
-		status: v.union(
-			v.literal("idle"),
-			v.literal("active"),
-			v.literal("blocked"),
-		),
+		status: v.union(v.literal("idle"), v.literal("active"), v.literal("blocked")),
 	},
 	handler: async (ctx, args) => {
 		const tenantId = await requireAuthTenantId(ctx);
@@ -25,11 +21,7 @@ export const createAgent = mutation({
 		role: v.string(),
 		level: v.union(v.literal("LEAD"), v.literal("INT"), v.literal("SPC")),
 		avatar: v.string(),
-		status: v.union(
-			v.literal("idle"),
-			v.literal("active"),
-			v.literal("blocked"),
-		),
+		status: v.union(v.literal("idle"), v.literal("active"), v.literal("blocked")),
 		systemPrompt: v.optional(v.string()),
 		character: v.optional(v.string()),
 		lore: v.optional(v.string()),
@@ -56,17 +48,9 @@ export const updateAgent = mutation({
 		id: v.id("agents"),
 		name: v.optional(v.string()),
 		role: v.optional(v.string()),
-		level: v.optional(
-			v.union(v.literal("LEAD"), v.literal("INT"), v.literal("SPC")),
-		),
+		level: v.optional(v.union(v.literal("LEAD"), v.literal("INT"), v.literal("SPC"))),
 		avatar: v.optional(v.string()),
-		status: v.optional(
-			v.union(
-				v.literal("idle"),
-				v.literal("active"),
-				v.literal("blocked"),
-			),
-		),
+		status: v.optional(v.union(v.literal("idle"), v.literal("active"), v.literal("blocked"))),
 		systemPrompt: v.optional(v.string()),
 		character: v.optional(v.string()),
 		lore: v.optional(v.string()),

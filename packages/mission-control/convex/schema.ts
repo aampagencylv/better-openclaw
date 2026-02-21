@@ -7,11 +7,7 @@ export default defineSchema({
 	agents: defineTable({
 		name: v.string(),
 		role: v.string(),
-		status: v.union(
-			v.literal("idle"),
-			v.literal("active"),
-			v.literal("blocked"),
-		),
+		status: v.union(v.literal("idle"), v.literal("active"), v.literal("blocked")),
 		level: v.union(v.literal("LEAD"), v.literal("INT"), v.literal("SPC")),
 		avatar: v.string(),
 		currentTaskId: v.optional(v.id("tasks")),

@@ -61,8 +61,7 @@ export const run = mutation({
 		});
 		const task2 = await ctx.db.insert("tasks", {
 			title: "Design dashboard layout",
-			description:
-				"Create wireframes and implement the main dashboard layout with kanban board.",
+			description: "Create wireframes and implement the main dashboard layout with kanban board.",
 			status: "done",
 			assigneeIds: [freya],
 			tags: ["design", "ui"],
@@ -71,8 +70,7 @@ export const run = mutation({
 		});
 		const task3 = await ctx.db.insert("tasks", {
 			title: "Implement agent monitoring",
-			description:
-				"Build real-time agent status monitoring and health check dashboard.",
+			description: "Build real-time agent status monitoring and health check dashboard.",
 			status: "review",
 			assigneeIds: [heimdall, loki],
 			tags: ["monitoring", "agents"],
@@ -81,8 +79,7 @@ export const run = mutation({
 		});
 		const task4 = await ctx.db.insert("tasks", {
 			title: "API rate limiting",
-			description:
-				"Implement rate limiting for the webhook endpoint and API routes.",
+			description: "Implement rate limiting for the webhook endpoint and API routes.",
 			status: "inbox",
 			assigneeIds: [],
 			tags: ["api", "security"],
@@ -90,8 +87,7 @@ export const run = mutation({
 		});
 		const task5 = await ctx.db.insert("tasks", {
 			title: "OpenClaw hook integration",
-			description:
-				"Build and test the OpenClaw hook handler for lifecycle event tracking.",
+			description: "Build and test the OpenClaw hook handler for lifecycle event tracking.",
 			status: "assigned",
 			assigneeIds: [loki],
 			tags: ["openclaw", "integration"],
@@ -110,8 +106,7 @@ export const run = mutation({
 		await ctx.db.insert("messages", {
 			taskId: task1,
 			fromAgentId: thor,
-			content:
-				"🔧 Using tool: exec\n\nConfiguring workflow YAML for the monorepo build matrix.",
+			content: "🔧 Using tool: exec\n\nConfiguring workflow YAML for the monorepo build matrix.",
 			attachments: [],
 			tenantId: TENANT_ID,
 		});
@@ -166,7 +161,7 @@ export const run = mutation({
 		await ctx.db.insert("documents", {
 			title: "ci-workflow.yml",
 			content:
-				'name: CI\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: pnpm/action-setup@v2\n      - run: pnpm install\n      - run: pnpm build\n      - run: pnpm test',
+				"name: CI\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: pnpm/action-setup@v2\n      - run: pnpm install\n      - run: pnpm build\n      - run: pnpm test",
 			type: "code",
 			path: ".github/workflows/ci.yml",
 			taskId: task1,
