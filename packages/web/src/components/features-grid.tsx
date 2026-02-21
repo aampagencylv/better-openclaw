@@ -52,10 +52,26 @@ const card = {
 export function FeaturesGrid() {
 	return (
 		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-white/5">
-			{/* Background ambient image */}
-			<div className="absolute inset-0 -z-10">
-				<img src="/section-bg.png" alt="" className="h-full w-full object-cover opacity-30" />
-				<div className="absolute inset-0 bg-gradient-to-b from-black via-black/80 to-black" />
+			{/* AXION-STYLE SWEEPING FLARE BACKGROUND */}
+			<div className="absolute inset-0 -z-10 overflow-hidden bg-black">
+				{/* Deep ambient base */}
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,20,10,0.8)_0%,rgba(0,0,0,1)_80%)]" />
+
+				{/* Huge diffuse warm glow */}
+				<div className="absolute -bottom-[20%] -left-[10%] w-[100%] h-[80%] rounded-full bg-[radial-gradient(closest-side,rgba(255,140,40,0.15)_0%,rgba(200,80,20,0.05)_50%,transparent_100%)] blur-[120px]" style={{ animation: "pulse-glow 10s ease-in-out infinite" }} />
+
+				{/* The sweeping bright flare */}
+				<div className="absolute bottom-0 left-[-20%] w-[140%] h-[600px] flex items-end justify-center transform-gpu -rotate-[12deg] origin-bottom-left pointer-events-none" style={{ animation: "nebula-drift-2 20s ease-in-out infinite" }}>
+					{/* Outer wide band */}
+					<div className="absolute bottom-[80px] w-full h-[300px] bg-gradient-to-r from-transparent via-[#ff8c28]/20 to-[rgba(100,180,255,0.15)] blur-[60px]" />
+					{/* Core intense band */}
+					<div className="absolute bottom-[100px] w-[80%] h-[60px] bg-gradient-to-r from-transparent via-[#ffb347]/60 to-[rgba(100,180,255,0.4)] blur-[20px]" />
+					{/* Searing white/gold hot line */}
+					<div className="absolute bottom-[120px] w-[70%] h-[4px] bg-gradient-to-r from-transparent via-[#ffffff] to-[rgba(180,220,255,0.8)] blur-[2px]" />
+				</div>
+
+				{/* Edge fade to blend seamlessly */}
+				<div className="absolute inset-0 bg-linear-to-b from-black via-transparent to-black" />
 			</div>
 
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">

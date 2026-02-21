@@ -33,13 +33,13 @@ function FooterColumn({
 }) {
 	return (
 		<div>
-			<h4 className="mb-6 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+			<h4 className="mb-6 font-mono text-xs uppercase tracking-widest text-zinc-500">
 				{title}
 			</h4>
 			<ul className="space-y-4">
 				{links.map((link) => {
 					const cls =
-						"font-sans text-[13px] text-zinc-400 transition-colors hover:text-white flex items-center gap-2";
+						"font-sans text-sm text-zinc-400 transition-colors hover:text-white flex items-center gap-2";
 					return (
 						<li key={link.label}>
 							{link.external ? (
@@ -50,7 +50,7 @@ function FooterColumn({
 								<Link href={link.href} className={cls}>
 									{link.label}
 									{link.badge && (
-										<span className="font-mono text-[8px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm uppercase tracking-widest">
+										<span className="font-mono text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm uppercase tracking-widest">
 											{link.badge}
 										</span>
 									)}
@@ -76,10 +76,10 @@ export function Footer() {
 							// SYSTEM_AUDIT_PROTOCOL_V4
 						</span>
 					</div>
-					<h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl mb-6">
+					<h2 className="text-4xl font-bold tracking-tight text-white md:text-6xl mb-6">
 						VALIDATION <span className="text-zinc-600">CONSOLE</span>
 					</h2>
-					<p className="max-w-xl text-sm leading-relaxed text-zinc-400 mb-16">
+					<p className="max-w-xl text-base leading-relaxed text-zinc-400 mb-16">
 						Live system audit interface verifying production readiness, compliance, and operational
 						integrity for better-openclaw deployments.
 					</p>
@@ -96,7 +96,7 @@ export function Footer() {
 							</div>
 							<h3 className="font-sans text-3xl font-bold text-white mb-2">ENTERPRISE</h3>
 							<h3 className="font-sans text-3xl font-bold text-zinc-600 mb-8">INTEGRITY</h3>
-							<p className="font-mono text-[10px] text-zinc-500 leading-relaxed">
+							<p className="font-mono text-xs text-zinc-500 leading-relaxed">
 								System infrastructure verified for high-availability environments. Zero-trust
 								architecture enforced across all active nodes.
 							</p>
@@ -150,13 +150,13 @@ export function Footer() {
 					</span>
 				</div>
 
-				<h2 className="mb-4 text-center text-4xl font-bold tracking-tight text-white md:text-5xl">
+				<h2 className="mb-4 text-center text-5xl font-bold tracking-tight text-white md:text-6xl">
 					SYSTEM <span className="text-zinc-600">READY</span>
 				</h2>
 
 				<div className="mt-12 flex flex-col md:flex-row gap-6 border border-white/5 bg-black/60 p-6 xl:p-10 backdrop-blur-md max-w-4xl mx-auto items-center">
 					<div className="flex-1">
-						<ul className="space-y-4 font-mono text-[11px] text-zinc-300">
+						<ul className="space-y-4 font-mono text-sm text-zinc-300">
 							<li className="flex items-center gap-3">
 								<span className="flex h-4 w-4 items-center justify-center rounded-sm border border-zinc-700 text-[8px] text-zinc-500">
 									1
@@ -180,13 +180,13 @@ export function Footer() {
 					<div className="flex-1 w-full flex flex-col gap-4">
 						<Link
 							href="/new"
-							className="flex h-12 w-full items-center justify-center bg-primary px-8 font-mono text-[10px] font-bold uppercase tracking-widest text-black transition-all hover:bg-[#b5986e]"
+							className="flex h-14 w-full items-center justify-center bg-primary px-8 font-mono text-xs font-bold uppercase tracking-widest text-black transition-all hover:bg-[#b5986e]"
 						>
 							INITIALIZE BUILD &rarr;
 						</Link>
 						<Link
 							href="/demo"
-							className="flex h-12 w-full items-center justify-center border border-zinc-700 px-8 font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-400 transition-colors hover:text-white hover:bg-zinc-900/50"
+							className="flex h-14 w-full items-center justify-center border border-zinc-700 px-8 font-mono text-xs font-bold uppercase tracking-widest text-zinc-400 transition-colors hover:text-white hover:bg-zinc-900/50"
 						>
 							REQUEST DEMO
 						</Link>
@@ -247,7 +247,7 @@ export function Footer() {
 							</p>
 							<Link
 								href="/new"
-								className="flex h-12 w-full items-center justify-center bg-primary px-8 font-mono text-[10px] font-bold uppercase tracking-widest text-black transition-all hover:bg-[#b5986e]"
+								className="flex h-14 w-full items-center justify-center bg-primary px-8 font-mono text-xs font-bold uppercase tracking-widest text-black transition-all hover:bg-[#b5986e]"
 							>
 								GET API KEY &rarr;
 							</Link>
