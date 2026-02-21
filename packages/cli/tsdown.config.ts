@@ -5,5 +5,6 @@ export default defineConfig({
 	format: ["esm"],
 	sourcemap: true,
 	clean: true,
+	inlineOnly: false,
 	dts: true, // Turn off dts generation if not needed for an app, speeds up build
 });
