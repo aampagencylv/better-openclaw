@@ -38,6 +38,27 @@ export const metadata: Metadata = {
 			"Generate Docker Compose stacks with 58+ companion services pre-wired with OpenClaw skills",
 		images: ["/og/og-image.svg"],
 	},
+	alternates: {
+		canonical: "/",
+	},
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			"max-video-preview": -1,
+			"max-image-preview": "large",
+			"max-snippet": -1,
+		},
+	},
+};
+
+export const viewport = {
+	width: "device-width",
+	initialScale: 1,
+	maximumScale: 5,
+	themeColor: "#0A0A0A",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -102,6 +123,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				{umamiUrl && umamiId && process.env.NODE_ENV === "production" && (
 					<Script defer src={umamiUrl} data-website-id={umamiId} strategy="afterInteractive" />
 				)}
+
+				{/* Google Analytics */}
+				<Script src="https://www.googletagmanager.com/gtag/js?id=G-2HSW5YY209" strategy="afterInteractive" />
+				<Script id="google-analytics" strategy="afterInteractive">
+					{`
+						window.dataLayer = window.dataLayer || [];
+						function gtag(){dataLayer.push(arguments);}
+						gtag('js', new Date());
+
+						gtag('config', 'G-2HSW5YY209');
+					`}
+				</Script>
 			</body>
 		</html>
 	);
