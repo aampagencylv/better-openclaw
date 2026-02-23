@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* ── Floating HUD Data ────────────────────────────────────────────────────── */
 const activeNodes = [
@@ -83,9 +83,6 @@ export function Hero() {
 
 	return (
 		<div className="relative flex min-h-[calc(100vh-3.5rem)] w-full flex-col items-center justify-center overflow-hidden">
-			
-
-
 			{/* ─── Floating Particles ──────────────────────────────────────────── */}
 			<Particles />
 
@@ -142,8 +139,15 @@ export function Hero() {
 				</motion.p>
 
 				{/* Tech Bullets */}
-				<motion.ul variants={fadeUp} className="mt-10 flex flex-col gap-4 font-mono text-sm font-medium tracking-widest uppercase text-foreground/80">
-					{["GLOBAL DISTRIBUTED INFRASTRUCTURE", "AUTONOMOUS AGENT ORCHESTRATION", "SUB-10MS EXECUTION LATENCY"].map((text, i) => (
+				<motion.ul
+					variants={fadeUp}
+					className="mt-10 flex flex-col gap-4 font-mono text-sm font-medium tracking-widest uppercase text-foreground/80"
+				>
+					{[
+						"GLOBAL DISTRIBUTED INFRASTRUCTURE",
+						"AUTONOMOUS AGENT ORCHESTRATION",
+						"SUB-10MS EXECUTION LATENCY",
+					].map((text, i) => (
 						<li key={text} className="flex items-center gap-3">
 							<span
 								className="h-1 w-1 bg-primary"
@@ -155,7 +159,10 @@ export function Hero() {
 				</motion.ul>
 
 				{/* CTAs */}
-				<motion.div variants={fadeUp} className="mt-14 flex flex-col sm:flex-row items-center gap-6">
+				<motion.div
+					variants={fadeUp}
+					className="mt-14 flex flex-col sm:flex-row items-center gap-6"
+				>
 					<Link
 						href="/new"
 						className="group relative flex h-16 items-center justify-center overflow-hidden bg-primary px-10 font-mono text-sm font-bold uppercase tracking-widest text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(163,135,95,0.3)]"
@@ -170,7 +177,9 @@ export function Hero() {
 						style={{ animation: "border-breathe 6s ease-in-out infinite" }}
 					>
 						VIEW DOCUMENTATION
-						<span className="ml-3 flex h-6 w-6 items-center justify-center border border-border rounded-sm text-xs transition-colors group-hover:border-primary/40">?</span>
+						<span className="ml-3 flex h-6 w-6 items-center justify-center border border-border rounded-sm text-xs transition-colors group-hover:border-primary/40">
+							?
+						</span>
 					</Link>
 				</motion.div>
 
@@ -195,10 +204,18 @@ export function Hero() {
 					style={{ animation: "screen-flicker 10s ease-in-out infinite" }}
 				>
 					<div className="flex items-center justify-between border-b border-border/50 pb-4 mb-4">
-						<span className="font-mono text-xs tracking-widest text-muted-foreground uppercase">ACTIVE_NODES</span>
+						<span className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
+							ACTIVE_NODES
+						</span>
 						<span className="flex gap-1">
-							<span className="h-1 w-1 bg-muted-foreground" style={{ animation: "pulse-dot 3s infinite" }} />
-							<span className="h-1 w-1 bg-muted-foreground" style={{ animation: "pulse-dot 3s infinite 0.5s" }} />
+							<span
+								className="h-1 w-1 bg-muted-foreground"
+								style={{ animation: "pulse-dot 3s infinite" }}
+							/>
+							<span
+								className="h-1 w-1 bg-muted-foreground"
+								style={{ animation: "pulse-dot 3s infinite 0.5s" }}
+							/>
 						</span>
 					</div>
 					<div className="flex flex-col gap-4 font-mono text-sm text-foreground/80">
@@ -211,7 +228,12 @@ export function Hero() {
 								className="flex justify-between items-center"
 							>
 								<span>{n.region}</span>
-								<span className={n.status === "ONLINE" ? "text-emerald-500" : "text-primary"} style={n.status === "SYNCING" ? { animation: "data-refresh 2s infinite" } : undefined}>
+								<span
+									className={n.status === "ONLINE" ? "text-emerald-500" : "text-primary"}
+									style={
+										n.status === "SYNCING" ? { animation: "data-refresh 2s infinite" } : undefined
+									}
+								>
 									{n.status}
 								</span>
 							</motion.div>
@@ -234,8 +256,13 @@ export function Hero() {
 						<span className="h-2 w-2 bg-primary" />
 					</div>
 
-					<span className="block font-mono text-xs tracking-widest text-muted-foreground uppercase mb-3">SYSTEM_HEALTH</span>
-					<span className="block text-5xl font-bold tracking-tight text-foreground mb-6" style={{ animation: "data-refresh 5s ease-in-out infinite" }}>
+					<span className="block font-mono text-xs tracking-widest text-muted-foreground uppercase mb-3">
+						SYSTEM_HEALTH
+					</span>
+					<span
+						className="block text-5xl font-bold tracking-tight text-foreground mb-6"
+						style={{ animation: "data-refresh 5s ease-in-out infinite" }}
+					>
 						{uptime}
 					</span>
 

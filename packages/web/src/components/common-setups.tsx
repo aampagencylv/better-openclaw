@@ -10,7 +10,7 @@ const ingestionNodes = [
 ];
 
 const logLines = [
-	{ ts: "00:01:21", text: "init_sequence(target=\"cluster_alpha\")", type: "info" },
+	{ ts: "00:01:21", text: 'init_sequence(target="cluster_alpha")', type: "info" },
 	{ ts: "00:01:24", text: "allocating_resources... [OK]", type: "success" },
 	{ ts: "00:01:25", text: "deploy_agents --mode=autonomous --src=Core", type: "info" },
 	{ ts: "00:01:27", text: "WARN: latency_spike in zone_3 (resolved)", type: "warn" },
@@ -36,7 +36,6 @@ export function CommonSetups() {
 			<div className="absolute left-1/2 top-1/2 -z-10 h-[500px] w-[800px] -translate-y-1/2 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(163,135,95,0.12)_0%,transparent_60%)] blur-3xl" />
 
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-
 				{/* Top Header */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
@@ -46,7 +45,10 @@ export function CommonSetups() {
 					className="mb-16"
 				>
 					<div className="flex items-center gap-3 mb-4">
-						<span className="h-2 w-2 bg-primary" style={{ animation: "pulse-dot 2s ease-in-out infinite" }} />
+						<span
+							className="h-2 w-2 bg-primary"
+							style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
+						/>
 						<span className="font-mono text-xs tracking-widest text-primary uppercase">
 							// OPERATIONAL_LOGIC
 						</span>
@@ -56,12 +58,15 @@ export function CommonSetups() {
 						SYSTEM <span className="text-muted-foreground/60">FLOW</span>
 					</h2>
 					<p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-						Operational pipeline outlining how better-openclaw connects, deploys,
-						monitors, and scales production autonomous systems.
+						Operational pipeline outlining how better-openclaw connects, deploys, monitors, and
+						scales production autonomous systems.
 					</p>
 
 					<div className="absolute right-8 top-32 hidden lg:flex items-center gap-2">
-						<span className="h-1.5 w-1.5 rounded-full bg-emerald-500" style={{ animation: "pulse-dot 3s ease-in-out infinite" }} />
+						<span
+							className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+							style={{ animation: "pulse-dot 3s ease-in-out infinite" }}
+						/>
 						<span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
 							PIPELINE ACTIVE v1.2.0
 						</span>
@@ -77,7 +82,6 @@ export function CommonSetups() {
 					className="relative flex flex-col lg:flex-row border border-border/50 bg-background/60 backdrop-blur-md"
 					style={{ animation: "border-breathe 8s ease-in-out infinite" }}
 				>
-
 					{/* Left Column: Ingestion Nodes */}
 					<div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r border-border/50 p-8">
 						<h3 className="mb-6 font-mono text-xs uppercase tracking-widest text-muted-foreground">
@@ -94,12 +98,17 @@ export function CommonSetups() {
 									className="group flex items-center justify-between border border-border/50 bg-secondary/30 px-4 py-3 transition-all hover:bg-secondary/60 hover:border-primary/20"
 								>
 									<div className="flex items-center gap-3">
-										<span className="h-1.5 w-1.5 bg-primary" style={{ animation: `pulse-dot 2s ease-in-out infinite ${i * 0.5}s` }} />
+										<span
+											className="h-1.5 w-1.5 bg-primary"
+											style={{ animation: `pulse-dot 2s ease-in-out infinite ${i * 0.5}s` }}
+										/>
 										<span className="font-mono text-sm text-foreground/80">{node.name}</span>
 									</div>
 									<span
 										className={`font-mono text-[9px] uppercase tracking-widest ${node.status === "READY" || node.status === "SYNC" ? "text-emerald-500" : "text-primary"}`}
-										style={node.status === "SYNC" ? { animation: "data-refresh 2s infinite" } : undefined}
+										style={
+											node.status === "SYNC" ? { animation: "data-refresh 2s infinite" } : undefined
+										}
 									>
 										{node.status}
 									</span>
@@ -107,8 +116,13 @@ export function CommonSetups() {
 							))}
 						</div>
 						<div className="mt-8 pt-8 border-t border-border/50 flex justify-between items-center">
-							<span className="font-mono text-[11px] text-muted-foreground uppercase">THROUGHPUT</span>
-							<span className="font-mono text-sm text-foreground/80" style={{ animation: "data-refresh 4s infinite" }}>
+							<span className="font-mono text-[11px] text-muted-foreground uppercase">
+								THROUGHPUT
+							</span>
+							<span
+								className="font-mono text-sm text-foreground/80"
+								style={{ animation: "data-refresh 4s infinite" }}
+							>
 								{throughput} GB/s
 							</span>
 						</div>
@@ -143,7 +157,10 @@ export function CommonSetups() {
 							style={{ animation: "pulse-glow 4s ease-in-out infinite" }}
 						>
 							<div className="h-8 w-8 rounded-sm bg-primary/20 border border-primary/50 flex items-center justify-center">
-								<span className="h-3 w-3 bg-primary" style={{ animation: "pulse-dot 2s ease-in-out infinite" }} />
+								<span
+									className="h-3 w-3 bg-primary"
+									style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
+								/>
 							</div>
 						</div>
 
@@ -152,12 +169,17 @@ export function CommonSetups() {
 								SUPERSTACK ORCHESTRATION ENGINE
 							</h4>
 							<p className="mt-2 max-w-[280px] font-mono text-[9px] leading-relaxed text-muted-foreground uppercase">
-								Deploying autonomous agents to optimized infrastructure zones.
-								Zero-latency handoff protocols active.
+								Deploying autonomous agents to optimized infrastructure zones. Zero-latency handoff
+								protocols active.
 							</p>
 							<div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
-								<span className="h-1.5 w-1.5 rounded-full bg-emerald-500" style={{ animation: "pulse-dot 3s ease-in-out infinite" }} />
-								<span className="font-mono text-[9px] text-emerald-500 tracking-widest">SYSTEM OPTIMAL</span>
+								<span
+									className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+									style={{ animation: "pulse-dot 3s ease-in-out infinite" }}
+								/>
+								<span className="font-mono text-[9px] text-emerald-500 tracking-widest">
+									SYSTEM OPTIMAL
+								</span>
 							</div>
 						</div>
 					</div>
@@ -170,13 +192,20 @@ export function CommonSetups() {
 							</h3>
 							<div className="grid grid-cols-2 gap-4">
 								<div className="border border-border/50 bg-secondary/30 p-3 transition-all hover:border-primary/20">
-									<span className="font-mono text-[11px] text-muted-foreground block mb-1">LATENCY</span>
-									<span className="font-mono text-xl text-foreground" style={{ animation: "data-refresh 5s infinite" }}>
+									<span className="font-mono text-[11px] text-muted-foreground block mb-1">
+										LATENCY
+									</span>
+									<span
+										className="font-mono text-xl text-foreground"
+										style={{ animation: "data-refresh 5s infinite" }}
+									>
 										{Math.floor(8 + Math.random() * 8)}ms
 									</span>
 								</div>
 								<div className="border border-border/50 bg-secondary/30 p-3 transition-all hover:border-emerald-500/20">
-									<span className="font-mono text-[11px] text-muted-foreground block mb-1">UPTIME</span>
+									<span className="font-mono text-[11px] text-muted-foreground block mb-1">
+										UPTIME
+									</span>
 									<span className="font-mono text-xl text-emerald-500">99.9%</span>
 								</div>
 							</div>
@@ -224,7 +253,9 @@ export function CommonSetups() {
 
 				{/* Global Logs Ribbon - Animated ticker */}
 				<div className="mt-px flex h-12 w-full items-center border border-t-0 border-border/50 bg-background/40 px-6 backdrop-blur-md overflow-hidden">
-					<span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60 mr-4 shrink-0">LOG_STREAM</span>
+					<span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60 mr-4 shrink-0">
+						LOG_STREAM
+					</span>
 					<div className="overflow-hidden flex-1">
 						<div
 							className="flex gap-8 whitespace-nowrap"
@@ -233,11 +264,15 @@ export function CommonSetups() {
 							{[...logLines, ...logLines].map((line, i) => (
 								<span key={i} className="font-mono text-xs">
 									<span className="text-muted-foreground/60">[{line.ts}]</span>{" "}
-									<span className={
-										line.type === "success" ? "text-primary" :
-										line.type === "warn" ? "text-amber-500" :
-										"text-muted-foreground"
-									}>
+									<span
+										className={
+											line.type === "success"
+												? "text-primary"
+												: line.type === "warn"
+													? "text-amber-500"
+													: "text-muted-foreground"
+										}
+									>
 										{line.text}
 									</span>
 								</span>
@@ -245,7 +280,6 @@ export function CommonSetups() {
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</section>
 	);

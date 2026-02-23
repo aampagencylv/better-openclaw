@@ -21,7 +21,9 @@ export function Navbar() {
 				{/* Left side: Logo & Badge */}
 				<div className="flex items-center gap-6">
 					<Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-						<span className="text-2xl font-bold tracking-tight text-foreground">better-openclaw</span>
+						<span className="text-2xl font-bold tracking-tight text-foreground">
+							better-openclaw
+						</span>
 					</Link>
 
 					{/* Production Badge */}

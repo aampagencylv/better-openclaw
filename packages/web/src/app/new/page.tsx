@@ -29,8 +29,8 @@ import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
 import {
-	SkillSelectorModal,
 	type SelectedSkill,
+	SkillSelectorModal,
 } from "@/components/stack-builder/SkillSelectorModal";
 import { generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
@@ -59,7 +59,9 @@ export default function NewStackPage() {
 	const [selectedSkillPacks, setSelectedSkillPacks] = useState<Set<string>>(new Set());
 	const [resolverError, setResolverError] = useState<string | null>(null);
 	const [showSkillModal, setShowSkillModal] = useState(false);
-	const [selectedIndividualSkills, setSelectedIndividualSkills] = useState<Map<string, SelectedSkill>>(new Map());
+	const [selectedIndividualSkills, setSelectedIndividualSkills] = useState<
+		Map<string, SelectedSkill>
+	>(new Map());
 
 	// Load all services, presets, and skill packs from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);

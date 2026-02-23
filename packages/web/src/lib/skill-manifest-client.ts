@@ -1,18 +1,9 @@
 // Client-safe manifest data loader
-// Next.js bundler handles JSON imports at build time, so this works in "use client" components.
-// We re-export manifest data as a typed array for the SkillSelectorModal.
-
-import manifestData from "../../../../skills/manifest.json";
-
-export interface SkillManifestEntry {
-	id: string;
-	path: string;
-	emoji: string;
-	services: string[];
-}
-
-const manifest = manifestData as { skills: SkillManifestEntry[] };
+import type { SkillManifestEntry } from "@better-openclaw/core";
+import { getAllManifestSkills } from "@better-openclaw/core";
 
 export function getClientManifestSkills(): SkillManifestEntry[] {
-	return manifest.skills;
+	return getAllManifestSkills();
 }
+
+export type { SkillManifestEntry };

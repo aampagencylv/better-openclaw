@@ -95,7 +95,9 @@ export function Footer() {
 								</span>
 							</div>
 							<h3 className="font-sans text-3xl font-bold text-foreground mb-2">ENTERPRISE</h3>
-							<h3 className="font-sans text-3xl font-bold text-muted-foreground/60 mb-8">INTEGRITY</h3>
+							<h3 className="font-sans text-3xl font-bold text-muted-foreground/60 mb-8">
+								INTEGRITY
+							</h3>
 							<p className="font-mono text-xs text-muted-foreground leading-relaxed">
 								System infrastructure verified for high-availability environments. Zero-trust
 								architecture enforced across all active nodes.

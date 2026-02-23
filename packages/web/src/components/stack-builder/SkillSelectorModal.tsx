@@ -1,7 +1,5 @@
 "use client";
 
-import type { SkillManifestEntry } from "@/lib/skill-manifest-client";
-import { getClientManifestSkills } from "@/lib/skill-manifest-client";
 import {
 	Check,
 	ExternalLink,
@@ -13,6 +11,8 @@ import {
 	X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { SkillManifestEntry } from "@/lib/skill-manifest-client";
+import { getClientManifestSkills } from "@/lib/skill-manifest-client";
 import { cn } from "@/lib/utils";
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -311,11 +311,7 @@ export function SkillSelectorModal({
 		}
 		if (search.trim()) {
 			const q = search.toLowerCase().trim();
-			skills = skills.filter(
-				(s) =>
-					s.id.toLowerCase().includes(q) ||
-					s.emoji.includes(q),
-			);
+			skills = skills.filter((s) => s.id.toLowerCase().includes(q) || s.emoji.includes(q));
 		}
 		return skills;
 	}, [curatedSkills, search, activeCategory]);
@@ -483,9 +479,7 @@ export function SkillSelectorModal({
 						onClick={() => setTab("curated")}
 						className={cn(
 							"relative px-4 py-2.5 text-sm font-medium transition-colors",
-							tab === "curated"
-								? "text-foreground"
-								: "text-muted-foreground hover:text-foreground",
+							tab === "curated" ? "text-foreground" : "text-muted-foreground hover:text-foreground",
 						)}
 					>
 						<span className="flex items-center gap-1.5">
@@ -581,9 +575,7 @@ export function SkillSelectorModal({
 										<button
 											key={cat}
 											type="button"
-											onClick={() =>
-												setActiveCategory(activeCategory === cat ? null : cat)
-											}
+											onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
 											className={cn(
 												"rounded-full px-3 py-1 text-xs font-medium transition-all",
 												activeCategory === cat
@@ -599,100 +591,78 @@ export function SkillSelectorModal({
 
 							{/* Skill cards grouped by category */}
 							<div className="space-y-5">
-								{CATEGORY_ORDER.filter((cat) => groupedFiltered.has(cat)).map(
-									(cat) => {
-										const skills = groupedFiltered.get(cat)!;
-										return (
-											<div key={cat}>
-												<h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-													{cat}{" "}
-													<span className="font-normal">
-														({skills.length})
-													</span>
-												</h4>
-												<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-													{skills.map((skill) => {
-														const isSelected = localSelection.has(
-															skill.id,
-														);
-														return (
-															<button
-																key={skill.id}
-																type="button"
-																onClick={() =>
-																	toggleSkill(
-																		skill.id,
-																		skill.id
-																			.replace(/-/g, " ")
-																			.replace(
-																				/\b\w/g,
-																				(c) =>
-																					c.toUpperCase(),
-																			),
-																		skill.emoji,
-																		"curated",
-																	)
-																}
+								{CATEGORY_ORDER.filter((cat) => groupedFiltered.has(cat)).map((cat) => {
+									const skills = groupedFiltered.get(cat)!;
+									return (
+										<div key={cat}>
+											<h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+												{cat} <span className="font-normal">({skills.length})</span>
+											</h4>
+											<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+												{skills.map((skill) => {
+													const isSelected = localSelection.has(skill.id);
+													return (
+														<button
+															key={skill.id}
+															type="button"
+															onClick={() =>
+																toggleSkill(
+																	skill.id,
+																	skill.id
+																		.replace(/-/g, " ")
+																		.replace(/\b\w/g, (c) => c.toUpperCase()),
+																	skill.emoji,
+																	"curated",
+																)
+															}
+															className={cn(
+																"group flex items-center gap-3 rounded-lg border p-3 text-left transition-all duration-150",
+																isSelected
+																	? "border-emerald-500/40 bg-emerald-500/5 ring-1 ring-emerald-500/20"
+																	: "border-border bg-surface/30 hover:border-muted-foreground/30 hover:bg-surface/60",
+															)}
+														>
+															{/* Checkbox */}
+															<div
 																className={cn(
-																	"group flex items-center gap-3 rounded-lg border p-3 text-left transition-all duration-150",
+																	"flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors",
 																	isSelected
-																		? "border-emerald-500/40 bg-emerald-500/5 ring-1 ring-emerald-500/20"
-																		: "border-border bg-surface/30 hover:border-muted-foreground/30 hover:bg-surface/60",
+																		? "border-emerald-500 bg-emerald-500 text-foreground"
+																		: "border-muted-foreground/30 group-hover:border-muted-foreground/50",
 																)}
 															>
-																{/* Checkbox */}
-																<div
-																	className={cn(
-																		"flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors",
-																		isSelected
-																			? "border-emerald-500 bg-emerald-500 text-foreground"
-																			: "border-muted-foreground/30 group-hover:border-muted-foreground/50",
-																	)}
-																>
-																	{isSelected && (
-																		<Check className="h-3.5 w-3.5" />
-																	)}
-																</div>
+																{isSelected && <Check className="h-3.5 w-3.5" />}
+															</div>
 
-																{/* Emoji + Name */}
-																<div className="min-w-0 flex-1">
-																	<div className="flex items-center gap-1.5">
-																		<span className="text-base leading-none">
-																			{skill.emoji}
-																		</span>
-																		<span className="truncate text-sm font-medium text-foreground">
-																			{skill.id
-																				.replace(/-/g, " ")
-																				.replace(
-																					/\b\w/g,
-																					(c) =>
-																						c.toUpperCase(),
-																				)}
-																		</span>
-																	</div>
-																	{skill.services.length > 0 && (
-																		<p className="mt-0.5 truncate text-[10px] text-muted-foreground">
-																			Requires:{" "}
-																			{skill.services.join(
-																				", ",
-																			)}
-																		</p>
-																	)}
+															{/* Emoji + Name */}
+															<div className="min-w-0 flex-1">
+																<div className="flex items-center gap-1.5">
+																	<span className="text-base leading-none">{skill.emoji}</span>
+																	<span className="truncate text-sm font-medium text-foreground">
+																		{skill.id
+																			.replace(/-/g, " ")
+																			.replace(/\b\w/g, (c) => c.toUpperCase())}
+																	</span>
 																</div>
+																{skill.services.length > 0 && (
+																	<p className="mt-0.5 truncate text-[10px] text-muted-foreground">
+																		Requires: {skill.services.join(", ")}
+																	</p>
+																)}
+															</div>
 
-																{/* Curated badge */}
-																<span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500">
-																	<ShieldCheck className="h-2.5 w-2.5" />
-																	Curated
-																</span>
-															</button>
-														);
-													})}
-												</div>
+															{/* Curated badge */}
+															<span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500">
+																<ShieldCheck className="h-2.5 w-2.5" />
+																Curated
+															</span>
+														</button>
+													);
+												})}
 											</div>
-										);
-									},
-								)}
+										</div>
+									);
+								})}
 							</div>
 
 							{filteredCurated.length === 0 && (
@@ -763,9 +733,7 @@ export function SkillSelectorModal({
 							{mpLoading && (
 								<div className="flex items-center justify-center py-12">
 									<Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-									<span className="ml-2 text-sm text-muted-foreground">
-										Searching SkillsMP...
-									</span>
+									<span className="ml-2 text-sm text-muted-foreground">Searching SkillsMP...</span>
 								</div>
 							)}
 
@@ -809,14 +777,7 @@ export function SkillSelectorModal({
 											<button
 												key={skill.id}
 												type="button"
-												onClick={() =>
-													toggleSkill(
-														skill.id,
-														skill.name,
-														"🌐",
-														"marketplace",
-													)
-												}
+												onClick={() => toggleSkill(skill.id, skill.name, "🌐", "marketplace")}
 												className={cn(
 													"group flex items-start gap-3 rounded-lg border p-3 text-left transition-all duration-150",
 													isSelected
@@ -833,9 +794,7 @@ export function SkillSelectorModal({
 															: "border-muted-foreground/30 group-hover:border-muted-foreground/50",
 													)}
 												>
-													{isSelected && (
-														<Check className="h-3.5 w-3.5" />
-													)}
+													{isSelected && <Check className="h-3.5 w-3.5" />}
 												</div>
 
 												{/* Content */}

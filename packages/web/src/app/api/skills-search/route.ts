@@ -17,7 +17,10 @@ export async function GET(request: NextRequest) {
 
 	if (!query.trim()) {
 		return NextResponse.json(
-			{ success: false, error: { code: "MISSING_QUERY", message: "The 'q' parameter is required" } },
+			{
+				success: false,
+				error: { code: "MISSING_QUERY", message: "The 'q' parameter is required" },
+			},
 			{ status: 400 },
 		);
 	}
@@ -25,7 +28,10 @@ export async function GET(request: NextRequest) {
 	const apiKey = process.env.SKILLSMP_API_KEY;
 	if (!apiKey) {
 		return NextResponse.json(
-			{ success: false, error: { code: "NO_API_KEY", message: "SkillsMP API key is not configured" } },
+			{
+				success: false,
+				error: { code: "NO_API_KEY", message: "SkillsMP API key is not configured" },
+			},
 			{ status: 500 },
 		);
 	}

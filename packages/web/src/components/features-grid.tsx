@@ -52,10 +52,7 @@ const card = {
 export function FeaturesGrid() {
 	return (
 		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-border/50">
-
-
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-
 				{/* Header Section */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
@@ -79,14 +76,18 @@ export function FeaturesGrid() {
 					</h2>
 
 					<p className="max-w-xl text-base leading-relaxed text-muted-foreground mt-2">
-						The four pillars of the better-openclaw engine. Modular, scalable, and
-						secure by design.
+						The four pillars of the better-openclaw engine. Modular, scalable, and secure by design.
 					</p>
 
 					<div className="absolute right-8 top-32 hidden lg:block">
-						<Link href="/docs" className="group font-mono text-[9px] tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground">
+						<Link
+							href="/docs"
+							className="group font-mono text-[9px] tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
+						>
 							EXPLORE ALL FEATURES
-							<span className="ml-1 inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
+							<span className="ml-1 inline-block transition-transform group-hover:translate-x-1">
+								&rarr;
+							</span>
 						</Link>
 					</div>
 				</motion.div>
@@ -154,7 +155,9 @@ export function FeaturesGrid() {
 										className="group/link font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60 transition-colors group-hover:text-foreground"
 									>
 										READ SPECS
-										<span className="ml-1 inline-block transition-transform group-hover/link:translate-x-1">&rarr;</span>
+										<span className="ml-1 inline-block transition-transform group-hover/link:translate-x-1">
+											&rarr;
+										</span>
 									</Link>
 								</div>
 							</motion.div>
