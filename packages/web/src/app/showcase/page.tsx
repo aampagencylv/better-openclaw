@@ -86,7 +86,7 @@ export default function ShowcasePage() {
 								<div
 									className={`h-40 bg-linear-to-br ${project.color} flex items-center justify-center`}
 								>
-									<span className="text-4xl font-bold text-white/80 drop-shadow-md">
+									<span className="text-4xl font-bold text-foreground/80 drop-shadow-md">
 										{project.name
 											.split(" ")
 											.map((w) => w[0])

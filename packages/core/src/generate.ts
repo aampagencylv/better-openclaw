@@ -9,6 +9,7 @@ import { generateBareMetalInstall } from "./generators/bare-metal-install.js";
 import { generateCaddyfile } from "./generators/caddy.js";
 import { generateEnvFiles } from "./generators/env.js";
 import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
+import { generateHealthCheck } from "./generators/health-check.js";
 import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 import { generateNativeInstallScripts } from "./generators/native-services.js";
 import { generatePostgresInit } from "./generators/postgres-init.js";
@@ -153,6 +154,15 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 	// Scripts
 	const scripts = generateScripts();
 	for (const [path, content] of Object.entries(scripts)) {
+		files[path] = content;
+	}
+
+	// Health check scripts (dynamic, stack-specific)
+	const healthCheckFiles = generateHealthCheck(resolved, {
+		projectName: input.projectName,
+		deploymentType: input.deploymentType,
+	});
+	for (const [path, content] of Object.entries(healthCheckFiles)) {
 		files[path] = content;
 	}
 

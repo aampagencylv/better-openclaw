@@ -15,6 +15,7 @@ export { generateCaddyfile } from "./generators/caddy.js";
 export type { EnvVarGroup } from "./generators/env.js";
 export { generateEnvFiles, getStructuredEnvVars } from "./generators/env.js";
 export { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
+export { generateHealthCheck } from "./generators/health-check.js";
 export { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 export { generatePostgresInit, getDbRequirements } from "./generators/postgres-init.js";
 export { generatePrometheusConfig } from "./generators/prometheus.js";
@@ -72,6 +73,13 @@ export {
 	getSkillPackById,
 	skillPackRegistry,
 } from "./skills/registry.js";
+// ─── Skill Manifest ─────────────────────────────────────────────────────────
+export type { SkillManifestEntry } from "./skills/skill-manifest.js";
+export {
+	getAllManifestSkills,
+	getManifestSkillById,
+	getManifestSkillCount,
+} from "./skills/skill-manifest.js";
 // ─── Types ──────────────────────────────────────────────────────────────────
 export type {
 	AddedDependency,

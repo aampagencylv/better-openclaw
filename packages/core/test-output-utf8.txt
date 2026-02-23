@@ -1,0 +1,871 @@
+﻿node.exe : [1m[43m DEPRECATED 
+[49m[22m [33m`test.poolOptions` 
+was removed in Vitest 4. All 
+previous `poolOptions` are now 
+top-level options. Please, refer to 
+the migration guide: https://vitest.d
+ev/guide/migration#pool-rework[39m
+At C:\Program 
+Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpe 
+   cified: ([1m[43m DEPRE...ool-r  
+  ework[39m:String) [], RemoteExc   
+ eption
+    + FullyQualifiedErrorId : Native 
+   CommandError
+ 
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/diopi/source/repos/diopisemou/better-openclaw/packages/core[39m
+
+ [32mÔ£ô[39m src/migrations.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32mÔ£ô[39m src/schema.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 80[2mms[22m[39m
+ [32mÔ£ô[39m src/generators/bare-metal-install.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+[90mstderr[2m | 
+src/services/registry.test.ts[2m > 
+[22m[2mservice registry[2m > 
+[22m[2mno two services have the 
+same exposed host port
+[22m[39m[informational] 8 port 
+overlap(s) detected:
+  Port 6379 shared by: redis, valkey
+  Port 80 shared by: caddy, traefik
+  Port 443 shared by: caddy, traefik
+  Port 8080 shared by: searxng, 
+stream-gateway
+  Port 8000 shared by: chromadb, 
+coolify
+  Port 8082 shared by: weaviate, 
+lasuite-meet-frontend
+  Port 8083 shared by: gotify, 
+lasuite-meet-frontend
+  Port 3000 shared by: usesend, 
+dokploy
+
+ [32mÔ£ô[39m src/services/registry.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32mÔ£ô[39m src/generators/traefik.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32mÔ£ô[39m src/resolver.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32mÔ£ô[39m src/version-manager.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32mÔ£ô[39m src/composer.snapshot.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 226[2mms[22m[39m
+ [32mÔ£ô[39m src/validator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 291[2mms[22m[39m
+ [32mÔ£ô[39m src/generators/env.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 385[2mms[22m[39m
+ [32mÔ£ô[39m src/composer.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 507[2mms[22m[39m
+ [32mÔ£ô[39m src/generators/caddy.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 440[2mms[22m[39m
+ [31mÔØ»[39m src/generators/health-check.test.ts [2m([22m[2m12 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 837[2mms[22m[39m
+     [32mÔ£ô[39m generates health-check.sh and health-check.ps1[32m 126[2mms[22m[39m
+     [32mÔ£ô[39m health-check.sh contains project name[32m 45[2mms[22m[39m
+     [32mÔ£ô[39m health-check.sh contains service-specific checks for each resolved service[32m 88[2mms[22m[39m
+     [32mÔ£ô[39m health-check.sh includes port checks for exposed ports[32m 36[2mms[22m[39m
+     [32mÔ£ô[39m health-check.sh has usage/help docs[32m 26[2mms[22m[39m
+     [32mÔ£ô[39m health-check.sh starts with shebang[32m 70[2mms[22m[39m
+     [32mÔ£ô[39m health-check.ps1 contains project name[32m 27[2mms[22m[39m
+     [32mÔ£ô[39m health-check.ps1 contains service checks[32m 31[2mms[22m[39m
+     [32mÔ£ô[39m health-check.ps1 includes PowerShell-style parameters[32m 35[2mms[22m[39m
+[31m     [31m├ù[31m health check scripts include all resolved services including dependencies[39m[32m 121[2mms[22m[39m
+     [32mÔ£ô[39m health check script includes health check commands when service defines one[32m 39[2mms[22m[39m
+     [32mÔ£ô[39m health check scripts contain the phase structure[32m 29[2mms[22m[39m
+ [32mÔ£ô[39m src/generate.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 1187[2mms[22m[39m
+ [32mÔ£ô[39m src/presets/registry.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32mÔ£ô[39m src/generators/scripts.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32mÔ£ô[39m src/bare-metal-partition.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+
+[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m[1m[
+41m Failed Tests 1 [49m[22m[31mÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m
+
+[41m[1m FAIL [22m[49m src/generat
+ors/health-check.test.ts[2m > 
+[22mgenerateHealthCheck (via 
+generate)[2m > [22mhealth check 
+scripts include all resolved 
+services including dependencies
+[31m[1mAssertionError[22m: 
+expected '#!/usr/bin/env bash\nset 
+-uo pipefailÔÇª' to contain 
+'redis'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- redis[39m
+[31m+ #!/usr/bin/env bash[39m
+[31m+ set -uo pipefail[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # ƒÉ¥ OpenClaw Stack Health 
+Check ÔÇö health-test[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ #[39m
+[31m+ # Auto-generated verification 
+script for your stack.[39m
+[31m+ # Checks 2 services across 6 
+phases:[39m
+[31m+ #   1. Environment     ÔÇö 
+prerequisites, .env, secrets[39m
+[31m+ #   2. Container       ÔÇö 
+running state, health status, 
+restart count[39m
+[31m+ #   3. Port            ÔÇö 
+TCP reachability for exposed 
+ports[39m
+[31m+ #   4. Health Command  ÔÇö 
+execute each service's health 
+check[39m
+[31m+ #   5. Resources       ÔÇö 
+memory/CPU warnings[39m
+[31m+ #   6. Logs            ÔÇö 
+scan for ERROR/FATAL/panic 
+patterns[39m
+[31m+ #[39m
+[31m+ # Usage:[39m
+[31m+ #   ./scripts/health-check.sh 
+          # Full check[39m
+[31m+ #   ./scripts/health-check.sh 
+--quick   # Skip log scan[39m
+[31m+ #   ./scripts/health-check.sh 
+--json    # Output as JSON[39m
+[31m+ #[39m
+[31m+ # Exit codes: 0 = all 
+healthy, 1 = some issues, 2 = 
+critical failure[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+[39m
+[31m+ SCRIPT_DIR="$(cd "$(dirname 
+"${BASH_SOURCE[0]}")" && pwd)"[39m
+[31m+ PROJECT_DIR="$(dirname 
+"$SCRIPT_DIR")"[39m
+[31m+ cd "$PROJECT_DIR"[39m
+[31m+[39m
+[31m+ # ÔöÇÔöÇ Arguments ÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇ[39m
+[31m+ QUICK_MODE=false[39m
+[31m+ JSON_MODE=false[39m
+[31m+ VERBOSE=false[39m
+[31m+ for arg in "$@"; do[39m
+[31m+   case "$arg" in[39m
+[31m+     --quick)  QUICK_MODE=true 
+;;[39m
+[31m+     --json)   JSON_MODE=true 
+;;[39m
+[31m+     --verbose|-v) 
+VERBOSE=true ;;[39m
+[31m+   esac[39m
+[31m+ done[39m
+[31m+[39m
+[31m+ # ÔöÇÔöÇ Colour helpers ÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+[39m
+[31m+ if [ -t 1 ] && [ "$JSON_MODE" 
+= false ]; then[39m
+[31m+   RED='\033[0;31m'; 
+GREEN='\033[0;32m'; 
+YELLOW='\033[1;33m'[39m
+[31m+   CYAN='\033[0;36m'; 
+DIM='\033[2m'; BOLD='\033[1m'; 
+NC='\033[0m'[39m
+[31m+ else[39m
+[31m+   RED=''; GREEN=''; 
+YELLOW=''; CYAN=''; DIM=''; BOLD=''; 
+NC=''[39m
+[31m+ fi[39m
+[31m+[39m
+[31m+ # ÔöÇÔöÇ Counters ÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇ[39m
+[31m+ TOTAL=2[39m
+[31m+ HEALTHY=0[39m
+[31m+ WARNING=0[39m
+[31m+ FAILED=0[39m
+[31m+ ERRORS=()[39m
+[31m+ WARNINGS_LIST=()[39m
+[31m+ SERVICE_RESULTS=()[39m
+[31m+[39m
+[31m+ # ÔöÇÔöÇ Utility functions ÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ[39m
+[31m+ pass()     { echo -e "  
+${GREEN}Ô£à $*${NC}"; 
+HEALTHY=$((HEALTHY + 1)); }[39m
+[31m+ warn_svc() { echo -e "  
+${YELLOW}ÔÜá´©Å  $*${NC}"; 
+WARNING=$((WARNING + 1)); 
+WARNINGS_LIST+=("$*"); }[39m
+[31m+ fail()     { echo -e "  
+${RED}ÔØî $*${NC}"; FAILED=$((FAILED 
++ 1)); ERRORS+=("$*"); }[39m
+[31m+ info()     { echo -e "  
+${CYAN}Ôä╣  $*${NC}"; }[39m
+[31m+ dim()      { echo -e "  
+${DIM}$*${NC}"; }[39m
+[31m+[39m
+[31m+ pad_name() {[39m
+[31m+   local name="$1"[39m
+[31m+   local pad=25[39m
+[31m+   printf "%-${pad}s" 
+"$name"[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # Phase 1: Environment[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ phase_environment() {[39m
+[31m+   if [ "$JSON_MODE" = false 
+]; then[39m
+[31m+     echo ""[39m
+[31m+     echo -e "${BOLD}ÔöÇÔöÇ 
+Phase 1: Environment ÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ${NC}"[39m
+[31m+     echo ""[39m
+[31m+   fi[39m
+[31m+[39m
+[31m+   # Docker[39m
+[31m+   if command -v docker 
+&>/dev/null; then[39m
+[31m+     if docker info 
+&>/dev/null 2>&1; then[39m
+[31m+       pass "Docker daemon is 
+running"[39m
+[31m+       
+DOCKER_AVAILABLE=true[39m
+[31m+     else[39m
+[31m+       fail "Docker daemon is 
+NOT running"[39m
+[31m+       
+DOCKER_AVAILABLE=false[39m
+[31m+     fi[39m
+[31m+   else[39m
+[31m+     warn_svc "Docker is not 
+installed ÔÇö running bare-metal 
+checks only"[39m
+[31m+     
+DOCKER_AVAILABLE=false[39m
+[31m+   fi[39m
+[31m+[39m
+[31m+   # Docker Compose[39m
+[31m+   if [ "$DOCKER_AVAILABLE" = 
+true ]; then[39m
+[31m+     if docker compose version 
+&>/dev/null 2>&1; then[39m
+[31m+       pass "Docker Compose v2 
+available"[39m
+[31m+     else[39m
+[31m+       warn_svc "Docker 
+Compose v2 not found"[39m
+[31m+     fi[39m
+[31m+   fi[39m
+[31m+[39m
+[31m+   # .env[39m
+[31m+   if [ -f ".env" ]; then[39m
+[31m+     pass ".env file 
+exists"[39m
+[31m+     EMPTY_SECRETS=0[39m
+[31m+     while IFS='=' read -r key 
+value; do[39m
+[31m+       [[ "$key" =~ ^#.*$ ]] 
+&& continue[39m
+[31m+       [[ -z "$key" ]] && 
+continue[39m
+[31m+       if [[ "$key" =~ (PASSWOR
+D|TOKEN|SECRET|SESSION_KEY|COOKIE|API
+_KEY) ]] && [[ -z "${value:-}" ]]; 
+then[39m
+[31m+         if [ "$VERBOSE" = 
+true ]; then[39m
+[31m+           warn_svc "Empty 
+secret: $key"[39m
+[31m+         fi[39m
+[31m+         
+EMPTY_SECRETS=$((EMPTY_SECRETS + 
+1))[39m
+[31m+       fi[39m
+[31m+     done < .env 2>/dev/null 
+|| true[39m
+[31m+     if [ "$EMPTY_SECRETS" -gt 
+0 ]; then[39m
+[31m+       warn_svc 
+"$EMPTY_SECRETS secret(s) are empty 
+in .env"[39m
+[31m+     else[39m
+[31m+       pass "All secrets are 
+populated"[39m
+[31m+     fi[39m
+[31m+   else[39m
+[31m+     warn_svc ".env file not 
+found"[39m
+[31m+   fi[39m
+[31m+[39m
+[31m+   # Disk space[39m
+[31m+   AVAIL_KB=$(df -k . 
+2>/dev/null | awk 'NR==2{print $4}' 
+|| echo "0")[39m
+[31m+   AVAIL_GB=$((AVAIL_KB / 1024 
+/ 1024))[39m
+[31m+   if [ "$AVAIL_GB" -lt 2 ]; 
+then[39m
+[31m+     warn_svc "Low disk space: 
+${AVAIL_GB}GB available"[39m
+[31m+   else[39m
+[31m+     pass "Disk space: 
+${AVAIL_GB}GB available"[39m
+[31m+   fi[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # Phase 2: Container 
+Status[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ check_container() {[39m
+[31m+   local id="$1" name="$2" 
+icon="$3"[39m
+[31m+[39m
+[31m+   local status restarts[39m
+[31m+   status=$(docker compose ps 
+"$id" --format json 2>/dev/null | 
+head -1)[39m
+[31m+[39m
+[31m+   if [ -z "$status" ]; 
+then[39m
+[31m+     fail "$icon $(pad_name 
+"$name") ÔÇö Container not 
+found"[39m
+[31m+     return[39m
+[31m+   fi[39m
+[31m+[39m
+[31m+   local state 
+health_status[39m
+[31m+   state=$(echo "$status" | 
+grep -o '"State":"[^"]*"' | cut 
+-d'"' -f4 || echo "unknown")[39m
+[31m+   health_status=$(echo 
+"$status" | grep -o 
+'"Health":"[^"]*"' | cut -d'"' -f4 
+|| echo "none")[39m
+[31m+[39m
+[31m+   restarts=$(docker inspect 
+--format="{{.RestartCount}}" 
+"$(docker compose ps -q "$id" 
+2>/dev/null | head -1)" 2>/dev/null 
+|| echo "0")[39m
+[31m+[39m
+[31m+   if [ "$state" = "running" 
+]; then[39m
+[31m+     if [ "$health_status" = 
+"healthy" ]; then[39m
+[31m+       pass "$icon $(pad_name 
+"$name") Running (healthy) restarts: 
+$restarts"[39m
+[31m+     elif [ "$health_status" = 
+"starting" ]; then[39m
+[31m+       warn_svc "$icon 
+$(pad_name "$name") Running 
+(starting) restarts: $restarts"[39m
+[31m+     elif [ "$health_status" = 
+"unhealthy" ]; then[39m
+[31m+       fail "$icon $(pad_name 
+"$name") Running (UNHEALTHY) 
+restarts: $restarts"[39m
+[31m+     else[39m
+[31m+       pass "$icon $(pad_name 
+"$name") Running restarts: 
+$restarts"[39m
+[31m+     fi[39m
+[31m+     if [ "$restarts" -gt 5 ] 
+2>/dev/null; then[39m
+[31m+       warn_svc "  ÔööÔöÇ 
+$name has restarted $restarts times 
+(possible crash loop)"[39m
+[31m+     fi[39m
+[31m+   elif [ "$state" = "exited" 
+]; then[39m
+[31m+     local exit_code[39m
+[31m+     exit_code=$(docker 
+inspect 
+--format="{{.State.ExitCode}}" 
+"$(docker compose ps -q "$id" 
+2>/dev/null | head -1)" 2>/dev/null 
+|| echo "?")[39m
+[31m+     fail "$icon $(pad_name 
+"$name") Exited (code 
+$exit_code)"[39m
+[31m+     if [ "$exit_code" = "137" 
+]; then[39m
+[31m+       ERRORS+=("  ÔööÔöÇ 
+$name: OOM killed (exit 137). 
+Increase memory limits.")[39m
+[31m+     elif [ "$exit_code" = "1" 
+]; then[39m
+[31m+       ERRORS+=("  ÔööÔöÇ 
+$name: Application error (exit 1). 
+Check logs: docker compose logs 
+$id")[39m
+[31m+     fi[39m
+[31m+   else[39m
+[31m+     fail "$icon $(pad_name 
+"$name") State: $state"[39m
+[31m+   fi[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # Phase 3: Port 
+Reachability[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ check_port() {[39m
+[31m+   local id="$1" port="$2" 
+desc="$3"[39m
+[31m+   if command -v nc 
+&>/dev/null; then[39m
+[31m+     if nc -z -w 2 localhost 
+"$port" 2>/dev/null; then[39m
+[31m+       dim "    Port $port 
+($desc) ÔÇö reachable"[39m
+[31m+     else[39m
+[31m+       warn_svc "  ÔööÔöÇ $id: 
+Port $port ($desc) ÔÇö NOT 
+reachable"[39m
+[31m+     fi[39m
+[31m+   elif command -v curl 
+&>/dev/null; then[39m
+[31m+     if curl -sf --max-time 2 
+"http://localhost:$port/" 
+&>/dev/null; then[39m
+[31m+       dim "    Port $port 
+($desc) ÔÇö reachable"[39m
+[31m+     else[39m
+[31m+       warn_svc "  ÔööÔöÇ $id: 
+Port $port ($desc) ÔÇö NOT 
+reachable"[39m
+[31m+     fi[39m
+[31m+   else[39m
+[31m+     dim "    Port $port 
+($desc) ÔÇö skipped (no nc or 
+curl)"[39m
+[31m+   fi[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # Phase 4: Health Check 
+Commands[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ check_health_cmd() {[39m
+[31m+   local id="$1" cmd="$2"[39m
+[31m+   local cid=$(docker compose 
+ps -q "$id" 2>/dev/null | head 
+-1)[39m
+[31m+   [ -z "$cid" ] && return[39m
+[31m+   if docker exec "$cid" sh -c 
+"$cmd" &>/dev/null; then[39m
+[31m+     dim "    Health command 
+passed"[39m
+[31m+   else[39m
+[31m+     warn_svc "  ÔööÔöÇ $id: 
+Health check command failed"[39m
+[31m+     if [ "$VERBOSE" = true ]; 
+then dim "    Command: $cmd"; fi[39m
+[31m+   fi[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # Phase 5: Resource Usage[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ phase_resources() {[39m
+[31m+   if [ "$JSON_MODE" = false 
+]; then[39m
+[31m+     echo ""[39m
+[31m+     echo -e "${BOLD}ÔöÇÔöÇ 
+Phase 5: Resource Usage ÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇ${NC}"[39m
+[31m+     echo ""[39m
+[31m+   fi[39m
+[31m+   docker stats --no-stream 
+--format "table {{.Name}}\t{{.CPUPerc
+}}\t{{.MemUsage}}\t{{.MemPerc}}" 
+2>/dev/null || true[39m
+[31m+   if [ "$VERBOSE" = false ] 
+&& [ "$JSON_MODE" = false ]; 
+then[39m
+[31m+     info "Use --verbose to 
+see warnings for high memory 
+usage"[39m
+[31m+   fi[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # Phase 6: Log Scan[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ phase_logs() {[39m
+[31m+   if [ "$QUICK_MODE" = true 
+]; then[39m
+[31m+     if [ "$JSON_MODE" = false 
+]; then echo ""; info "Skipping log 
+scan (--quick mode)"; fi[39m
+[31m+     return[39m
+[31m+   fi[39m
+[31m+   if [ "$JSON_MODE" = false 
+]; then[39m
+[31m+     echo ""[39m
+[31m+     echo -e "${BOLD}ÔöÇÔöÇ 
+Phase 6: Log Scan ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ${NC}"[39m
+[31m+     echo ""[39m
+[31m+   fi[39m
+[31m+   local has_errors=false[39m
+[31m+   for svc_id in "postgresql" 
+"n8n"; do[39m
+[31m+     local error_lines[39m
+[31m+     error_lines=$(docker 
+compose logs --tail=50 "$svc_id" 
+2>/dev/null | grep -iE "(error|fatal|
+panic|exception|segfault|killed|oom)"
+ | tail -5 || true)[39m
+[31m+     if [ -n "$error_lines" ]; 
+then[39m
+[31m+       has_errors=true[39m
+[31m+       warn_svc "$svc_id ÔÇö 
+found error patterns in logs:"[39m
+[31m+       echo "$error_lines" | 
+while IFS= read -r eline; do[39m
+[31m+         dim "    | 
+$eline"[39m
+[31m+       done[39m
+[31m+     fi[39m
+[31m+   done[39m
+[31m+   if [ "$has_errors" = false 
+] && [ "$JSON_MODE" = false ]; 
+then[39m
+[31m+     pass "No error patterns 
+found in recent logs"[39m
+[31m+   fi[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔöÇÔöÇ Bare-metal process 
+check ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇ[39m
+[31m+ check_process() {[39m
+[31m+   local id="$1" name="$2" 
+icon="$3"[39m
+[31m+   if command -v systemctl 
+&>/dev/null; then[39m
+[31m+     if systemctl is-active 
+--quiet "$id" 2>/dev/null; then[39m
+[31m+       pass "$icon $(pad_name 
+"$name") Active (systemd)"[39m
+[31m+       return[39m
+[31m+     fi[39m
+[31m+   fi[39m
+[31m+   if pgrep -f "$id" 
+&>/dev/null; then[39m
+[31m+     pass "$icon $(pad_name 
+"$name") Running (process)"[39m
+[31m+   else[39m
+[31m+     fail "$icon $(pad_name 
+"$name") NOT running"[39m
+[31m+   fi[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+ # Main[39m
+[31m+ # ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+[39m
+[31m+[39m
+[31m+ DOCKER_AVAILABLE=false[39m
+[31m+[39m
+[31m+ if [ "$JSON_MODE" = false ]; 
+then[39m
+[31m+   echo ""[39m
+[31m+   echo "ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉ"[39m
+[31m+   echo " ƒÉ¥ OpenClaw Stack 
+Health Report ÔÇö health-test"[39m
+[31m+   echo "ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉ"[39m
+[31m+ fi[39m
+[31m+[39m
+[31m+ phase_environment[39m
+[31m+[39m
+[31m+ if [ "$DOCKER_AVAILABLE" = 
+true ]; then[39m
+[31m+   if [ "$JSON_MODE" = false 
+]; then[39m
+[31m+     echo ""[39m
+[31m+     echo -e "${BOLD}ÔöÇÔöÇ 
+Phase 2ÔÇô4: Service Checks ÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇ${NC}"[39m
+[31m+     echo ""[39m
+[31m+   fi[39m
+[31m+[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m16 passed[39m[22m[90m (17)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m154 passed[39m[22m[90m (155)[39m
+[2m   Start at [22m 21:24:22
+[2m   Duration [22m 9.37s[2m (transform 33.25s, setup 0ms, import 49.91s, tests 4.18s, environment 12ms)[22m
+
+[31m+   # ÔöÇÔöÇ ƒÉÿ PostgreSQL 
+ÔöÇÔöÇ[39m
+[31m+   check_container 
+"postgresql" "PostgreSQL" "ƒÉÿ"[39m
+[31m+   check_port "postgresql" 
+5432 "PostgreSQL server port"[39m
+[31m+   check_health_cmd 
+"postgresql" "pg_isready -U 
+openclaw"[39m
+[31m+[39m
+[31m+   # ÔöÇÔöÇ ƒöä n8n ÔöÇÔöÇ[39m
+[31m+   check_container "n8n" "n8n" 
+"ƒöä"[39m
+[31m+   check_port "n8n" 5678 "n8n 
+web interface and API"[39m
+[31m+   check_health_cmd "n8n" 
+"wget -q --spider 
+http://localhost:5678/healthz || 
+exit 1"[39m
+[31m+[39m
+[31m+[39m
+[31m+   phase_resources[39m
+[31m+   phase_logs[39m
+[31m+[39m
+[31m+ else[39m
+[31m+   if [ "$JSON_MODE" = false 
+]; then[39m
+[31m+     echo ""[39m
+[31m+     echo -e "${BOLD}ÔöÇÔöÇ 
+Bare-Metal Service Checks ÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇ${NC}"[39m
+[31m+     echo ""[39m
+[31m+   fi[39m
+[31m+[39m
+[31m+   # ÔöÇÔöÇ ƒÉÿ PostgreSQL 
+(bare-metal) ÔöÇÔöÇ[39m
+[31m+   check_process "postgresql" 
+"PostgreSQL" "ƒÉÿ"[39m
+[31m+   check_port "postgresql" 
+5432 "PostgreSQL server port"[39m
+[31m+[39m
+[31m+   # ÔöÇÔöÇ ƒöä n8n 
+(bare-metal) ÔöÇÔöÇ[39m
+[31m+   check_process "n8n" "n8n" "-
+ƒöä"[39m
+[31m+   check_port "n8n" 5678 "n8n 
+web interface and API"[39m
+[31m+[39m
+[31m+ fi[39m
+[31m+[39m
+[31m+ # ÔöÇÔöÇ Summary ÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇ[39m
+[31m+ echo ""[39m
+[31m+ echo "ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉ"[39m
+[31m+ echo ""[39m
+[31m+ echo -e "  
+${BOLD}Summary${NC}: $TOTAL services 
+checked"[39m
+[31m+ echo -e "  ${GREEN}Healthy: 
+$HEALTHY${NC}  |  ${YELLOW}Warnings: 
+$WARNING${NC}  |  ${RED}Failed: 
+$FAILED${NC}"[39m
+[31m+[39m
+[31m+ if [ ${#ERRORS[@]} -gt 0 ]; 
+then[39m
+[31m+   echo ""[39m
+[31m+   echo -e "  
+${BOLD}${RED}ÔöÇÔöÇ Errors ÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔö
+ÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔ
+öÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ${NC}"[39m
+[31m+   for e in "${ERRORS[@]}"; 
+do[39m
+[31m+     echo -e "  
+${RED}$e${NC}"[39m
+[31m+   done[39m
+[31m+ fi[39m
+[31m+[39m
+[31m+ echo ""[39m
+[31m+ echo "ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔ
+òÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔò
+ÉÔòÉ"[39m
+[31m+ echo ""[39m
+[31m+[39m
+[31m+ if [ "$FAILED" -gt 0 ]; 
+then[39m
+[31m+   echo -e "  ${RED}Some 
+services need attention. Run with 
+--verbose for details.${NC}"[39m
+[31m+   exit 1[39m
+[31m+ else[39m
+[31m+   echo -e "  ${GREEN}ƒÄë All 
+services are running!${NC}"[39m
+[31m+   exit 0[39m
+[31m+ fi[39m
+[31m+[39m
+
+[36m [2mÔØ»[22m src/generators/hea
+lth-check.test.ts:[2m96:14[22m[39m
+    [90m 94| [39m  [34mexpect[39m
+(sh)[33m.[39m[34mtoContain[39m([
+32m"n8n"[39m)[33m;[39m
+    [90m 95| [39m  [90m// 
+Dependencies should be auto-resolved 
+and included[39m
+    [90m 96| [39m  [34mexpect[39m
+(sh)[33m.[39m[34mtoContain[39m([
+32m"redis"[39m)[33m;[39m
+    [90m   | [39m             
+[31m^[39m
+    [90m 97| [39m  [34mexpect[39m
+(sh)[33m.[39m[34mtoContain[39m([
+32m"postgresql"[39m)[33m;[39m
+    [90m 98| [39m })[33m;[39m
+
+[31m[2mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»Ô
+Ä»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ
+»ÔÄ»ÔÄ»[1/1]ÔÄ»[22m[39m
+

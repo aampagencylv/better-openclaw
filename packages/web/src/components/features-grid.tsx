@@ -51,7 +51,7 @@ const card = {
 
 export function FeaturesGrid() {
 	return (
-		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-white/5">
+		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-border/50">
 
 
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -74,17 +74,17 @@ export function FeaturesGrid() {
 						</span>
 					</div>
 
-					<h2 className="text-4xl font-bold tracking-tight text-white md:text-6xl">
-						INFRASTRUCTURE <span className="text-zinc-600">PRIMITIVES</span>
+					<h2 className="text-4xl font-bold tracking-tight text-foreground md:text-6xl">
+						INFRASTRUCTURE <span className="text-muted-foreground/60">PRIMITIVES</span>
 					</h2>
 
-					<p className="max-w-xl text-base leading-relaxed text-zinc-400 mt-2">
+					<p className="max-w-xl text-base leading-relaxed text-muted-foreground mt-2">
 						The four pillars of the better-openclaw engine. Modular, scalable, and
 						secure by design.
 					</p>
 
 					<div className="absolute right-8 top-32 hidden lg:block">
-						<Link href="/docs" className="group font-mono text-[9px] tracking-widest text-zinc-500 uppercase transition-colors hover:text-white">
+						<Link href="/docs" className="group font-mono text-[9px] tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground">
 							EXPLORE ALL FEATURES
 							<span className="ml-1 inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
 						</Link>
@@ -109,7 +109,7 @@ export function FeaturesGrid() {
 									y: -4,
 									transition: { duration: 0.3 },
 								}}
-								className={`group relative flex min-h-[360px] flex-col justify-between border-white/5 bg-black/40 p-8 backdrop-blur-sm transition-all duration-500 hover:bg-zinc-900/60
+								className={`group relative flex min-h-[360px] flex-col justify-between border-border/50 bg-background/40 p-8 backdrop-blur-sm transition-all duration-500 hover:bg-secondary/60
 									${i === 0 ? "border border-r-0 lg:border-r" : ""}
 									${i > 0 && i < 3 ? "border-y border-r-0 lg:border-r lg:border-l-0" : ""}
 									${i === 3 ? "border lg:border-l-0" : ""}
@@ -130,19 +130,19 @@ export function FeaturesGrid() {
 								<div>
 									{/* Top Row: Fig Label + Icon */}
 									<div className="mb-8 flex items-center justify-between">
-										<div className="flex px-2 py-1 border border-zinc-800 rounded-sm transition-colors duration-300 group-hover:border-primary/30">
-											<span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
+										<div className="flex px-2 py-1 border border-border rounded-sm transition-colors duration-300 group-hover:border-primary/30">
+											<span className="font-mono text-[9px] text-muted-foreground uppercase tracking-widest">
 												FIG. {f.id}
 											</span>
 										</div>
-										<Icon className="h-4 w-4 text-zinc-600 transition-all duration-500 group-hover:text-primary group-hover:drop-shadow-[0_0_8px_rgba(163,135,95,0.5)]" />
+										<Icon className="h-4 w-4 text-muted-foreground/60 transition-all duration-500 group-hover:text-primary group-hover:drop-shadow-[0_0_8px_rgba(163,135,95,0.5)]" />
 									</div>
 
-									<h3 className="mb-4 font-sans text-base font-bold uppercase tracking-wide text-white transition-colors group-hover:text-primary/90">
+									<h3 className="mb-4 font-sans text-base font-bold uppercase tracking-wide text-foreground transition-colors group-hover:text-primary/90">
 										{f.title}
 									</h3>
 
-									<p className="font-mono text-xs leading-relaxed text-zinc-500 transition-colors group-hover:text-zinc-400">
+									<p className="font-mono text-xs leading-relaxed text-muted-foreground transition-colors group-hover:text-muted-foreground/80">
 										{f.description}
 									</p>
 								</div>
@@ -151,7 +151,7 @@ export function FeaturesGrid() {
 								<div className="mt-8">
 									<Link
 										href="/docs"
-										className="group/link font-mono text-[9px] uppercase tracking-widest text-zinc-600 transition-colors group-hover:text-white"
+										className="group/link font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60 transition-colors group-hover:text-foreground"
 									>
 										READ SPECS
 										<span className="ml-1 inline-block transition-transform group-hover/link:translate-x-1">&rarr;</span>

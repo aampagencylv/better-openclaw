@@ -84,10 +84,12 @@ html {
   color: inherit;
 }
 
-/* ── Scrollbar (dark mode) ──────────────────────────────────────────────── */
-.dark ::-webkit-scrollbar { width: 6px; height: 6px; }
-.dark ::-webkit-scrollbar-track { background: transparent; }
-.dark ::-webkit-scrollbar-thumb { background: rgba(163, 135, 95, 0.2); border-radius: 3px; }
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(163, 135, 95, 0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(163, 135, 95, 0.3); }
+.dark ::-webkit-scrollbar-thumb { background: rgba(163, 135, 95, 0.2); }
 .dark ::-webkit-scrollbar-thumb:hover { background: rgba(163, 135, 95, 0.35); }
 
 /* ── Utility: hide scrollbar ──────────────────────────────────────────── */

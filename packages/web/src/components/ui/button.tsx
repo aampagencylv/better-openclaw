@@ -16,7 +16,7 @@ const buttonVariants = cva(
 				ghost: "hover:bg-accent hover:text-accent-foreground",
 				link: "text-primary underline-offset-4 hover:underline",
 				lobster:
-					"bg-gradient-to-r from-primary to-orange-600 text-white hover:opacity-90 shadow-lg shadow-orange-500/20",
+					"bg-gradient-to-r from-primary to-orange-600 text-foreground hover:opacity-90 shadow-lg shadow-orange-500/20",
 			},
 			size: {
 				default: "h-10 px-4 py-2",

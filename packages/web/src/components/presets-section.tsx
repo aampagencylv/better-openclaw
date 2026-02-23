@@ -71,7 +71,7 @@ const TABS = [
 		label: "SECURITY",
 		title: "INFRASTRUCTURE SECURITY",
 		metric: "SOC2 TYPE II READY",
-		metricColor: "text-zinc-300 border-zinc-700 bg-zinc-800/50",
+		metricColor: "text-foreground/80 border-border bg-muted/50",
 		desc: "Zero-trust architecture by default. Automated vulnerability scanning, secrets management, and compliance auditing built-in.",
 		bullets: [
 			"Automated CVE Scanning",
@@ -91,7 +91,7 @@ export function PresetsSection() {
 	const [activeTab, setActiveTab] = useState(0);
 
 	return (
-		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-white/5">
+		<section className="relative w-full py-20 lg:py-32 overflow-hidden border-t border-border/50">
 			{/* Dramatic Background Splat */}
 			<div className="absolute left-1/3 top-1/2 -z-10 h-[600px] w-[1000px] -translate-y-1/2 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(163,135,95,0.08)_0%,transparent_60%)] blur-[100px]" />
 			<div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[800px] bg-[radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.05)_0%,transparent_60%)] blur-[80px]" />
@@ -112,32 +112,32 @@ export function PresetsSection() {
 						</span>
 					</div>
 
-					<h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
-						DEPLOYMENT <span className="text-zinc-600">SCENARIOS</span>
+					<h2 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+						DEPLOYMENT <span className="text-muted-foreground/60">SCENARIOS</span>
 					</h2>
-					<p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-400">
+					<p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
 						Operational contexts where better-openclaw engine delivers measurable value across
 						enterprise infrastructure.
 					</p>
 
-					<div className="mt-8 flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-zinc-500">
+					<div className="mt-8 flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
 						<span className="h-1.5 w-1.5 rounded-full bg-emerald-500/50" />
 						USED IN PRODUCTION ACROSS DISTRIBUTED ENTERPRISE STACKS
 					</div>
 				</motion.div>
 
 				{/* Two-Column Layout */}
-				<div className="flex flex-col lg:flex-row border border-white/5 bg-black/40 backdrop-blur-md">
+				<div className="flex flex-col lg:flex-row border border-border/50 bg-background/40 backdrop-blur-md">
 					{/* Left: Tab List */}
-					<div className="w-full lg:w-[35%] flex flex-col border-b lg:border-b-0 lg:border-r border-white/5">
+					<div className="w-full lg:w-[35%] flex flex-col border-b lg:border-b-0 lg:border-r border-border/50">
 						{TABS.map((tab, idx) => {
 							const isActive = activeTab === idx;
 							return (
 								<button
 									key={tab.id}
 									onClick={() => setActiveTab(idx)}
-									className={`group relative flex flex-col items-start justify-center border-b border-white/5 p-6 text-left transition-colors last:border-b-0 hover:bg-zinc-900/30
-										${isActive ? "bg-zinc-900/50" : ""}
+									className={`group relative flex flex-col items-start justify-center border-b border-border/50 p-6 text-left transition-colors last:border-b-0 hover:bg-secondary/30
+										${isActive ? "bg-secondary/50" : ""}
 									`}
 								>
 									{/* Active glow edge */}
@@ -149,12 +149,12 @@ export function PresetsSection() {
 									)}
 
 									<span
-										className={`font-mono text-[10px] uppercase tracking-widest mb-3 transition-colors ${isActive ? "text-primary" : "text-zinc-600 group-hover:text-zinc-400"}`}
+										className={`font-mono text-[10px] uppercase tracking-widest mb-3 transition-colors ${isActive ? "text-primary" : "text-muted-foreground/60 group-hover:text-muted-foreground"}`}
 									>
 										{tab.label}
 									</span>
 									<span
-										className={`font-sans text-sm font-bold uppercase tracking-wide transition-colors ${isActive ? "text-white" : "text-zinc-400 group-hover:text-zinc-300"}`}
+										className={`font-sans text-sm font-bold uppercase tracking-wide transition-colors ${isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/80"}`}
 									>
 										{tab.title}
 									</span>
@@ -182,15 +182,15 @@ export function PresetsSection() {
 								transition={{ duration: 0.3 }}
 								className="flex h-full flex-col"
 							>
-								<h3 className="mb-6 font-sans text-xl font-bold uppercase tracking-wide text-white md:text-3xl max-w-[400px]">
+								<h3 className="mb-6 font-sans text-xl font-bold uppercase tracking-wide text-foreground md:text-3xl max-w-[400px]">
 									{TABS[activeTab].title}
 								</h3>
 
-								<p className="max-w-[500px] font-mono text-[11px] leading-relaxed text-zinc-400">
+								<p className="max-w-[500px] font-mono text-[11px] leading-relaxed text-muted-foreground">
 									{TABS[activeTab].desc}
 								</p>
 
-								<ul className="mt-8 flex flex-col gap-4 font-mono text-[10px] tracking-widest text-zinc-300">
+								<ul className="mt-8 flex flex-col gap-4 font-mono text-[10px] tracking-widest text-foreground/80">
 									{TABS[activeTab].bullets.map((bullet, i) => (
 										<li key={i} className="flex items-center gap-3">
 											<span className="h-1 w-1 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
@@ -208,7 +208,7 @@ export function PresetsSection() {
 									</Link>
 									<Link
 										href="/docs"
-										className="flex h-12 items-center justify-center border border-zinc-700 px-8 font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-400 transition-colors hover:text-white"
+										className="flex h-12 items-center justify-center border border-border px-8 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
 									>
 										READ DOCUMENTATION
 									</Link>
@@ -217,9 +217,9 @@ export function PresetsSection() {
 						</AnimatePresence>
 
 						{/* Mock Terminal Card float right */}
-						<div className="absolute right-8 top-12 hidden w-[320px] rounded-sm border border-zinc-800 bg-[#0A0A0A] xl:block">
-							<div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
-								<span className="font-mono text-[9px] uppercase tracking-widest text-zinc-600">
+						<div className="absolute right-8 top-12 hidden w-[320px] rounded-sm border border-border bg-background xl:block">
+							<div className="flex items-center justify-between border-b border-border px-4 py-2">
+								<span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
 									TERMINAL_OUT
 								</span>
 								<div className="flex gap-1.5">
@@ -227,7 +227,7 @@ export function PresetsSection() {
 									<span className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
 								</div>
 							</div>
-							<div className="p-4 font-mono text-[10px] text-zinc-400 leading-relaxed">
+							<div className="p-4 font-mono text-[10px] text-muted-foreground leading-relaxed">
 								<AnimatePresence mode="wait">
 									<motion.div
 										key={activeTab}
@@ -239,7 +239,7 @@ export function PresetsSection() {
 										{TABS[activeTab].terminal.map((line, i) => (
 											<span
 												key={i}
-												className={line.startsWith(">") ? "text-zinc-500" : "text-primary"}
+												className={line.startsWith(">") ? "text-muted-foreground" : "text-primary"}
 											>
 												{line}
 											</span>

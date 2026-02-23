@@ -1166,6 +1166,168 @@
       "services": [
         "kong"
       ]
+    },
+    {
+      "id": "ui-prompting",
+      "path": "ui-prompting/SKILL.md",
+      "emoji": "🎨",
+      "services": []
+    },
+    {
+      "id": "pricing-page-design",
+      "path": "pricing-page-design/SKILL.md",
+      "emoji": "💰",
+      "services": []
+    },
+    {
+      "id": "landing-page-design",
+      "path": "landing-page-design/SKILL.md",
+      "emoji": "🚀",
+      "services": []
+    },
+    {
+      "id": "gsap-animate",
+      "path": "gsap-animate/SKILL.md",
+      "emoji": "✨",
+      "services": []
+    },
+    {
+      "id": "threejs-scene",
+      "path": "threejs-scene/SKILL.md",
+      "emoji": "🎲",
+      "services": []
+    },
+    {
+      "id": "matterjs-physics",
+      "path": "matterjs-physics/SKILL.md",
+      "emoji": "⚛️",
+      "services": []
+    },
+    {
+      "id": "globe-gl-visualize",
+      "path": "globe-gl-visualize/SKILL.md",
+      "emoji": "🌍",
+      "services": []
+    },
+    {
+      "id": "tailwindcss-style",
+      "path": "tailwindcss-style/SKILL.md",
+      "emoji": "🎐",
+      "services": []
+    },
+    {
+      "id": "css-border-gradient",
+      "path": "css-border-gradient/SKILL.md",
+      "emoji": "🌈",
+      "services": []
+    },
+    {
+      "id": "progressive-blur",
+      "path": "progressive-blur/SKILL.md",
+      "emoji": "🌫️",
+      "services": []
+    },
+    {
+      "id": "animation-on-scroll",
+      "path": "animation-on-scroll/SKILL.md",
+      "emoji": "📜",
+      "services": []
+    },
+    {
+      "id": "css-alpha-masking",
+      "path": "css-alpha-masking/SKILL.md",
+      "emoji": "🎭",
+      "services": []
+    },
+    {
+      "id": "vantajs-background",
+      "path": "vantajs-background/SKILL.md",
+      "emoji": "🌊",
+      "services": []
+    },
+    {
+      "id": "cobejs-globe",
+      "path": "cobejs-globe/SKILL.md",
+      "emoji": "🌐",
+      "services": []
+    },
+    {
+      "id": "unicorn-studio-embed",
+      "path": "unicorn-studio-embed/SKILL.md",
+      "emoji": "🦄",
+      "services": []
+    },
+    {
+      "id": "ui-design-system",
+      "path": "ui-design-system/SKILL.md",
+      "emoji": "🎨",
+      "services": []
+    },
+    {
+      "id": "tailwind-design-system-v4",
+      "path": "tailwind-design-system-v4/SKILL.md",
+      "emoji": "💨",
+      "services": []
+    },
+    {
+      "id": "interaction-design",
+      "path": "interaction-design/SKILL.md",
+      "emoji": "👆",
+      "services": []
+    },
+    {
+      "id": "responsive-design",
+      "path": "responsive-design/SKILL.md",
+      "emoji": "📱",
+      "services": []
+    },
+    {
+      "id": "web-interface-guidelines",
+      "path": "web-interface-guidelines/SKILL.md",
+      "emoji": "✅",
+      "services": []
+    },
+    {
+      "id": "threejs-animation",
+      "path": "threejs-animation/SKILL.md",
+      "emoji": "🎬",
+      "services": []
+    },
+    {
+      "id": "copywriting",
+      "path": "copywriting/SKILL.md",
+      "emoji": "✍️",
+      "services": []
+    },
+    {
+      "id": "frontend-distinctive-design",
+      "path": "frontend-distinctive-design/SKILL.md",
+      "emoji": "💎",
+      "services": []
+    },
+    {
+      "id": "canvas-design",
+      "path": "canvas-design/SKILL.md",
+      "emoji": "🖌️",
+      "services": []
+    },
+    {
+      "id": "web-design-reviewer",
+      "path": "web-design-reviewer/SKILL.md",
+      "emoji": "🔍",
+      "services": []
+    },
+    {
+      "id": "animejs-animate",
+      "path": "animejs-animate/SKILL.md",
+      "emoji": "🎌",
+      "services": []
+    },
+    {
+      "id": "aura-asset-images",
+      "path": "aura-asset-images/SKILL.md",
+      "emoji": "📷",
+      "services": []
     }
   ]
 }

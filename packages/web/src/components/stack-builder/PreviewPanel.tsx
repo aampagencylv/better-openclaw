@@ -271,7 +271,7 @@ export function PreviewPanel({
 			{/* ── Tab Content ────────────────────────────────────────────────────── */}
 
 			{activeTab === "compose" && (
-				<div className="flex flex-1 flex-col overflow-hidden rounded-xl border border-border bg-[#0D1117]">
+				<div className="flex flex-1 flex-col overflow-hidden rounded-xl border border-border bg-surface dark:bg-[#0D1117]">
 					{/* Compose sub-tabs */}
 					{composeResult && composeFiles.length > 1 && (
 						<div className="flex flex-wrap gap-0 border-b border-border bg-surface/30">

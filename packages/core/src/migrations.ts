@@ -1,4 +1,3 @@
-import type { GenerationInput } from "./types.js";
 
 export const CURRENT_CONFIG_VERSION = 2;
 

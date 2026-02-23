@@ -30,7 +30,6 @@ export default function HomePage() {
 	const [activeSection, setActiveSection] = useState("hero");
 
 	useEffect(() => {
-		document.documentElement.classList.add("dark");
 
 		const observer = new IntersectionObserver(
 			(entries) => {
@@ -52,14 +51,14 @@ export default function HomePage() {
 	}, []);
 
 	return (
-		<div className="relative min-h-screen bg-black text-foreground selection:bg-primary/20">
+		<div className="relative min-h-screen bg-background text-foreground selection:bg-primary/20">
 			{/* Grid Background Overlay with subtle animation */}
 			<div className="pointer-events-none fixed inset-0 z-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_32px]" />
 
 			{/* ─── MASTER CONTINUOUS BACKGROUND ─────────────────────────────────── */}
-			<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-black">
+			<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-background">
 				{/* Deep ambient base for the entire page */}
-				<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(30,20,10,1)_0%,rgba(0,0,0,1)_100%)]" />
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(240,235,230,0.5)_0%,transparent_100%)] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(30,20,10,1)_0%,rgba(0,0,0,1)_100%)]" />
 
 				{/* 1. HERO SECTION BACKGROUND (0 - 100vh) */}
 				<div className="absolute top-0 w-full h-[100vh]">
@@ -100,17 +99,17 @@ export default function HomePage() {
 
 				{/* 4. BOTTOM SECTION (Footer space) - section-bg.png */}
 				<div className="absolute bottom-0 w-full h-[150vh]">
-					<div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-10" />
-					<img src="/section-bg.png" alt="Deep Nebula Base" className="absolute bottom-0 w-full h-full object-cover opacity-40 mix-blend-screen" />
+					<div className="absolute inset-0 bg-gradient-to-b from-transparent to-background dark:to-black/80 z-10" />
+					<img src="/section-bg.png" alt="Deep Nebula Base" className="absolute bottom-0 w-full h-full object-cover opacity-10 dark:opacity-40 mix-blend-multiply dark:mix-blend-screen" />
 					<div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[80%] rounded-full bg-[radial-gradient(closest-side,rgba(255,200,100,0.15)_0%,transparent_100%)] blur-[100px] z-10" style={{ animation: "nebula-drift-3 28s ease-in-out infinite" }} />
 				</div>
 			</div>
 
 			{/* Left Vertical Navigation */}
-			<div className="fixed left-0 top-0 z-40 hidden h-full w-14 flex-col border-r border-white/5 bg-black/40 backdrop-blur-md lg:flex">
-				<div className="flex h-16 w-full items-center justify-center border-b border-white/5">
+			<div className="fixed left-0 top-0 z-40 hidden h-full w-14 flex-col border-r border-border/50 bg-background/40 backdrop-blur-md lg:flex">
+				<div className="flex h-16 w-full items-center justify-center border-b border-border/50">
 					<span
-						className="font-mono text-xs text-zinc-600"
+						className="font-mono text-xs text-muted-foreground/60"
 						style={{ animation: "data-refresh 4s ease-in-out infinite" }}
 					>
 						SYS
@@ -124,7 +123,7 @@ export default function HomePage() {
 							className={`group relative flex h-7 w-7 items-center justify-center rounded-sm border transition-all duration-300
 								${activeSection === sec.id
 									? "bg-primary/10 border-primary/50 text-primary shadow-[0_0_12px_rgba(163,135,95,0.3)]"
-									: "border-white/5 text-zinc-600 hover:text-zinc-400 hover:border-white/10"}
+									: "border-border/50 text-muted-foreground/60 hover:text-muted-foreground hover:border-border/50"}
 							`}
 						>
 							<span className="font-mono text-[11px]">{sec.label}</span>
@@ -138,7 +137,7 @@ export default function HomePage() {
 					))}
 				</div>
 				<div className="flex h-16 w-full items-end justify-center pb-4">
-					<span className="font-mono text-[11px] text-zinc-600 [writing-mode:vertical-rl]">
+					<span className="font-mono text-[11px] text-muted-foreground/60 [writing-mode:vertical-rl]">
 						V1.0_LTS
 					</span>
 				</div>
@@ -147,7 +146,7 @@ export default function HomePage() {
 			<Navbar />
 
 			{/* ─── Scrolling Notification Ticker ──────────────────────────────── */}
-			<div className="fixed top-16 left-0 right-0 z-30 h-8 overflow-hidden border-b border-white/5 bg-black/80 backdrop-blur-md lg:left-14">
+			<div className="fixed top-16 left-0 right-0 z-30 h-8 overflow-hidden border-b border-border/50 bg-background/80 backdrop-blur-md lg:left-14">
 				<div
 					className="flex h-full items-center gap-12 whitespace-nowrap"
 					style={{ animation: "ticker-scroll 40s linear infinite" }}
@@ -155,8 +154,8 @@ export default function HomePage() {
 					{/* Double the messages for seamless loop */}
 					{[...TICKER_MESSAGES, ...TICKER_MESSAGES].map((msg, i) => (
 						<span key={i} className="flex items-center gap-3 font-mono text-xs tracking-wider">
-							<span className="text-zinc-600">{`${String(Math.floor(Math.random() * 24)).padStart(2, "0")}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}`}</span>
-							<span className={msg.startsWith("WARN") ? "text-amber-500" : msg.startsWith("OK") ? "text-emerald-500" : "text-zinc-400"}>
+							<span className="text-muted-foreground/60">{`${String(Math.floor(Math.random() * 24)).padStart(2, "0")}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}`}</span>
+							<span className={msg.startsWith("WARN") ? "text-amber-500" : msg.startsWith("OK") ? "text-emerald-500" : "text-muted-foreground"}>
 								{msg}
 							</span>
 						</span>

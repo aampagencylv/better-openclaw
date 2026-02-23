@@ -28,6 +28,10 @@ import { useCallback, useMemo, useState } from "react";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
+import {
+	SkillSelectorModal,
+	type SelectedSkill,
+} from "@/components/stack-builder/SkillSelectorModal";
 import { generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +58,8 @@ export default function NewStackPage() {
 	const [clawexaAction, setClawexaAction] = useState<"idle" | "loading" | "sent" | "error">("idle");
 	const [selectedSkillPacks, setSelectedSkillPacks] = useState<Set<string>>(new Set());
 	const [resolverError, setResolverError] = useState<string | null>(null);
+	const [showSkillModal, setShowSkillModal] = useState(false);
+	const [selectedIndividualSkills, setSelectedIndividualSkills] = useState<Map<string, SelectedSkill>>(new Map());
 
 	// Load all services, presets, and skill packs from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
@@ -187,6 +193,7 @@ export default function NewStackPage() {
 	const handleReset = useCallback(() => {
 		setSelectedServices(new Set());
 		setSelectedSkillPacks(new Set());
+		setSelectedIndividualSkills(new Map());
 		setActivePreset(null);
 		setSearchQuery("");
 		setGenerateError(null);
@@ -414,7 +421,7 @@ export default function NewStackPage() {
 			{/* Deploy to clawexa.net modal */}
 			{showClawexaModal && (
 				<div
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+					className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 p-4"
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="clawexa-modal-title"
@@ -612,50 +619,97 @@ export default function NewStackPage() {
 						))}
 					</div>
 
-					{/* Skill Pack selection */}
-					{allSkillPacks.length > 0 && (
-						<div className="mb-6">
-							<h3 className="mb-2 text-sm font-semibold text-foreground">Skill Packs</h3>
-							<p className="mb-3 text-xs text-muted-foreground">
-								Pre-configured bundles of services for common use cases.
-							</p>
-							<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-								{allSkillPacks.map((pack) => {
-									const isSelected = selectedSkillPacks.has(pack.id);
-									return (
+					{/* Advanced Skill Selection */}
+					<div className="mb-6">
+						<div className="flex items-center justify-between">
+							<div>
+								<h3 className="text-sm font-semibold text-foreground">Agent Skills</h3>
+								<p className="mt-0.5 text-xs text-muted-foreground">
+									{selectedIndividualSkills.size > 0
+										? `${selectedIndividualSkills.size} skill${selectedIndividualSkills.size !== 1 ? "s" : ""} selected`
+										: "Browse 180+ curated skills or search the SkillsMP marketplace"}
+								</p>
+							</div>
+							<button
+								type="button"
+								onClick={() => setShowSkillModal(true)}
+								className="flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-all hover:bg-primary/20 border border-primary/20"
+							>
+								<Search className="h-4 w-4" />
+								Browse Skills
+							</button>
+						</div>
+
+						{/* Selected skills chips */}
+						{selectedIndividualSkills.size > 0 && (
+							<div className="mt-3 flex flex-wrap gap-1.5">
+								{Array.from(selectedIndividualSkills.values()).map((skill) => (
+									<span
+										key={skill.id}
+										className={cn(
+											"inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium",
+											skill.source === "curated"
+												? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+												: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+										)}
+									>
+										{skill.emoji} {skill.name}
 										<button
-											key={pack.id}
+											aria-label="Remove skill"
 											type="button"
 											onClick={() => {
-												setSelectedSkillPacks((prev) => {
-													const next = new Set(prev);
-													if (next.has(pack.id)) {
-														next.delete(pack.id);
-													} else {
-														next.add(pack.id);
-													}
+												setSelectedIndividualSkills((prev) => {
+													const next = new Map(prev);
+													next.delete(skill.id);
 													return next;
 												});
 											}}
-											className={cn(
-												"rounded-lg border p-2.5 text-left text-xs transition-all",
-												isSelected
-													? "border-primary/40 bg-primary/10 text-primary"
-													: "border-border bg-surface/50 text-muted-foreground hover:border-primary/20 hover:bg-surface",
-											)}
+											className="ml-0.5 rounded-full p-0.5 hover:bg-background/10 dark:hover:bg-white/10"
 										>
-											<div className="font-medium">
-												{pack.icon ?? ""} {pack.name}
-											</div>
-											<div className="mt-1 text-[10px] opacity-70">
-												{pack.requiredServices.length} services
-											</div>
+											<X className="h-3 w-3" />
 										</button>
-									);
-								})}
+									</span>
+								))}
 							</div>
-						</div>
-					)}
+						)}
+
+						{/* Quick Skill Packs */}
+						{allSkillPacks.length > 0 && (
+							<div className="mt-4">
+								<p className="mb-2 text-xs font-medium text-muted-foreground">Quick Packs:</p>
+								<div className="flex flex-wrap gap-1.5">
+									{allSkillPacks.map((pack) => {
+										const isSelected = selectedSkillPacks.has(pack.id);
+										return (
+											<button
+												key={pack.id}
+												type="button"
+												onClick={() => {
+													setSelectedSkillPacks((prev) => {
+														const next = new Set(prev);
+														if (next.has(pack.id)) {
+															next.delete(pack.id);
+														} else {
+															next.add(pack.id);
+														}
+														return next;
+													});
+												}}
+												className={cn(
+													"shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-all",
+													isSelected
+														? "border-primary/30 bg-primary/10 text-primary"
+														: "border-transparent bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary",
+												)}
+											>
+												{pack.icon ?? ""} {pack.name}
+											</button>
+										);
+									})}
+								</div>
+							</div>
+						)}
+					</div>
 
 					<ServiceGrid
 						services={filteredServices}
@@ -710,7 +764,7 @@ export default function NewStackPage() {
 			{/* Deployment options modal (before building) */}
 			{showDeploymentModal && (
 				<div
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+					className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 p-4"
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="deployment-modal-title"
@@ -822,7 +876,7 @@ export default function NewStackPage() {
 					const name = svc?.name ?? pendingRemovalId;
 					return (
 						<div
-							className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+							className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 p-4"
 							role="dialog"
 							aria-modal="true"
 							aria-labelledby="mandatory-removal-title"
@@ -856,6 +910,14 @@ export default function NewStackPage() {
 						</div>
 					);
 				})()}
+
+			{/* Skill Selector Modal */}
+			<SkillSelectorModal
+				open={showSkillModal}
+				onClose={() => setShowSkillModal(false)}
+				selectedSkills={selectedIndividualSkills}
+				onApply={(skills) => setSelectedIndividualSkills(skills)}
+			/>
 		</div>
 	);
 }
