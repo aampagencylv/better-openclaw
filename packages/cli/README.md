@@ -1,40 +1,54 @@
-# create-better-openclaw
+# @better-openclaw/cli
 
-CLI tool for scaffolding production-ready OpenClaw stacks with Docker Compose.
+The official Command Line Interface (CLI) for rapidly scaffolding production-ready OpenClaw stacks directly to your filesystem. Connects to `@better-openclaw/core` to build and output tailored Docker Compose & native hybrid topologies.
 
-## Usage
+## Installation & Usage
+
+You can use the CLI seamlessly using `pnpx`, `npx`, or standard global installation mechanisms. Node.js >= 20 is required.
 
 ```bash
-# Interactive wizard
-pnpm create better-openclaw@latest [project-directory]
+# Interactive interactive builder (Visual Wizard)
+pnpx create-better-openclaw@latest [my-directory]
 
-# Non-interactive
-pnpm create better-openclaw@latest --preset researcher --yes
-pnpm create better-openclaw@latest --services ollama,qdrant,n8n --skills ollama-local-llm,qdrant-memory
+# Headless / Pipeline generation (Fast track with presets)
+pnpx create-better-openclaw@latest --preset researcher --yes
+
+# Custom Advanced Scaffold
+pnpx create-better-openclaw@latest --services ollama,qdrant,n8n --skills ollama-local-llm,qdrant-memory
 ```
 
-## Options
+## Features
 
-| Flag | Description |
-|------|-------------|
-| `-y, --yes` | Use default configuration (skip wizard) |
-| `--preset <name>` | Use preset: minimal, creator, researcher, devops, full |
-| `--services <ids>` | Comma-separated service IDs |
-| `--skills <packs>` | Comma-separated skill pack IDs |
-| `--proxy <type>` | Reverse proxy: none, caddy, traefik |
-| `--domain <domain>` | Domain for reverse proxy auto-SSL |
-| `--monitoring` | Include Grafana + Prometheus |
-| `--gpu` | Enable GPU passthrough for AI services |
-| `--deployment-type <type>` | **docker** (default): all services in containers. **bare-metal**: native + Docker hybrid — services with a native recipe (e.g. Redis on Linux) get install/run scripts in `native/`, and a top-level `install.sh` or `install.ps1` runs native services first, then `docker compose up` for the rest. |
-| `--platform <arch>` | Target platform: linux/amd64, linux/arm64, windows/amd64, macos/amd64, macos/arm64 |
-| `--dry-run` | Preview without writing files |
-| `--open` | Open web UI stack builder in browser |
+- **Interactive Wizard (Terminal UI):** Guides you smoothly through Platform architecture, Custom vs Preset service selection, AI Skill Packs, and precise deployment/proxy variables. Driven by highly optimized `@clack/prompts`.
+- **Intelligent Dependency Graphs:** Ensures prerequisite tools are correctly enabled.
+- **Multiple Platform Topologies:** Support targeting `linux/amd64`, `linux/arm64`, `macos`, and `windows`.
+- **Multiple Output Formats:** Directly outputs to a `directory`, a `tar.gz` archive, or a `zip` bundle via flags (`--output-format zip`).
 
-## Development
+## Non-Interactive CLI Options
+
+This tool is highly suited for CI/CD environments or scripting automation.
+
+| Argument | Definition |
+|----------|------------|
+| `-y, --yes` | Silently build using default configuration mappings |
+| `--preset <id>` | Scaffold immediately using predefined blueprints (`minimal`, `creator`, `researcher`, `devops`, `full`) |
+| `--services <ids>` | Explicit comma-separated list of service IDs to install |
+| `--skills <ids>` | Explicit comma-separated list of companion Skill Pack IDs to mount into agents |
+| `--proxy <type>` | Assign Reverse proxy networking mode: `none`, `caddy`, `traefik` |
+| `--domain <domain>` | Fully qualified domain mapped to wildcard auto-SSL proxies |
+| `--monitoring` | Embed Prometheus, Grafana, and Cadvisor telemetry |
+| `--gpu` | Passthrough host GPU telemetry to NVIDIA/AMD hardware integrations for deployed LLMs |
+| `--deployment-type <type>` | Defines compute execution layer boundaries. Options: `docker` (Full containerization) vs. `bare-metal` (Native node execution + Docker fallback layer where required). |
+| `--output-format <type>` | File emission mechanism: `directory`, `zip`, `tar` |
+| `--dry-run` | Build generation outputs in memory for trace logging without writing to disk |
+| `--open` | Escape terminal workflow and launch the Visual Web UI `better-openclaw.dev` platform |
+
+## Package Development
+
+The CLI compiles against standard TypeScript configurations into dual CJS/MJS mappings for backwards execution compatibility.
 
 ```bash
-pnpm build    # Compile TypeScript
-pnpm dev      # Watch mode
-pnpm test     # Run tests
-pnpm lint     # Run Biome
+pnpm build # Compile via tsdown
+pnpm dev   # Hot-reload transpilation watch mode
+pnpm test  # CLI unit execution
 ```

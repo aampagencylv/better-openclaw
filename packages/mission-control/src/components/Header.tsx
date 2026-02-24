@@ -9,7 +9,7 @@ interface HeaderProps {
 export default function Header({ onOpenAgents, onOpenLiveFeed }: HeaderProps) {
 	return (
 		<header
-			className="flex items-center justify-between px-6 border-b border-border bg-card"
+			className="flex items-center justify-between px-6 border-b border-border/50 glass-panel z-10"
 			style={{ gridArea: "header" }}
 		>
 			<div className="flex items-center gap-3">

@@ -1,114 +1,81 @@
 # @better-openclaw/mission-control
 
-Real-time agent oversight dashboard for Better OpenClaw. Built with **Vite + React + Convex + Tailwind CSS**.
+The centralized oversight system and orchestration dashboard for Better OpenClaw. Built entirely upon extremely modern standards: Vite, React, Convex (real-time backend), and Tailwind v4. 
+It enables humans to interact with, manage, and assign goals to autonomous agent deployments running within constructed OpenClaw clusters.
 
 ## Features
 
-- 🎯 **Kanban Mission Queue** — Inbox → Assigned → In Progress → Review → Done
-- 🤖 **Agent Sidebar** — Real-time agent status, roles, and quick task assignment
-- 📄 **Document Browser** — Files created by agents with preview and conversation context
-- 📡 **Live Activity Feed** — Real-time stream of agent actions and status updates
-- 🔗 **OpenClaw Integration** — Webhook handler that auto-creates tasks from agent runs
-- 🔒 **Auth** — Convex Auth with email/password
-- 📱 **Responsive** — Drawer-based sidebars on mobile
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js ≥ 20
-- A [Convex](https://convex.dev) account (free tier works)
-
-### 1. Install Dependencies
-
-```bash
-pnpm install
-```
-
-### 2. Set Up Convex
-
-```bash
-cd packages/mission-control
-npx convex dev --once   # Creates your Convex project
-```
-
-This generates a `.env.local` file with your `VITE_CONVEX_URL`.
-
-### 3. Seed Sample Data (Optional)
-
-```bash
-npx convex run seed:run
-```
-
-### 4. Start Development
-
-```bash
-pnpm dev
-```
-
-This runs both the Vite dev server (port 3660) and Convex dev in parallel.
-
-### 5. Install OpenClaw Hook (Automatic)
-
-```bash
-npm run setup
-# or: npm run setup -- --url https://your-project.convex.site/openclaw/event
-```
-
-This copies the hook handler to `~/.openclaw/hooks/mission-control/` and updates your OpenClaw config.
+- 🎯 **Kanban Mission Queue:** Watch agent tasking progress organically via a dynamic Inbox → Assigned → In Progress → Review → Done state graph.
+- 🤖 **Agent Oversight Sidebar:** Real-time visibility into agent health status (idle, active, blocked), hierarchical levels (LEAD, INT, SPC), and automated rapid task dispatch mapping.
+- 📄 **Document Management & Viewing Trays:** Access Markdown records, images, code files, and operational artifacts asynchronously created by AI workers.
+- 📡 **Live Telemetry Feed:** Real-time logging of activity broadcasts tracking agent state transitions and tool outputs.
+- 🔗 **Deep OpenClaw Hooks Integration:** Natively receives webhook triggers from OpenClaw instances automatically instantiating human-review tracks for requested actions.
+- 🔒 **Convex Auth Layer:** Built-in multi-tenant isolation and email/password secure gating.
+- ✨ **Better-OpenClaw Aesthetic UI:** Responsive layout logic leveraging modern Glassmorphism, CSS dark themes by default, ErrorBoundaries for crash prevention, and smooth suspense loading indicators.
 
 ## Architecture
 
 ```
 packages/mission-control/
-├── convex/              # Convex backend
-│   ├── schema.ts        # Database schema (agents, tasks, messages, etc.)
-│   ├── openclaw.ts      # Webhook mutation for OpenClaw events
-│   ├── http.ts          # HTTP endpoint: POST /openclaw/event
-│   ├── queries.ts       # Read queries (listAgents, listTasks, etc.)
-│   ├── tasks.ts         # Task mutations (create, update, archive)
-│   ├── agents.ts        # Agent mutations (CRUD)
-│   ├── documents.ts     # Document queries and mutations
-│   ├── messages.ts      # Message send mutation
-│   └── seed.ts          # Sample data seeder
-├── hooks/               # OpenClaw hook
-│   └── mission-control/
-│       ├── handler.ts   # Event capture and webhook POST
-│       └── HOOK.md      # Hook metadata
-├── src/                 # React frontend
-│   ├── main.tsx         # Entry point with ConvexAuthProvider
-│   ├── App.tsx          # Main layout orchestrator
-│   ├── index.css        # Design system (Tailwind v4 + custom vars)
-│   └── components/      # UI components
-│       ├── Header.tsx
-│       ├── AgentsSidebar.tsx
-│       ├── MissionQueue.tsx
-│       ├── KanbanColumn.tsx
-│       ├── TaskCard.tsx
-│       ├── TaskDetailPanel.tsx
-│       ├── AddTaskModal.tsx
-│       ├── AddAgentModal.tsx
-│       ├── AgentDetailTray.tsx
-│       ├── SignIn.tsx
-│       ├── RightSidebar/
-│       └── Trays/
-├── setup.mjs            # Auto-install hook script
-├── vite.config.ts
-└── package.json
+├── convex/              # Auto-syncing real-time database schema
+│   ├── schema.ts        # Declarative data models (agents, tasks, messages)
+│   ├── openclaw.ts      # Webhook ingestion logic (POST tracking)
+│   ├── queries.ts       # Database accessors and subscription polling
+│   └── seed.ts          # Sample state bootstrapping
+├── hooks/               # OpenClaw webhook listener definition
+├── src/                 
+│   ├── components/      # Glassmorphic React Components (Sidebars, Trays, Modal logic)
+│   ├── index.css        # Custom variable mapping and utility classes (`.glass-panel`)
+│   └── App.tsx          # Orchestrator embedding ErrorBoundaries and suspense tracks
+├── Dockerfile           # OCI-compliant isolated build directives
+└── setup.mjs            # Installation hook injection logic 
 ```
 
-## Environment Variables
+## Quick Start Configuration
 
-| Variable | Description | Default |
-|---|---|---|
-| `VITE_CONVEX_URL` | Convex deployment URL | Set by `npx convex dev` |
-| `MISSION_CONTROL_URL` | Webhook endpoint for hook | `http://127.0.0.1:3211/openclaw/event` |
+Node 20+ and a free [Convex.dev](https://convex.dev/) account are the only true prerequisites.
 
-## Docker
+### 1. Database Provisioning
+
+Initiate Convex cloud syncing to build a `.env.local` backing context containing the `VITE_CONVEX_URL` route:
+
+```bash
+cd packages/mission-control
+npx convex dev --once
+```
+
+### 2. Seeding Sample Traces (Optional)
+
+Generate dummy agents and standard mission flows for debugging UI states:
+
+```bash
+npx convex run seed:run
+```
+
+### 3. Server Initialization
+
+Start both the Hot-Reload Vite frontend mapping and the real-time Convex cloud synchronization socket:
+
+```bash
+pnpm dev
+# (Accessible at http://127.0.0.1:3660)
+```
+
+### 4. Injecting OpenClaw Hooks (Crucial step)
+
+Connect a pre-existing deployed OpenClaw cluster to push webhook telemetry back into this console application:
+
+```bash
+npm run setup -- --url https://<your-convex-project>.convex.site/openclaw/event
+```
+*(This places the event handler physically into `~/.openclaw/hooks/mission-control/` modifying the active cluster bindings)*
+
+## Containerization
+
+The SPA can be instantly containerized using standard execution directives:
 
 ```bash
 docker build -t mission-control .
 docker run -p 3660:3660 mission-control
 ```
-
-> **Note**: The Docker image serves the static SPA build. You still need a running Convex backend.
+*(NOTE: The compiled SPA strictly serves web fragments. The actual Convex backend socket execution stays resident in the cloud context unless specifically overridden with self-hosted Convex variants.)*

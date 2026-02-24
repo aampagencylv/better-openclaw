@@ -42,8 +42,8 @@ export default function AgentsSidebar({
 	const agents = useQuery(api.queries.listAgents, {});
 
 	const sidebarClasses = [
-		"flex flex-col bg-sidebar border-r border-sidebar-border overflow-y-auto",
-		"md:static md:translate-x-0",
+		"flex flex-col glass-panel border-r border-sidebar-border/50 overflow-y-auto",
+		"md:static md:translate-x-0 z-10",
 		"sidebar-drawer sidebar-drawer--left",
 		isOpen ? "is-open" : "",
 	].join(" ");

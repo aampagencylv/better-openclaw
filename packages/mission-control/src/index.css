@@ -269,6 +269,19 @@
   background: oklch(0.8 0 0);
 }
 
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(var(--background), 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--border), 0.5);
+  box-shadow: var(--shadow-sm);
+}
+.dark .glass-panel {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* Agent Detail Tray */
 .agent-tray {
   position: fixed;

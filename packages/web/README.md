@@ -1,27 +1,47 @@
 # @better-openclaw/web
 
-Next.js web application for better-openclaw: visual stack builder, documentation, and showcase.
+The primary front-end platform for the Better OpenClaw ecosystem. Built entirely with Next.js (App Router), React, and Tailwind CSS. It serves as both the documentation hub and the interactive Visual Stack Builder GUI.
 
-## Features
+## Platform Features
 
-- **Visual Stack Builder** (`/new`) — Pick services, add skill packs, live preview; choose Docker (all containers) or bare-metal (native + Docker hybrid) and platform before download
-- **Documentation** (`/docs`) — Installation, CLI, API, services, skill packs, deployment
-- **API Reference** (`/api-docs`) — REST endpoints with curl examples
-- **Showcase** (`/showcase`) — Example stacks and project gallery
+- **Interactive Visual Stack Builder (`/new`):** The graphical equivalent of the CLI wizard. Users interactively click, categorize, and filter Docker services and AI skills, select architecture targets, and generate entire deployments to standard Zip or JSON configurations instantly.
+- **Showcase Gallery (`/showcase`):** Features community examples, verified combinations, and high-impact AI tool chaining templates for deployment.
+- **Core Documentation (`/docs`):** Statically generated and easily updatable guides on deploying, tuning, and contributing to OpenClaw architectures.
+- **Dynamic API References (`/api-docs`):** Swagger-compatible REST API documentation exposing all possible endpoints for programmatic stack generation payloads and schemas.
+- **Adaptive Theming:** Supports seamless Light / Premium Dark mode matching the Better-OpenClaw Glassmorphism aesthetic. A user preference switch is integrated throughout.
 
-## Run
+## Local Configuration
 
-```bash
-pnpm dev    # Development server, port 3654
-pnpm build  # Production build
-pnpm start  # Production server
+The Web App communicates heavily with the `@better-openclaw/api` backend to fetch dynamic service registries and process generation payloads. 
+
+Ensure the `.env.local` accurately targets the backing execution tier:
+
+```env
+# URL pointer to the api package process
+NEXT_PUBLIC_API_URL=http://localhost:3456/v1
+
+# Destination webhook for parsing and pushing JSON complete generation payloads
+NEXT_PUBLIC_CLAWEXA_DEPLOY_URL=https://clawexa.net/deploy
 ```
 
-Set `NEXT_PUBLIC_API_URL` to point at the API server (default: `http://localhost:3456/v1`).
+## Running Web Execution
 
-## Development
+Ensure standard Node 20 environments are active:
 
 ```bash
-pnpm lint     # Run Biome
-pnpm typecheck
+# Launch hot-reload watcher spanning port 3654
+pnpm dev
+
+# Construct and minify Next app bundles (Triggers route compilation)
+pnpm build
+
+# Boot local production replica on port 3654
+pnpm start
+```
+
+## Workspace Development
+
+```bash
+pnpm lint      # Execute Biome style formatting and logical verifications
+pnpm typecheck # TSC strict no-emit transpilation validation
 ```

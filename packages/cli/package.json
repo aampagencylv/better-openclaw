@@ -19,10 +19,10 @@
     }
   },
   "bin": {
-    "@better-openclaw/cli": "./dist/index.js",
-    "create-better-openclaw": "./dist/index.js",
-    "better-openclaw": "./dist/index.js",
-    "better-openclaw-cli": "./dist/index.js"
+    "@better-openclaw/cli": "./dist/index.mjs",
+    "create-better-openclaw": "./dist/index.mjs",
+    "better-openclaw": "./dist/index.mjs",
+    "better-openclaw-cli": "./dist/index.mjs"
   },
   "files": [
     "dist",
@@ -32,7 +32,7 @@
     "build": "tsdown",
     "build:tsc": "tsc",
     "dev": "tsc --watch",
-    "start": "node dist/index.js",
+    "start": "node dist/index.mjs",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:watch": "vitest",
@@ -42,7 +42,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@better-openclaw/core": "^1.0.12",
+    "@better-openclaw/core": "^1.0.13",
     "@clack/prompts": "^1.0.0",
     "commander": "^14.0.3",
     "picocolors": "^1.1.1"

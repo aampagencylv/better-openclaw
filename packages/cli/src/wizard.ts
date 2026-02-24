@@ -1,6 +1,7 @@
-import type { GenerationInput, ServiceDefinition, SkillPack } from "@better-openclaw/core";
+import type { GenerationInput, Preset, ServiceDefinition, SkillPack } from "@better-openclaw/core";
 import {
 	generate,
+	getAllPresets,
 	getAllServices,
 	getAllSkillPacks,
 	getCompatibleSkillPacks,
@@ -117,32 +118,62 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		}),
 	);
 
-	// ── Step 2: Service Selection ─────────────────────────────────────────────
+	// ── Step 2: Build Method & Service Selection ──────────────────────────────
 
-	const allServices = getAllServices();
-
-	// Build grouped options for groupMultiselect
-	const serviceGroups: Record<string, { value: string; label: string; hint?: string }[]> = {};
-
-	for (const cat of SERVICE_CATEGORIES) {
-		const services = allServices.filter((s: ServiceDefinition) => s.category === cat.id);
-		if (services.length === 0) continue;
-		serviceGroups[`${cat.icon} ${cat.name}`] = services.map((s: ServiceDefinition) => ({
-			value: s.id,
-			label: s.name,
-			hint: s.description,
-		}));
-	}
-
-	const selectedServices = ensureNotCancelled(
-		await groupMultiselect({
-			message: "Select companion services:",
-			options: serviceGroups,
-			required: false,
+	const buildMethod = ensureNotCancelled(
+		await select({
+			message: "How would you like to build your stack?",
+			options: [
+				{ value: "preset", label: "Start from a preset", hint: "recommended" },
+				{ value: "custom", label: "Custom build", hint: "select individual services" },
+			],
 		}),
 	);
 
-	const serviceIds = (selectedServices as string[]).filter(Boolean);
+	const allServices = getAllServices();
+	let serviceIds: string[] = [];
+	let preset: Preset | undefined;
+
+	if (buildMethod === "preset") {
+		const allPresets = getAllPresets();
+		const presetId = ensureNotCancelled(
+			await select({
+				message: "Select a preset:",
+				options: allPresets.map((p: Preset) => ({
+					value: p.id,
+					label: p.name,
+					hint: p.description,
+				})),
+			}),
+		);
+		preset = allPresets.find((p: Preset) => p.id === presetId);
+		if (preset) {
+			serviceIds = [...preset.services];
+		}
+	} else {
+		// Build grouped options for groupMultiselect
+		const serviceGroups: Record<string, { value: string; label: string; hint?: string }[]> = {};
+
+		for (const cat of SERVICE_CATEGORIES) {
+			const services = allServices.filter((s: ServiceDefinition) => s.category === cat.id);
+			if (services.length === 0) continue;
+			serviceGroups[`${cat.icon} ${cat.name}`] = services.map((s: ServiceDefinition) => ({
+				value: s.id,
+				label: s.name,
+				hint: s.description,
+			}));
+		}
+
+		const selectedServices = ensureNotCancelled(
+			await groupMultiselect({
+				message: "Select companion services:",
+				options: serviceGroups,
+				required: false,
+			}),
+		);
+
+		serviceIds = (selectedServices as string[]).filter(Boolean);
+	}
 
 	// ── Step 3: Auto-Dependency Resolution ────────────────────────────────────
 
@@ -192,6 +223,8 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 	let selectedSkillPacks: string[] = [];
 
 	if (compatiblePacks.length > 0) {
+		const initialSkillPacks = preset ? preset.skillPacks : [];
+		
 		const skillPackChoice = ensureNotCancelled(
 			await multiselect({
 				message: "Select skill packs (filtered to compatible):",
@@ -200,6 +233,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 					label: `${p.icon ?? "📦"} ${p.name}`,
 					hint: p.description,
 				})),
+				initialValues: initialSkillPacks.filter((id) => compatiblePacks.some((p) => p.id === id)),
 				required: false,
 			}),
 		);
@@ -267,6 +301,17 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		}),
 	);
 
+	const outputFormat = ensureNotCancelled(
+		await select({
+			message: "Output format:",
+			options: [
+				{ value: "directory" as const, label: "Directory", hint: "default" },
+				{ value: "zip" as const, label: "Zip Archive" },
+				{ value: "tar" as const, label: "Tar Archive" },
+			],
+		}),
+	);
+
 	// ── Step 6: Review Summary ────────────────────────────────────────────────
 
 	const serviceNames = finalServiceIds
@@ -292,6 +337,8 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		`${pc.bold("Deployment:")}    ${String(deployment)}`,
 		`${pc.bold("Deploy type:")}   ${String(deploymentType)}`,
 		`${pc.bold("Platform:")}      ${String(platform)}`,
+		`${pc.bold("Format:")}        ${String(outputFormat)}`,
+		...(preset ? [`${pc.bold("Preset:")}        ${preset.name}`] : []),
 		`${pc.bold("Services:")}`,
 		`  ${serviceNames || pc.dim("(none)")}`,
 		`${pc.bold("Skill Packs:")}`,
@@ -345,7 +392,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		process.exit(1);
 	}
 
-	await writeProject(String(projectDir), result.files);
+	await writeProject(String(projectDir), result.files, {
+		outputFormat: String(outputFormat),
+	});
 
 	s.stop("Stack generated successfully!");
 
