@@ -10,6 +10,7 @@ import MissionQueue from "./components/MissionQueue";
 import RightSidebar from "./components/RightSidebar";
 import SignInForm from "./components/SignIn";
 import TaskDetailPanel from "./components/TaskDetailPanel";
+import ClawRecipesTray from "./components/Trays/ClawRecipesTray";
 import TrayContainer from "./components/Trays/TrayContainer";
 
 export default function App() {
@@ -51,6 +52,7 @@ export default function App() {
 	const [selectedDocumentId, setSelectedDocumentId] = useState<Id<"documents"> | null>(null);
 	const [showConversationTray, setShowConversationTray] = useState(false);
 	const [showPreviewTray, setShowPreviewTray] = useState(false);
+	const [showClawRecipesTray, setShowClawRecipesTray] = useState(false);
 
 	const handleSelectDocument = useCallback((id: Id<"documents"> | null) => {
 		if (id === null) {
@@ -97,6 +99,7 @@ export default function App() {
 							setIsRightSidebarOpen(true);
 							setIsLeftSidebarOpen(false);
 						}}
+						onOpenClawRecipes={() => setShowClawRecipesTray(true)}
 					/>
 
 					{isAnySidebarOpen && (
@@ -176,6 +179,11 @@ export default function App() {
 			<Unauthenticated>
 				<SignInForm />
 			</Unauthenticated>
+
+			<ClawRecipesTray
+				isOpen={showClawRecipesTray}
+				onClose={() => setShowClawRecipesTray(false)}
+			/>
 		</>
 	);
 }
