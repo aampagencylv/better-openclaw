@@ -246,7 +246,45 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		);
 	}
 
-	// ── Step 5: Networking & Security ─────────────────────────────────────────
+	// ── Step 5: AI Providers & Networking ─────────────────────────────────────────
+
+	const aiProvidersChoice = ensureNotCancelled(
+		await multiselect({
+			message: "Select AI Providers to enable (Space to select, Enter to confirm):",
+			options: [
+				{ value: "openai", label: "OpenAI" },
+				{ value: "anthropic", label: "Anthropic (Claude)" },
+				{ value: "google", label: "Google (Gemini)" },
+				{ value: "xai", label: "xAI (Grok)" },
+				{ value: "deepseek", label: "DeepSeek" },
+				{ value: "groq", label: "Groq" },
+				{ value: "openrouter", label: "OpenRouter" },
+				{ value: "mistral", label: "Mistral" },
+				{ value: "together", label: "Together AI" },
+				{ value: "ollama", label: "Ollama (Local)" },
+				{ value: "lmstudio", label: "LM Studio (Local)" },
+				{ value: "vllm", label: "vLLM (Local)" },
+			],
+			initialValues: ["openai"],
+			required: false,
+		}),
+	);
+	
+	const selectedAiProviders = (aiProvidersChoice as string[]).filter(Boolean) as GenerationInput["aiProviders"];
+
+	const gsdRuntimesChoice = ensureNotCancelled(
+		await multiselect({
+			message: "Install Get-Shit-Done AI Workflows? Select target runtimes (Optional):",
+			options: [
+				{ value: "claude", label: "Claude Code", hint: "Anthropic's CLI" },
+				{ value: "opencode", label: "OpenCode", hint: "Open source CLI" },
+				{ value: "gemini", label: "Gemini CLI", hint: "Google's CLI" },
+				{ value: "codex", label: "Codex", hint: "Skills-first agent" },
+			],
+			required: false,
+		})
+	);
+	const selectedGsdRuntimes = (gsdRuntimesChoice as string[]).filter(Boolean) as GenerationInput["gsdRuntimes"];
 
 	const proxy = ensureNotCancelled(
 		await select({
@@ -343,6 +381,10 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		`  ${serviceNames || pc.dim("(none)")}`,
 		`${pc.bold("Skill Packs:")}`,
 		`  ${skillPackNames}`,
+		`${pc.bold("AI Providers:")}`,
+		`  ${selectedAiProviders?.length ? selectedAiProviders.join(", ") : pc.dim("(none)")}`,
+		`${pc.bold("GSD Channels:")}`,
+		`  ${selectedGsdRuntimes?.length ? selectedGsdRuntimes.join(", ") : pc.dim("(none)")}`,
 		`${pc.bold("Proxy:")}         ${String(proxy)}${domain ? ` (${domain})` : ""}`,
 		`${pc.bold("GPU:")}           ${gpu ? "yes" : "no"}`,
 		`${pc.bold("Monitoring:")}    ${enableMonitoring ? "yes" : "no"}`,
@@ -372,6 +414,8 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		projectName: String(projectDir),
 		services: finalServiceIds,
 		skillPacks: selectedSkillPacks,
+		aiProviders: selectedAiProviders,
+		gsdRuntimes: selectedGsdRuntimes,
 		proxy: String(proxy) as GenerationInput["proxy"],
 		domain,
 		gpu,

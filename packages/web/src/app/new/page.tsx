@@ -10,6 +10,8 @@ import {
 	SERVICE_CATEGORIES,
 	type ServiceDefinition,
 	type SkillPack,
+	type AiProvider,
+	type GsdRuntime,
 } from "@better-openclaw/core";
 import JSZip from "jszip";
 import {
@@ -57,6 +59,8 @@ export default function NewStackPage() {
 	const [showClawexaModal, setShowClawexaModal] = useState(false);
 	const [clawexaAction, setClawexaAction] = useState<"idle" | "loading" | "sent" | "error">("idle");
 	const [selectedSkillPacks, setSelectedSkillPacks] = useState<Set<string>>(new Set());
+	const [selectedAiProviders, setSelectedAiProviders] = useState<Set<AiProvider>>(new Set(["openai"]));
+	const [selectedGsdRuntimes, setSelectedGsdRuntimes] = useState<Set<GsdRuntime>>(new Set());
 	const [resolverError, setResolverError] = useState<string | null>(null);
 	const [showSkillModal, setShowSkillModal] = useState(false);
 	const [selectedIndividualSkills, setSelectedIndividualSkills] = useState<
@@ -90,6 +94,8 @@ export default function NewStackPage() {
 			const result = resolve({
 				services: Array.from(selectedServices),
 				skillPacks: Array.from(selectedSkillPacks),
+				aiProviders: Array.from(selectedAiProviders),
+				gsdRuntimes: Array.from(selectedGsdRuntimes),
 				proxy: "none",
 				gpu: false,
 				platform: "linux/amd64",
@@ -195,6 +201,8 @@ export default function NewStackPage() {
 	const handleReset = useCallback(() => {
 		setSelectedServices(new Set());
 		setSelectedSkillPacks(new Set());
+		setSelectedAiProviders(new Set(["openai"]));
+		setSelectedGsdRuntimes(new Set());
 		setSelectedIndividualSkills(new Map());
 		setActivePreset(null);
 		setSearchQuery("");
@@ -219,6 +227,8 @@ export default function NewStackPage() {
 					projectName: name,
 					services: Array.from(selectedServices),
 					skillPacks: Array.from(selectedSkillPacks),
+					aiProviders: Array.from(selectedAiProviders),
+					gsdRuntimes: Array.from(selectedGsdRuntimes),
 					proxy: "none",
 					gpu: false,
 					platform,
@@ -449,6 +459,8 @@ export default function NewStackPage() {
 											projectName: projectName || "my-stack",
 											services: Array.from(selectedServices),
 											skillPacks: [],
+											aiProviders: Array.from(selectedAiProviders),
+											gsdRuntimes: Array.from(selectedGsdRuntimes),
 											proxy: "none",
 											gpu: false,
 											platform: "linux/amd64",
@@ -484,6 +496,8 @@ export default function NewStackPage() {
 											projectName: projectName || "my-stack",
 											services: Array.from(selectedServices),
 											skillPacks: [],
+											aiProviders: Array.from(selectedAiProviders),
+											gsdRuntimes: Array.from(selectedGsdRuntimes),
 											proxy: "none",
 											gpu: false,
 											platform: "linux/amd64",
@@ -524,6 +538,8 @@ export default function NewStackPage() {
 												projectName: projectName || "my-stack",
 												services: Array.from(selectedServices),
 												skillPacks: [],
+												aiProviders: Array.from(selectedAiProviders),
+												gsdRuntimes: Array.from(selectedGsdRuntimes),
 												proxy: "none",
 												gpu: false,
 												platform: "linux/amd64",
@@ -711,6 +727,106 @@ export default function NewStackPage() {
 								</div>
 							</div>
 						)}
+
+						{/* AI Providers Selection */}
+						<div className="mt-6 mb-6">
+							<div className="flex items-center justify-between mb-2">
+								<div>
+									<h3 className="text-sm font-semibold text-foreground">AI Providers</h3>
+									<p className="mt-0.5 text-xs text-muted-foreground">Select one or more LLM gateways to configure</p>
+								</div>
+							</div>
+							<div className="flex flex-wrap gap-2 mt-3">
+								{[
+									{ id: "openai", name: "OpenAI" },
+									{ id: "anthropic", name: "Anthropic" },
+									{ id: "google", name: "Google Gemini" },
+									{ id: "xai", name: "xAI Grok" },
+									{ id: "deepseek", name: "DeepSeek" },
+									{ id: "groq", name: "Groq" },
+									{ id: "openrouter", name: "OpenRouter" },
+									{ id: "mistral", name: "Mistral" },
+									{ id: "together", name: "Together AI" },
+									{ id: "ollama", name: "Ollama (Local)" },
+									{ id: "lmstudio", name: "LM Studio" },
+									{ id: "vllm", name: "vLLM" },
+								].map((provider) => {
+									const providerId = provider.id as AiProvider;
+									const isSelected = selectedAiProviders.has(providerId);
+									return (
+										<button
+											key={provider.id}
+											type="button"
+											onClick={() => {
+												setSelectedAiProviders((prev) => {
+													const next = new Set(prev);
+													if (next.has(providerId)) {
+														next.delete(providerId);
+													} else {
+														next.add(providerId);
+													}
+													return next;
+												});
+											}}
+											className={cn(
+												"shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all",
+												isSelected
+													? "border-primary bg-primary/20 text-primary shadow-[0_0_10px_rgba(163,135,95,0.2)]"
+													: "border-border/50 bg-surface/50 text-muted-foreground hover:bg-surface hover:text-foreground",
+											)}
+										>
+											{provider.name}
+										</button>
+									);
+								})}
+							</div>
+						</div>
+
+						{/* Get-Shit-Done Channels Selection */}
+						<div className="mt-6 mb-6">
+							<div className="flex items-center justify-between mb-2">
+								<div>
+									<h3 className="text-sm font-semibold text-foreground">GSD AI Runtimes (Optional)</h3>
+									<p className="mt-0.5 text-xs text-muted-foreground">Select one or more agent workflows to install automatically</p>
+								</div>
+							</div>
+							<div className="flex flex-wrap gap-2 mt-3">
+								{([
+									{ id: "claude", name: "Claude Code", emoji: "🟠" },
+									{ id: "opencode", name: "OpenCode", emoji: "🟢" },
+									{ id: "gemini", name: "Gemini CLI", emoji: "🔵" },
+									{ id: "codex", name: "Codex", emoji: "🟣" },
+								] as const).map((runtime) => {
+									const runtimeId = runtime.id as unknown as GsdRuntime;
+									const isSelected = selectedGsdRuntimes.has(runtimeId);
+									return (
+										<button
+											key={runtime.id}
+											type="button"
+											onClick={() => {
+												setSelectedGsdRuntimes((prev) => {
+													const next = new Set(prev);
+													if (next.has(runtime.id as GsdRuntime)) {
+														next.delete(runtime.id as GsdRuntime);
+													} else {
+														next.add(runtime.id as GsdRuntime);
+													}
+													return next;
+												});
+											}}
+											className={cn(
+												"shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all",
+												isSelected
+													? "border-primary bg-primary/20 text-primary shadow-[0_0_10px_rgba(163,135,95,0.2)]"
+													: "border-border/50 bg-surface/50 text-muted-foreground hover:bg-surface hover:text-foreground",
+											)}
+										>
+											{runtime.emoji} {runtime.name}
+										</button>
+									);
+								})}
+							</div>
+						</div>
 					</div>
 
 					<ServiceGrid

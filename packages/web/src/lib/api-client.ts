@@ -127,6 +127,8 @@ export async function generateStack(config: {
 	projectName: string;
 	services: string[];
 	skillPacks?: string[];
+	aiProviders?: string[];
+	gsdRuntimes?: string[];
 	proxy?: string;
 	domain?: string;
 	gpu?: boolean;

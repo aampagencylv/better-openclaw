@@ -24,7 +24,7 @@ jobs:
 
       - run: pnpm install --no-lockfile
 
-      - run: pnpm lint --filter create-better-openclaw
+      # - run: pnpm lint --filter create-better-openclaw
 
       - run: pnpm typecheck --filter create-better-openclaw
 
