@@ -2,7 +2,18 @@
   "name": "create-better-openclaw",
   "version": "1.0.0",
   "private": false,
-  "description": "CLI tool for scaffolding production-ready OpenClaw stacks with Docker Compose",
+  "description": "Scaffold production-ready OpenClaw Docker Compose stacks in one command. 95+ services, presets, auto-wiring, and skill packs.",
+  "author": "bidew.io <bachir@bidew.io>",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/diopisemou/better-openclaw.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://better-openclaw.dev",
+  "bugs": {
+    "url": "https://github.com/diopisemou/better-openclaw/issues"
+  },
   "main": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -19,7 +30,6 @@
     }
   },
   "bin": {
-    "@better-openclaw/cli": "./dist/index.mjs",
     "create-better-openclaw": "./dist/index.mjs",
     "better-openclaw": "./dist/index.mjs",
     "better-openclaw-cli": "./dist/index.mjs"
@@ -33,6 +43,7 @@
     "build:tsc": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.mjs",
+    "postinstall": "node -e \"try{console.log('\\n\\x1b[36m%s\\x1b[0m','  create-better-openclaw installed!');console.log('  Run: npx create-better-openclaw generate --preset researcher');console.log('  Docs: https://better-openclaw.dev\\n')}catch{}\"",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:watch": "vitest",
@@ -42,7 +53,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@better-openclaw/core": "^1.0.14",
+    "@better-openclaw/core": "^1.0.16",
     "@clack/prompts": "^1.0.0",
     "commander": "^14.0.3",
     "picocolors": "^1.1.1"
@@ -54,19 +65,19 @@
     "vitest": "^4.0.18"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "keywords": [
-    "clawexa",
     "openclaw",
     "better-openclaw",
     "create-better-openclaw",
-    "create-better-openclaw",
-    "better-openclaw-cli",
     "docker",
     "docker-compose",
     "scaffolding",
     "cli",
-    "ai-agent"
+    "ai-agent",
+    "devops",
+    "self-hosted",
+    "infrastructure"
   ]
 }

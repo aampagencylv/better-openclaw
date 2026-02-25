@@ -180,10 +180,7 @@ export default function App() {
 				<SignInForm />
 			</Unauthenticated>
 
-			<ClawRecipesTray
-				isOpen={showClawRecipesTray}
-				onClose={() => setShowClawRecipesTray(false)}
-			/>
+			<ClawRecipesTray isOpen={showClawRecipesTray} onClose={() => setShowClawRecipesTray(false)} />
 		</>
 	);
 }

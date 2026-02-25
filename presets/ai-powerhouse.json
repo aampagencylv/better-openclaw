@@ -1,0 +1,20 @@
+{
+  "id": "ai-powerhouse",
+  "name": "AI Powerhouse",
+  "description": "AI Powerhouse preset",
+  "services": [
+    "ollama",
+    "redis",
+    "qdrant",
+    "minio",
+    "n8n",
+    "postgresql",
+    "caddy",
+    "open-webui",
+    "searxng"
+  ],
+  "skillPacks": [
+    "ai-powerhouse-agent"
+  ],
+  "estimatedMemoryMB": 8192
+}

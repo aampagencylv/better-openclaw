@@ -8,7 +8,9 @@
       "Bash(node -e:*)",
       "Bash(node --loader ts-node/esm:*)",
       "Bash(npx tsx:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm add:*)"
     ]
   }
 }

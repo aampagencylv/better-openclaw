@@ -1,4 +1,4 @@
-import { getAllPresets } from "@better-openclaw/core";
+import { getAllPresets, getPresetById, getServiceById } from "@better-openclaw/core";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
 const route = new OpenAPIHono();
@@ -52,6 +52,66 @@ route.openapi(presetsGet, (c) => {
 			500,
 		);
 	}
+});
+
+// ─── GET /presets/:id ────────────────────────────────────────────────────────
+
+const presetGetById = createRoute({
+	method: "get",
+	path: "/{id}",
+	tags: ["Presets"],
+	summary: "Get a preset by ID with service details",
+	request: {
+		params: z.object({
+			id: z.string().min(1),
+		}),
+	},
+	responses: {
+		200: {
+			description: "Preset details with resolved services",
+			content: {
+				"application/json": {
+					schema: z.object({
+						preset: z.any(),
+						services: z.array(z.any()),
+					}),
+				},
+			},
+		},
+		404: {
+			description: "Preset not found",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
+
+route.openapi(presetGetById, (c) => {
+	const { id } = c.req.valid("param");
+	const preset = getPresetById(id);
+
+	if (!preset) {
+		return c.json(
+			{
+				error: {
+					code: "NOT_FOUND",
+					message: `Preset "${id}" not found`,
+				},
+			},
+			404,
+		);
+	}
+
+	const services = preset.services
+		.map((svcId) => getServiceById(svcId))
+		.filter(Boolean);
+
+	return c.json({ preset, services });
 });
 
 export { route as presetsRoute };

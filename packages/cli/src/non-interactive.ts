@@ -35,6 +35,7 @@ export interface NonInteractiveOptions {
 	dryRun?: boolean;
 	yes?: boolean;
 	outputFormat?: string;
+	json?: boolean;
 }
 
 /**
@@ -148,6 +149,8 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		projectName: projectDir,
 		services: serviceIds,
 		skillPacks: skillPackIds,
+		aiProviders: [],
+		gsdRuntimes: [],
 		proxy,
 		domain: options.domain,
 		gpu: options.gpu ?? false,
@@ -159,25 +162,45 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		monitoring: options.monitoring ?? false,
 	};
 
-	console.log("");
-	console.log(pc.bold("Generating stack..."));
-	console.log(pc.dim(`  Services: ${serviceIds.length > 0 ? serviceIds.join(", ") : "(none)"}`));
-	console.log(
-		pc.dim(`  Skill packs: ${skillPackIds.length > 0 ? skillPackIds.join(", ") : "(none)"}`),
-	);
-	console.log(pc.dim(`  Proxy: ${proxy}`));
-	console.log(pc.dim(`  Deployment: ${deploymentType}`));
-	console.log(pc.dim(`  Platform: ${platform}`));
-	if (options.domain) {
-		console.log(pc.dim(`  Domain: ${options.domain}`));
+	if (!options.json) {
+		console.log("");
+		console.log(pc.bold("Generating stack..."));
+		console.log(pc.dim(`  Services: ${serviceIds.length > 0 ? serviceIds.join(", ") : "(none)"}`));
+		console.log(
+			pc.dim(`  Skill packs: ${skillPackIds.length > 0 ? skillPackIds.join(", ") : "(none)"}`),
+		);
+		console.log(pc.dim(`  Proxy: ${proxy}`));
+		console.log(pc.dim(`  Deployment: ${deploymentType}`));
+		console.log(pc.dim(`  Platform: ${platform}`));
+		if (options.domain) {
+			console.log(pc.dim(`  Domain: ${options.domain}`));
+		}
+		if (options.gpu) {
+			console.log(pc.dim(`  GPU: enabled`));
+		}
+		console.log("");
 	}
-	if (options.gpu) {
-		console.log(pc.dim(`  GPU: enabled`));
-	}
-	console.log("");
 
 	// Generate
 	const result = generate(input);
+
+	if (options.json) {
+		console.log(
+			JSON.stringify({
+				directory: projectDir,
+				files: Object.keys(result.files),
+				metadata: result.metadata,
+			}),
+		);
+		if (!options.dryRun) {
+			await writeProject(projectDir, result.files, {
+				dryRun: false,
+				force: options.force,
+				outputFormat: options.outputFormat,
+			});
+		}
+		return;
+	}
 
 	// Write files or dry-run
 	await writeProject(projectDir, result.files, {

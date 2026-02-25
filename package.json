@@ -4,10 +4,15 @@
   "private": true,
   "description": "CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks",
   "author": "bachir@bidew.io",
-  "license": "MIT",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/diopisemou/better-openclaw.git"
+  },
+  "homepage": "https://better-openclaw.dev",
   "packageManager": "pnpm@9.15.4",
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "scripts": {
     "build": "turbo run build",
@@ -36,6 +41,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
     "@types/node": "^22.15.0",
+    "@vitest/coverage-v8": "^3.2.0",
     "turbo": "^2.8.5",
     "typescript": "^5.8.0",
     "vitest": "^3.2.0"

@@ -1,4 +1,4 @@
-import { IconBell, IconLayoutSidebar, IconMenu2, IconChefHat } from "@tabler/icons-react";
+import { IconBell, IconChefHat, IconLayoutSidebar, IconMenu2 } from "@tabler/icons-react";
 import SignOut from "./Signout";
 
 interface HeaderProps {
@@ -45,7 +45,10 @@ export default function Header({ onOpenAgents, onOpenLiveFeed, onOpenClawRecipes
 				>
 					<IconLayoutSidebar size={20} />
 				</button>
-				<button className="relative p-2 hover:bg-accent rounded-lg text-muted-foreground" aria-label="Notifications">
+				<button
+					className="relative p-2 hover:bg-accent rounded-lg text-muted-foreground"
+					aria-label="Notifications"
+				>
 					<IconBell size={20} />
 				</button>
 				<SignOut />

@@ -43,8 +43,9 @@ packages/core/.git
 packages/core/.github
 packages/core/.gitignore
 
-cursor_mcp_backup.json
+
 packages/promo-video/
-packages/promo-video/src
-packages/promo-video/scripts
-packages/promo-video/utils
+packages/promo-video/src/
+
+cursor_mcp_backup.json
+CLAUDE_CODE_PROMPT.md

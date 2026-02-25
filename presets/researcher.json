@@ -2,7 +2,16 @@
   "id": "researcher",
   "name": "Researcher",
   "description": "Research agent with vector search, web scraping, and meta search",
-  "services": ["qdrant", "searxng", "browserless", "redis"],
-  "skillPacks": ["research-agent"],
-  "estimatedMemoryMB": 2560
+  "services": [
+    "qdrant",
+    "searxng",
+    "browserless",
+    "redis",
+    "caddy",
+    "postgresql"
+  ],
+  "skillPacks": [
+    "research-agent"
+  ],
+  "estimatedMemoryMB": 4096
 }

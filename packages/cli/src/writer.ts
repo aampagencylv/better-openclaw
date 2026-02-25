@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { chmod, mkdir, readdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
@@ -95,21 +95,42 @@ async function createArchive(projectDir: string, format: "tar" | "zip"): Promise
 	try {
 		if (format === "tar") {
 			const archivePath = `${absDir}.tar.gz`;
-			execSync(`tar -czf "${archivePath}" -C "${parentDir}" "${baseName}"`, {
+			const result = spawnSync("tar", ["-czf", archivePath, "-C", parentDir, baseName], {
 				stdio: "pipe",
 			});
+			if (result.error || result.status !== 0) {
+				throw new Error(result.stderr?.toString() || result.error?.message || "tar command failed");
+			}
 			console.log(pc.green(`  Archive created: ${archivePath}`));
 		} else {
 			// zip
 			const archivePath = `${absDir}.zip`;
 			if (process.platform === "win32") {
 				// Use PowerShell Compress-Archive on Windows
-				execSync(
-					`powershell -NoProfile -Command "Compress-Archive -Path '${absDir}\\*' -DestinationPath '${archivePath}' -Force"`,
+				const result = spawnSync(
+					"powershell",
+					[
+						"-NoProfile",
+						"-Command",
+						`Compress-Archive -Path '${absDir}\\*' -DestinationPath '${archivePath}' -Force`,
+					],
 					{ stdio: "pipe" },
 				);
+				if (result.error || result.status !== 0) {
+					throw new Error(
+						result.stderr?.toString() || result.error?.message || "PowerShell command failed",
+					);
+				}
 			} else {
-				execSync(`cd "${parentDir}" && zip -r "${archivePath}" "${baseName}"`, { stdio: "pipe" });
+				// We can't easily cd and execute across platforms with spawn without a shell,
+				// but zip allows doing it via arguments or running from a cwd.
+				const result = spawnSync("zip", ["-r", archivePath, baseName], {
+					cwd: parentDir,
+					stdio: "pipe",
+				});
+				if (result.error || result.status !== 0) {
+					throw new Error(result.stderr?.toString() || result.error?.message || "zip command failed");
+				}
 			}
 			console.log(pc.green(`  Archive created: ${archivePath}`));
 		}

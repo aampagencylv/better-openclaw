@@ -12,7 +12,13 @@ createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<ConvexAuthProvider client={convex}>
 			<ErrorBoundary>
-				<Suspense fallback={<div className="flex h-screen w-screen items-center justify-center bg-background text-foreground dark">Loading Mission Control...</div>}>
+				<Suspense
+					fallback={
+						<div className="flex h-screen w-screen items-center justify-center bg-background text-foreground dark">
+							Loading Mission Control...
+						</div>
+					}
+				>
 					<App />
 				</Suspense>
 			</ErrorBoundary>

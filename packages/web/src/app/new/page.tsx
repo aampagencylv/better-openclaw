@@ -1,7 +1,9 @@
 "use client";
 
 import {
+	type AiProvider,
 	composeMultiFile,
+	type GsdRuntime,
 	getAllPresets,
 	getAllServices,
 	getAllSkillPacks,
@@ -10,8 +12,6 @@ import {
 	SERVICE_CATEGORIES,
 	type ServiceDefinition,
 	type SkillPack,
-	type AiProvider,
-	type GsdRuntime,
 } from "@better-openclaw/core";
 import JSZip from "jszip";
 import {
@@ -59,7 +59,9 @@ export default function NewStackPage() {
 	const [showClawexaModal, setShowClawexaModal] = useState(false);
 	const [clawexaAction, setClawexaAction] = useState<"idle" | "loading" | "sent" | "error">("idle");
 	const [selectedSkillPacks, setSelectedSkillPacks] = useState<Set<string>>(new Set());
-	const [selectedAiProviders, setSelectedAiProviders] = useState<Set<AiProvider>>(new Set(["openai"]));
+	const [selectedAiProviders, setSelectedAiProviders] = useState<Set<AiProvider>>(
+		new Set(["openai"]),
+	);
 	const [selectedGsdRuntimes, setSelectedGsdRuntimes] = useState<Set<GsdRuntime>>(new Set());
 	const [resolverError, setResolverError] = useState<string | null>(null);
 	const [showSkillModal, setShowSkillModal] = useState(false);
@@ -733,7 +735,9 @@ export default function NewStackPage() {
 							<div className="flex items-center justify-between mb-2">
 								<div>
 									<h3 className="text-sm font-semibold text-foreground">AI Providers</h3>
-									<p className="mt-0.5 text-xs text-muted-foreground">Select one or more LLM gateways to configure</p>
+									<p className="mt-0.5 text-xs text-muted-foreground">
+										Select one or more LLM gateways to configure
+									</p>
 								</div>
 							</div>
 							<div className="flex flex-wrap gap-2 mt-3">
@@ -786,17 +790,23 @@ export default function NewStackPage() {
 						<div className="mt-6 mb-6">
 							<div className="flex items-center justify-between mb-2">
 								<div>
-									<h3 className="text-sm font-semibold text-foreground">GSD AI Runtimes (Optional)</h3>
-									<p className="mt-0.5 text-xs text-muted-foreground">Select one or more agent workflows to install automatically</p>
+									<h3 className="text-sm font-semibold text-foreground">
+										GSD AI Runtimes (Optional)
+									</h3>
+									<p className="mt-0.5 text-xs text-muted-foreground">
+										Select one or more agent workflows to install automatically
+									</p>
 								</div>
 							</div>
 							<div className="flex flex-wrap gap-2 mt-3">
-								{([
-									{ id: "claude", name: "Claude Code", emoji: "🟠" },
-									{ id: "opencode", name: "OpenCode", emoji: "🟢" },
-									{ id: "gemini", name: "Gemini CLI", emoji: "🔵" },
-									{ id: "codex", name: "Codex", emoji: "🟣" },
-								] as const).map((runtime) => {
+								{(
+									[
+										{ id: "claude", name: "Claude Code", emoji: "🟠" },
+										{ id: "opencode", name: "OpenCode", emoji: "🟢" },
+										{ id: "gemini", name: "Gemini CLI", emoji: "🔵" },
+										{ id: "codex", name: "Codex", emoji: "🟣" },
+									] as const
+								).map((runtime) => {
 									const runtimeId = runtime.id as unknown as GsdRuntime;
 									const isSelected = selectedGsdRuntimes.has(runtimeId);
 									return (

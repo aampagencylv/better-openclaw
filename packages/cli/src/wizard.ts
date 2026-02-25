@@ -224,7 +224,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 
 	if (compatiblePacks.length > 0) {
 		const initialSkillPacks = preset ? preset.skillPacks : [];
-		
+
 		const skillPackChoice = ensureNotCancelled(
 			await multiselect({
 				message: "Select skill packs (filtered to compatible):",
@@ -269,8 +269,10 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 			required: false,
 		}),
 	);
-	
-	const selectedAiProviders = (aiProvidersChoice as string[]).filter(Boolean) as GenerationInput["aiProviders"];
+
+	const selectedAiProviders = (aiProvidersChoice as string[]).filter(
+		Boolean,
+	) as GenerationInput["aiProviders"];
 
 	const gsdRuntimesChoice = ensureNotCancelled(
 		await multiselect({
@@ -282,9 +284,11 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 				{ value: "codex", label: "Codex", hint: "Skills-first agent" },
 			],
 			required: false,
-		})
+		}),
 	);
-	const selectedGsdRuntimes = (gsdRuntimesChoice as string[]).filter(Boolean) as GenerationInput["gsdRuntimes"];
+	const selectedGsdRuntimes = (gsdRuntimesChoice as string[]).filter(
+		Boolean,
+	) as GenerationInput["gsdRuntimes"];
 
 	const proxy = ensureNotCancelled(
 		await select({

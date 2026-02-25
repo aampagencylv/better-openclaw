@@ -1,5 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
+import { optionalApiKey } from "./middleware/api-key.js";
 import { generateRateLimiter, rateLimiter } from "./middleware/rate-limit.js";
 import { requestId } from "./middleware/request-id.js";
 import { generateRoute } from "./routes/generate.js";
@@ -14,6 +15,7 @@ const app = new OpenAPIHono().basePath("/v1");
 // Middleware
 app.use("/*", requestId());
 app.use("/*", cors());
+app.use("/*", optionalApiKey());
 app.use("/*", rateLimiter());
 app.use("/generate", generateRateLimiter());
 

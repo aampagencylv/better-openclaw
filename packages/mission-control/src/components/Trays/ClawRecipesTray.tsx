@@ -1,5 +1,5 @@
+import { IconCheck, IconChefHat, IconCopy, IconX } from "@tabler/icons-react";
 import { useState } from "react";
-import { IconX, IconCopy, IconCheck, IconChefHat } from "@tabler/icons-react";
 
 interface ClawRecipesTrayProps {
 	isOpen: boolean;
@@ -58,6 +58,8 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 					<h3 className="text-lg font-semibold text-foreground">ClawRecipes Setup</h3>
 				</div>
 				<button
+					title="Close"
+					type="button"
 					onClick={onClose}
 					className="p-1.5 hover:bg-accent rounded-md text-muted-foreground transition-colors"
 				>
@@ -72,7 +74,8 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 						Step 1: Install Plugin
 					</h4>
 					<p className="text-sm text-muted-foreground">
-						Run this command in your terminal to install the official ClawRecipes plugin into your OpenClaw Gateway.
+						Run this command in your terminal to install the official ClawRecipes plugin into your
+						OpenClaw Gateway.
 					</p>
 					<div className="relative group">
 						<pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono text-foreground overflow-x-auto border border-border">
@@ -102,6 +105,7 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 								Workspace Recipes Directory
 							</label>
 							<input
+								title="Workspace Recipes Directory"
 								type="text"
 								value={workspaceRecipesDir}
 								onChange={(e) => setWorkspaceRecipesDir(e.target.value)}
@@ -114,6 +118,7 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 								Workspace Teams Directory
 							</label>
 							<input
+								title="Workspace Teams Directory"
 								type="text"
 								value={workspaceTeamsDir}
 								onChange={(e) => setWorkspaceTeamsDir(e.target.value)}
@@ -127,6 +132,7 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 									Agents Directory
 								</label>
 								<input
+									title="Agents Directory"
 									type="text"
 									value={workspaceAgentsDir}
 									onChange={(e) => setWorkspaceAgentsDir(e.target.value)}
@@ -138,6 +144,7 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 									Skills Directory
 								</label>
 								<input
+									title="Skills Directory"
 									type="text"
 									value={workspaceSkillsDir}
 									onChange={(e) => setWorkspaceSkillsDir(e.target.value)}
@@ -177,6 +184,7 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 									Cron Installation Prompt
 								</label>
 								<select
+									title="Cron Installation Prompt"
 									value={cronInstallation}
 									onChange={(e) => setCronInstallation(e.target.value as any)}
 									className="w-full bg-secondary/50 border border-border rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary [&>option]:bg-background"
@@ -196,7 +204,8 @@ export default function ClawRecipesTray({ isOpen, onClose }: ClawRecipesTrayProp
 						Step 3: Export Configuration
 					</h4>
 					<p className="text-sm text-muted-foreground mb-2">
-						Copy this JSON and save it to your <code className="text-xs">openclaw.plugin.json</code> configuration file.
+						Copy this JSON and save it to your <code className="text-xs">openclaw.plugin.json</code>{" "}
+						configuration file.
 					</p>
 					<div className="relative group">
 						<pre className="bg-secondary/50 p-4 rounded-md text-xs font-mono text-foreground overflow-x-auto border border-border">

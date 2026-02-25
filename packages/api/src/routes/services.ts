@@ -1,5 +1,10 @@
 import type { ServiceCategory, ServiceDefinition } from "@better-openclaw/core";
-import { getAllServices, getServicesByCategory, SERVICE_CATEGORIES } from "@better-openclaw/core";
+import {
+	getAllServices,
+	getServiceById,
+	getServicesByCategory,
+	SERVICE_CATEGORIES,
+} from "@better-openclaw/core";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
 const route = new OpenAPIHono();
@@ -68,6 +73,61 @@ route.openapi(servicesGet, (c) => {
 			500,
 		);
 	}
+});
+
+// ─── GET /services/:id ──────────────────────────────────────────────────────
+
+const serviceGetById = createRoute({
+	method: "get",
+	path: "/{id}",
+	tags: ["Services"],
+	summary: "Get a service by ID",
+	request: {
+		params: z.object({
+			id: z.string().min(1),
+		}),
+	},
+	responses: {
+		200: {
+			description: "Service details",
+			content: {
+				"application/json": {
+					schema: z.object({
+						service: z.any(),
+					}),
+				},
+			},
+		},
+		404: {
+			description: "Service not found",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
+
+route.openapi(serviceGetById, (c) => {
+	const { id } = c.req.valid("param");
+	const service = getServiceById(id);
+
+	if (!service) {
+		return c.json(
+			{
+				error: {
+					code: "NOT_FOUND",
+					message: `Service "${id}" not found`,
+				},
+			},
+			404,
+		);
+	}
+
+	return c.json({ service });
 });
 
 export { route as servicesRoute };
