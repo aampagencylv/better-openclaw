@@ -10,6 +10,15 @@ out/
 .env
 .env.local
 .env.*.local
+.env.production
+.env.staging
+
+# Secrets & credentials
+*.pem
+*.key
+*.cert
+credentials.json
+serviceAccountKey.json
 
 # IDE
 .vscode/
@@ -49,3 +58,8 @@ packages/promo-video/src/
 
 cursor_mcp_backup.json
 CLAUDE_CODE_PROMPT.md
+PROMPT_CLAUDE_CODE.md
+purpose_.txt
+trinity_identity.txt
+_tmp_*
+fixup.js
