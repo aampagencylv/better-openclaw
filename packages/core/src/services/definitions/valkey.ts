@@ -12,7 +12,7 @@ export const valkeyDefinition: ServiceDefinition = {
 	imageTag: "8-alpine",
 	ports: [
 		{
-			host: 6379,
+			host: 6380,
 			container: 6379,
 			description: "Valkey server port",
 			exposed: true,

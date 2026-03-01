@@ -12,7 +12,7 @@ export const jenkinsDefinition: ServiceDefinition = {
 	imageTag: "lts",
 	ports: [
 		{
-			host: 8080,
+			host: 8185,
 			container: 8080,
 			description: "Jenkins Web Interface",
 			exposed: true,

@@ -8,6 +8,21 @@ export {
 } from "./bare-metal-partition.js";
 export type { ComposeResult } from "./composer.js";
 export { compose, composeMultiFile } from "./composer.js";
+// ─── PaaS Deployers ─────────────────────────────────────────────────────────
+export type {
+	DeployInput as PaasDeployInput,
+	DeployResult as PaasDeployResult,
+	DeployStep as PaasDeployStep,
+	DeployTarget as PaasDeployTarget,
+	PaasDeployer,
+} from "./deployers/index.js";
+export {
+	CoolifyDeployer,
+	DokployDeployer,
+	deployerRegistry,
+	getAvailableDeployers,
+	getDeployer,
+} from "./deployers/index.js";
 // ─── Errors ─────────────────────────────────────────────────────────────────
 export { StackConfigError, ValidationError } from "./errors.js";
 export { generate, generateServicesDoc } from "./generate.js";
@@ -22,8 +37,17 @@ export { generatePrometheusConfig } from "./generators/prometheus.js";
 export { generateReadme } from "./generators/readme.js";
 export { generateScripts } from "./generators/scripts.js";
 export { generateSkillFiles } from "./generators/skills.js";
+export type {
+	StackManifest,
+	StackManifestService,
+	StackManifestSkill,
+} from "./generators/stack-manifest.js";
+export { generateStackManifest } from "./generators/stack-manifest.js";
 // ─── Config Migrations ──────────────────────────────────────────────────────
 export { CURRENT_CONFIG_VERSION, migrateConfig, needsMigration } from "./migrations.js";
+// ─── Port Scanner ───────────────────────────────────────────────────────────
+export type { PortConflict } from "./port-scanner.js";
+export { formatPortConflicts, scanPortConflicts } from "./port-scanner.js";
 // ─── Presets ────────────────────────────────────────────────────────────────
 export { getAllPresets, getPresetById, presetRegistry } from "./presets/registry.js";
 export { resolve } from "./resolver.js";
@@ -34,6 +58,7 @@ export {
 	DeploymentTargetSchema,
 	DeploymentTypeSchema,
 	DeploySchema,
+	DeployTargetSchema,
 	EnvVariableSchema,
 	ErrorSchema,
 	GenerationInputSchema,
@@ -41,6 +66,8 @@ export {
 	MaturitySchema,
 	NativePlatformSchema,
 	NativeRecipeSchema,
+	OpenclawImageVariantSchema,
+	OpenclawInstallMethodSchema,
 	OutputFormatSchema,
 	PlatformSchema,
 	PortMappingSchema,
@@ -90,6 +117,7 @@ export type {
 	Deploy,
 	DeploymentTarget,
 	DeploymentType,
+	DeployTarget,
 	EnvVariable,
 	GeneratedFiles,
 	GenerationInput,
@@ -100,6 +128,8 @@ export type {
 	Maturity,
 	NativePlatform,
 	NativeRecipe,
+	OpenclawImageVariant,
+	OpenclawInstallMethod,
 	OutputFormat,
 	Platform,
 	PortMapping,

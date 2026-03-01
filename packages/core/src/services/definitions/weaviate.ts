@@ -55,7 +55,7 @@ export const weaviateDefinition: ServiceDefinition = {
 		},
 	],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:8080/v1/.well-known/ready || exit 1",
+		test: "curl -sf http://localhost:8080/v1/.well-known/ready || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

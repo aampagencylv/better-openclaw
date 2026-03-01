@@ -12,7 +12,7 @@ export const chromadbDefinition: ServiceDefinition = {
 	imageTag: "1.5.1",
 	ports: [
 		{
-			host: 8000,
+			host: 8100,
 			container: 8000,
 			description: "ChromaDB HTTP API",
 			exposed: true,
@@ -27,7 +27,7 @@ export const chromadbDefinition: ServiceDefinition = {
 	],
 	environment: [],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:8000/api/v1/heartbeat || exit 1",
+		test: "curl -sf http://localhost:8000/api/v1/heartbeat || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

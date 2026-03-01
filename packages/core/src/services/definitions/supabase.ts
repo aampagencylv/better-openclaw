@@ -47,7 +47,7 @@ export const supabaseDefinition: ServiceDefinition = {
 		},
 	],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:3000/api/profile || exit 1",
+		test: "curl -sf http://localhost:3000/api/profile || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

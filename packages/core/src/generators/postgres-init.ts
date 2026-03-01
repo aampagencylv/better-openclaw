@@ -35,6 +35,17 @@ const DB_REQUIREMENTS: Record<string, Omit<DbRequirement, "serviceId" | "service
 	umami: { dbName: "umami", dbUser: "umami", passwordEnvVar: "UMAMI_DB_PASSWORD" },
 	matomo: { dbName: "matomo", dbUser: "matomo", passwordEnvVar: "MATOMO_DB_PASSWORD" },
 	mixpost: { dbName: "mixpost", dbUser: "mixpost", passwordEnvVar: "MIXPOST_DB_PASSWORD" },
+	"cal-com": { dbName: "calcom", dbUser: "calcom", passwordEnvVar: "CALCOM_DB_PASSWORD" },
+	immich: { dbName: "immich", dbUser: "immich", passwordEnvVar: "IMMICH_DB_PASSWORD" },
+	authentik: { dbName: "authentik", dbUser: "authentik", passwordEnvVar: "AUTHENTIK_DB_PASSWORD" },
+	"lasuite-meet-backend": {
+		dbName: "meet",
+		dbUser: "meet",
+		passwordEnvVar: "LASUITE_MEET_DB_PASSWORD",
+	},
+	openpanel: { dbName: "openpanel", dbUser: "openpanel", passwordEnvVar: "OPENPANEL_DB_PASSWORD" },
+	usesend: { dbName: "usesend", dbUser: "usesend", passwordEnvVar: "USESEND_DB_PASSWORD" },
+	nextcloud: { dbName: "nextcloud", dbUser: "nextcloud", passwordEnvVar: "NEXTCLOUD_DB_PASSWORD" },
 };
 
 /**

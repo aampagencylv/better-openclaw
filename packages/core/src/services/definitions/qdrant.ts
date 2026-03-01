@@ -41,7 +41,7 @@ export const qdrantDefinition: ServiceDefinition = {
 		},
 	],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:6333/healthz || exit 1",
+		test: "bash -c 'echo > /dev/tcp/localhost/6333' || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

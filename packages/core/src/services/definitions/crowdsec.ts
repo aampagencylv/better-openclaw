@@ -12,7 +12,7 @@ export const crowdsecDefinition: ServiceDefinition = {
 	imageTag: "1.7.6",
 	ports: [
 		{
-			host: 8080,
+			host: 8186,
 			container: 8080,
 			description: "CrowdSec Local API Interface",
 			exposed: true,

@@ -11,6 +11,12 @@ export interface EnvGeneratorOptions {
 	openclawVersion?: string;
 	/** When set, host-like vars (e.g. REDIS_HOST) for these services use host.docker.internal so gateway in Docker can reach native services on host. */
 	nativeServiceIds?: Set<string>;
+	/** Compose file names for COMPOSE_FILE env var (enables `docker compose up` without -f flags). */
+	composeFiles?: string[];
+	/** Compose profiles for COMPOSE_PROFILES env var (enables `docker compose up` without --profile flags). */
+	composeProfiles?: string[];
+	/** OpenClaw image variant (official, coolify, alpine). */
+	openclawImage?: "official" | "coolify" | "alpine";
 }
 
 /**
@@ -25,6 +31,43 @@ export function generateEnvFiles(
 ): { envExample: string; env: string } {
 	const version = options.openclawVersion ?? "latest";
 	const lines: { comment: string; key: string; exampleValue: string; actualValue: string }[] = [];
+
+	// Track all env var values for resolving references later
+	const envVarValues = new Map<string, string>();
+
+	// ── Docker Compose convenience vars ─────────────────────────────────────
+	// These let you run `docker compose up -d` without -f and --profile flags.
+
+	if (options.composeFiles && options.composeFiles.length > 0) {
+		const separator = process.platform === "win32" ? ";" : ":";
+		const composeFileValue = options.composeFiles.join(separator);
+		lines.push({
+			comment: formatComment(
+				"Compose files to load (allows plain `docker compose up -d`)",
+				"Docker Compose",
+				false,
+				false,
+			),
+			key: "COMPOSE_FILE",
+			exampleValue: composeFileValue,
+			actualValue: composeFileValue,
+		});
+	}
+
+	if (options.composeProfiles && options.composeProfiles.length > 0) {
+		const profilesValue = options.composeProfiles.join(",");
+		lines.push({
+			comment: formatComment(
+				"Profiles to activate (allows plain `docker compose up -d`)",
+				"Docker Compose",
+				false,
+				false,
+			),
+			key: "COMPOSE_PROFILES",
+			exampleValue: profilesValue,
+			actualValue: profilesValue,
+		});
+	}
 
 	// ── Base OpenClaw Variables ──────────────────────────────────────────────
 
@@ -70,7 +113,7 @@ export function generateEnvFiles(
 
 	lines.push({
 		comment: formatComment(
-			"Gateway network bind mode (lan for Docker networking, loopback for local-only)",
+			"Gateway network bind mode: 'lan' (all interfaces, required for Docker). Use 'loopback' only for native (non-Docker) installs with Tailscale serve/funnel",
 			"OpenClaw Core",
 			false,
 			false,
@@ -104,14 +147,58 @@ export function generateEnvFiles(
 		actualValue: "./openclaw/workspace",
 	});
 
+	// Set OPENCLAW_IMAGE based on variant (empty = use compose default)
+	const imageVariantMap: Record<string, string> = {
+		official: "", // use compose default (ghcr.io/openclaw/openclaw:VERSION)
+		coolify: "coollabsio/openclaw:latest",
+		alpine: "alpine/openclaw:latest",
+	};
+	const imageValue = imageVariantMap[options.openclawImage ?? "official"] ?? "";
+
 	lines.push({
 		comment: formatComment(
-			"OpenClaw Docker image override (default uses ghcr.io/openclaw/openclaw)",
+			`OpenClaw Docker image variant: ${options.openclawImage ?? "official"} (official, coolify, alpine)`,
 			"OpenClaw Core",
 			false,
 			false,
 		),
 		key: "OPENCLAW_IMAGE",
+		exampleValue: "",
+		actualValue: imageValue,
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Extra bind mounts for gateway and CLI containers (comma-separated, format: source:target[:options])",
+			"OpenClaw Core",
+			false,
+			false,
+		),
+		key: "OPENCLAW_EXTRA_MOUNTS",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Named volume or host path for /home/node persistence across container restarts",
+			"OpenClaw Core",
+			false,
+			false,
+		),
+		key: "OPENCLAW_HOME_VOLUME",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Extra apt packages to install during Docker image build (space-separated)",
+			"OpenClaw Core",
+			false,
+			false,
+		),
+		key: "OPENCLAW_DOCKER_APT_PACKAGES",
 		exampleValue: "",
 		actualValue: "",
 	});
@@ -137,13 +224,17 @@ export function generateEnvFiles(
 		});
 
 		for (const provider of resolved.aiProviders) {
+			// Local-only providers don't need API keys
 			if (provider === "ollama" || provider === "lmstudio" || provider === "vllm") continue;
 
-			const envKey = `${provider.toUpperCase()}_API_KEY`;
+			// Ollama Cloud uses OLLAMA_API_KEY (matches Ollama's official env var name)
+			const envKey =
+				provider === "ollama-cloud" ? "OLLAMA_API_KEY" : `${provider.toUpperCase()}_API_KEY`;
+			const label = provider === "ollama-cloud" ? "Ollama Cloud" : provider;
 			lines.push({
-				comment: formatComment(`API Key for ${provider} AI models`, "OpenClaw Core", true, true),
+				comment: formatComment(`API Key for ${label} AI models`, "OpenClaw Core", true, true),
 				key: envKey,
-				exampleValue: `your_${provider.toLowerCase()}_api_key_here`,
+				exampleValue: `your_${provider.toLowerCase().replace("-", "_")}_api_key_here`,
 				actualValue: "",
 			});
 		}
@@ -210,6 +301,9 @@ export function generateEnvFiles(
 		for (const req of dbReqs) {
 			const secretValue = options.generateSecrets ? randomBytes(24).toString("hex") : "";
 
+			// Store in map for later reference resolution
+			envVarValues.set(req.passwordEnvVar, secretValue);
+
 			lines.push({
 				comment: formatComment(
 					`PostgreSQL password for ${req.serviceName} (database: ${req.dbName}, user: ${req.dbUser})`,
@@ -237,6 +331,9 @@ export function generateEnvFiles(
 		"OPENCLAW_CONFIG_DIR",
 		"OPENCLAW_WORKSPACE_DIR",
 		"OPENCLAW_IMAGE",
+		"OPENCLAW_EXTRA_MOUNTS",
+		"OPENCLAW_HOME_VOLUME",
+		"OPENCLAW_DOCKER_APT_PACKAGES",
 		"OPENCLAW_DOMAIN",
 		"CLAUDE_AI_SESSION_KEY",
 		"CLAUDE_WEB_SESSION_KEY",
@@ -280,10 +377,19 @@ export function generateEnvFiles(
 			if (hostValue) {
 				actualValue = hostValue;
 			} else if (envVar.secret) {
-				actualValue = envVar.defaultValue.startsWith("${") ? envVar.defaultValue : secretValue;
+				// Resolve env var references like ${N8N_DB_PASSWORD}
+				if (envVar.defaultValue.startsWith("${") && envVar.defaultValue.endsWith("}")) {
+					const refKey = envVar.defaultValue.slice(2, -1); // Extract var name from ${VAR_NAME}
+					actualValue = envVarValues.get(refKey) || envVar.defaultValue;
+				} else {
+					actualValue = secretValue;
+				}
 			} else {
 				actualValue = envVar.defaultValue;
 			}
+
+			// Store in map for later reference resolution
+			envVarValues.set(envVar.key, actualValue);
 
 			lines.push({
 				comment: formatComment(envVar.description, definition.name, envVar.required, envVar.secret),

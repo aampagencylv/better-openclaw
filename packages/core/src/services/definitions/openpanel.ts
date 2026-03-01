@@ -39,8 +39,8 @@ export const openpanelDefinition: ServiceDefinition = {
 	tags: ["analytics", "events", "real-time", "dashboards"],
 	maturity: "beta",
 
-	requires: [],
-	recommends: ["postgresql"],
+	requires: ["postgresql"],
+	recommends: [],
 	conflictsWith: [],
 
 	minMemoryMB: 256,

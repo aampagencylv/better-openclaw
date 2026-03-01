@@ -28,7 +28,7 @@ export const signozDefinition: ServiceDefinition = {
 		},
 	],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:3301 || exit 1",
+		test: "curl -sf http://localhost:3301 || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

@@ -26,6 +26,13 @@ export const geminiCliDefinition: ServiceDefinition = {
 			description: "Google API key for Gemini CLI",
 			required: true,
 		},
+		{
+			key: "GEMINI_API_KEY",
+			defaultValue: "",
+			secret: true,
+			description: "Google API key for Gemini CLI",
+			required: false,
+		},
 	],
 	command: "npx @anthropic-ai/gemini-cli@latest",
 	dependsOn: [],

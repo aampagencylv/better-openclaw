@@ -18,7 +18,7 @@ export const streamGatewayDefinition: ServiceDefinition = {
 			exposed: true,
 		},
 		{
-			host: 8080,
+			host: 8088,
 			container: 8080,
 			description: "HTTP server for HLS preview and stats",
 			exposed: true,

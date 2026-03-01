@@ -12,7 +12,7 @@ export const anythingLlmDefinition: ServiceDefinition = {
 	imageTag: "1.3.0",
 	ports: [
 		{
-			host: 3100,
+			host: 3115,
 			container: 3001,
 			description: "AnythingLLM interface",
 			exposed: true,

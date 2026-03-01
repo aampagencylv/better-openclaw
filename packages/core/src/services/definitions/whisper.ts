@@ -21,7 +21,7 @@ export const whisperDefinition: ServiceDefinition = {
 	volumes: [],
 	environment: [],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:8000/health || exit 1",
+		test: "curl -sf http://localhost:8000/health || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

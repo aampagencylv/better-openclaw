@@ -7,6 +7,7 @@ import type {
 	DeploymentTargetSchema,
 	DeploymentTypeSchema,
 	DeploySchema,
+	DeployTargetSchema,
 	EnvVariableSchema,
 	ErrorSchema,
 	GenerationInputSchema,
@@ -15,6 +16,8 @@ import type {
 	MaturitySchema,
 	NativePlatformSchema,
 	NativeRecipeSchema,
+	OpenclawImageVariantSchema,
+	OpenclawInstallMethodSchema,
 	OutputFormatSchema,
 	PlatformSchema,
 	PortMappingSchema,
@@ -48,6 +51,9 @@ export type DeploymentType = z.infer<typeof DeploymentTypeSchema>;
 export type NativePlatform = z.infer<typeof NativePlatformSchema>;
 export type NativeRecipe = z.infer<typeof NativeRecipeSchema>;
 export type OutputFormat = z.infer<typeof OutputFormatSchema>;
+export type OpenclawImageVariant = z.infer<typeof OpenclawImageVariantSchema>;
+export type OpenclawInstallMethod = z.infer<typeof OpenclawInstallMethodSchema>;
+export type DeployTarget = z.infer<typeof DeployTargetSchema>;
 
 export type PortMapping = z.infer<typeof PortMappingSchema>;
 export type VolumeMapping = z.infer<typeof VolumeMappingSchema>;
@@ -86,6 +92,8 @@ export interface ResolverInput {
 	proxy?: ProxyType;
 	gpu?: boolean;
 	platform?: Platform;
+	deployment?: DeploymentType;
+	deploymentType?: DeploymentType;
 	monitoring?: boolean;
 	memoryThresholds?: { info: number; warning: number; critical: number };
 }
@@ -109,28 +117,138 @@ export interface GenerationResult {
 export interface CategoryInfo {
 	id: ServiceCategory;
 	name: string;
+	description?: string;
+	label?: string;
 	icon: string;
 }
 
 export const SERVICE_CATEGORIES: CategoryInfo[] = [
-	{ id: "coding-agent", name: "AI Coding Agents", icon: "💻" },
-	{ id: "ai-platform", name: "AI Platforms & Chat UIs", icon: "🧪" },
-	{ id: "ai", name: "AI / Local Models", icon: "🤖" },
-	{ id: "automation", name: "Automation & Workflows", icon: "🔄" },
-	{ id: "vector-db", name: "Vector Databases", icon: "🧠" },
-	{ id: "media", name: "Media & Video", icon: "🎬" },
-	{ id: "social-media", name: "Social Media", icon: "📱" },
-	{ id: "analytics", name: "Analytics", icon: "📊" },
-	{ id: "knowledge", name: "Knowledge & Documents", icon: "📚" },
-	{ id: "storage", name: "Object Storage", icon: "💾" },
-	{ id: "database", name: "Databases & Caching", icon: "🗄️" },
-	{ id: "dev-tools", name: "Developer Tools", icon: "🛠️" },
-	{ id: "proxy", name: "Reverse Proxy", icon: "🌐" },
-	{ id: "monitoring", name: "Monitoring", icon: "📡" },
-	{ id: "browser", name: "Browser Automation", icon: "🌐" },
-	{ id: "search", name: "Search", icon: "🔍" },
-	{ id: "communication", name: "Notifications", icon: "🔔" },
-	{ id: "desktop", name: "Desktop Environment", icon: "🖥️" },
-	{ id: "streaming", name: "Streaming & Relay", icon: "📺" },
-	{ id: "security", name: "Security & Pentesting", icon: "🛡️" },
+	{
+		id: "coding-agent",
+		name: "AI Coding Agents",
+		description: "AI Coding Agents",
+		label: "AI Coding Agents",
+		icon: "💻",
+	},
+	{
+		id: "ai-platform",
+		name: "AI Platforms & Chat UIs",
+		description: "AI Platforms & Chat UIs",
+		label: "AI Platforms & Chat UIs",
+		icon: "🧪",
+	},
+	{
+		id: "ai",
+		name: "AI / Local Models",
+		description: "AI / Local Models",
+		label: "AI / Local Models",
+		icon: "🤖",
+	},
+	{
+		id: "automation",
+		name: "Automation & Workflows",
+		description: "Automation & Workflows",
+		label: "Automation & Workflows",
+		icon: "🔄",
+	},
+	{
+		id: "vector-db",
+		name: "Vector Databases",
+		description: "Vector Databases",
+		label: "Vector Databases",
+		icon: "🧠",
+	},
+	{
+		id: "media",
+		name: "Media & Video",
+		description: "Media & Video",
+		label: "Media & Video",
+		icon: "🎬",
+	},
+	{
+		id: "social-media",
+		name: "Social Media",
+		description: "Social Media",
+		label: "Social Media",
+		icon: "📱",
+	},
+	{ id: "analytics", name: "Analytics", description: "Analytics", label: "Analytics", icon: "📊" },
+	{
+		id: "knowledge",
+		name: "Knowledge & Documents",
+		description: "Knowledge & Documents",
+		label: "Knowledge & Documents",
+		icon: "📚",
+	},
+	{
+		id: "storage",
+		name: "Object Storage",
+		description: "Object Storage",
+		label: "Object Storage",
+		icon: "💾",
+	},
+	{
+		id: "database",
+		name: "Databases & Caching",
+		description: "Databases & Caching",
+		label: "Databases & Caching",
+		icon: "🗄️",
+	},
+	{
+		id: "dev-tools",
+		name: "Developer Tools",
+		description: "Developer Tools",
+		label: "Developer Tools",
+		icon: "🛠️",
+	},
+	{
+		id: "proxy",
+		name: "Reverse Proxy",
+		description: "Reverse Proxy",
+		label: "Reverse Proxy",
+		icon: "🌐",
+	},
+	{
+		id: "monitoring",
+		name: "Monitoring",
+		description: "Monitoring",
+		label: "Monitoring",
+		icon: "📡",
+	},
+	{
+		id: "browser",
+		name: "Browser Automation",
+		description: "Browser Automation",
+		label: "Browser Automation",
+		icon: "🌐",
+	},
+	{ id: "search", name: "Search", description: "Search", label: "Search", icon: "🔍" },
+	{
+		id: "communication",
+		name: "Notifications",
+		description: "Notifications",
+		label: "Notifications",
+		icon: "🔔",
+	},
+	{
+		id: "desktop",
+		name: "Desktop Environment",
+		description: "Desktop Environment",
+		label: "Desktop Environment",
+		icon: "🖥️",
+	},
+	{
+		id: "streaming",
+		name: "Streaming & Relay",
+		description: "Streaming & Relay",
+		label: "Streaming & Relay",
+		icon: "📺",
+	},
+	{
+		id: "security",
+		name: "Security & Pentesting",
+		description: "Security & Pentesting",
+		label: "Security & Pentesting",
+		icon: "🛡️",
+	},
 ];

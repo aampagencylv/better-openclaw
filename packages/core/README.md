@@ -61,6 +61,33 @@ export const myCoolService: ServiceDefinition = {
 
 Skills are markdown instructions or code bundles mapped to specific tools. They are defined in `skills/manifest.json`. During generation, if a `SkillPack` is explicitly selected or implicitly included via an auto-installing service, the Core locates the corresponding files and mounts them into the generated stack's Volume pathways.
 
+## PaaS Deployers
+
+The core includes deployer clients for pushing generated stacks directly to self-hosted PaaS platforms:
+
+| Provider    | Module                 | Auth                    |
+|-------------|------------------------|-------------------------|
+| **Dokploy** | `deployers/dokploy.ts` | `x-api-key` header      |
+| **Coolify** | `deployers/coolify.ts` | `Authorization: Bearer` |
+
+All deployers implement the `PaasDeployer` interface (defined in `deployers/types.ts`). To add a new provider, implement the interface and register it in `deployers/index.ts`.
+
+```typescript
+import { getDeployer, getAvailableDeployers } from "@better-openclaw/core";
+
+// List available providers
+const providers = getAvailableDeployers(); // ["dokploy", "coolify"]
+
+// Deploy a stack
+const deployer = getDeployer("dokploy");
+const result = await deployer.deploy({
+  target: { instanceUrl: "https://dokploy.example.com", apiKey: "..." },
+  projectName: "my-stack",
+  composeYaml: "...",
+  envContent: "...",
+});
+```
+
 ## Development
 
 ```bash

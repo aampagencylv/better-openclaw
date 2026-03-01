@@ -11,7 +11,7 @@ export const authentikDefinition: ServiceDefinition = {
 	imageTag: "2026.2.0",
 	ports: [
 		{
-			host: 9000,
+			host: 9015,
 			container: 9000,
 			description: "Authentik HTTP Interface",
 			exposed: true,
@@ -45,14 +45,14 @@ export const authentikDefinition: ServiceDefinition = {
 		},
 		{
 			key: "AUTHENTIK_POSTGRESQL__HOST",
-			defaultValue: "postgres",
+			defaultValue: "postgresql",
 			secret: false,
 			description: "Postgres database hostname",
 			required: true,
 		},
 		{
 			key: "AUTHENTIK_POSTGRESQL__USER",
-			defaultValue: "postgres",
+			defaultValue: "authentik",
 			secret: false,
 			description: "Postgres database user",
 			required: true,
@@ -66,7 +66,7 @@ export const authentikDefinition: ServiceDefinition = {
 		},
 		{
 			key: "AUTHENTIK_POSTGRESQL__PASSWORD",
-			defaultValue: "postgres",
+			defaultValue: "${AUTHENTIK_DB_PASSWORD}",
 			secret: true,
 			description: "Postgres database password",
 			required: true,

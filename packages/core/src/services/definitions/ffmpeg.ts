@@ -34,7 +34,7 @@ export const ffmpegDefinition: ServiceDefinition = {
 			required: true,
 		},
 	],
-	command: "tail -f /dev/null",
+	entrypoint: "tail -f /dev/null",
 	dependsOn: [],
 	restartPolicy: "unless-stopped",
 	networks: ["openclaw-network"],

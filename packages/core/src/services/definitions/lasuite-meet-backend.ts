@@ -43,9 +43,9 @@ export const lasuiteMeetBackendDefinition: ServiceDefinition = {
 		},
 		{
 			key: "DB_PASSWORD",
-			defaultValue: "",
-			secret: true,
-			description: "PostgreSQL password",
+			defaultValue: "${LASUITE_MEET_DB_PASSWORD}",
+			secret: false,
+			description: "PostgreSQL password (resolved from LASUITE_MEET_DB_PASSWORD)",
 			required: true,
 		},
 		{

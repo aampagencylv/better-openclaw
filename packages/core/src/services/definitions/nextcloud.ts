@@ -11,7 +11,7 @@ export const nextcloudDefinition: ServiceDefinition = {
 	imageTag: "32.0.6",
 	ports: [
 		{
-			host: 8080,
+			host: 8181,
 			container: 80,
 			description: "Nextcloud Web Interface",
 			exposed: true,
@@ -26,32 +26,32 @@ export const nextcloudDefinition: ServiceDefinition = {
 	],
 	environment: [
 		{
-			key: "MYSQL_DATABASE",
+			key: "POSTGRES_DB",
 			defaultValue: "nextcloud",
 			secret: false,
-			description: "Database name",
-			required: false,
+			description: "PostgreSQL database name for Nextcloud",
+			required: true,
 		},
 		{
-			key: "MYSQL_USER",
+			key: "POSTGRES_USER",
 			defaultValue: "nextcloud",
 			secret: false,
-			description: "Database user",
-			required: false,
+			description: "PostgreSQL user for Nextcloud",
+			required: true,
 		},
 		{
-			key: "MYSQL_PASSWORD",
-			defaultValue: "nextcloud_secret",
-			secret: true,
-			description: "Database password",
-			required: false,
-		},
-		{
-			key: "MYSQL_HOST",
-			defaultValue: "postgres",
+			key: "POSTGRES_PASSWORD",
+			defaultValue: "${NEXTCLOUD_DB_PASSWORD}",
 			secret: false,
-			description: "Database hostname",
-			required: false,
+			description: "PostgreSQL password for Nextcloud (resolved from NEXTCLOUD_DB_PASSWORD)",
+			required: true,
+		},
+		{
+			key: "POSTGRES_HOST",
+			defaultValue: "postgresql",
+			secret: false,
+			description: "PostgreSQL hostname for Nextcloud",
+			required: true,
 		},
 	],
 	healthcheck: {
@@ -72,8 +72,8 @@ export const nextcloudDefinition: ServiceDefinition = {
 	tags: ["storage", "cloud", "productivity", "collaboration"],
 	maturity: "stable",
 
-	requires: [],
-	recommends: ["postgresql"],
+	requires: ["postgresql"],
+	recommends: [],
 	conflictsWith: [],
 
 	minMemoryMB: 512,

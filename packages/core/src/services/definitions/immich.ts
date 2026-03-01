@@ -32,23 +32,23 @@ export const immichDefinition: ServiceDefinition = {
 	environment: [
 		{
 			key: "DB_HOSTNAME",
-			defaultValue: "postgres",
+			defaultValue: "postgresql",
 			secret: false,
 			description: "Database hostname",
 			required: true,
 		},
 		{
 			key: "DB_USERNAME",
-			defaultValue: "postgres",
+			defaultValue: "immich",
 			secret: false,
 			description: "Database user",
 			required: true,
 		},
 		{
 			key: "DB_PASSWORD",
-			defaultValue: "postgres",
-			secret: true,
-			description: "Database password",
+			defaultValue: "${IMMICH_DB_PASSWORD}",
+			secret: false,
+			description: "Database password (resolved from IMMICH_DB_PASSWORD)",
 			required: true,
 		},
 		{

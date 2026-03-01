@@ -12,7 +12,7 @@ export const dokployDefinition: ServiceDefinition = {
 	imageTag: "v0.26.7",
 	ports: [
 		{
-			host: 3000,
+			host: 3035,
 			container: 3000,
 			description: "Dokploy web UI",
 			exposed: true,

@@ -1,5 +1,33 @@
-import { stringify } from "yaml";
-import type { ComposeOptions, ResolverOutput, ServiceCategory } from "./types.js";
+import { Scalar, stringify } from "yaml";
+import { getDbRequirements } from "./generators/postgres-init.js";
+import type {
+	ComposeOptions,
+	OpenclawImageVariant,
+	ResolverOutput,
+	ServiceCategory,
+} from "./types.js";
+
+/** Maps image variant to the Docker image string. */
+const IMAGE_VARIANTS: Record<OpenclawImageVariant, string> = {
+	official: "ghcr.io/openclaw/openclaw",
+	coolify: "coollabsio/openclaw",
+	alpine: "alpine/openclaw",
+};
+
+/** Returns the OpenClaw image string with version tag for a given variant. */
+function getOpenclawImage(variant: OpenclawImageVariant, version: string): string {
+	const base = IMAGE_VARIANTS[variant];
+	// Coolify and alpine images use :latest by default
+	const tag = variant === "official" ? version : "latest";
+	return `${base}:${tag}`;
+}
+
+/** Creates a YAML scalar that is always quoted — avoids YAML 1.1 bare `no` → false. */
+function quotedStr(value: string): Scalar {
+	const s = new Scalar(value);
+	s.type = Scalar.QUOTE_DOUBLE;
+	return s;
+}
 
 // ── Public Types ────────────────────────────────────────────────────────────
 
@@ -61,6 +89,23 @@ function buildGatewayServices(
 		CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE}",
 	};
 
+	// Add AI provider API keys to gateway environment
+	const providerKeys = [
+		"OPENAI_API_KEY",
+		"ANTHROPIC_API_KEY",
+		"GOOGLE_API_KEY",
+		"XAI_API_KEY",
+		"DEEPSEEK_API_KEY",
+		"GROQ_API_KEY",
+		"OPENROUTER_API_KEY",
+		"MISTRAL_API_KEY",
+		"TOGETHER_API_KEY",
+		"OLLAMA_API_KEY",
+	];
+	for (const key of providerKeys) {
+		gatewayEnv[key] = `\${${key}}`;
+	}
+
 	// Gateway volumes (bind-mount style matching real docker-setup.sh)
 	const gatewayVolumes: string[] = [
 		"${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw",
@@ -85,8 +130,12 @@ function buildGatewayServices(
 	}
 
 	// Gateway service
+	const defaultImage = getOpenclawImage(
+		options.openclawImage ?? "official",
+		options.openclawVersion,
+	);
 	const gateway: Record<string, unknown> = {
-		image: `\${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:${options.openclawVersion}}`,
+		image: `\${OPENCLAW_IMAGE:-${defaultImage}}`,
 		environment: gatewayEnv,
 		volumes: gatewayVolumes,
 		ports: ["${OPENCLAW_GATEWAY_PORT:-18789}:18789", "${OPENCLAW_BRIDGE_PORT:-18790}:18790"],
@@ -119,17 +168,28 @@ function buildGatewayServices(
 	}
 
 	// CLI companion service (matching real OpenClaw docker-compose.yml)
+	// Build CLI environment with same keys as gateway for consistency
+	const cliEnv: Record<string, string> = {
+		HOME: "/home/node",
+		TERM: "xterm-256color",
+		OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}",
+		// Gateway connection: use Docker service name so CLI can reach the gateway over the bridge network
+		OPENCLAW_GATEWAY_HOST: "openclaw-gateway",
+		OPENCLAW_GATEWAY_PORT: "18789",
+		BROWSER: "echo",
+		CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY}",
+		CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY}",
+		CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE}",
+	};
+
+	// Add same AI provider API keys to CLI for direct AI interactions
+	for (const key of providerKeys) {
+		cliEnv[key] = `\${${key}}`;
+	}
+
 	const cliService: Record<string, unknown> = {
-		image: `\${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:${options.openclawVersion}}`,
-		environment: {
-			HOME: "/home/node",
-			TERM: "xterm-256color",
-			OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}",
-			BROWSER: "echo",
-			CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY}",
-			CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY}",
-			CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE}",
-		},
+		image: `\${OPENCLAW_IMAGE:-${defaultImage}}`,
+		environment: cliEnv,
 		volumes: [
 			"${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw",
 			"${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace",
@@ -139,6 +199,11 @@ function buildGatewayServices(
 		init: true,
 		networks: ["openclaw-network"],
 		entrypoint: ["node", "dist/index.js"],
+		// CLI is interactive — don't auto-restart, but wait for gateway to be ready
+		restart: "no",
+		depends_on: {
+			"openclaw-gateway": { condition: "service_started" },
+		},
 	};
 
 	return { gatewayService: gateway, cliService: cliService, allVolumes };
@@ -170,7 +235,35 @@ function buildCompanionService(
 		const prefix = def.id.toUpperCase().replace(/-/g, "_");
 		svc.ports = exposedPorts.map((p, i) => {
 			const suffix = exposedPorts.length > 1 ? `_${i}` : "";
-			return `\${${prefix}_PORT${suffix}:-${p.host}}:${p.container}`;
+			let defaultPort = p.host;
+
+			// Override proxy ports if custom ports are specified
+			if (
+				(def.id === "caddy" || def.id === "traefik") &&
+				options.proxyHttpPort !== undefined &&
+				p.container === 80
+			) {
+				defaultPort = options.proxyHttpPort;
+			}
+			if (
+				(def.id === "caddy" || def.id === "traefik") &&
+				options.proxyHttpsPort !== undefined &&
+				p.container === 443
+			) {
+				defaultPort = options.proxyHttpsPort;
+			}
+
+			// Apply global port overrides if specified
+			if (options.portOverrides?.[def.id]?.[p.host] !== undefined) {
+				defaultPort = options.portOverrides?.[def.id]?.[p.host] || p.host;
+			}
+
+			// Use _EXTERNAL_PORT to avoid colliding with openclawEnvVars _PORT keys.
+			// openclawEnvVars define the container port (e.g. GRAFANA_PORT=3000 for
+			// internal Docker networking), while these are host port mappings (e.g. 3150).
+			// Without this, GRAFANA_PORT=3000 from .env would override the default
+			// 3150 in ${GRAFANA_PORT:-3150}:3000, mapping host port 3000 instead.
+			return `\${${prefix}_EXTERNAL_PORT${suffix}:-${defaultPort}}:${p.container}`;
 		});
 	}
 
@@ -187,12 +280,22 @@ function buildCompanionService(
 		});
 	}
 
-	// PostgreSQL: mount the init script for creating per-service databases
+	// PostgreSQL: mount the init script and pass per-service DB passwords
 	if (def.id === "postgresql") {
 		if (!svc.volumes) svc.volumes = [];
 		(svc.volumes as string[]).push(
 			"./postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro",
 		);
+
+		// Pass per-service database password env vars so the init script can use them
+		const dbReqs = getDbRequirements(resolved);
+		if (dbReqs.length > 0) {
+			const env = (svc.environment ?? {}) as Record<string, string>;
+			for (const req of dbReqs) {
+				env[req.passwordEnvVar] = `\${${req.passwordEnvVar}}`;
+			}
+			svc.environment = env;
+		}
 	}
 
 	if (def.healthcheck) {
@@ -248,7 +351,39 @@ function buildCompanionService(
 			},
 		};
 	}
+	// Memory limits from estimatedMemoryMB
+	if (def.minMemoryMB && options.hardened) {
+		const base = deploy ?? {};
+		const resources = (base.resources ?? {}) as Record<string, unknown>;
+		const limits = (resources.limits as Record<string, unknown>) ?? {};
+		deploy = {
+			...base,
+			resources: {
+				...resources,
+				limits: {
+					...limits,
+					memory: `${def.minMemoryMB * 2}m`, // 2x min as safe limit
+				},
+			},
+		};
+	}
 	if (deploy) svc.deploy = deploy;
+
+	// Security hardening (when enabled)
+	if (options.hardened) {
+		svc.cap_drop = ["ALL"];
+		svc.security_opt = ["no-new-privileges:true"];
+
+		// Services that need specific capabilities
+		const capAddMap: Record<string, string[]> = {
+			caddy: ["NET_BIND_SERVICE"],
+			traefik: ["NET_BIND_SERVICE"],
+			crowdsec: ["NET_BIND_SERVICE", "DAC_READ_SEARCH"],
+		};
+		if (capAddMap[def.id]) {
+			svc.cap_add = capAddMap[def.id];
+		}
+	}
 
 	// Merge both dependsOn and requires to ensure proper Docker startup ordering
 	const depIds = [...new Set([...def.dependsOn, ...def.requires])].filter((id) =>
@@ -268,6 +403,78 @@ function buildCompanionService(
 	return { entry: svc, volumeNames };
 }
 
+// ── PostgreSQL Setup Init Container ─────────────────────────────────────────
+
+/**
+ * Builds a one-shot init container that creates databases and users for
+ * services that need their own PostgreSQL database.  Runs AFTER PostgreSQL
+ * is healthy, on every `docker compose up`, and is idempotent.
+ *
+ * Uses standard PG* environment variables (PGHOST, PGUSER, PGDATABASE,
+ * PGPASSWORD) so psql/createuser/createdb automatically connect without
+ * needing explicit -h/-U/-d flags — simpler and avoids YAML escaping issues.
+ *
+ * Returns null when no setup is needed (no PostgreSQL or no DB requirements).
+ */
+function buildPostgresSetup(resolved: ResolverOutput): Record<string, unknown> | null {
+	const hasPostgres = resolved.services.some((s) => s.definition.id === "postgresql");
+	if (!hasPostgres) return null;
+
+	const dbReqs = getDbRequirements(resolved);
+	if (dbReqs.length === 0) return null;
+
+	// Build a shell script with one command per line.
+	// Uses $$ to escape $ from Docker Compose's variable substitution —
+	// Docker Compose converts $$ → $ before passing to the container.
+	// NO set -e: we handle errors explicitly so one failed service doesn't block others.
+	const scriptLines = ["echo '=== PostgreSQL database setup ==='", "FAILED=0"];
+
+	for (const req of dbReqs) {
+		// Each service's setup is wrapped so a failure doesn't block the others.
+		// Uses psql -v ON_ERROR_STOP=0 so SQL errors don't abort psql.
+		scriptLines.push(
+			`echo "Setting up database '${req.dbName}' with user '${req.dbUser}'..."`,
+			// Create user if not exists (pure SQL, no createuser binary quirks)
+			`psql -c "SELECT 1 FROM pg_roles WHERE rolname='${req.dbUser}'" | grep -q 1 || psql -c "CREATE ROLE ${req.dbUser} WITH LOGIN PASSWORD '$$${req.passwordEnvVar}'"`,
+			// Always sync the password to match current env
+			`psql -c "ALTER ROLE ${req.dbUser} WITH LOGIN PASSWORD '$$${req.passwordEnvVar}'"`,
+			// Create database if not exists
+			`psql -tc "SELECT 1 FROM pg_database WHERE datname='${req.dbName}'" | grep -q 1 || psql -c "CREATE DATABASE ${req.dbName} OWNER ${req.dbUser}"`,
+			// Grant privileges (idempotent)
+			`psql -c "GRANT ALL PRIVILEGES ON DATABASE ${req.dbName} TO ${req.dbUser}" || FAILED=1`,
+			`echo "  Done: ${req.dbName}"`,
+		);
+	}
+
+	scriptLines.push("echo '=== All databases ready ==='", "exit $$FAILED");
+
+	// Standard PG* env vars: psql/createuser/createdb use these automatically
+	const env: Record<string, string> = {
+		PGHOST: "postgresql",
+		PGUSER: "${POSTGRES_USER:-openclaw}",
+		PGDATABASE: "${POSTGRES_DB:-openclaw}",
+		PGPASSWORD: "${POSTGRES_PASSWORD}",
+	};
+	for (const req of dbReqs) {
+		env[req.passwordEnvVar] = `\${${req.passwordEnvVar}}`;
+	}
+
+	return {
+		image: "postgres:17-alpine",
+		depends_on: {
+			postgresql: { condition: "service_healthy" },
+		},
+		environment: env,
+		// command MUST be a single-element array so the entire script is passed
+		// as ONE argument to `sh -c`. A plain string gets shlex-split by Docker
+		// Compose into multiple args, breaking multi-line scripts.
+		entrypoint: ["/bin/sh", "-c"],
+		command: [scriptLines.join("\n")],
+		restart: quotedStr("no"),
+		networks: ["openclaw-network"],
+	};
+}
+
 // ── Single-File Compose ─────────────────────────────────────────────────────
 
 /**
@@ -275,6 +482,8 @@ function buildCompanionService(
  * Backward-compatible signature.
  */
 export function compose(resolved: ResolverOutput, options: ComposeOptions): string {
+	const isDirectInstall = options.openclawInstallMethod === "direct";
+
 	// Build depends_on for ALL companion services
 	const gatewayDependsOn: Record<string, { condition: string }> = {};
 	for (const { definition: def } of resolved.services) {
@@ -283,23 +492,62 @@ export function compose(resolved: ResolverOutput, options: ComposeOptions): stri
 		};
 	}
 
-	const { gatewayService, cliService, allVolumes } = buildGatewayServices(
-		resolved,
-		options,
-		gatewayDependsOn,
-	);
+	const services: Record<string, Record<string, unknown>> = {};
+	let allVolumes = new Set<string>();
 
-	const services: Record<string, Record<string, unknown>> = {
-		"openclaw-gateway": gatewayService,
-	};
+	if (!isDirectInstall) {
+		const {
+			gatewayService,
+			cliService,
+			allVolumes: gwVolumes,
+		} = buildGatewayServices(resolved, options, gatewayDependsOn);
+		allVolumes = gwVolumes;
+		services["openclaw-gateway"] = gatewayService;
+		// CLI service added after companions
+		// Determine which services need DB setup so we can redirect their depends_on
+		const dbReqs = getDbRequirements(resolved);
+		const dbServiceIds = new Set(dbReqs.map((r) => r.serviceId));
 
-	for (const { definition: def } of resolved.services) {
-		const { entry } = buildCompanionService(def, resolved, options, allVolumes);
-		services[def.id] = entry;
+		for (const { definition: def } of resolved.services) {
+			const { entry } = buildCompanionService(def, resolved, options, allVolumes);
+			if (dbServiceIds.has(def.id) && entry.depends_on) {
+				const deps = entry.depends_on as Record<string, { condition: string }>;
+				if (deps.postgresql) {
+					delete deps.postgresql;
+					deps["postgres-setup"] = { condition: "service_completed_successfully" };
+				}
+			}
+			services[def.id] = entry;
+		}
+
+		const pgSetup = buildPostgresSetup(resolved);
+		if (pgSetup) {
+			services["postgres-setup"] = pgSetup;
+		}
+
+		services["openclaw-cli"] = cliService;
+	} else {
+		// Direct install: no gateway/CLI containers, just companion services
+		const dbReqs = getDbRequirements(resolved);
+		const dbServiceIds = new Set(dbReqs.map((r) => r.serviceId));
+
+		for (const { definition: def } of resolved.services) {
+			const { entry } = buildCompanionService(def, resolved, options, allVolumes);
+			if (dbServiceIds.has(def.id) && entry.depends_on) {
+				const deps = entry.depends_on as Record<string, { condition: string }>;
+				if (deps.postgresql) {
+					delete deps.postgresql;
+					deps["postgres-setup"] = { condition: "service_completed_successfully" };
+				}
+			}
+			services[def.id] = entry;
+		}
+
+		const pgSetup = buildPostgresSetup(resolved);
+		if (pgSetup) {
+			services["postgres-setup"] = pgSetup;
+		}
 	}
-
-	// Add CLI service
-	services["openclaw-cli"] = cliService;
 
 	const volumes: Record<string, null> = {};
 	for (const v of [...allVolumes].sort()) {
@@ -325,13 +573,24 @@ interface ServiceInfo {
  * override files by category.
  */
 export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptions): ComposeResult {
+	const isDirectInstall = options.openclawInstallMethod === "direct";
 	const allVolumes = new Set<string>();
 
 	// Build all companion service entries & classify by category
 	const serviceInfos: ServiceInfo[] = [];
+	const dbReqs = getDbRequirements(resolved);
+	const dbServiceIds = new Set(dbReqs.map((r) => r.serviceId));
 
 	for (const { definition: def } of resolved.services) {
 		const { entry, volumeNames } = buildCompanionService(def, resolved, options, allVolumes);
+		// Redirect DB-dependent services to depend on postgres-setup
+		if (dbServiceIds.has(def.id) && entry.depends_on) {
+			const deps = entry.depends_on as Record<string, { condition: string }>;
+			if (deps.postgresql) {
+				delete deps.postgresql;
+				deps["postgres-setup"] = { condition: "service_completed_successfully" };
+			}
+		}
 		serviceInfos.push({ id: def.id, category: def.category, entry, volumeNames });
 	}
 
@@ -351,37 +610,56 @@ export function composeMultiFile(resolved: ResolverOutput, options: ComposeOptio
 		}
 	}
 
-	// Gateway depends_on (only base services)
-	const gatewayDependsOn: Record<string, { condition: string }> = {};
-	for (const { definition: def } of resolved.services) {
-		if (baseServiceIds.has(def.id)) {
-			gatewayDependsOn[def.id] = {
-				condition: def.healthcheck ? "service_healthy" : "service_started",
-			};
+	const baseServices: Record<string, Record<string, unknown>> = {};
+
+	if (!isDirectInstall) {
+		// Gateway depends_on (only base services)
+		const gatewayDependsOn: Record<string, { condition: string }> = {};
+		for (const { definition: def } of resolved.services) {
+			if (baseServiceIds.has(def.id)) {
+				gatewayDependsOn[def.id] = {
+					condition: def.healthcheck ? "service_healthy" : "service_started",
+				};
+			}
+		}
+
+		const {
+			gatewayService,
+			cliService,
+			allVolumes: gwVolumes,
+		} = buildGatewayServices(resolved, options, gatewayDependsOn);
+
+		// Merge gateway volumes into allVolumes
+		for (const v of gwVolumes) allVolumes.add(v);
+
+		baseServices["openclaw-gateway"] = gatewayService;
+
+		for (const info of serviceInfos) {
+			if (baseServiceIds.has(info.id)) {
+				baseServices[info.id] = info.entry;
+			}
+		}
+
+		// Add postgres-setup init container if needed
+		const pgSetup = buildPostgresSetup(resolved);
+		if (pgSetup) {
+			baseServices["postgres-setup"] = pgSetup;
+		}
+
+		baseServices["openclaw-cli"] = cliService;
+	} else {
+		// Direct install: no gateway/CLI containers
+		for (const info of serviceInfos) {
+			if (baseServiceIds.has(info.id)) {
+				baseServices[info.id] = info.entry;
+			}
+		}
+
+		const pgSetup = buildPostgresSetup(resolved);
+		if (pgSetup) {
+			baseServices["postgres-setup"] = pgSetup;
 		}
 	}
-
-	const {
-		gatewayService,
-		cliService,
-		allVolumes: gwVolumes,
-	} = buildGatewayServices(resolved, options, gatewayDependsOn);
-
-	// Merge gateway volumes into allVolumes
-	for (const v of gwVolumes) allVolumes.add(v);
-
-	// Base file: gateway + CLI + core services + ALL volumes + networks
-	const baseServices: Record<string, Record<string, unknown>> = {
-		"openclaw-gateway": gatewayService,
-	};
-
-	for (const info of serviceInfos) {
-		if (baseServiceIds.has(info.id)) {
-			baseServices[info.id] = info.entry;
-		}
-	}
-
-	baseServices["openclaw-cli"] = cliService;
 
 	const sortedAllVolumes: Record<string, null> = {};
 	for (const v of [...allVolumes].sort()) {

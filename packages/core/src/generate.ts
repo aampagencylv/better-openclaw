@@ -7,18 +7,21 @@ import { composeMultiFile } from "./composer.js";
 import { StackConfigError, ValidationError } from "./errors.js";
 import { generateBareMetalInstall } from "./generators/bare-metal-install.js";
 import { generateCaddyfile } from "./generators/caddy.js";
+import { generateCloudInit } from "./generators/cloud-init.js";
 import { generateEnvFiles } from "./generators/env.js";
 import { generateGsdScripts } from "./generators/get-shit-done.js";
 import { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
 import { generateHealthCheck } from "./generators/health-check.js";
 import { generateN8nWorkflows } from "./generators/n8n-workflows.js";
 import { generateNativeInstallScripts } from "./generators/native-services.js";
+import { generateOpenclawInstallScript } from "./generators/openclaw-install-script.js";
 import { generateOpenClawConfig } from "./generators/openclaw-json.js";
 import { generatePostgresInit } from "./generators/postgres-init.js";
 import { generatePrometheusConfig } from "./generators/prometheus.js";
 import { generateReadme } from "./generators/readme.js";
 import { generateScripts } from "./generators/scripts.js";
 import { generateSkillFiles } from "./generators/skills.js";
+import { generateStackManifest } from "./generators/stack-manifest.js";
 import { generateTraefikConfig } from "./generators/traefik.js";
 import { migrateConfig } from "./migrations.js";
 import { resolve } from "./resolver.js";
@@ -91,6 +94,9 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 	const composeOptions = {
 		projectName: input.projectName,
 		proxy: input.proxy,
+		proxyHttpPort: input.proxyHttpPort,
+		proxyHttpsPort: input.proxyHttpsPort,
+		portOverrides: input.portOverrides,
 		domain: input.domain,
 		gpu: input.gpu,
 		platform: composePlatform,
@@ -98,6 +104,9 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 		openclawVersion: input.openclawVersion,
 		bareMetalNativeHost: isBareMetal && nativeIds.size > 0,
 		traefikLabels: traefikOutput?.serviceLabels,
+		openclawImage: input.openclawImage ?? "official",
+		hardened: input.hardened ?? true,
+		openclawInstallMethod: input.openclawInstallMethod ?? "docker",
 	};
 	const composeResult = composeMultiFile(resolvedForCompose, composeOptions);
 
@@ -126,6 +135,9 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 		domain: input.domain,
 		openclawVersion: input.openclawVersion,
 		nativeServiceIds: isBareMetal ? nativeIds : undefined,
+		composeFiles: Object.keys(composeResult.files),
+		composeProfiles: composeResult.profiles,
+		openclawImage: input.openclawImage,
 	});
 	files[".env.example"] = envFiles.envExample;
 	files[".env"] = envFiles.env;
@@ -139,6 +151,12 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 		"docker-compose.override.yml",
 	].join("\n");
 
+	// Stack manifest (consumed by Mission Control)
+	const manifestFiles = generateStackManifest(resolved, input);
+	for (const [path, content] of Object.entries(manifestFiles)) {
+		files[path] = content;
+	}
+
 	// Skills
 	const skillFiles = generateSkillFiles(resolved);
 	for (const [path, content] of Object.entries(skillFiles)) {
@@ -146,7 +164,11 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 	}
 
 	// OpenClaw Core Configuration
-	files["openclaw/config/openclaw.json"] = generateOpenClawConfig(resolved);
+	files["openclaw/config/openclaw.json"] = generateOpenClawConfig(resolved, {
+		deploymentType: input.deploymentType,
+		gatewayPort: 18789,
+		openclawVersion: input.openclawVersion,
+	});
 
 	// README
 	files["README.md"] = generateReadme(resolved, {
@@ -155,6 +177,7 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 		proxy: input.proxy,
 		deploymentType: input.deploymentType,
 		hasNativeServices: isBareMetal && nativeServices.length > 0,
+		openclawInstallMethod: input.openclawInstallMethod,
 	});
 
 	// Scripts
@@ -252,6 +275,27 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 			files["openclaw/scripts/setup-gsd.sh"] = gsdScripts.sh;
 			files["openclaw/scripts/setup-gsd.ps1"] = gsdScripts.ps1;
 		}
+	}
+
+	// OpenClaw direct install scripts (host-based, no Docker gateway)
+	if (input.openclawInstallMethod === "direct") {
+		const installScripts = generateOpenclawInstallScript({
+			projectName: input.projectName,
+		});
+		for (const [path, content] of Object.entries(installScripts)) {
+			files[path] = content;
+		}
+	}
+
+	// Cloud-init deploy target
+	if (input.deployTarget === "cloud-init") {
+		const mainCompose = composeResult.files["docker-compose.yml"] ?? "";
+		files["cloud-init.yml"] = generateCloudInit({
+			composeYaml: mainCompose,
+			envContent: envFiles.env,
+			projectName: input.projectName,
+			gatewayPort: 18789,
+		});
 	}
 
 	// 5. Calculate metadata

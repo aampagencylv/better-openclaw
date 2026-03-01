@@ -2,9 +2,9 @@ import type { ResolverOutput } from "../types.js";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-interface HealthCheckOptions {
+export interface HealthCheckOptions {
 	projectName: string;
-	deploymentType?: "docker" | "bare-metal";
+	deploymentType?: "docker" | "bare-metal" | "local";
 }
 
 // ─── Generator ──────────────────────────────────────────────────────────────

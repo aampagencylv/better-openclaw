@@ -12,7 +12,7 @@ export const usesendDefinition: ServiceDefinition = {
 	imageTag: "v1.7.7",
 	ports: [
 		{
-			host: 3000,
+			host: 3025,
 			container: 3000,
 			description: "useSend web UI",
 			exposed: true,
@@ -22,7 +22,7 @@ export const usesendDefinition: ServiceDefinition = {
 	environment: [
 		{
 			key: "DATABASE_URL",
-			defaultValue: "postgres://user:password@postgresql:5432/usesend",
+			defaultValue: "postgres://usesend:${USESEND_DB_PASSWORD}@postgresql:5432/usesend",
 			secret: true,
 			description: "PostgreSQL connection URL",
 			required: true,
@@ -89,7 +89,7 @@ export const usesendDefinition: ServiceDefinition = {
 	tags: ["email", "ses", "smtp", "transactional", "self-hosted"],
 	maturity: "stable",
 
-	requires: [],
+	requires: ["postgresql", "redis"],
 	recommends: [],
 	conflictsWith: [],
 

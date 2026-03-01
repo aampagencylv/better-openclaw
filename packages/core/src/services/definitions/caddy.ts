@@ -38,7 +38,7 @@ export const caddyDefinition: ServiceDefinition = {
 	],
 	environment: [],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:80 || exit 1",
+		test: "curl -sf http://localhost:80 || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

@@ -8,9 +8,11 @@ export interface ReadmeOptions {
 	domain?: string;
 	proxy?: string;
 	/** When "bare-metal", the stack uses native + Docker hybrid. */
-	deploymentType?: "docker" | "bare-metal";
+	deploymentType?: "docker" | "bare-metal" | "local";
 	/** True when some services run natively on the host (bare-metal only). */
 	hasNativeServices?: boolean;
+	/** How OpenClaw itself is installed: docker (container) or direct (host). */
+	openclawInstallMethod?: "docker" | "direct";
 }
 
 /**
@@ -20,7 +22,9 @@ export interface ReadmeOptions {
  * service URLs, skill packs, and scripts documentation.
  */
 export function generateReadme(resolved: ResolverOutput, options: ReadmeOptions): string {
-	const { projectName, domain, proxy, deploymentType, hasNativeServices } = options;
+	const { projectName, domain, proxy, deploymentType, hasNativeServices, openclawInstallMethod } =
+		options;
+	const isDirectInstall = openclawInstallMethod === "direct";
 	const sections: string[] = [];
 
 	// ── Title & Description ─────────────────────────────────────────────────
@@ -29,7 +33,7 @@ export function generateReadme(resolved: ResolverOutput, options: ReadmeOptions)
 
 > Self-hosted AI agent infrastructure powered by [OpenClaw](https://openclaw.dev).
 
-This project provides a fully configured Docker Compose stack with ${resolved.services.length} services, ready to deploy on any server.
+This project provides a fully configured Docker Compose stack with ${resolved.services.length} services, ready to deploy on any server.${isDirectInstall ? " OpenClaw itself runs directly on the host (not in Docker)." : ""}
 ${deploymentType === "bare-metal" && hasNativeServices ? "\n\n**Bare-metal (native + Docker):** Some services run natively on the host; the rest (including the OpenClaw gateway) run in Docker. Use the top-level `install.sh` or `install.ps1` to install/start native services first, then start the Docker stack." : ""}
 
 ---`);
@@ -64,6 +68,7 @@ ${serviceRows}
 - [Docker](https://docs.docker.com/get-docker/) (v24+)
 - [Docker Compose](https://docs.docker.com/compose/install/) (v2+)
 - At least ${Math.ceil(resolved.estimatedMemoryMB / 1024)}GB of RAM available
+${isDirectInstall ? "- Node.js 22+ (installed automatically by the OpenClaw installer)" : ""}
 
 ### 1. Extract the ZIP
 
@@ -79,7 +84,31 @@ cp .env.example .env
 \`\`\`
 
 Edit \`.env\` and update any values as needed. Secret values have been pre-generated — review and change them for production use.
+${
+	isDirectInstall
+		? `
+### 3. Install OpenClaw on the Host
 
+\`\`\`bash
+chmod +x scripts/install-openclaw.sh
+./scripts/install-openclaw.sh
+\`\`\`
+
+This downloads and runs the official installer, which sets up Node.js 22+ and OpenClaw globally.
+
+### 4. Start Companion Services
+
+\`\`\`bash
+docker compose up -d
+\`\`\`
+
+### 5. Run Onboarding
+
+\`\`\`bash
+openclaw onboard
+\`\`\`
+`
+		: `
 ### 3. Start Services
 
 \`\`\`bash
@@ -104,7 +133,8 @@ docker compose ps
 \`\`\`bash
 docker compose logs -f openclaw-gateway
 \`\`\`
-
+`
+}
 All services should show a healthy status within 1–2 minutes.
 `);
 
@@ -185,6 +215,75 @@ The following OpenClaw skills are automatically installed:
 ${skillRows}
 
 Skills are located in \`openclaw/workspace/skills/\`. Each skill provides a \`SKILL.md\` with usage instructions.
+`);
+	}
+
+	// ── Onboarding & Channels ──────────────────────────────────────────────
+	// Based on openclaw_docker-setup.sh post-deploy instructions
+
+	if (isDirectInstall) {
+		sections.push(`## OpenClaw Setup
+
+OpenClaw is installed directly on the host (not in Docker). After running the install script:\n
+\`\`\`bash
+# Run onboarding to configure the gateway
+openclaw onboard
+
+# Launch the dashboard
+openclaw dashboard
+\`\`\`
+
+When prompted during onboarding:
+- **Gateway bind:** \`lan\`
+- **Gateway auth:** \`token\`
+- **Gateway token:** (use the value from \`.env\` → \`OPENCLAW_GATEWAY_TOKEN\`)
+
+### Connect Messaging Channels (optional)
+
+\`\`\`bash
+# WhatsApp (scan QR code)
+openclaw channels login
+
+# Telegram
+openclaw channels add --channel telegram --token <BOT_TOKEN>
+
+# Discord
+openclaw channels add --channel discord --token <BOT_TOKEN>
+\`\`\`
+
+See [Channel Docs](https://docs.openclaw.ai/channels) for more providers.
+`);
+	} else {
+		sections.push(`## Onboarding & Channel Setup
+
+After starting the stack, complete the gateway onboarding:
+
+\`\`\`bash
+# Interactive onboarding (sets up gateway auth and config)
+docker compose run --rm openclaw-cli onboard --no-install-daemon
+\`\`\`
+
+When prompted:
+- **Gateway bind:** \`lan\`
+- **Gateway auth:** \`token\`
+- **Gateway token:** (use the value from \`.env\` → \`OPENCLAW_GATEWAY_TOKEN\`)
+- **Tailscale exposure:** Off
+- **Install Gateway daemon:** No
+
+### Connect Messaging Channels (optional)
+
+\`\`\`bash
+# WhatsApp (scan QR code)
+docker compose run --rm openclaw-cli channels login
+
+# Telegram
+docker compose run --rm openclaw-cli channels add --channel telegram --token <BOT_TOKEN>
+
+# Discord
+docker compose run --rm openclaw-cli channels add --channel discord --token <BOT_TOKEN>
+\`\`\`
+
+See [Channel Docs](https://docs.openclaw.ai/channels) for more providers.
 `);
 	}
 

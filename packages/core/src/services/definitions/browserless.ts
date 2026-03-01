@@ -9,7 +9,7 @@ export const browserlessDefinition: ServiceDefinition = {
 	icon: "🌐",
 
 	image: "browserless/chrome",
-	imageTag: "2.21.0",
+	imageTag: "latest",
 	ports: [
 		{
 			host: 3010,
@@ -36,7 +36,7 @@ export const browserlessDefinition: ServiceDefinition = {
 		},
 	],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:3000/ || exit 1",
+		test: "curl -sf http://localhost:3000/?token=$TOKEN || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

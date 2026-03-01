@@ -38,7 +38,7 @@ export const PlatformSchema = z.enum([
 /** Platform for Docker image arch only (used by resolver/compose). */
 export const ComposePlatformSchema = z.enum(["linux/amd64", "linux/arm64"]);
 
-export const DeploymentTypeSchema = z.enum(["docker", "bare-metal"]);
+export const DeploymentTypeSchema = z.enum(["docker", "bare-metal", "local"]);
 
 export const RestartPolicySchema = z.enum(["unless-stopped", "always", "on-failure", "no"]);
 
@@ -47,6 +47,12 @@ export const ProxyTypeSchema = z.enum(["none", "caddy", "traefik"]);
 export const DeploymentTargetSchema = z.enum(["local", "vps", "homelab", "clawexa"]);
 
 export const OutputFormatSchema = z.enum(["directory", "tar", "zip"]);
+
+export const OpenclawImageVariantSchema = z.enum(["official", "coolify", "alpine"]);
+
+export const OpenclawInstallMethodSchema = z.enum(["docker", "direct"]);
+
+export const DeployTargetSchema = z.enum(["local", "cloud-init"]);
 
 export const AiProviderSchema = z.enum([
 	"openai",
@@ -59,6 +65,7 @@ export const AiProviderSchema = z.enum([
 	"mistral",
 	"together",
 	"ollama",
+	"ollama-cloud",
 	"lmstudio",
 	"vllm",
 ]);
@@ -233,6 +240,11 @@ export const GenerationInputSchema = z.object({
 	aiProviders: z.array(AiProviderSchema).default([]),
 	gsdRuntimes: z.array(GsdRuntimeSchema).default([]),
 	proxy: ProxyTypeSchema.default("none"),
+	proxyHttpPort: z.number().int().min(1).max(65535).optional(),
+	proxyHttpsPort: z.number().int().min(1).max(65535).optional(),
+	portOverrides: z
+		.record(z.string(), z.record(z.string(), z.number().int().min(1).max(65535)))
+		.optional(),
 	domain: z.string().optional(),
 	gpu: z.boolean().default(false),
 	platform: PlatformSchema.default("linux/amd64"),
@@ -241,6 +253,10 @@ export const GenerationInputSchema = z.object({
 	generateSecrets: z.boolean().default(true),
 	openclawVersion: z.string().default("latest"),
 	monitoring: z.boolean().default(false),
+	openclawImage: OpenclawImageVariantSchema.default("official"),
+	openclawInstallMethod: OpenclawInstallMethodSchema.default("docker"),
+	deployTarget: DeployTargetSchema.default("local"),
+	hardened: z.boolean().default(true),
 });
 
 // ─── Resolver Output ────────────────────────────────────────────────────────
@@ -252,6 +268,8 @@ export const ResolvedServiceSchema = z.object({
 
 export const AddedDependencySchema = z.object({
 	service: z.string(),
+	serviceId: z.string().optional(),
+	requiredBy: z.string().optional(),
 	reason: z.string(),
 });
 
@@ -282,6 +300,11 @@ export const ResolverOutputSchema = z.object({
 export const ComposeOptionsSchema = z.object({
 	projectName: z.string(),
 	proxy: ProxyTypeSchema.default("none"),
+	proxyHttpPort: z.number().int().min(1).max(65535).optional(),
+	proxyHttpsPort: z.number().int().min(1).max(65535).optional(),
+	portOverrides: z
+		.record(z.string(), z.record(z.string(), z.number().int().min(1).max(65535)))
+		.optional(),
 	domain: z.string().optional(),
 	gpu: z.boolean().default(false),
 	platform: PlatformSchema.default("linux/amd64"),
@@ -289,6 +312,12 @@ export const ComposeOptionsSchema = z.object({
 	openclawVersion: z.string().default("latest"),
 	/** When true, gateway gets extra_hosts so it can reach host-run (native) services. */
 	bareMetalNativeHost: z.boolean().optional(),
+	/** OpenClaw Docker image variant: official, coolify, or alpine. */
+	openclawImage: OpenclawImageVariantSchema.default("official"),
+	/** Whether to apply security hardening (cap_drop, no-new-privileges, etc.) */
+	hardened: z.boolean().default(true),
+	/** How to install OpenClaw itself: docker (in container) or direct (host install). */
+	openclawInstallMethod: OpenclawInstallMethodSchema.default("docker"),
 });
 
 // ─── API Request/Response ───────────────────────────────────────────────────

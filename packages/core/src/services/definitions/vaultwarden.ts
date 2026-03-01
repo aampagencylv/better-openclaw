@@ -12,7 +12,7 @@ export const vaultwardenDefinition: ServiceDefinition = {
 	imageTag: "1.33.2-alpine",
 	ports: [
 		{
-			host: 80, // User should probably proxy this or change it to avoid conflicts
+			host: 8843,
 			container: 80,
 			description: "Vaultwarden Web Interface / API",
 			exposed: true,

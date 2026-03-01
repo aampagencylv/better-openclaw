@@ -48,7 +48,7 @@ export const ntfyDefinition: ServiceDefinition = {
 		},
 		{
 			key: "NTFY_PORT",
-			defaultValue: "8080",
+			defaultValue: "80",
 			secret: false,
 			description: "ntfy port for OpenClaw",
 			required: true,

@@ -11,7 +11,7 @@ export const scraplingDefinition: ServiceDefinition = {
 	imageTag: "v0.4",
 	ports: [
 		{
-			host: 8000,
+			host: 8300,
 			container: 8000,
 			description: "Scrapling MCP Server",
 			exposed: true,

@@ -9,7 +9,7 @@ export const gotifyDefinition: ServiceDefinition = {
 	icon: "🔔",
 
 	image: "gotify/server",
-	imageTag: "2.17.0",
+	imageTag: "2.9.0",
 	ports: [
 		{
 			host: 8083,
@@ -27,7 +27,7 @@ export const gotifyDefinition: ServiceDefinition = {
 	],
 	environment: [],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:80/health || exit 1",
+		test: "curl -sf http://localhost:80/health || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,
@@ -47,7 +47,7 @@ export const gotifyDefinition: ServiceDefinition = {
 		},
 		{
 			key: "GOTIFY_PORT",
-			defaultValue: "8080",
+			defaultValue: "80",
 			secret: false,
 			description: "Gotify port for OpenClaw",
 			required: true,

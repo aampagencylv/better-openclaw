@@ -12,7 +12,7 @@ export const pentagiDefinition: ServiceDefinition = {
 	imageTag: "v1.0",
 	ports: [
 		{
-			host: 8080, // Assuming default or common port for web UI, might need adjustment based on their docker-compose
+			host: 8089,
 			container: 8080,
 			description: "PentAGI Interface",
 			exposed: true,

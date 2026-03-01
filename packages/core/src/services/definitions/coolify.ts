@@ -12,7 +12,7 @@ export const coolifyDefinition: ServiceDefinition = {
 	imageTag: "latest",
 	ports: [
 		{
-			host: 8000,
+			host: 8200,
 			container: 8000,
 			description: "Coolify web UI",
 			exposed: true,

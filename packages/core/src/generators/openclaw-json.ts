@@ -1,4 +1,10 @@
-import type { AiProvider, ResolverOutput } from "../types.js";
+import type { AiProvider, DeploymentType, ResolverOutput } from "../types.js";
+
+export interface OpenClawConfigOptions {
+	deploymentType: DeploymentType;
+	gatewayPort: number;
+	openclawVersion: string;
+}
 
 const PROVIDER_CONFIGS: Record<AiProvider, any> = {
 	openai: {
@@ -202,7 +208,7 @@ const PROVIDER_CONFIGS: Record<AiProvider, any> = {
 		apiKey: "${TOGETHER_API_KEY}",
 		models: [
 			{
-				id: "meta-llama/Llama-4-Maverick-Instruct-Turbo",
+				id: "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8", // "meta-llama/Llama-4-Maverick-Instruct-Turbo",
 				name: "LLaMA 4 Maverick (Together)",
 				api: "openai-completions",
 				reasoning: false,
@@ -214,7 +220,7 @@ const PROVIDER_CONFIGS: Record<AiProvider, any> = {
 		],
 	},
 	ollama: {
-		baseUrl: "http://host.docker.internal:11434/v1",
+		baseUrl: null, // dynamic: resolved at generation time based on deployment type
 		api: "openai-completions",
 		auth: "none",
 		models: [
@@ -240,8 +246,66 @@ const PROVIDER_CONFIGS: Record<AiProvider, any> = {
 			},
 		],
 	},
+	"ollama-cloud": {
+		baseUrl: "https://ollama.com/v1",
+		api: "openai-completions",
+		auth: "api-key",
+		apiKey: "${OLLAMA_API_KEY}",
+		models: [
+			{
+				id: "qwen3.5:397b-cloud",
+				name: "Qwen 3.5 397B (Cloud)",
+				api: "openai-completions",
+				reasoning: false,
+				input: ["text"],
+				cost: { input: 0, output: 0 },
+				contextWindow: 131072,
+				maxTokens: 32768,
+			},
+			{
+				id: "glm-5:cloud",
+				name: "GLM-5 (Cloud)",
+				api: "openai-completions",
+				reasoning: false,
+				input: ["text"],
+				cost: { input: 0, output: 0 },
+				contextWindow: 131072,
+				maxTokens: 32768,
+			},
+			{
+				id: "minimax-m2.5:cloud",
+				name: "MiniMax M2.5 (Cloud)",
+				api: "openai-completions",
+				reasoning: false,
+				input: ["text"],
+				cost: { input: 0, output: 0 },
+				contextWindow: 131072,
+				maxTokens: 32768,
+			},
+			{
+				id: "kimi-k2.5:cloud",
+				name: "Kimi K2.5 (Cloud)",
+				api: "openai-completions",
+				reasoning: false,
+				input: ["text"],
+				cost: { input: 0, output: 0 },
+				contextWindow: 131072,
+				maxTokens: 32768,
+			},
+			{
+				id: "gemini-3-flash-preview:cloud",
+				name: "Gemini 3 Flash (Cloud)",
+				api: "openai-completions",
+				reasoning: false,
+				input: ["text", "image"],
+				cost: { input: 0, output: 0 },
+				contextWindow: 1000000,
+				maxTokens: 8192,
+			},
+		],
+	},
 	lmstudio: {
-		baseUrl: "http://host.docker.internal:1234/v1",
+		baseUrl: null, // dynamic: resolved at generation time based on deployment type
 		api: "openai-completions",
 		auth: "none",
 		models: [
@@ -258,7 +322,7 @@ const PROVIDER_CONFIGS: Record<AiProvider, any> = {
 		],
 	},
 	vllm: {
-		baseUrl: "http://host.docker.internal:8000/v1",
+		baseUrl: null, // dynamic: resolved at generation time based on deployment type
 		api: "openai-completions",
 		auth: "none",
 		models: [
@@ -276,11 +340,27 @@ const PROVIDER_CONFIGS: Record<AiProvider, any> = {
 	},
 };
 
+/** Default ports for local inference providers (ollama, lmstudio, vllm). */
+const LOCAL_PROVIDER_PORTS: Record<string, number> = {
+	ollama: 11434,
+	lmstudio: 1234,
+	vllm: 8000,
+};
+
 /**
  * Generates a default `openclaw/config/openclaw.json` tailored
  * to the services installed in the stack.
  */
-export function generateOpenClawConfig(resolved: ResolverOutput): string {
+export function generateOpenClawConfig(
+	resolved: ResolverOutput,
+	options: OpenClawConfigOptions,
+): string {
+	const isDocker = options.deploymentType === "docker";
+	// Docker containers reach host services via host.docker.internal; bare-metal uses localhost
+	const localInferenceHost = isDocker ? "host.docker.internal" : "localhost";
+	// Docker: bind to all interfaces (0.0.0.0) so port mapping works from host
+	// Bare-metal/local: bind to loopback (127.0.0.1) for security, Tailscale can expose if needed
+	const gatewayBind = isDocker ? "lan" : "loopback";
 	const defaultSkills: Record<string, { enabled: boolean }> = {};
 
 	// Auto-enable any OpenClaw skills attached to installed companion services
@@ -306,8 +386,12 @@ export function generateOpenClawConfig(resolved: ResolverOutput): string {
 		const meta = PROVIDER_CONFIGS[provider];
 		if (!meta) continue;
 
+		// Local inference providers have null baseUrl — resolve dynamically based on deployment type
+		const baseUrl =
+			meta.baseUrl ?? `http://${localInferenceHost}:${LOCAL_PROVIDER_PORTS[provider] ?? 8000}/v1`;
+
 		providers[provider] = {
-			baseUrl: meta.baseUrl,
+			baseUrl,
 			api: meta.api,
 			auth: meta.auth,
 			...(meta.apiKey ? { apiKey: meta.apiKey } : {}),
@@ -337,11 +421,27 @@ export function generateOpenClawConfig(resolved: ResolverOutput): string {
 	}
 
 	const config = {
+		meta: {
+			lastTouchedVersion: options.openclawVersion,
+			lastTouchedAt: new Date().toISOString(),
+		},
+		env: {
+			shellEnv: {
+				enabled: true,
+			},
+			vars: {},
+		},
 		wizard: {
 			lastRunAt: new Date().toISOString(),
-			lastRunVersion: "2026.2.23",
+			lastRunVersion: options.openclawVersion,
 			lastRunCommand: "auto-generated-by-better-openclaw",
 			lastRunMode: "local",
+		},
+		logging: {
+			redactSensitive: "tools",
+		},
+		update: {
+			checkOnStart: true,
 		},
 		auth: {
 			profiles: authProfiles,
@@ -356,7 +456,7 @@ export function generateOpenClawConfig(resolved: ResolverOutput): string {
 					primary: primaryModel,
 				},
 				models: agentsModels,
-				workspace: "/home/node/.openclaw/workspace",
+				workspace: isDocker ? "/home/node/.openclaw/workspace" : "./workspace",
 				compaction: { mode: "safeguard" },
 				maxConcurrent: 4,
 				subagents: { maxConcurrent: 8 },
@@ -369,6 +469,9 @@ export function generateOpenClawConfig(resolved: ResolverOutput): string {
 			native: "auto",
 			nativeSkills: "auto",
 		},
+		cron: {
+			enabled: true,
+		},
 		hooks: {
 			internal: {
 				enabled: true,
@@ -380,35 +483,59 @@ export function generateOpenClawConfig(resolved: ResolverOutput): string {
 				},
 			},
 		},
+		web: {
+			enabled: true,
+		},
+		discovery: {
+			wideArea: {
+				enabled: true,
+			},
+		},
+		canvasHost: {
+			enabled: true,
+			liveReload: true,
+		},
 		channels: {},
 		gateway: {
-			port: 18791,
+			port: options.gatewayPort,
 			mode: "local",
-			bind: "loopback",
+			bind: gatewayBind,
+			controlUi: {
+				enabled: true,
+				// Docker NAT makes browser connections appear external — skip device pairing, use token-only auth
+				...(isDocker ? { allowInsecureAuth: true } : {}),
+				// Non-loopback binds need explicit origin allowlist for control UI CORS
+				// Reference: docker-setup.sh ensure_control_ui_allowed_origins()
+				...(gatewayBind !== "loopback"
+					? { allowedOrigins: [`http://127.0.0.1:${options.gatewayPort}`] }
+					: {}),
+			},
 			auth: {
 				mode: "token",
 				token: "${OPENCLAW_GATEWAY_TOKEN}",
+				...(isDocker ? {} : { allowTailscale: true }),
 			},
-			tailscale: {
-				mode: "serve",
-				resetOnExit: true,
-			},
+			// Tailscale serve only works on bare-metal/local (not inside Docker containers)
+			...(isDocker ? {} : { tailscale: { mode: "serve", resetOnExit: true } }),
 			nodes: {
 				denyCommands: ["camera.snap", "camera.clip", "screen.record"],
 			},
 		},
 		skills: {
 			install: { nodeManager: "pnpm" },
+			load: {
+				watch: true,
+			},
 			...(Object.keys(defaultSkills).length > 0 ? { entries: defaultSkills } : {}),
 		},
 		plugins: {
+			enabled: true,
 			entries: {
+				telegram: { enabled: true },
+				whatsapp: { enabled: true },
+				discord: { enabled: true },
 				"memory-core": { enabled: true },
 			},
-		},
-		meta: {
-			lastTouchedVersion: "2026.2.23",
-			lastTouchedAt: new Date().toISOString(),
 		},
 	};
 

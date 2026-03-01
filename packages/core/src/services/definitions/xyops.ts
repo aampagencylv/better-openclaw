@@ -53,7 +53,7 @@ export const xyopsDefinition: ServiceDefinition = {
 		},
 	],
 	healthcheck: {
-		test: "wget -q --spider http://localhost:5522 || exit 1",
+		test: "curl -sf http://localhost:5522 || exit 1",
 		interval: "30s",
 		timeout: "10s",
 		retries: 3,

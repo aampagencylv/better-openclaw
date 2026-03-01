@@ -11,7 +11,7 @@ export const solidityGuardDefinition: ServiceDefinition = {
 	imageTag: "latest",
 	ports: [
 		{
-			host: 8000,
+			host: 8400,
 			container: 8000,
 			description: "SolidityGuard Web Dashboard",
 			exposed: true,
