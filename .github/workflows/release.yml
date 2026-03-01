@@ -78,7 +78,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.check-version.outputs.exists == 'false'
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build all packages
         if: steps.check-version.outputs.exists == 'false'
