@@ -52,7 +52,7 @@ export async function runUpdate(options: {
 	}
 
 	try {
-		const pullOutput = execSync("docker compose pull", {
+		execSync("docker compose pull", {
 			cwd: dir,
 			stdio: options.json ? ["pipe", "pipe", "pipe"] : ["pipe", "inherit", "inherit"],
 			encoding: "utf-8",

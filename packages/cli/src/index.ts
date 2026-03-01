@@ -213,7 +213,7 @@ presetsCmd
 	.command("list")
 	.description("List all available presets")
 	.action(async () => {
-		const { getAllPresets, getServiceById } = await import("@better-openclaw/core");
+		const { getAllPresets } = await import("@better-openclaw/core");
 		const parentJson = program.opts() as { json?: boolean };
 		const presets = getAllPresets();
 
@@ -295,11 +295,9 @@ program
 	.action(async (options: { services?: string; preset?: string; dir?: string }) => {
 		const {
 			resolve: resolveStack,
-			getAllServices,
 			getAllPresets,
 			getPresetById,
 			getServiceById,
-			getSkillPackById,
 		} = await import("@better-openclaw/core");
 		const parentJson = program.opts() as { json?: boolean };
 
@@ -332,7 +330,7 @@ program
 		}
 
 		if (options.dir) {
-			const { existsSync, readFileSync } = await import("node:fs");
+			const { existsSync } = await import("node:fs");
 			const { join } = await import("node:path");
 			const composePath = join(options.dir, "docker-compose.yml");
 			if (!existsSync(composePath)) {
@@ -472,8 +470,7 @@ program
 			process.exit(1);
 		}
 
-		// Read existing .env.example to detect current services
-		const envPath = join(options.dir, ".env.example");
+		// Read existing docker-compose.yml to detect current services
 		const composePath = join(options.dir, "docker-compose.yml");
 		if (!existsSync(composePath)) {
 			console.error(
@@ -523,6 +520,10 @@ program
 			generateSecrets: true,
 			openclawVersion: "latest",
 			monitoring: false,
+			openclawImage: "official",
+			openclawInstallMethod: "docker",
+			deployTarget: "local",
+			hardened: true,
 		});
 
 		await writeProject(options.dir, result.files, { force: true });
@@ -610,6 +611,10 @@ program
 			generateSecrets: true,
 			openclawVersion: "latest",
 			monitoring: false,
+			openclawImage: "official",
+			openclawInstallMethod: "docker",
+			deployTarget: "local",
+			hardened: true,
 		});
 
 		await writeProject(options.dir, result.files, { force: true });

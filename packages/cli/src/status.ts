@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import pc from "picocolors";
 
@@ -20,7 +20,6 @@ export async function runStatus(options: { dir: string; json?: boolean }): Promi
 	const dir = resolve(options.dir);
 
 	// Find compose file(s)
-	const envPath = join(dir, ".env");
 	const defaultCompose = join(dir, "docker-compose.yml");
 
 	if (!existsSync(defaultCompose)) {

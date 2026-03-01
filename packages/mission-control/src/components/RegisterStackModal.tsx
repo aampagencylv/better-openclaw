@@ -114,8 +114,8 @@ export default function RegisterStackModal({ onClose, onRegistered }: RegisterSt
 
 				<form onSubmit={handleSubmit} className="px-5 py-4 space-y-4">
 					<p className="text-sm text-muted-foreground">
-						Paste the contents of <code className="text-xs">stack-manifest.json</code> or upload
-						the file. This manifest is generated alongside your Docker Compose stack.
+						Paste the contents of <code className="text-xs">stack-manifest.json</code> or upload the
+						file. This manifest is generated alongside your Docker Compose stack.
 					</p>
 
 					{/* File upload */}

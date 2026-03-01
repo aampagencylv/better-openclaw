@@ -198,12 +198,13 @@ export async function runDeployInteractive(options: {
 		placeholder:
 			provider === "dokploy" ? "https://dokploy.example.com" : "https://coolify.example.com",
 		validate: (value) => {
-			if (!value.trim()) return "URL is required";
+			if (!value?.trim()) return "URL is required";
 			try {
 				new URL(value);
 			} catch {
 				return "Invalid URL";
 			}
+			return undefined;
 		},
 	});
 
@@ -220,7 +221,8 @@ export async function runDeployInteractive(options: {
 	const apiKey = await clack.password({
 		message: `Enter your API key (${apiKeyHint})`,
 		validate: (value) => {
-			if (!value.trim()) return "API key is required";
+			if (!value?.trim()) return "API key is required";
+			return undefined;
 		},
 	});
 

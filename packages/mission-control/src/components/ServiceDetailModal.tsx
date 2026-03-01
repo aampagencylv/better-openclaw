@@ -108,9 +108,7 @@ export default function ServiceDetailModal({ service, onClose }: ServiceDetailMo
 											{p.container}
 										</code>
 										<span className="text-muted-foreground text-xs">{p.description}</span>
-										{p.exposed && (
-											<span className="ml-auto text-xs text-primary">exposed</span>
-										)}
+										{p.exposed && <span className="ml-auto text-xs text-primary">exposed</span>}
 									</div>
 								))}
 							</div>

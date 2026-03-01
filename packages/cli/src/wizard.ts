@@ -621,6 +621,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		monitoring: enableMonitoring,
 		openclawImage: openclawImage as "official" | "coolify" | "alpine",
 		openclawInstallMethod: openclawInstallMethod as "docker" | "direct",
+		deployTarget: "local",
 		hardened: true,
 	};
 

@@ -123,13 +123,7 @@ export default function ServicesPage({ onRegisterStack }: ServicesPageProps) {
 	);
 }
 
-function ServiceCard({
-	service,
-	onClick,
-}: {
-	service: Doc<"stackServices">;
-	onClick: () => void;
-}) {
+function ServiceCard({ service, onClick }: { service: Doc<"stackServices">; onClick: () => void }) {
 	const categoryClass = CATEGORY_COLORS[service.category] ?? "bg-secondary text-muted-foreground";
 	const statusColor = STATUS_COLORS[service.status ?? "unknown"] ?? STATUS_COLORS.unknown;
 
@@ -150,7 +144,10 @@ function ServiceCard({
 					</div>
 				</div>
 				<div className="flex items-center gap-2">
-					<div className={`h-2 w-2 rounded-full ${statusColor}`} title={service.status ?? "unknown"} />
+					<div
+						className={`h-2 w-2 rounded-full ${statusColor}`}
+						title={service.status ?? "unknown"}
+					/>
 					<IconSettings
 						size={14}
 						className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
@@ -164,7 +161,9 @@ function ServiceCard({
 				</span>
 				{service.ports.length > 0 && (
 					<span className="text-[10px] text-muted-foreground">
-						{service.ports.map((p) => (p.host ? `${p.host}:${p.container}` : `:${p.container}`)).join(", ")}
+						{service.ports
+							.map((p) => (p.host ? `${p.host}:${p.container}` : `:${p.container}`))
+							.join(", ")}
 					</span>
 				)}
 				{service.dependencyOf && (

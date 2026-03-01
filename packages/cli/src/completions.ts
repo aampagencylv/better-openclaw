@@ -18,7 +18,7 @@ const COMMANDS = [
 	"deploy",
 ];
 
-const _SUB_COMMANDS: Record<string, string[]> = {
+export const SUB_COMMANDS: Record<string, string[]> = {
 	services: ["list"],
 	presets: ["list", "info"],
 	backup: ["create", "restore", "list"],

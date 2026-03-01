@@ -14,7 +14,11 @@ interface StackSelectorProps {
 	onRegister: () => void;
 }
 
-export default function StackSelector({ selectedStackId, onSelect, onRegister }: StackSelectorProps) {
+export default function StackSelector({
+	selectedStackId,
+	onSelect,
+	onRegister,
+}: StackSelectorProps) {
 	const stacks = useQuery(api.stacks.listStacks, {});
 
 	if (!stacks) return null;

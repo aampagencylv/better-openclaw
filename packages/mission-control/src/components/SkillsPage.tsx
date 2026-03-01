@@ -41,11 +41,7 @@ export default function SkillsPage({ onRegisterStack }: SkillsPageProps) {
 					{skills.length > 0 ? (
 						<div className="space-y-3">
 							{skills.map((skill) => (
-								<SkillCard
-									key={skill._id}
-									skill={skill}
-									onEdit={() => setEditingSkill(skill)}
-								/>
+								<SkillCard key={skill._id} skill={skill} onEdit={() => setEditingSkill(skill)} />
 							))}
 						</div>
 					) : (
@@ -69,13 +65,7 @@ export default function SkillsPage({ onRegisterStack }: SkillsPageProps) {
 	);
 }
 
-function SkillCard({
-	skill,
-	onEdit,
-}: {
-	skill: Doc<"stackSkills">;
-	onEdit: () => void;
-}) {
+function SkillCard({ skill, onEdit }: { skill: Doc<"stackSkills">; onEdit: () => void }) {
 	return (
 		<div className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 hover:border-primary/50 transition-colors group">
 			<div className="flex-1 min-w-0">
@@ -94,7 +84,9 @@ function SkillCard({
 					))}
 				</div>
 				{skill.content && (
-					<p className="text-xs text-muted-foreground mt-2 line-clamp-2">{skill.content.slice(0, 200)}</p>
+					<p className="text-xs text-muted-foreground mt-2 line-clamp-2">
+						{skill.content.slice(0, 200)}
+					</p>
 				)}
 			</div>
 			<button
@@ -109,13 +101,7 @@ function SkillCard({
 	);
 }
 
-function SkillEditorModal({
-	skill,
-	onClose,
-}: {
-	skill: Doc<"stackSkills">;
-	onClose: () => void;
-}) {
+function SkillEditorModal({ skill, onClose }: { skill: Doc<"stackSkills">; onClose: () => void }) {
 	const updateContent = useMutation(api.stacks.updateSkillContent);
 	const [content, setContent] = useState(skill.content);
 	const [saving, setSaving] = useState(false);
@@ -204,7 +190,9 @@ function SkillEditorModal({
 				</div>
 
 				{/* Editor + Preview */}
-				<div className={`flex-1 flex overflow-hidden ${showPreview ? "divide-x divide-border" : ""}`}>
+				<div
+					className={`flex-1 flex overflow-hidden ${showPreview ? "divide-x divide-border" : ""}`}
+				>
 					{/* Editor */}
 					<textarea
 						value={content}
