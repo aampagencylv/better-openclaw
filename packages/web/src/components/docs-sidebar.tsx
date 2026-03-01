@@ -3,9 +3,11 @@
 import {
 	BookOpen,
 	ChevronRight,
+	Download,
 	Globe,
 	Menu,
 	Package,
+	Plug,
 	Rocket,
 	Server,
 	Terminal,
@@ -34,6 +36,15 @@ const navigation: NavSection[] = [
 		items: [
 			{ title: "Quick Start", href: "/docs" },
 			{ title: "Installation", href: "/docs/installation" },
+			{ title: "Direct Install", href: "/docs/installation#direct-install" },
+		],
+	},
+	{
+		title: "MCP Server",
+		icon: <Plug className="h-4 w-4" />,
+		items: [
+			{ title: "Overview", href: "/docs/mcp" },
+			{ title: "Tools Reference", href: "/docs/mcp/tools" },
 		],
 	},
 	{

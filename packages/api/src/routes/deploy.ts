@@ -29,9 +29,7 @@ const testConnectionPost = createRoute({
 			content: {
 				"application/json": {
 					schema: z.object({
-						provider: z
-							.string()
-							.describe('PaaS provider ID (e.g. "dokploy", "coolify")'),
+						provider: z.string().describe('PaaS provider ID (e.g. "dokploy", "coolify")'),
 						instanceUrl: z.string().url().describe("Base URL of the PaaS instance"),
 						apiKey: z.string().min(1).describe("API key or bearer token"),
 					}),
@@ -101,9 +99,7 @@ const deployPost = createRoute({
 			content: {
 				"application/json": {
 					schema: z.object({
-						provider: z
-							.string()
-							.describe('PaaS provider ID (e.g. "dokploy", "coolify")'),
+						provider: z.string().describe('PaaS provider ID (e.g. "dokploy", "coolify")'),
 						instanceUrl: z.string().url().describe("Base URL of the PaaS instance"),
 						apiKey: z.string().min(1).describe("API key or bearer token"),
 						projectName: z.string().min(1).describe("Project name"),

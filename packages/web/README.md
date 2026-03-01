@@ -7,6 +7,7 @@ The primary front-end platform for the Better OpenClaw ecosystem. Built entirely
 - **Interactive Visual Stack Builder (`/new`):** The graphical equivalent of the CLI wizard. Users interactively click, categorize, and filter Docker services and AI skills, select architecture targets, and generate entire deployments to standard Zip or JSON configurations instantly.
 - **Showcase Gallery (`/showcase`):** Features community examples, verified combinations, and high-impact AI tool chaining templates for deployment.
 - **Core Documentation (`/docs`):** Statically generated and easily updatable guides on deploying, tuning, and contributing to OpenClaw architectures.
+- **MCP Server Documentation (`/docs/mcp`):** Comprehensive guides on using better-openclaw as an MCP server — setup for Claude, Cursor, and VS Code, plus a full tools reference.
 - **Dynamic API References (`/api-docs`):** Swagger-compatible REST API documentation exposing all possible endpoints for programmatic stack generation payloads and schemas.
 - **Adaptive Theming:** Supports seamless Light / Premium Dark mode matching the Better-OpenClaw Glassmorphism aesthetic. A user preference switch is integrated throughout.
 

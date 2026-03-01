@@ -11,9 +11,9 @@ export default function DeploymentPage() {
 		<>
 			<h1>Deployment</h1>
 			<p>
-				You can run your stack in two ways: <strong>Docker</strong> (all services in containers) or{" "}
-				<strong>bare-metal</strong> (native + Docker hybrid). This page covers the default Docker
-				workflow. For bare-metal, see the section below.
+				You can run your stack in three ways: <strong>Docker</strong> (all services in containers),{" "}
+				<strong>direct install</strong> (OpenClaw on host, companion services in Docker), or{" "}
+				<strong>bare-metal</strong> (native + Docker hybrid). This page covers all three.
 			</p>
 
 			<h2>Local / Docker Desktop</h2>
@@ -234,6 +234,42 @@ docker compose up -d`}</code>
 				<li>Standard stack: 4 GB</li>
 				<li>Full stack or AI services: 8 GB+</li>
 			</ul>
+
+			<h2 id="direct-install">Direct Install (OpenClaw on Host)</h2>
+			<p>
+				With the <strong>direct install</strong> method, OpenClaw itself runs directly on your host
+				(not in Docker), while companion services like PostgreSQL, Redis, Qdrant, etc. still run in
+				Docker containers.
+			</p>
+			<p>This approach is ideal when you:</p>
+			<ul>
+				<li>Need direct access to host GPU drivers for AI workloads</li>
+				<li>Want the OpenClaw process to have full access to host filesystem</li>
+				<li>Prefer a lighter Docker footprint</li>
+				<li>Are running on a machine where Docker performance overhead matters</li>
+			</ul>
+			<h3>Quick Start</h3>
+			<pre>
+				<code>{`# Generate a stack with direct install
+npx create-better-openclaw my-stack --openclaw-install direct --yes
+
+cd my-stack
+cp .env.example .env   # Add your API keys
+
+# Install OpenClaw on the host
+./scripts/install-openclaw.sh
+
+# Start companion services
+docker compose up -d
+
+# Run onboarding
+openclaw onboard`}</code>
+			</pre>
+			<p>
+				The generated <code>docker-compose.yml</code> will <strong>not</strong> contain the{" "}
+				<code>openclaw-gateway</code> or <code>openclaw-cli</code> services — only your selected
+				companion services.
+			</p>
 
 			<h2 id="bare-metal">Bare-metal (native + Docker hybrid)</h2>
 			<p>

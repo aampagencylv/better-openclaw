@@ -1,5 +1,5 @@
-import { Inter, JetBrains_Mono } from "next/font/google";
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -126,7 +126,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 					}}
 				/>
 			</head>
-			<body className={`${fontInter.variable} ${fontMono.variable} bg-background text-foreground font-sans antialiased min-h-screen`}>
+			<body
+				className={`${fontInter.variable} ${fontMono.variable} bg-background text-foreground font-sans antialiased min-h-screen`}
+			>
 				<ErrorBoundary>
 					<ThemeProvider>{children}</ThemeProvider>
 				</ErrorBoundary>

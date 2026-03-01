@@ -183,9 +183,7 @@ export function DeployModal({
 						<>
 							{/* Provider selector */}
 							<div className="mb-4">
-								<label className="mb-2 block text-sm font-medium text-foreground">
-									Platform
-								</label>
+								<label className="mb-2 block text-sm font-medium text-foreground">Platform</label>
 								<div className="flex gap-2">
 									{PROVIDERS.map((p) => (
 										<button
@@ -200,9 +198,7 @@ export function DeployModal({
 											)}
 										>
 											<span className="block text-sm font-semibold">{p.name}</span>
-											<span className="block text-xs text-muted-foreground">
-												{p.description}
-											</span>
+											<span className="block text-xs text-muted-foreground">{p.description}</span>
 										</button>
 									))}
 								</div>
@@ -229,10 +225,7 @@ export function DeployModal({
 							{/* API Key */}
 							<div className="mb-3">
 								<div className="mb-1.5 flex items-center justify-between">
-									<label
-										htmlFor="deploy-key"
-										className="text-sm font-medium text-foreground"
-									>
+									<label htmlFor="deploy-key" className="text-sm font-medium text-foreground">
 										API Key
 									</label>
 									<a
@@ -262,9 +255,7 @@ export function DeployModal({
 										{showApiKey ? "Hide" : "Show"}
 									</button>
 								</div>
-								<p className="mt-1 text-xs text-muted-foreground">
-									{provider.keyInstructions}
-								</p>
+								<p className="mt-1 text-xs text-muted-foreground">{provider.keyInstructions}</p>
 							</div>
 
 							{/* Error */}
@@ -276,8 +267,8 @@ export function DeployModal({
 
 							{/* Info */}
 							<div className="rounded-lg border border-border bg-surface/30 px-3 py-2 text-xs text-muted-foreground">
-								Your credentials are stored locally in your browser and sent through
-								our API only as a relay. We never store API keys server-side.
+								Your credentials are stored locally in your browser and sent through our API only as
+								a relay. We never store API keys server-side.
 							</div>
 						</>
 					)}
@@ -294,9 +285,7 @@ export function DeployModal({
 					{phase === "deploying" && (
 						<div className="flex flex-col items-center gap-3 py-8">
 							<Loader2 className="h-8 w-8 animate-spin text-primary" />
-							<p className="text-sm font-medium text-foreground">
-								Deploying to {provider.name}...
-							</p>
+							<p className="text-sm font-medium text-foreground">Deploying to {provider.name}...</p>
 							<p className="text-xs text-muted-foreground">
 								Creating project, uploading compose file, setting env vars...
 							</p>
@@ -309,9 +298,7 @@ export function DeployModal({
 								<div className="mb-4 flex items-start gap-3">
 									<CheckCircle className="mt-0.5 h-6 w-6 shrink-0 text-green-500" />
 									<div>
-										<p className="font-semibold text-green-500">
-											Deployed successfully!
-										</p>
+										<p className="font-semibold text-green-500">Deployed successfully!</p>
 										<p className="mt-1 text-sm text-muted-foreground">
 											Your stack is being deployed on {provider.name}.
 										</p>
@@ -387,15 +374,9 @@ function StepRow({ step }: { step: DeployStep }) {
 	return (
 		<div className="flex items-center gap-2 rounded-lg bg-surface/50 px-3 py-2">
 			<span className="shrink-0">
-				{step.status === "done" && (
-					<CheckCircle className="h-4 w-4 text-green-500" />
-				)}
-				{step.status === "error" && (
-					<X className="h-4 w-4 text-red-500" />
-				)}
-				{step.status === "running" && (
-					<Loader2 className="h-4 w-4 animate-spin text-primary" />
-				)}
+				{step.status === "done" && <CheckCircle className="h-4 w-4 text-green-500" />}
+				{step.status === "error" && <X className="h-4 w-4 text-red-500" />}
+				{step.status === "running" && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
 				{step.status === "pending" && (
 					<div className="h-4 w-4 rounded-full border-2 border-border" />
 				)}
@@ -413,9 +394,7 @@ function StepRow({ step }: { step: DeployStep }) {
 				{step.step}
 			</span>
 			{step.detail && (
-				<span className="text-xs text-muted-foreground truncate max-w-[200px]">
-					{step.detail}
-				</span>
+				<span className="text-xs text-muted-foreground truncate max-w-[200px]">{step.detail}</span>
 			)}
 		</div>
 	);

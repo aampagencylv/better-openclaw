@@ -129,7 +129,9 @@ async function createArchive(projectDir: string, format: "tar" | "zip"): Promise
 					stdio: "pipe",
 				});
 				if (result.error || result.status !== 0) {
-					throw new Error(result.stderr?.toString() || result.error?.message || "zip command failed");
+					throw new Error(
+						result.stderr?.toString() || result.error?.message || "zip command failed",
+					);
 				}
 			}
 			console.log(pc.green(`  Archive created: ${archivePath}`));

@@ -3,8 +3,8 @@
 import {
 	type AiProvider,
 	composeMultiFile,
-	generateEnvFiles,
 	type GsdRuntime,
+	generateEnvFiles,
 	getAllPresets,
 	getAllServices,
 	getAllSkillPacks,
@@ -29,8 +29,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
-import { DeployModal } from "@/components/stack-builder/DeployModal";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
+import { DeployModal } from "@/components/stack-builder/DeployModal";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
 import {

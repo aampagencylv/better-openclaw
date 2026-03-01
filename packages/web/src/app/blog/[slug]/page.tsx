@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import { ArrowLeft, Calendar, Clock, Tag } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Tag } from "lucide-react";
-import { blogPosts } from "@/lib/blogPosts";
+import { notFound } from "next/navigation";
 import { Footer } from "@/components/footer";
+import { blogPosts } from "@/lib/blogPosts";
 
 interface BlogPostPageProps {
 	params: Promise<{ slug: string }>;
@@ -114,9 +114,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 						</h1>
 
 						{/* Description */}
-						<p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-							{post.description}
-						</p>
+						<p className="mt-4 text-lg leading-relaxed text-muted-foreground">{post.description}</p>
 
 						{/* Tags */}
 						<div className="mt-6 flex flex-wrap gap-2">

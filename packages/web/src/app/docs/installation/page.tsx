@@ -114,6 +114,50 @@ npm update -g create-better-openclaw
 npm install -g create-better-openclaw@latest`}</code>
 			</pre>
 
+			<h2 id="direct-install">Option 3: Direct Install (OpenClaw on Host)</h2>
+			<p>
+				Instead of running OpenClaw inside Docker, you can install it directly on your host machine.
+				This is useful if you want more control over the OpenClaw process, need access to local GPU
+				drivers, or prefer a lighter Docker footprint (companion services only).
+			</p>
+			<p>
+				During the CLI wizard, select <strong>&quot;Direct install (host)&quot;</strong> when asked
+				&quot;How would you like to install OpenClaw itself?&quot;. Or use the
+				<code>--openclaw-install direct</code> flag:
+			</p>
+			<pre>
+				<code>{`npx create-better-openclaw my-stack --openclaw-install direct --yes`}</code>
+			</pre>
+			<p>This generates a stack where:</p>
+			<ul>
+				<li>
+					<code>docker-compose.yml</code> contains only companion services (no{" "}
+					<code>openclaw-gateway</code> or <code>openclaw-cli</code>)
+				</li>
+				<li>
+					<code>scripts/install-openclaw.sh</code> runs the official installer:{" "}
+					<code>curl -fsSL https://openclaw.ai/install.sh | bash</code>
+				</li>
+				<li>
+					<code>scripts/install-openclaw.ps1</code> handles Windows (via WSL)
+				</li>
+			</ul>
+			<h3>Usage</h3>
+			<pre>
+				<code>{`cd my-stack
+cp .env.example .env
+
+# Install OpenClaw on the host
+chmod +x scripts/install-openclaw.sh
+./scripts/install-openclaw.sh
+
+# Start companion services in Docker
+docker compose up -d
+
+# Run onboarding
+openclaw onboard`}</code>
+			</pre>
+
 			<h2>Verify Installation</h2>
 			<p>Run the following commands to verify everything is set up correctly:</p>
 			<pre>
@@ -212,6 +256,9 @@ npm install -g create-better-openclaw`}</code>
 				</li>
 				<li>
 					<Link href="/docs/cli">CLI reference</Link> — all flags and options
+				</li>
+				<li>
+					<Link href="/docs/mcp">MCP Server</Link> — let AI agents generate stacks
 				</li>
 			</ul>
 		</>

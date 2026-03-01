@@ -46,9 +46,7 @@ export async function runDeploy(options: DeployOptions): Promise<void> {
 				}),
 			);
 		} else {
-			console.error(
-				pc.red(`Unknown provider "${options.provider}". Available: ${available}`),
-			);
+			console.error(pc.red(`Unknown provider "${options.provider}". Available: ${available}`));
 		}
 		process.exit(1);
 	}
@@ -76,9 +74,7 @@ export async function runDeploy(options: DeployOptions): Promise<void> {
 	} else if (existsSync(envExamplePath)) {
 		envContent = readFileSync(envExamplePath, "utf-8");
 		if (!options.json) {
-			console.log(
-				pc.yellow("No .env found, using .env.example. Secrets may not be populated."),
-			);
+			console.log(pc.yellow("No .env found, using .env.example. Secrets may not be populated."));
 		}
 	}
 
@@ -200,9 +196,7 @@ export async function runDeployInteractive(options: {
 	const instanceUrl = await clack.text({
 		message: `Enter your ${provider === "dokploy" ? "Dokploy" : "Coolify"} instance URL`,
 		placeholder:
-			provider === "dokploy"
-				? "https://dokploy.example.com"
-				: "https://coolify.example.com",
+			provider === "dokploy" ? "https://dokploy.example.com" : "https://coolify.example.com",
 		validate: (value) => {
 			if (!value.trim()) return "URL is required";
 			try {

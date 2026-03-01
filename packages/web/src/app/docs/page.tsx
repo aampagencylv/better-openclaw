@@ -160,6 +160,15 @@ docker compose up -d
 # Watch OpenClaw boot
 docker compose logs -f openclaw-gateway`}</code>
 			</pre>
+			<blockquote>
+				<p>
+					<strong>Direct Install:</strong> During the wizard, you can choose to install OpenClaw
+					directly on your host instead of Docker. This generates a{" "}
+					<code>scripts/install-openclaw.sh</code> that runs the official installer via curl.
+					Companion services still run in Docker. See the{" "}
+					<Link href="/docs/installation#direct-install">direct install guide</Link>.
+				</p>
+			</blockquote>
 
 			<h2>What Gets Generated</h2>
 			<p>The CLI generates a complete project directory with everything you need:</p>
@@ -213,7 +222,11 @@ open http://localhost:3000`}</code>
 				</li>
 				<li>
 					<Link href="/docs/deployment">Deployment guides</Link> — Docker, bare-metal (native +
-					Docker), VPS, homelab
+					Docker), direct install, VPS, homelab
+				</li>
+				<li>
+					<Link href="/docs/mcp">MCP Server</Link> — let AI agents generate stacks via natural
+					language
 				</li>
 			</ul>
 		</>

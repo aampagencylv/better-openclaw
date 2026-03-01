@@ -692,37 +692,27 @@ program.addCommand(backupCmd);
 const deployCmd = new Command("deploy")
 	.description("Deploy a generated stack to Dokploy or Coolify")
 	.option("--dir <path>", "Project directory (default: current directory)", ".")
-	.option(
-		"--provider <name>",
-		"PaaS provider: dokploy or coolify (omit for interactive selection)",
-	)
+	.option("--provider <name>", "PaaS provider: dokploy or coolify (omit for interactive selection)")
 	.option("--url <url>", "PaaS instance URL (e.g. https://dokploy.example.com)")
 	.option("--api-key <key>", "API key for the PaaS instance")
-	.action(
-		async (options: {
-			dir: string;
-			provider?: string;
-			url?: string;
-			apiKey?: string;
-		}) => {
-			const parentJson = program.opts() as { json?: boolean };
-			const isNonInteractive = options.provider && options.url && options.apiKey;
+	.action(async (options: { dir: string; provider?: string; url?: string; apiKey?: string }) => {
+		const parentJson = program.opts() as { json?: boolean };
+		const isNonInteractive = options.provider && options.url && options.apiKey;
 
-			if (isNonInteractive) {
-				const { runDeploy } = await import("./deploy.js");
-				await runDeploy({
-					provider: options.provider!,
-					instanceUrl: options.url!,
-					apiKey: options.apiKey!,
-					dir: options.dir,
-					json: parentJson.json,
-				});
-			} else {
-				const { runDeployInteractive } = await import("./deploy.js");
-				await runDeployInteractive({ dir: options.dir, json: parentJson.json });
-			}
-		},
-	);
+		if (isNonInteractive) {
+			const { runDeploy } = await import("./deploy.js");
+			await runDeploy({
+				provider: options.provider!,
+				instanceUrl: options.url!,
+				apiKey: options.apiKey!,
+				dir: options.dir,
+				json: parentJson.json,
+			});
+		} else {
+			const { runDeployInteractive } = await import("./deploy.js");
+			await runDeployInteractive({ dir: options.dir, json: parentJson.json });
+		}
+	});
 
 program.addCommand(deployCmd);
 

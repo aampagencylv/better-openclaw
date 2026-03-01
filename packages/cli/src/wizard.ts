@@ -654,7 +654,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		`cd ${String(projectDir)}`,
 		"cp .env.example .env  # review and customize",
 		startCommand,
-		...(openclawInstallMethod === "direct" ? ["docker compose up -d  # start companion services"] : []),
+		...(openclawInstallMethod === "direct"
+			? ["docker compose up -d  # start companion services"]
+			: []),
 	].join("\n");
 
 	note(nextSteps, "Next steps");

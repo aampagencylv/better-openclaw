@@ -45,7 +45,7 @@ jobs:
         id: check-version
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          if npm view create-better-t-stack@$VERSION version 2>/dev/null; then
+          if npm view create-better-openclaw@$VERSION version 2>/dev/null; then
             echo "Version $VERSION already exists on NPM"
             echo "exists=true" >> $GITHUB_OUTPUT
           else
@@ -57,8 +57,8 @@ jobs:
         if: steps.check-version.outputs.exists == 'false'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          git config --local user.email "amanvarshney.work@gmail.com"
-          git config --local user.name "Aman Varshney"
+          git config --local user.email "bachir@bidew.io"
+          git config --local user.name "bidew.io"
           if ! git rev-parse "v$VERSION" >/dev/null 2>&1; then
             git tag -a "v$VERSION" -m "Release v$VERSION"
             git push --tags
@@ -66,102 +66,65 @@ jobs:
             echo "Tag v$VERSION already exists, skipping"
           fi
 
-      - name: Setup Bun
+      - uses: pnpm/action-setup@v4
         if: steps.check-version.outputs.exists == 'false'
-        uses: oven-sh/setup-bun@v2
+
+      - uses: actions/setup-node@v4
+        if: steps.check-version.outputs.exists == 'false'
         with:
-          bun-version: latest
+          node-version: 22
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install Dependencies
         if: steps.check-version.outputs.exists == 'false'
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        if: steps.check-version.outputs.exists == 'false'
+        run: pnpm build
+
+      - name: Run tests
+        if: steps.check-version.outputs.exists == 'false'
+        run: pnpm test
+
+      - name: Update package versions
+        if: steps.check-version.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          for pkg in packages/core packages/cli; do
+            jq --arg v "$VERSION" '.version = $v' $pkg/package.json > tmp.json && mv tmp.json $pkg/package.json
+          done
 
       - name: Create GitHub Release
         if: steps.check-version.outputs.exists == 'false'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           if ! gh release view "v$VERSION" >/dev/null 2>&1; then
-            bunx changelogithub
+            gh release create "v$VERSION" --generate-notes
           else
             echo "Release v$VERSION already exists, skipping"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update types package version
+      - name: Publish Core to NPM
         if: steps.check-version.outputs.exists == 'false'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          cd packages/types
-          jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
-
-      - name: Build types package
-        if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/types && bun run build
-
-      - name: Publish types to NPM
-        if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/types && bun publish --access public
+        run: pnpm publish --filter @better-openclaw/core --no-git-checks --access public
         env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-          BTS_TELEMETRY: 1
-          CONVEX_INGEST_URL: ${{ secrets.CONVEX_INGEST_URL }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Update template-generator package version and types dependency
-        if: steps.check-version.outputs.exists == 'false'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          cd packages/template-generator
-          jq --arg v "$VERSION" --arg dep "^$VERSION" '.version = $v | .dependencies["@better-t-stack/types"] = $dep' package.json > tmp.json && mv tmp.json package.json
-
-      - name: Build template-generator package
-        if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/template-generator && bun run build
-
-      - name: Publish template-generator to NPM
-        if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/template-generator && bun publish --access public
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-          BTS_TELEMETRY: 1
-          CONVEX_INGEST_URL: ${{ secrets.CONVEX_INGEST_URL }}
-
-      - name: Update CLI types and template-generator dependencies and version
-        if: steps.check-version.outputs.exists == 'false'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          cd apps/cli
-          jq --arg v "^$VERSION" '.dependencies["@better-t-stack/types"] = $v | .dependencies["@better-t-stack/template-generator"] = $v' package.json > tmp.json && mv tmp.json package.json
-
-      - name: Build CLI
-        if: steps.check-version.outputs.exists == 'false'
-        run: cd apps/cli && bun run build
-        env:
-          BTS_TELEMETRY: 1
-          CONVEX_INGEST_URL: ${{ secrets.CONVEX_INGEST_URL }}
-
-      - name: Update create-bts alias package version
-        if: steps.check-version.outputs.exists == 'false'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          cd packages/create-bts
-          jq --arg v "$VERSION" --arg dep "^$VERSION" '.version = $v | .dependencies["create-better-t-stack"] = $dep' package.json > tmp.json && mv tmp.json package.json
+      # - name: Publish MCP to NPM
+      #   if: steps.check-version.outputs.exists == 'false'
+      #   run: pnpm publish --filter @better-openclaw/mcp --no-git-checks --access public
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish CLI to NPM
         if: steps.check-version.outputs.exists == 'false'
-        run: cd apps/cli && bun publish --access public
+        run: pnpm publish --filter create-better-openclaw --no-git-checks --access public
         env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-          BTS_TELEMETRY: 1
-          CONVEX_INGEST_URL: ${{ secrets.CONVEX_INGEST_URL }}
-
-      - name: Publish create-bts alias to NPM
-        if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/create-bts && bun publish --access public
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-          BTS_TELEMETRY: 1
-          CONVEX_INGEST_URL: ${{ secrets.CONVEX_INGEST_URL }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Release Summary
         if: steps.check-version.outputs.exists == 'false'
@@ -170,10 +133,9 @@ jobs:
           echo "## Release v$VERSION Complete!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Published Packages" >> $GITHUB_STEP_SUMMARY
-          echo "- [create-better-t-stack@$VERSION](https://www.npmjs.com/package/create-better-t-stack/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
-          echo "- [create-bts@$VERSION](https://www.npmjs.com/package/create-bts/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
-          echo "- [@better-t-stack/types@$VERSION](https://www.npmjs.com/package/@better-t-stack/types/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
-          echo "- [@better-t-stack/template-generator@$VERSION](https://www.npmjs.com/package/@better-t-stack/template-generator/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@better-openclaw/core@$VERSION](https://www.npmjs.com/package/@better-openclaw/core/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          # echo "- [@better-openclaw/mcp@$VERSION](https://www.npmjs.com/package/@better-openclaw/mcp/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [create-better-openclaw@$VERSION](https://www.npmjs.com/package/create-better-openclaw/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### GitHub Release" >> $GITHUB_STEP_SUMMARY
           echo "[v$VERSION](https://github.com/${{ github.repository }}/releases/tag/v$VERSION)" >> $GITHUB_STEP_SUMMARY

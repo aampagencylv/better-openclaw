@@ -3,12 +3,12 @@ import { cors } from "hono/cors";
 import { optionalApiKey } from "./middleware/api-key.js";
 import { generateRateLimiter, rateLimiter } from "./middleware/rate-limit.js";
 import { requestId } from "./middleware/request-id.js";
+import { deployRoute } from "./routes/deploy.js";
 import { generateRoute } from "./routes/generate.js";
 import { healthRoute } from "./routes/health.js";
 import { presetsRoute } from "./routes/presets.js";
 import { servicesRoute } from "./routes/services.js";
 import { skillsRoute } from "./routes/skills.js";
-import { deployRoute } from "./routes/deploy.js";
 import { validateRoute } from "./routes/validate.js";
 
 const app = new OpenAPIHono().basePath("/v1");

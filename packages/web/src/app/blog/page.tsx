@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Calendar, Clock, Tag } from "lucide-react";
-import { blogPosts, blogCategories } from "@/lib/blogPosts";
+import Link from "next/link";
+import { useState } from "react";
 import { Footer } from "@/components/footer";
+import { blogCategories, blogPosts } from "@/lib/blogPosts";
 
 export default function BlogPage() {
 	const [activeCategory, setActiveCategory] = useState<string>("All");
@@ -52,8 +52,8 @@ export default function BlogPage() {
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.5, delay: 0.2 }}
 					>
-						Deep dives into self-hosting AI agents, Docker Compose best practices,
-						homelab infrastructure, and DevOps automation.
+						Deep dives into self-hosting AI agents, Docker Compose best practices, homelab
+						infrastructure, and DevOps automation.
 					</motion.p>
 				</div>
 			</section>
