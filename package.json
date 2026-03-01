@@ -7,7 +7,7 @@
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/diopisemou/better-openclaw.git"
+    "url": "https://github.com/bidewio/better-openclaw.git"
   },
   "homepage": "https://better-openclaw.dev",
   "packageManager": "pnpm@9.15.4",

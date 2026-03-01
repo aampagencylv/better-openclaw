@@ -1,0 +1,9 @@
+# Default owners for everything
+* @bidewio
+
+# Core package — critical path
+packages/core/ @bidewio
+
+# Security-sensitive files
+.github/workflows/ @bidewio
+.npmrc @bidewio

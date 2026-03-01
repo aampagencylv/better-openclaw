@@ -3,6 +3,7 @@
 import {
 	type AiProvider,
 	composeMultiFile,
+	generateEnvFiles,
 	type GsdRuntime,
 	getAllPresets,
 	getAllServices,
@@ -21,12 +22,14 @@ import {
 	Copy,
 	Download,
 	Loader2,
+	Rocket,
 	RotateCcw,
 	Search,
 	X,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
+import { DeployModal } from "@/components/stack-builder/DeployModal";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
 import { ServiceGrid } from "@/components/stack-builder/ServiceGrid";
@@ -65,6 +68,7 @@ export default function NewStackPage() {
 	const [selectedGsdRuntimes, setSelectedGsdRuntimes] = useState<Set<GsdRuntime>>(new Set());
 	const [resolverError, setResolverError] = useState<string | null>(null);
 	const [showSkillModal, setShowSkillModal] = useState(false);
+	const [showDeployToServerModal, setShowDeployToServerModal] = useState(false);
 	const [selectedIndividualSkills, setSelectedIndividualSkills] = useState<
 		Map<string, SelectedSkill>
 	>(new Map());
@@ -113,7 +117,7 @@ export default function NewStackPage() {
 			setResolverError(err instanceof Error ? err.message : "Resolution failed");
 			return null;
 		}
-	}, [selectedServices, selectedSkillPacks]);
+	}, [selectedServices, selectedSkillPacks, selectedAiProviders, selectedGsdRuntimes]);
 
 	// Build a set of all resolved service IDs (including auto-added deps)
 	const resolvedServiceIds = useMemo(() => {
@@ -132,6 +136,8 @@ export default function NewStackPage() {
 				platform: "linux/amd64",
 				deployment: "local",
 				openclawVersion: "latest",
+				openclawImage: "official",
+				hardened: true,
 			});
 			// Return the main file YAML as fallback for the composeYaml prop
 			return result.files[result.mainFile] ?? "";
@@ -139,6 +145,21 @@ export default function NewStackPage() {
 			return "# Error generating preview...";
 		}
 	}, [resolverOutput, projectName]);
+
+	// Generate .env content for deploy-to-server
+	const envContent = useMemo(() => {
+		if (!resolverOutput || resolverOutput.services.length === 0) return "";
+		try {
+			const { env } = generateEnvFiles(resolverOutput, {
+				generateSecrets: true,
+				openclawVersion: "latest",
+				openclawImage: "official",
+			});
+			return env;
+		} catch {
+			return "";
+		}
+	}, [resolverOutput]);
 
 	// Toggle a service selection (mandatory services require confirmation to remove)
 	const handleToggle = useCallback(
@@ -264,7 +285,7 @@ export default function NewStackPage() {
 				setIsGenerating(false);
 			}
 		},
-		[selectedServices, projectName],
+		[selectedServices, projectName, selectedSkillPacks, selectedAiProviders, selectedGsdRuntimes],
 	);
 
 	return (
@@ -312,6 +333,20 @@ export default function NewStackPage() {
 							Reset
 						</button>
 
+						<button
+							type="button"
+							onClick={() => setShowDeployToServerModal(true)}
+							disabled={selectedServices.size === 0}
+							className={cn(
+								"hidden items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all sm:flex",
+								selectedServices.size > 0
+									? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20"
+									: "border-border text-muted-foreground cursor-not-allowed",
+							)}
+						>
+							<Rocket className="h-3.5 w-3.5" />
+							Deploy to Server
+						</button>
 						<button
 							type="button"
 							onClick={() => setShowClawexaModal(true)}
@@ -416,6 +451,14 @@ export default function NewStackPage() {
 										className="text-xs text-muted-foreground hover:text-foreground"
 									>
 										Dismiss
+									</button>
+									<span className="text-muted-foreground">·</span>
+									<button
+										type="button"
+										onClick={() => setShowDeployToServerModal(true)}
+										className="text-xs text-primary hover:underline"
+									>
+										Deploy to Dokploy / Coolify
 									</button>
 									<span className="text-muted-foreground">·</span>
 									<button
@@ -1038,6 +1081,15 @@ export default function NewStackPage() {
 						</div>
 					);
 				})()}
+
+			{/* Deploy to Server Modal (Dokploy / Coolify) */}
+			<DeployModal
+				open={showDeployToServerModal}
+				onClose={() => setShowDeployToServerModal(false)}
+				projectName={projectName || "my-stack"}
+				composeYaml={composeYaml}
+				envContent={envContent}
+			/>
 
 			{/* Skill Selector Modal */}
 			<SkillSelectorModal

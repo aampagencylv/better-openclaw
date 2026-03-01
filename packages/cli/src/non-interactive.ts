@@ -1,6 +1,7 @@
 import type {
 	DeploymentType,
 	GenerationInput,
+	OpenclawInstallMethod,
 	Platform,
 	Preset,
 	ProxyType,
@@ -8,6 +9,7 @@ import type {
 	SkillPack,
 } from "@better-openclaw/core";
 import {
+	formatPortConflicts,
 	generate,
 	getAllPresets,
 	getAllServices,
@@ -15,6 +17,7 @@ import {
 	getPresetById,
 	getServiceById,
 	getSkillPackById,
+	scanPortConflicts,
 } from "@better-openclaw/core";
 import pc from "picocolors";
 import { writeProject } from "./writer.js";
@@ -25,6 +28,9 @@ export interface NonInteractiveOptions {
 	skills?: string;
 	preset?: string;
 	proxy?: string;
+	proxyHttpPort?: number;
+	proxyHttpsPort?: number;
+	aiProviders?: string;
 	domain?: string;
 	gpu?: boolean;
 	monitoring?: boolean;
@@ -36,6 +42,11 @@ export interface NonInteractiveOptions {
 	yes?: boolean;
 	outputFormat?: string;
 	json?: boolean;
+	image?: string;
+	llm?: string;
+	hardened?: boolean;
+	deployTarget?: string;
+	openclawInstall?: string;
 }
 
 /**
@@ -144,14 +155,78 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		);
 	}
 
+	// Parse AI providers - default to OpenAI like the wizard does
+	let aiProvidersList = options.aiProviders
+		? options.aiProviders.split(",").map((p) => p.trim())
+		: ["openai"];
+
+	// --llm shortcut: sets the AI provider and auto-adds ollama service if needed
+	if (options.llm) {
+		const llmProvider = options.llm.toLowerCase();
+		aiProvidersList = [llmProvider];
+
+		if (llmProvider === "ollama" && !serviceIds.includes("ollama")) {
+			serviceIds.push("ollama");
+			if (!options.json) {
+				console.log(pc.cyan("Auto-adding Ollama service for local LLM support"));
+			}
+		}
+	}
+
+	// Validate image variant
+	const validImages = ["official", "coolify", "alpine"];
+	const imageVariant = options.image ?? "official";
+	if (!validImages.includes(imageVariant)) {
+		throw new Error(
+			`Invalid image variant: "${options.image}". Valid options: ${validImages.join(", ")}`,
+		);
+	}
+
+	// Validate OpenClaw install method
+	const validInstallMethods = ["docker", "direct"];
+	const openclawInstallMethod = (options.openclawInstall ?? "docker") as OpenclawInstallMethod;
+	if (!validInstallMethods.includes(openclawInstallMethod)) {
+		throw new Error(
+			`Invalid OpenClaw install method: "${options.openclawInstall}". Valid options: ${validInstallMethods.join(", ")}`,
+		);
+	}
+
+	// Scan for port conflicts and auto-reassign
+	const selectedServiceDefs = serviceIds
+		.map((id) => getServiceById(id))
+		.filter((s): s is ServiceDefinition => s !== undefined);
+
+	const portReassignments = await scanPortConflicts(selectedServiceDefs);
+	const conflicts = formatPortConflicts(selectedServiceDefs, portReassignments);
+
+	let portOverrides: Record<string, Record<number, number>> | undefined;
+
+	if (conflicts.length > 0) {
+		if (!options.json) {
+			console.log(pc.yellow("\n⚠️  Port conflicts detected:"));
+			for (const c of conflicts) {
+				console.log(pc.dim(`   ${c.serviceId}: port ${c.port} → ${c.suggestedPort}`));
+			}
+			console.log(pc.dim("   Auto-reassigning to available ports...\n"));
+		}
+
+		portOverrides = {};
+		for (const [serviceId, reassignments] of portReassignments) {
+			portOverrides[serviceId] = Object.fromEntries(reassignments);
+		}
+	}
+
 	// Build generation input
 	const input: GenerationInput = {
 		projectName: projectDir,
 		services: serviceIds,
 		skillPacks: skillPackIds,
-		aiProviders: [],
+		aiProviders: aiProvidersList as GenerationInput["aiProviders"],
 		gsdRuntimes: [],
 		proxy,
+		proxyHttpPort: options.proxyHttpPort,
+		proxyHttpsPort: options.proxyHttpsPort,
+		portOverrides,
 		domain: options.domain,
 		gpu: options.gpu ?? false,
 		platform,
@@ -160,6 +235,10 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		generateSecrets: true,
 		openclawVersion: "latest",
 		monitoring: options.monitoring ?? false,
+		openclawImage: imageVariant as "official" | "coolify" | "alpine",
+		openclawInstallMethod,
+		hardened: options.hardened ?? true,
+		deployTarget: (options.deployTarget ?? "local") as "local" | "cloud-init",
 	};
 
 	if (!options.json) {
@@ -221,7 +300,10 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 		console.log("");
 		console.log("Next steps:");
 		console.log(pc.dim(`  cd ${projectDir}`));
-		if (deploymentType === "bare-metal") {
+		if (openclawInstallMethod === "direct") {
+			console.log(pc.dim("  ./scripts/install-openclaw.sh  # install OpenClaw on host"));
+			console.log(pc.dim("  docker compose up -d  # start companion services"));
+		} else if (deploymentType === "bare-metal") {
 			console.log(pc.dim(platform === "windows/amd64" ? "  .\\install.ps1" : "  ./install.sh"));
 		} else {
 			console.log(pc.dim("  docker compose up -d"));

@@ -1,7 +1,7 @@
 ---
 name: mission-control
 description: "Sync agent lifecycle events to Better OpenClaw Mission Control dashboard"
-homepage: https://github.com/diopisemou/better-openclaw
+homepage: https://github.com/bidewio/better-openclaw
 metadata:
   {
     "openclaw":

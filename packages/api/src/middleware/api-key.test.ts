@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { optionalApiKey, requireApiKey } from "./api-key.js";
 
 function createApp(middleware: ReturnType<typeof requireApiKey>) {

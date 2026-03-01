@@ -1,8 +1,24 @@
 import type { MetadataRoute } from "next";
+import { blogPosts } from "@/lib/blogPosts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
 	const baseUrl = "https://better-openclaw.dev";
 	const now = new Date();
+
+	const blogEntries: MetadataRoute.Sitemap = [
+		{
+			url: `${baseUrl}/blog`,
+			lastModified: now,
+			changeFrequency: "weekly",
+			priority: 0.8,
+		},
+		...blogPosts.map((post) => ({
+			url: `${baseUrl}/blog/${post.slug}`,
+			lastModified: new Date(post.date),
+			changeFrequency: "monthly" as const,
+			priority: 0.6,
+		})),
+	];
 
 	return [
 		{
@@ -113,5 +129,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			changeFrequency: "weekly",
 			priority: 0.9,
 		},
+		...blogEntries,
 	];
 }

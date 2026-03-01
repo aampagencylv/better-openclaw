@@ -107,9 +107,7 @@ route.openapi(presetGetById, (c) => {
 		);
 	}
 
-	const services = preset.services
-		.map((svcId) => getServiceById(svcId))
-		.filter(Boolean);
+	const services = preset.services.map((svcId) => getServiceById(svcId)).filter(Boolean);
 
 	return c.json({ preset, services });
 });

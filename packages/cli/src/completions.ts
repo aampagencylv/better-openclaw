@@ -1,8 +1,4 @@
-import {
-	getAllPresets,
-	getAllServices,
-	getAllSkillPacks,
-} from "@better-openclaw/core";
+import { getAllPresets, getAllServices, getAllSkillPacks } from "@better-openclaw/core";
 
 /**
  * Generates shell completion scripts for bash, zsh, and fish.
@@ -16,11 +12,16 @@ const COMMANDS = [
 	"init",
 	"add",
 	"remove",
+	"status",
+	"update",
+	"backup",
+	"deploy",
 ];
 
-const SUB_COMMANDS: Record<string, string[]> = {
+const _SUB_COMMANDS: Record<string, string[]> = {
 	services: ["list"],
 	presets: ["list", "info"],
+	backup: ["create", "restore", "list"],
 };
 
 export function generateBashCompletion(): string {
@@ -88,6 +89,10 @@ _create_better_openclaw() {
       COMPREPLY=( $(compgen -W "linux/amd64 linux/arm64 windows/amd64 macos/amd64 macos/arm64" -- "\${cur}") )
       return 0
       ;;
+    --provider)
+      COMPREPLY=( $(compgen -W "dokploy coolify" -- "\${cur}") )
+      return 0
+      ;;
     *)
       if [[ "\${cur}" == -* ]]; then
         COMPREPLY=( $(compgen -W "--yes --preset --services --skills --proxy --domain --monitoring --gpu --deployment --deployment-type --platform --output-format --force --dry-run --json --help --version" -- "\${cur}") )
@@ -117,6 +122,10 @@ _create_better_openclaw() {
     'init:Initialize in current directory'
     'add:Add a service to existing stack'
     'remove:Remove a service from existing stack'
+    'status:Show stack service status'
+    'update:Pull latest images and restart'
+    'backup:Manage stack backups'
+    'deploy:Deploy stack to Dokploy or Coolify'
   )
 
   _arguments -C \\
@@ -126,12 +135,12 @@ _create_better_openclaw() {
     '1:command:->command' \\
     '*::arg:->args'
 
-  case "\$state" in
+  case "$state" in
     command)
       _describe 'command' commands
       ;;
     args)
-      case "\$words[1]" in
+      case "$words[1]" in
         generate)
           _arguments \\
             '--yes[Skip wizard]' \\
@@ -154,12 +163,22 @@ _create_better_openclaw() {
         services)
           _arguments '1:subcommand:(list)'
           ;;
+        backup)
+          _arguments '1:subcommand:(create restore list)'
+          ;;
+        deploy)
+          _arguments \\
+            '--provider[PaaS provider]:provider:(dokploy coolify)' \\
+            '--url[Instance URL]:url:' \\
+            '--api-key[API key]:key:' \\
+            '--dir[Project directory]:dir:_files -/'
+          ;;
       esac
       ;;
   esac
 }
 
-_create_better_openclaw "\$@"
+_create_better_openclaw "$@"
 `;
 }
 
@@ -175,6 +194,10 @@ complete -c create-better-openclaw -n "__fish_use_subcommand" -a "validate" -d "
 complete -c create-better-openclaw -n "__fish_use_subcommand" -a "init" -d "Initialize in current directory"
 complete -c create-better-openclaw -n "__fish_use_subcommand" -a "add" -d "Add a service"
 complete -c create-better-openclaw -n "__fish_use_subcommand" -a "remove" -d "Remove a service"
+complete -c create-better-openclaw -n "__fish_use_subcommand" -a "status" -d "Show stack status"
+complete -c create-better-openclaw -n "__fish_use_subcommand" -a "update" -d "Update stack images"
+complete -c create-better-openclaw -n "__fish_use_subcommand" -a "backup" -d "Manage backups"
+complete -c create-better-openclaw -n "__fish_use_subcommand" -a "deploy" -d "Deploy to Dokploy or Coolify"
 
 # generate flags
 complete -c create-better-openclaw -n "__fish_seen_subcommand_from generate" -l yes -s y -d "Skip wizard"
@@ -193,5 +216,13 @@ ${presetIds.map((id) => `complete -c create-better-openclaw -n "__fish_seen_subc
 
 # services subcommands
 complete -c create-better-openclaw -n "__fish_seen_subcommand_from services" -a "list"
+
+# backup subcommands
+complete -c create-better-openclaw -n "__fish_seen_subcommand_from backup" -a "create restore list"
+
+# deploy flags
+complete -c create-better-openclaw -n "__fish_seen_subcommand_from deploy" -l provider -xa "dokploy coolify" -d "PaaS provider"
+complete -c create-better-openclaw -n "__fish_seen_subcommand_from deploy" -l url -d "Instance URL"
+complete -c create-better-openclaw -n "__fish_seen_subcommand_from deploy" -l api-key -d "API key"
 `;
 }

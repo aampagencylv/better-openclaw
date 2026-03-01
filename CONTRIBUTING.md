@@ -38,6 +38,7 @@ better-openclaw/
     core/     # Shared logic: schemas, services, resolver, composer, generators
     cli/      # Interactive CLI tool (npm: create-better-openclaw)
     api/      # REST API server (Hono)
+    mcp/      # MCP server for AI agent integration
     web/      # Website + visual stack builder (Next.js)
   skills/     # SKILL.md templates for OpenClaw
   presets/    # Preset stack configurations (JSON)
@@ -45,7 +46,7 @@ better-openclaw/
 
 ### Package Dependencies
 
-- `cli` and `api` depend on `core`
+- `cli`, `api`, and `mcp` depend on `core`
 - `web` depends on `core` (for client-side generation preview)
 - `core` has no internal dependencies
 
@@ -163,4 +164,4 @@ Follow the prompts to describe your change and select the appropriate version bu
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree that your contributions will be licensed under the AGPL-3.0 License.

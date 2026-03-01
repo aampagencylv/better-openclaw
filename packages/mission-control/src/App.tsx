@@ -5,17 +5,22 @@ import AddAgentModal from "./components/AddAgentModal";
 import AddTaskModal from "./components/AddTaskModal";
 import AgentDetailTray from "./components/AgentDetailTray";
 import AgentsSidebar from "./components/AgentsSidebar";
-import Header from "./components/Header";
+import Header, { type ActiveView } from "./components/Header";
 import MissionQueue from "./components/MissionQueue";
+import RegisterStackModal from "./components/RegisterStackModal";
 import RightSidebar from "./components/RightSidebar";
+import ServicesPage from "./components/ServicesPage";
 import SignInForm from "./components/SignIn";
+import SkillsPage from "./components/SkillsPage";
 import TaskDetailPanel from "./components/TaskDetailPanel";
 import ClawRecipesTray from "./components/Trays/ClawRecipesTray";
 import TrayContainer from "./components/Trays/TrayContainer";
 
 export default function App() {
+	const [activeView, setActiveView] = useState<ActiveView>("missions");
 	const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
 	const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+	const [showRegisterStackModal, setShowRegisterStackModal] = useState(false);
 
 	const closeSidebars = useCallback(() => {
 		setIsLeftSidebarOpen(false);
@@ -86,6 +91,10 @@ export default function App() {
 		setShowPreviewTray(true);
 	}, []);
 
+	const handleOpenRegisterStack = useCallback(() => {
+		setShowRegisterStackModal(true);
+	}, []);
+
 	return (
 		<>
 			<Authenticated>
@@ -100,79 +109,100 @@ export default function App() {
 							setIsLeftSidebarOpen(false);
 						}}
 						onOpenClawRecipes={() => setShowClawRecipesTray(true)}
+						activeView={activeView}
+						onChangeView={setActiveView}
 					/>
 
 					{isAnySidebarOpen && (
 						<div className="drawer-backdrop" onClick={closeSidebars} aria-hidden="true" />
 					)}
 
-					<AgentsSidebar
-						isOpen={isLeftSidebarOpen}
-						onClose={() => setIsLeftSidebarOpen(false)}
-						onAddTask={(preselectedAgentId) => {
-							setAddTaskPreselectedAgentId(preselectedAgentId);
-							setShowAddTaskModal(true);
-						}}
-						onAddAgent={() => setShowAddAgentModal(true)}
-						onSelectAgent={(agentId) => setSelectedAgentId(agentId as Id<"agents">)}
-					/>
-					<MissionQueue selectedTaskId={selectedTaskId} onSelectTask={setSelectedTaskId} />
-					<RightSidebar
-						isOpen={isRightSidebarOpen}
-						onClose={() => setIsRightSidebarOpen(false)}
-						selectedDocumentId={selectedDocumentId}
-						onSelectDocument={handleSelectDocument}
-						onPreviewDocument={handlePreviewDocument}
-					/>
-					<TrayContainer
-						selectedDocumentId={selectedDocumentId}
-						showConversation={showConversationTray}
-						showPreview={showPreviewTray}
-						onCloseConversation={handleCloseConversation}
-						onClosePreview={handleClosePreview}
-						onOpenPreview={handleOpenPreview}
-					/>
-					{showAddTaskModal && (
-						<AddTaskModal
-							onClose={() => {
-								setShowAddTaskModal(false);
-								setAddTaskPreselectedAgentId(undefined);
-							}}
-							onCreated={(taskId) => {
-								setShowAddTaskModal(false);
-								setAddTaskPreselectedAgentId(undefined);
-								setSelectedTaskId(taskId);
-							}}
-							initialAssigneeId={addTaskPreselectedAgentId}
-						/>
-					)}
-					{selectedAgentId && (
-						<div
-							className="fixed inset-0 z-99"
-							onClick={() => setSelectedAgentId(null)}
-							aria-hidden="true"
-						/>
-					)}
-					<AgentDetailTray agentId={selectedAgentId} onClose={() => setSelectedAgentId(null)} />
-					{showAddAgentModal && (
-						<AddAgentModal
-							onClose={() => setShowAddAgentModal(false)}
-							onCreated={() => setShowAddAgentModal(false)}
-						/>
-					)}
-					{selectedTaskId && (
+					{/* Missions view (original kanban) */}
+					{activeView === "missions" && (
 						<>
-							<div
-								className="fixed inset-0 z-40"
-								onClick={() => setSelectedTaskId(null)}
-								aria-hidden="true"
+							<AgentsSidebar
+								isOpen={isLeftSidebarOpen}
+								onClose={() => setIsLeftSidebarOpen(false)}
+								onAddTask={(preselectedAgentId) => {
+									setAddTaskPreselectedAgentId(preselectedAgentId);
+									setShowAddTaskModal(true);
+								}}
+								onAddAgent={() => setShowAddAgentModal(true)}
+								onSelectAgent={(agentId) => setSelectedAgentId(agentId as Id<"agents">)}
 							/>
-							<TaskDetailPanel
-								taskId={selectedTaskId}
-								onClose={() => setSelectedTaskId(null)}
+							<MissionQueue selectedTaskId={selectedTaskId} onSelectTask={setSelectedTaskId} />
+							<RightSidebar
+								isOpen={isRightSidebarOpen}
+								onClose={() => setIsRightSidebarOpen(false)}
+								selectedDocumentId={selectedDocumentId}
+								onSelectDocument={handleSelectDocument}
 								onPreviewDocument={handlePreviewDocument}
 							/>
+							<TrayContainer
+								selectedDocumentId={selectedDocumentId}
+								showConversation={showConversationTray}
+								showPreview={showPreviewTray}
+								onCloseConversation={handleCloseConversation}
+								onClosePreview={handleClosePreview}
+								onOpenPreview={handleOpenPreview}
+							/>
+							{showAddTaskModal && (
+								<AddTaskModal
+									onClose={() => {
+										setShowAddTaskModal(false);
+										setAddTaskPreselectedAgentId(undefined);
+									}}
+									onCreated={(taskId) => {
+										setShowAddTaskModal(false);
+										setAddTaskPreselectedAgentId(undefined);
+										setSelectedTaskId(taskId);
+									}}
+									initialAssigneeId={addTaskPreselectedAgentId}
+								/>
+							)}
+							{selectedAgentId && (
+								<div
+									className="fixed inset-0 z-99"
+									onClick={() => setSelectedAgentId(null)}
+									aria-hidden="true"
+								/>
+							)}
+							<AgentDetailTray agentId={selectedAgentId} onClose={() => setSelectedAgentId(null)} />
+							{showAddAgentModal && (
+								<AddAgentModal
+									onClose={() => setShowAddAgentModal(false)}
+									onCreated={() => setShowAddAgentModal(false)}
+								/>
+							)}
+							{selectedTaskId && (
+								<>
+									<div
+										className="fixed inset-0 z-40"
+										onClick={() => setSelectedTaskId(null)}
+										aria-hidden="true"
+									/>
+									<TaskDetailPanel
+										taskId={selectedTaskId}
+										onClose={() => setSelectedTaskId(null)}
+										onPreviewDocument={handlePreviewDocument}
+									/>
+								</>
+							)}
 						</>
+					)}
+
+					{/* Services view */}
+					{activeView === "services" && (
+						<div style={{ gridArea: "main" }}>
+							<ServicesPage onRegisterStack={handleOpenRegisterStack} />
+						</div>
+					)}
+
+					{/* Skills view */}
+					{activeView === "skills" && (
+						<div style={{ gridArea: "main" }}>
+							<SkillsPage onRegisterStack={handleOpenRegisterStack} />
+						</div>
 					)}
 				</main>
 			</Authenticated>
@@ -181,6 +211,13 @@ export default function App() {
 			</Unauthenticated>
 
 			<ClawRecipesTray isOpen={showClawRecipesTray} onClose={() => setShowClawRecipesTray(false)} />
+
+			{showRegisterStackModal && (
+				<RegisterStackModal
+					onClose={() => setShowRegisterStackModal(false)}
+					onRegistered={() => setShowRegisterStackModal(false)}
+				/>
+			)}
 		</>
 	);
 }

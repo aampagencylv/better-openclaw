@@ -21,6 +21,16 @@ const generateCmd = new Command("generate")
 	.option("--skills <packs>", "Comma-separated skill pack IDs")
 	.option("--preset <name>", "Use a preset stack configuration")
 	.option("--proxy <type>", "Reverse proxy: none, caddy, traefik", "none")
+	.option("--proxy-http-port <port>", "Custom HTTP port for reverse proxy (default: 80)", parseInt)
+	.option(
+		"--proxy-https-port <port>",
+		"Custom HTTPS port for reverse proxy (default: 443)",
+		parseInt,
+	)
+	.option(
+		"--ai-providers <providers>",
+		"Comma-separated AI providers (openai,anthropic,google,xai,deepseek,groq,openrouter,mistral,together,ollama,lmstudio,vllm). Default: openai",
+	)
 	.option("--domain <domain>", "Domain for reverse proxy auto-SSL")
 	.option("--monitoring", "Include monitoring stack")
 	.option("--no-monitoring", "Exclude monitoring")
@@ -33,6 +43,21 @@ const generateCmd = new Command("generate")
 		"linux/amd64",
 	)
 	.option("--output-format <fmt>", "Output format: directory, tar, zip", "directory")
+	.option(
+		"--deploy <target>",
+		"Deploy target: local (default), cloud-init (VPS provisioning)",
+		"local",
+	)
+	.option(
+		"--image <variant>",
+		"OpenClaw Docker image variant: official, coolify, alpine",
+		"official",
+	)
+	.option(
+		"--llm <provider>",
+		"LLM provider shortcut (anthropic, openai, ollama, google, etc.) — auto-configures AI provider",
+	)
+	.option("--no-hardened", "Disable security hardening (cap_drop, no-new-privileges)")
 	.option("--force", "Overwrite existing project directory")
 	.option("--dry-run", "Show what would be generated without writing files")
 	.option("--open", "Open web UI stack builder in browser")
@@ -83,6 +108,9 @@ const generateCmd = new Command("generate")
 					skills: options.skills as string | undefined,
 					preset: options.preset as string | undefined,
 					proxy: options.proxy as string | undefined,
+					proxyHttpPort: options.proxyHttpPort as number | undefined,
+					proxyHttpsPort: options.proxyHttpsPort as number | undefined,
+					aiProviders: options.aiProviders as string | undefined,
 					domain: options.domain as string | undefined,
 					gpu: options.gpu as boolean | undefined,
 					monitoring: options.monitoring as boolean | undefined,
@@ -93,6 +121,10 @@ const generateCmd = new Command("generate")
 					yes: options.yes as boolean | undefined,
 					outputFormat: options.outputFormat as string | undefined,
 					json: parentJson.json,
+					image: options.image as string | undefined,
+					llm: options.llm as string | undefined,
+					hardened: options.hardened as boolean | undefined,
+					deployTarget: options.deploy as string | undefined,
 				});
 			} catch (err) {
 				console.error(pc.red(`\nError: ${err instanceof Error ? err.message : String(err)}`));
@@ -121,14 +153,12 @@ servicesCmd
 	.description("List all available services with descriptions")
 	.option("--category <cat>", "Filter by category (e.g., database, ai, proxy)")
 	.action(async (options: { category?: string }) => {
-		const {
-			getAllServices,
-			getServicesByCategory,
-			SERVICE_CATEGORIES,
-		} = await import("@better-openclaw/core");
+		const { getAllServices, getServicesByCategory, SERVICE_CATEGORIES } = await import(
+			"@better-openclaw/core"
+		);
 		const parentJson = program.opts() as { json?: boolean };
 
-		let services = options.category
+		const services = options.category
 			? getServicesByCategory(options.category as import("@better-openclaw/core").ServiceCategory)
 			: getAllServices();
 
@@ -195,17 +225,11 @@ presetsCmd
 		console.log(pc.bold(`\nAvailable Presets (${presets.length}):\n`));
 		for (const p of presets) {
 			console.log(`  ${pc.green(pc.bold(p.id.padEnd(20)))} ${p.description}`);
-			console.log(
-				pc.dim(`${"".padEnd(22)}Services: ${p.services.join(", ")}`),
-			);
+			console.log(pc.dim(`${"".padEnd(22)}Services: ${p.services.join(", ")}`));
 			if (p.skillPacks.length > 0) {
-				console.log(
-					pc.dim(`${"".padEnd(22)}Skills: ${p.skillPacks.join(", ")}`),
-				);
+				console.log(pc.dim(`${"".padEnd(22)}Skills: ${p.skillPacks.join(", ")}`));
 			}
-			console.log(
-				pc.dim(`${"".padEnd(22)}Memory: ~${p.estimatedMemoryMB}MB`),
-			);
+			console.log(pc.dim(`${"".padEnd(22)}Memory: ~${p.estimatedMemoryMB}MB`));
 			console.log("");
 		}
 	});
@@ -215,22 +239,20 @@ presetsCmd
 	.description("Show details of a specific preset")
 	.argument("<preset-id>", "The preset ID to inspect")
 	.action(async (presetId: string) => {
-		const { getPresetById, getServiceById, getAllPresets } = await import(
-			"@better-openclaw/core"
-		);
+		const { getPresetById, getServiceById, getAllPresets } = await import("@better-openclaw/core");
 		const parentJson = program.opts() as { json?: boolean };
 		const preset = getPresetById(presetId);
 
 		if (!preset) {
-			const available = getAllPresets().map((p) => p.id).join(", ");
+			const available = getAllPresets()
+				.map((p) => p.id)
+				.join(", ");
 			console.error(pc.red(`Unknown preset: "${presetId}". Available: ${available}`));
 			process.exit(1);
 		}
 
 		if (parentJson.json) {
-			const servicesDetail = preset.services
-				.map((id) => getServiceById(id))
-				.filter(Boolean);
+			const servicesDetail = preset.services.map((id) => getServiceById(id)).filter(Boolean);
 			console.log(JSON.stringify({ preset, services: servicesDetail }));
 			return;
 		}
@@ -244,7 +266,9 @@ presetsCmd
 		for (const id of preset.services) {
 			const svc = getServiceById(id);
 			if (svc) {
-				console.log(`    ${svc.icon} ${pc.green(svc.id.padEnd(22))} ${pc.dim(svc.description.slice(0, 55))}`);
+				console.log(
+					`    ${svc.icon} ${pc.green(svc.id.padEnd(22))} ${pc.dim(svc.description.slice(0, 55))}`,
+				);
 			} else {
 				console.log(`    ${pc.yellow(id)} (not found)`);
 			}
@@ -284,7 +308,9 @@ program
 		if (options.preset) {
 			const preset = getPresetById(options.preset);
 			if (!preset) {
-				const available = getAllPresets().map((p) => p.id).join(", ");
+				const available = getAllPresets()
+					.map((p) => p.id)
+					.join(", ");
 				console.error(pc.red(`Unknown preset: "${options.preset}". Available: ${available}`));
 				process.exit(1);
 			}
@@ -292,7 +318,10 @@ program
 		}
 
 		if (options.services) {
-			const parsed = options.services.split(",").map((s) => s.trim()).filter(Boolean);
+			const parsed = options.services
+				.split(",")
+				.map((s) => s.trim())
+				.filter(Boolean);
 			for (const id of parsed) {
 				if (!getServiceById(id)) {
 					console.error(pc.red(`Unknown service: "${id}"`));
@@ -364,7 +393,9 @@ program
 			console.log("");
 			console.log(pc.bold("  Auto-added dependencies:"));
 			for (const dep of result.addedDependencies) {
-				console.log(`    ${pc.green("+")} ${dep.serviceId} ${pc.dim(`(${dep.reason}: ${dep.requiredBy})`)}`);
+				console.log(
+					`    ${pc.green("+")} ${dep.serviceId} ${pc.dim(`(${dep.reason}: ${dep.requiredBy})`)}`,
+				);
 			}
 		}
 
@@ -428,17 +459,15 @@ program
 	.action(async (serviceId: string, options: { dir: string; force?: boolean }) => {
 		const { existsSync, readFileSync } = await import("node:fs");
 		const { join } = await import("node:path");
-		const {
-			getServiceById,
-			getAllServices,
-			generate,
-		} = await import("@better-openclaw/core");
+		const { getServiceById, getAllServices, generate } = await import("@better-openclaw/core");
 		const { writeProject } = await import("./writer.js");
 		const parentJson = program.opts() as { json?: boolean };
 
 		// Validate the service ID
 		if (!getServiceById(serviceId)) {
-			const available = getAllServices().map((s) => s.id).join(", ");
+			const available = getAllServices()
+				.map((s) => s.id)
+				.join(", ");
 			console.error(pc.red(`Unknown service: "${serviceId}". Available: ${available}`));
 			process.exit(1);
 		}
@@ -459,7 +488,10 @@ program
 		const allServices = getAllServices();
 		for (const svc of allServices) {
 			// Check if the service container name appears in the compose file
-			if (composeContent.includes(`${svc.id}:`) || composeContent.includes(`container_name: ${svc.id}`)) {
+			if (
+				composeContent.includes(`${svc.id}:`) ||
+				composeContent.includes(`container_name: ${svc.id}`)
+			) {
 				serviceIds.push(svc.id);
 			}
 		}
@@ -504,7 +536,9 @@ program
 				}),
 			);
 		} else {
-			console.log(pc.green(`\nAdded ${serviceId}. Stack now has ${result.metadata.serviceCount} services.`));
+			console.log(
+				pc.green(`\nAdded ${serviceId}. Stack now has ${result.metadata.serviceCount} services.`),
+			);
 		}
 	});
 
@@ -517,11 +551,7 @@ program
 	.action(async (serviceId: string, options: { dir: string }) => {
 		const { existsSync, readFileSync } = await import("node:fs");
 		const { join } = await import("node:path");
-		const {
-			getServiceById,
-			getAllServices,
-			generate,
-		} = await import("@better-openclaw/core");
+		const { getServiceById, getAllServices, generate } = await import("@better-openclaw/core");
 		const { writeProject } = await import("./writer.js");
 		const parentJson = program.opts() as { json?: boolean };
 
@@ -538,7 +568,10 @@ program
 		const serviceIds: string[] = [];
 		const allServices = getAllServices();
 		for (const svc of allServices) {
-			if (composeContent.includes(`${svc.id}:`) || composeContent.includes(`container_name: ${svc.id}`)) {
+			if (
+				composeContent.includes(`${svc.id}:`) ||
+				composeContent.includes(`container_name: ${svc.id}`)
+			) {
 				serviceIds.push(svc.id);
 			}
 		}
@@ -595,6 +628,104 @@ program
 		}
 	});
 
+// ─── status command ────────────────────────────────────────────────────────
+program
+	.command("status")
+	.description("Show the status of all services in the running stack")
+	.option("--dir <path>", "Project directory (default: current directory)", ".")
+	.action(async (options: { dir: string }) => {
+		const { runStatus } = await import("./status.js");
+		const parentJson = program.opts() as { json?: boolean };
+		await runStatus({ dir: options.dir, json: parentJson.json });
+	});
+
+// ─── update command ────────────────────────────────────────────────────────
+program
+	.command("update")
+	.description("Pull latest images and restart the stack")
+	.option("--dir <path>", "Project directory (default: current directory)", ".")
+	.option("--dry-run", "Show what would be updated without making changes")
+	.action(async (options: { dir: string; dryRun?: boolean }) => {
+		const { runUpdate } = await import("./update.js");
+		const parentJson = program.opts() as { json?: boolean };
+		await runUpdate({ dir: options.dir, dryRun: options.dryRun, json: parentJson.json });
+	});
+
+// ─── backup command ────────────────────────────────────────────────────────
+const backupCmd = new Command("backup").description("Manage stack backups");
+
+backupCmd
+	.command("create")
+	.description("Create a backup of the stack (PostgreSQL dump, Qdrant snapshot)")
+	.option("--dir <path>", "Project directory (default: current directory)", ".")
+	.option("--output <path>", "Output directory for the backup")
+	.action(async (options: { dir: string; output?: string }) => {
+		const { runBackupCreate } = await import("./backup.js");
+		const parentJson = program.opts() as { json?: boolean };
+		await runBackupCreate({ dir: options.dir, output: options.output, json: parentJson.json });
+	});
+
+backupCmd
+	.command("restore")
+	.description("Restore from a backup archive")
+	.argument("<file>", "Path to the backup .tar.gz file")
+	.option("--dir <path>", "Project directory (default: current directory)", ".")
+	.action(async (file: string, options: { dir: string }) => {
+		const { runBackupRestore } = await import("./backup.js");
+		const parentJson = program.opts() as { json?: boolean };
+		await runBackupRestore({ file, dir: options.dir, json: parentJson.json });
+	});
+
+backupCmd
+	.command("list")
+	.description("List available backups")
+	.option("--dir <path>", "Project directory (default: current directory)", ".")
+	.action(async (options: { dir: string }) => {
+		const { runBackupList } = await import("./backup.js");
+		const parentJson = program.opts() as { json?: boolean };
+		await runBackupList({ dir: options.dir, json: parentJson.json });
+	});
+
+program.addCommand(backupCmd);
+
+// ─── deploy command ─────────────────────────────────────────────────────────
+const deployCmd = new Command("deploy")
+	.description("Deploy a generated stack to Dokploy or Coolify")
+	.option("--dir <path>", "Project directory (default: current directory)", ".")
+	.option(
+		"--provider <name>",
+		"PaaS provider: dokploy or coolify (omit for interactive selection)",
+	)
+	.option("--url <url>", "PaaS instance URL (e.g. https://dokploy.example.com)")
+	.option("--api-key <key>", "API key for the PaaS instance")
+	.action(
+		async (options: {
+			dir: string;
+			provider?: string;
+			url?: string;
+			apiKey?: string;
+		}) => {
+			const parentJson = program.opts() as { json?: boolean };
+			const isNonInteractive = options.provider && options.url && options.apiKey;
+
+			if (isNonInteractive) {
+				const { runDeploy } = await import("./deploy.js");
+				await runDeploy({
+					provider: options.provider!,
+					instanceUrl: options.url!,
+					apiKey: options.apiKey!,
+					dir: options.dir,
+					json: parentJson.json,
+				});
+			} else {
+				const { runDeployInteractive } = await import("./deploy.js");
+				await runDeployInteractive({ dir: options.dir, json: parentJson.json });
+			}
+		},
+	);
+
+program.addCommand(deployCmd);
+
 // ─── completion command ─────────────────────────────────────────────────────
 program
 	.command("completion")
@@ -620,7 +751,11 @@ program
 				console.error(pc.dim("\nUsage:"));
 				console.error(pc.dim("  create-better-openclaw completion bash >> ~/.bashrc"));
 				console.error(pc.dim("  create-better-openclaw completion zsh >> ~/.zshrc"));
-				console.error(pc.dim("  create-better-openclaw completion fish > ~/.config/fish/completions/create-better-openclaw.fish"));
+				console.error(
+					pc.dim(
+						"  create-better-openclaw completion fish > ~/.config/fish/completions/create-better-openclaw.fish",
+					),
+				);
 				process.exit(1);
 		}
 	});

@@ -14,6 +14,9 @@ The API is mounted at `/v1`.
 | `GET`  | `/presets` | List predefined configurations (minimal, creator, devops, researcher, etc.) |
 | `POST` | `/validate` | Validates an incoming stack generation payload. |
 | `POST` | `/generate` | Core endpoint to generate the stack. Expects `GenerationInput` matching the core specifications. |
+| `POST` | `/deploy/test` | Test connection to a PaaS instance (Dokploy/Coolify). |
+| `POST` | `/deploy` | Deploy a compose stack to a PaaS provider (relay). |
+| `GET`  | `/deploy/providers` | List available PaaS deployment providers. |
 | `GET`  | `/openapi.json` | Dynamic OpenAPI 3.1 specification schema. |
 
 ### Generation Output Formats (`POST /generate`)
@@ -23,6 +26,22 @@ The generation endpoint dynamically formats its output using standard exact HTTP
 - **JSON (Default):** Returns `{ files: Record<string, string>, metadata: { ... } }`.
 - **Complete Payload:** Pass `?format=complete` or `Accept: application/vnd.openclaw.complete+json` to return `{ formatVersion: "1", input, files, metadata }`. The `input` object contains exactly what was parsed for reproducible generation hashes.
 - **Binary Archive (ZIP):** Add `Accept: application/zip` or `?format=zip` to receive a compressed binary `.zip` containing the entire filesystem tree.
+
+### Deploy Relay (`POST /deploy`)
+
+The deploy endpoints act as a server-side relay between the web UI and the user's self-hosted PaaS instance to avoid browser CORS restrictions. The API never stores API keys -- they are passed through to the target PaaS in a single request.
+
+```bash
+# Test PaaS connection
+curl -X POST http://localhost:3456/v1/deploy/test \
+  -H "Content-Type: application/json" \
+  -d '{"provider":"dokploy","instanceUrl":"https://dokploy.example.com","apiKey":"..."}'
+
+# Deploy a stack
+curl -X POST http://localhost:3456/v1/deploy \
+  -H "Content-Type: application/json" \
+  -d '{"provider":"dokploy","instanceUrl":"https://...","apiKey":"...","projectName":"my-stack","composeYaml":"...","envContent":"..."}'
+```
 
 ## Security & Rate Limiting
 

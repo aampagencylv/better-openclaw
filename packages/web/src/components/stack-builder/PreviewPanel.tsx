@@ -99,6 +99,8 @@ export function PreviewPanel({
 				platform: "linux/amd64",
 				deployment: "local",
 				openclawVersion: "latest",
+				openclawImage: "official",
+				hardened: true,
 			});
 		} catch {
 			return null;

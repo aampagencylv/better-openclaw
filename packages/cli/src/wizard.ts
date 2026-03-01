@@ -1,5 +1,6 @@
 import type { GenerationInput, Preset, ServiceDefinition, SkillPack } from "@better-openclaw/core";
 import {
+	formatPortConflicts,
 	generate,
 	getAllPresets,
 	getAllServices,
@@ -7,6 +8,7 @@ import {
 	getCompatibleSkillPacks,
 	resolve,
 	SERVICE_CATEGORIES,
+	scanPortConflicts,
 } from "@better-openclaw/core";
 import {
 	cancel,
@@ -97,6 +99,26 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		}),
 	);
 
+	// ── OpenClaw Install Method ─────────────────────────────────────────────
+
+	const openclawInstallMethod = ensureNotCancelled(
+		await select({
+			message: "How would you like to install OpenClaw itself?",
+			options: [
+				{
+					value: "docker" as const,
+					label: "Docker (container)",
+					hint: "runs alongside your services in Docker",
+				},
+				{
+					value: "direct" as const,
+					label: "Direct install (host)",
+					hint: "installs on host via curl — no Docker needed for OpenClaw",
+				},
+			],
+		}),
+	);
+
 	const platformOptions =
 		deploymentType === "docker"
 			? [
@@ -117,6 +139,34 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 			options: platformOptions,
 		}),
 	);
+
+	// ── OpenClaw Image Variant (only when Docker install) ───────────────────
+
+	let openclawImage: "official" | "coolify" | "alpine" = "official";
+	if (openclawInstallMethod === "docker") {
+		openclawImage = ensureNotCancelled(
+			await select({
+				message: "OpenClaw Docker image variant:",
+				options: [
+					{
+						value: "official" as const,
+						label: "Official",
+						hint: "ghcr.io/openclaw/openclaw — minimal, most stable",
+					},
+					{
+						value: "coolify" as const,
+						label: "Coolify",
+						hint: "coollabsio/openclaw — batteries-included (Linuxbrew, Go, uv, browser)",
+					},
+					{
+						value: "alpine" as const,
+						label: "Alpine",
+						hint: "alpine/openclaw — auto-updates daily",
+					},
+				],
+			}),
+		);
+	}
 
 	// ── Step 2: Build Method & Service Selection ──────────────────────────────
 
@@ -217,6 +267,54 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		}
 	}
 
+	// ── Step 3.5: Port Conflict Detection ─────────────────────────────────────
+
+	// Gather full service definitions for all selected services
+	const selectedServiceDefs = finalServiceIds
+		.map((id) => allServices.find((s: ServiceDefinition) => s.id === id))
+		.filter((s): s is ServiceDefinition => s !== undefined);
+
+	// Scan for port conflicts
+	const portReassignments = await scanPortConflicts(selectedServiceDefs);
+	const conflicts = formatPortConflicts(selectedServiceDefs, portReassignments);
+
+	let portOverrides: Record<string, Record<number, number>> | undefined;
+
+	if (conflicts.length > 0) {
+		const conflictList = conflicts
+			.map((c) => `  ${pc.yellow(c.port)} (${c.serviceId}) → ${pc.green(c.suggestedPort)}`)
+			.join("\n");
+
+		note(
+			`The following ports are already in use on your system:\n\n${conflictList}\n\nAuto-reassignment will update the Docker Compose configuration to use alternative ports.`,
+			"Port Conflicts Detected",
+		);
+
+		const acceptReassignment = ensureNotCancelled(
+			await confirm({
+				message: "Auto-reassign conflicting ports?",
+				initialValue: true,
+			}),
+		);
+
+		if (acceptReassignment) {
+			portOverrides = {};
+			for (const [serviceId, reassignments] of portReassignments) {
+				portOverrides[serviceId] = Object.fromEntries(reassignments);
+			}
+
+			const appliedList = conflicts
+				.map((c) => `  ${pc.dim(c.serviceId)}: ${c.port} → ${pc.green(c.suggestedPort)}`)
+				.join("\n");
+			note(`Port reassignments applied:\n\n${appliedList}`, "Ports Updated");
+		} else {
+			note(
+				"Port conflicts not resolved. Some services may fail to start if ports are already in use.",
+				"Warning",
+			);
+		}
+	}
+
 	// ── Step 4: Skill Pack Selection ──────────────────────────────────────────
 
 	const compatiblePacks = getCompatibleSkillPacks(finalServiceIds);
@@ -262,6 +360,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 				{ value: "mistral", label: "Mistral" },
 				{ value: "together", label: "Together AI" },
 				{ value: "ollama", label: "Ollama (Local)" },
+				{ value: "ollama-cloud", label: "Ollama Cloud" },
 				{ value: "lmstudio", label: "LM Studio (Local)" },
 				{ value: "vllm", label: "vLLM (Local)" },
 			],
@@ -302,6 +401,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 	);
 
 	let domain: string | undefined;
+	let proxyHttpPort: number | undefined;
+	let proxyHttpsPort: number | undefined;
+
 	if (proxy !== "none") {
 		const domainInput = ensureNotCancelled(
 			await text({
@@ -311,6 +413,90 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		);
 		const trimmed = String(domainInput).trim();
 		domain = trimmed.length > 0 ? trimmed : undefined;
+
+		// Check for port conflicts and offer custom ports
+		const portsInUse = new Set<number>();
+		for (const serviceId of finalServiceIds) {
+			const service = allServices.find((s: ServiceDefinition) => s.id === serviceId);
+			if (service?.ports) {
+				for (const port of service.ports) {
+					if (port.exposed) {
+						portsInUse.add(port.host);
+					}
+				}
+			}
+		}
+
+		const hasPort80Conflict = portsInUse.has(80);
+		const hasPort443Conflict = portsInUse.has(443);
+
+		if (hasPort80Conflict || hasPort443Conflict) {
+			const conflictingPorts = [];
+			if (hasPort80Conflict) conflictingPorts.push("80");
+			if (hasPort443Conflict) conflictingPorts.push("443");
+
+			console.log("");
+			console.log(
+				pc.yellow(
+					`⚠️  Port conflict detected: ${proxy} needs ports ${conflictingPorts.join(" and ")}, but they're already used by selected services.`,
+				),
+			);
+			console.log(pc.dim("   You can either:"));
+			console.log(pc.dim(`   1. Use custom ports for ${proxy} (e.g., 8080 and 8443)`));
+			console.log(pc.dim("   2. Remove conflicting services"));
+			console.log("");
+
+			const useCustomPorts = ensureNotCancelled(
+				await confirm({
+					message: `Use custom ports for ${proxy}?`,
+					initialValue: true,
+				}),
+			);
+
+			if (useCustomPorts) {
+				if (hasPort80Conflict) {
+					const httpPortInput = ensureNotCancelled(
+						await text({
+							message: "Custom HTTP port:",
+							placeholder: "8080",
+							initialValue: "8080",
+							validate: (value) => {
+								const port = Number.parseInt(value as string, 10);
+								if (Number.isNaN(port) || port < 1 || port > 65535) {
+									return "Port must be between 1 and 65535";
+								}
+								if (portsInUse.has(port)) {
+									return `Port ${port} is already in use by another service`;
+								}
+								return undefined;
+							},
+						}),
+					);
+					proxyHttpPort = Number.parseInt(String(httpPortInput), 10);
+				}
+
+				if (hasPort443Conflict) {
+					const httpsPortInput = ensureNotCancelled(
+						await text({
+							message: "Custom HTTPS port:",
+							placeholder: "8443",
+							initialValue: "8443",
+							validate: (value) => {
+								const port = Number.parseInt(value as string, 10);
+								if (Number.isNaN(port) || port < 1 || port > 65535) {
+									return "Port must be between 1 and 65535";
+								}
+								if (portsInUse.has(port) || port === proxyHttpPort) {
+									return `Port ${port} is already in use`;
+								}
+								return undefined;
+							},
+						}),
+					);
+					proxyHttpsPort = Number.parseInt(String(httpsPortInput), 10);
+				}
+			}
+		}
 	}
 
 	// Check if any selected service requires GPU
@@ -378,6 +564,7 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		`${pc.bold("Project:")}       ${projectDir}`,
 		`${pc.bold("Deployment:")}    ${String(deployment)}`,
 		`${pc.bold("Deploy type:")}   ${String(deploymentType)}`,
+		`${pc.bold("OpenClaw:")}      ${openclawInstallMethod === "direct" ? "direct (host install)" : "Docker container"}`,
 		`${pc.bold("Platform:")}      ${String(platform)}`,
 		`${pc.bold("Format:")}        ${String(outputFormat)}`,
 		...(preset ? [`${pc.bold("Preset:")}        ${preset.name}`] : []),
@@ -421,6 +608,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		aiProviders: selectedAiProviders,
 		gsdRuntimes: selectedGsdRuntimes,
 		proxy: String(proxy) as GenerationInput["proxy"],
+		proxyHttpPort,
+		proxyHttpsPort,
+		portOverrides,
 		domain,
 		gpu,
 		platform: platform as GenerationInput["platform"],
@@ -429,6 +619,9 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		generateSecrets,
 		openclawVersion: "latest",
 		monitoring: enableMonitoring,
+		openclawImage: openclawImage as "official" | "coolify" | "alpine",
+		openclawInstallMethod: openclawInstallMethod as "docker" | "direct",
+		hardened: true,
 	};
 
 	let result: ReturnType<typeof generate>;
@@ -449,16 +642,19 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 	// ── Step 8: Outro ─────────────────────────────────────────────────────────
 
 	const startCommand =
-		deploymentType === "bare-metal"
-			? platform === "windows/amd64"
-				? ".\\install.ps1  # install Docker and start (Windows)"
-				: "./install.sh    # install Docker and start (Linux/macOS)"
-			: "docker compose up -d";
+		openclawInstallMethod === "direct"
+			? "./scripts/install-openclaw.sh  # install OpenClaw on host"
+			: deploymentType === "bare-metal"
+				? platform === "windows/amd64"
+					? ".\\install.ps1  # install Docker and start (Windows)"
+					: "./install.sh    # install Docker and start (Linux/macOS)"
+				: "docker compose up -d";
 
 	const nextSteps = [
 		`cd ${String(projectDir)}`,
 		"cp .env.example .env  # review and customize",
 		startCommand,
+		...(openclawInstallMethod === "direct" ? ["docker compose up -d  # start companion services"] : []),
 	].join("\n");
 
 	note(nextSteps, "Next steps");

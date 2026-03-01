@@ -108,6 +108,54 @@ export default defineSchema({
 		createdAt: v.number(),
 		updatedAt: v.number(),
 	}).index("by_tenant", ["tenantId"]),
+	// ── Stack Management ────────────────────────────────────────────────────
+	stacks: defineTable({
+		projectName: v.string(),
+		domain: v.optional(v.string()),
+		deployment: v.optional(v.string()),
+		deploymentType: v.optional(v.string()),
+		platform: v.optional(v.string()),
+		proxy: v.optional(v.string()),
+		manifestVersion: v.string(),
+		registeredAt: v.number(),
+		tenantId: v.optional(v.string()),
+	}).index("by_tenant", ["tenantId"]),
+	stackServices: defineTable({
+		stackId: v.id("stacks"),
+		serviceId: v.string(),
+		name: v.string(),
+		category: v.string(),
+		icon: v.string(),
+		image: v.string(),
+		imageTag: v.string(),
+		ports: v.array(
+			v.object({
+				container: v.number(),
+				host: v.optional(v.number()),
+				exposed: v.boolean(),
+				description: v.string(),
+			}),
+		),
+		docsUrl: v.optional(v.string()),
+		addedBy: v.string(),
+		dependencyOf: v.optional(v.string()),
+		status: v.optional(v.string()),
+		envOverrides: v.optional(v.string()),
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_stack", ["stackId"]),
+	stackSkills: defineTable({
+		stackId: v.id("stacks"),
+		skillId: v.string(),
+		name: v.string(),
+		path: v.string(),
+		content: v.string(),
+		serviceIds: v.array(v.string()),
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_stack", ["stackId"]),
 	rateLimits: defineTable({
 		tenantId: v.optional(v.string()),
 		orgId: v.optional(v.string()),

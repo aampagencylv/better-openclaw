@@ -43,6 +43,31 @@ This tool is highly suited for CI/CD environments or scripting automation.
 | `--dry-run` | Build generation outputs in memory for trace logging without writing to disk |
 | `--open` | Escape terminal workflow and launch the Visual Web UI `better-openclaw.dev` platform |
 
+## Deploy to PaaS
+
+Deploy a generated stack directly to a self-hosted Dokploy or Coolify instance:
+
+```bash
+# Interactive deploy wizard
+better-openclaw deploy
+
+# Non-interactive deploy
+better-openclaw deploy \
+  --provider dokploy \
+  --url https://dokploy.example.com \
+  --api-key YOUR_API_KEY \
+  --dir ./my-stack
+```
+
+| Flag               | Description                                              |
+|--------------------|----------------------------------------------------------|
+| `--provider <id>`  | PaaS provider: `dokploy` or `coolify`                    |
+| `--url <url>`      | Instance URL of the PaaS platform                        |
+| `--api-key <key>`  | API key or bearer token                                  |
+| `--dir <path>`     | Directory containing `docker-compose.yml` (default: `.`) |
+
+If any required flag is missing, the CLI falls back to the interactive wizard which guides you through provider selection, URL, and API key entry.
+
 ## Package Development
 
 The CLI compiles against standard TypeScript configurations into dual CJS/MJS mappings for backwards execution compatibility.

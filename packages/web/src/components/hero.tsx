@@ -102,7 +102,12 @@ export function Hero() {
 				className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center xl:items-start"
 			>
 				{/* Status Bar */}
-				<motion.div variants={fadeUp} className="mb-8 flex items-center gap-3">
+				<motion.div
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.8 }}
+					className="mb-8 flex items-center gap-3"
+				>
 					<div className="h-px w-10 bg-primary/50" />
 					<span className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
 						CLUSTER : READY // SYSTEM ONLINE
@@ -113,8 +118,8 @@ export function Hero() {
 					/>
 				</motion.div>
 
-				{/* Huge Typography */}
-				<motion.h1 variants={fadeUp} className="max-w-[900px] text-center xl:text-left">
+				{/* Huge Typography (LCP Element - Statically Rendered) */}
+				<h1 className="max-w-[900px] text-center xl:text-left">
 					<span className="block text-6xl font-bold tracking-tight text-foreground md:text-8xl lg:text-9xl">
 						SCALE WITH
 					</span>
@@ -128,15 +133,12 @@ export function Hero() {
 					>
 						AUTONOMY
 					</span>
-				</motion.h1>
+				</h1>
 
-				<motion.p
-					variants={fadeUp}
-					className="mt-10 max-w-[650px] text-center xl:text-left text-lg text-muted-foreground md:text-xl leading-relaxed"
-				>
+				<p className="mt-10 max-w-[650px] text-center xl:text-left text-lg text-muted-foreground md:text-xl leading-relaxed">
 					Deploy autonomous agents optimized for infrastructure scalability. Engineered for
 					precision and zero-latency performance.
-				</motion.p>
+				</p>
 
 				{/* Tech Bullets */}
 				<motion.ul

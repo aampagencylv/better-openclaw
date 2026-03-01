@@ -153,6 +153,66 @@ export async function generateStackComplete(
 	});
 }
 
+// ── Deploy to PaaS ──────────────────────────────────────────────────────────
+// These functions relay deploy requests through the API server to the user's
+// self-hosted Dokploy/Coolify instance, avoiding browser CORS restrictions.
+
+/** A single step in the deploy progress (mirrors core DeployStep). */
+export interface DeployStep {
+	step: string;
+	status: "pending" | "running" | "done" | "error";
+	detail?: string;
+}
+
+/** Final result of a PaaS deployment (mirrors core DeployResult). */
+export interface DeployResult {
+	success: boolean;
+	dashboardUrl?: string;
+	projectId?: string;
+	composeId?: string;
+	steps: DeployStep[];
+	error?: string;
+}
+
+export interface DeployProvider {
+	id: string;
+	name: string;
+}
+
+/** List available PaaS deployment providers. */
+export async function fetchDeployProviders(): Promise<DeployProvider[]> {
+	const res = await apiFetch<{ providers: DeployProvider[] }>("/deploy/providers");
+	return res.providers;
+}
+
+/** Test connection to a PaaS instance. */
+export async function testDeployConnection(config: {
+	provider: string;
+	instanceUrl: string;
+	apiKey: string;
+}): Promise<{ ok: boolean; provider: string; error?: string }> {
+	return apiFetch("/deploy/test", {
+		method: "POST",
+		body: JSON.stringify(config),
+	});
+}
+
+/** Deploy a generated stack to a PaaS provider. */
+export async function deployStack(config: {
+	provider: string;
+	instanceUrl: string;
+	apiKey: string;
+	projectName: string;
+	composeYaml: string;
+	envContent: string;
+	description?: string;
+}): Promise<DeployResult> {
+	return apiFetch<DeployResult>("/deploy", {
+		method: "POST",
+		body: JSON.stringify(config),
+	});
+}
+
 /** Generate stack and return as ZIP blob. */
 export async function generateStackAsZip(
 	config: Parameters<typeof generateStack>[0],

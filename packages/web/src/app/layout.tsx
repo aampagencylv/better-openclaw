@@ -1,8 +1,21 @@
+import { Inter, JetBrains_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+
+const fontInter = Inter({
+	subsets: ["latin"],
+	display: "swap",
+	variable: "--font-inter",
+});
+
+const fontMono = JetBrains_Mono({
+	subsets: ["latin"],
+	display: "swap",
+	variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
 	metadataBase: new URL("https://better-openclaw.dev"),
@@ -112,12 +125,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 						__html: JSON.stringify(softwareJsonLd),
 					}}
 				/>
-				<link
-					href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-					rel="stylesheet"
-				/>
 			</head>
-			<body className="bg-background text-foreground font-sans antialiased min-h-screen">
+			<body className={`${fontInter.variable} ${fontMono.variable} bg-background text-foreground font-sans antialiased min-h-screen`}>
 				<ErrorBoundary>
 					<ThemeProvider>{children}</ThemeProvider>
 				</ErrorBoundary>

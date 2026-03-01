@@ -14,6 +14,22 @@ const coreDist = fs.existsSync(coreDistFromRoot)
 
 const nextConfig: NextConfig = {
 	transpilePackages: ["@better-openclaw/core"],
+	async headers() {
+		return [
+			{
+				source: "/(.*)\\.(png|jpg|jpeg|svg|webp|gif|mp4)$",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=31536000, immutable",
+					},
+				],
+			},
+		];
+	},
+
+	// Allow Next.js 16 to use webpack (our config requires it for node: protocol handling)
+	turbopack: {},
 
 	// The core package barrel export re-exports generators that depend on
 	// node:crypto and handlebars.  These generators are never called on the

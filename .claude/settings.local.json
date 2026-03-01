@@ -10,7 +10,15 @@
       "Bash(npx tsx:*)",
       "WebFetch(domain:github.com)",
       "Bash(pnpm remove:*)",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(pnpm --filter @better-openclaw/core build:*)",
+      "Bash(pnpm --filter @better-openclaw/cli build:*)",
+      "Bash(pnpm build:*)",
+      "Bash(node:*)",
+      "Bash(pnpm start:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker run:*)",
+      "Bash(echo:*)"
     ]
   }
 }
