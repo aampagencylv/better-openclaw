@@ -1,7 +1,8 @@
 <p align="center">
   <h1 align="center">better-openclaw</h1>
   <p align="center">
-    Build your OpenClaw superstack in seconds
+    <strong>Build your OpenClaw superstack in seconds.</strong><br/>
+    94 services. 10 skill packs. 9 presets. One command.
   </p>
 </p>
 
@@ -11,13 +12,15 @@
   <a href="#deployment">Deployment</a> &bull;
   <a href="#service-catalog">Services</a> &bull;
   <a href="#skill-packs">Skill Packs</a> &bull;
+  <a href="#presets">Presets</a> &bull;
+  <a href="#rest-api">API</a> &bull;
   <a href="#architecture">Architecture</a> &bull;
   <a href="#development">Development</a>
 </p>
 
 <p align="center">
-  <img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg" />
-  <img alt="Node" src="https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg" />
+  <img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg" />
+  <img alt="Node" src="https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg" />
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-9.15.4-orange.svg" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.7-blue.svg" />
 </p>
@@ -29,7 +32,7 @@
 ## Quick Start
 
 ```bash
-pnpm create better-openclaw@latest
+npx create-better-openclaw@latest
 ```
 
 Follow the interactive wizard to select services, skill packs, and configuration options. Your complete stack will be generated in seconds.
@@ -37,24 +40,70 @@ Follow the interactive wizard to select services, skill packs, and configuration
 Or run non-interactively:
 
 ```bash
-pnpm create better-openclaw@latest --preset researcher --output ./my-stack
+# Use a preset
+npx create-better-openclaw --preset researcher --yes
+
+# Cherry-pick services
+npx create-better-openclaw --services postgresql,redis,n8n,grafana --proxy caddy --domain example.com --yes
+
+# Preview without writing files
+npx create-better-openclaw --preset devops --dry-run
+
+# JSON output for CI/CD pipelines
+npx create-better-openclaw --preset minimal --yes --json
+```
+
+### CLI Commands
+
+```bash
+better-openclaw generate [dir]       # Generate a stack (default command)
+better-openclaw services list        # List all 94 available services
+better-openclaw presets list         # List all preset stacks
+better-openclaw presets info <id>    # Show preset details
+better-openclaw validate <dir>      # Validate an existing stack
+better-openclaw init                 # Initialize in current directory
+better-openclaw add <service-id>    # Add a service to existing stack
+better-openclaw remove <service-id> # Remove a service from existing stack
+better-openclaw deploy               # Deploy stack to Dokploy or Coolify (interactive)
+better-openclaw deploy --provider dokploy --url https://... --api-key ...  # Non-interactive
+better-openclaw completion <shell>  # Generate shell completions (bash/zsh/fish)
+```
+
+### Advanced CLI Options
+
+```bash
+# Custom proxy ports (auto-detects conflicts)
+npx create-better-openclaw --proxy caddy --proxy-http-port 8080 --proxy-https-port 8443
+
+# Select AI providers (comma-separated)
+npx create-better-openclaw --ai-providers openai,anthropic,google --yes
+
+# Combine options
+npx create-better-openclaw \
+  --services postgresql,redis,n8n \
+  --proxy caddy --proxy-http-port 8080 \
+  --ai-providers openai,anthropic \
+  --domain example.com \
+  --yes
 ```
 
 ## Features
 
 - **Interactive CLI wizard** -- guided service selection with dependency resolution
 - **Non-interactive mode** -- scriptable with presets and flags for CI/CD pipelines
+- **Automatic port conflict detection** -- scans your system for port conflicts and auto-reassigns services to available ports (interactive and non-interactive modes)
 - **REST API** -- generate stacks programmatically via HTTP endpoints
 - **Web UI** -- visual stack builder with live preview and one-click download
 - **Smart dependency resolution** -- automatically adds required services (e.g., n8n adds PostgreSQL)
 - **Preset stacks** -- pre-configured templates for common use cases
 - **Skill packs** -- bundles of agent skills wired to their backing services
-- **Reverse proxy configs** -- auto-generated Caddy or Traefik configuration with label generation
+- **Reverse proxy configs** -- auto-generated Caddy or Traefik configuration with label generation and custom port support
 - **Auto-generated OpenAPI spec** -- live Swagger UI at `/v1/docs`
 - **Distributed rate limiting** -- optional Redis-backed rate limiter for production
 - **Config migrations** -- forward-compatible configuration versioning
 - **Monitoring dashboards** -- Grafana + Prometheus pre-wired with service exporters
 - **Environment files** -- secure `.env` generation with random secrets
+- **One-click deploy** -- deploy generated stacks to self-hosted Dokploy or Coolify directly from the web UI or CLI
 - **Validation engine** -- port conflicts, resource limits, and configuration checks
 - **Multi-platform support** -- linux/amd64 and linux/arm64
 - **Bare-metal deployment** -- hybrid native + Docker: run supported services natively on the host and use Docker only for the rest (see [Deployment](#deployment))
@@ -73,31 +122,32 @@ Only services with a native recipe run on the host; others remain in Docker. Cur
 
 ## Service Catalog
 
-75 services across 19 categories, ready to compose:
+94 services across 21 categories, ready to compose:
 
 | Category | Services |
 |---|---|
-| **AI Coding Agents** | Claude Code, Codex, Gemini CLI, OpenCode |
-| **AI Platforms & Chat UIs** | AnythingLLM, Dify, Flowise, Kimi, LibreChat, LiteLLM, Open WebUI |
-| **AI / Local Models** | Ollama, Stable Diffusion, Whisper |
-| **Automation & Workflows** | Cal.com, n8n, Temporal, xyOps |
-| **Database & Caching** | Convex, Neo4j, PostgreSQL, Redis, Valkey |
-| **Vector Databases** | Qdrant, ChromaDB, Weaviate |
-| **Media & Video** | ComfyUI, FFmpeg, Motion Canvas, Remotion |
-| **Social Media** | Mixpost, Postiz, UseSend |
+| **AI Coding Agents** | Claude Code, Codex, Gemini CLI, Kimi, OpenCode |
+| **AI Platforms & Chat UIs** | AnythingLLM, Dify, Flowise, LibreChat, LiteLLM, Open WebUI |
+| **AI / Local Models** | ComfyUI, Ollama, Stable Diffusion, Whisper |
+| **Automation & Workflows** | Cal.com, Home Assistant, n8n, Temporal, xyOps |
+| **Database & Caching** | Convex, Neo4j, PostgreSQL, Redis, Supabase, Valkey |
+| **Vector Databases** | ChromaDB, Milvus, Qdrant, Weaviate |
+| **Media & Video** | FFmpeg, Immich, Jellyfin, Motion Canvas, Remotion |
+| **Social Media** | Ghost, Mixpost, Postiz |
 | **Analytics** | Matomo, OpenPanel, Umami |
-| **Knowledge & Documents** | DocsGPT, NocoDB, Outline, Paperless-ngx |
-| **Object Storage** | MinIO |
-| **Developer Tools** | AppFlowy, Beszel, Code Server, Coolify, Dokploy, Dozzle, Gitea, Mission Control, Portainer, Watchtower |
+| **Knowledge & Documents** | AppFlowy, DocsGPT, NocoDB, Outline, Paperless-ngx |
+| **Object Storage** | MinIO, Nextcloud |
+| **Developer Tools** | Beszel, Code Server, Convex Dashboard, Coolify, Dokploy, Dozzle, Gitea, Headscale, Jenkins, Mission Control, Portainer, Tailscale, Watchtower |
 | **Reverse Proxy** | Caddy, Traefik |
-| **Monitoring** | Grafana, Prometheus, Uptime Kuma |
-| **Browser Automation** | Browserless, LightPanda, Playwright Server, Steel Browser |
-| **Search** | SearXNG, Meilisearch |
-| **Notifications** | Gotify, ntfy |
-| **Communication** | Matrix Synapse, Mattermost, Rocket.Chat |
-| **Streaming & Relay** | LiveKit, Stream Gateway, Tailscale |
+| **Monitoring** | Grafana, Loki, Prometheus, SigNoz, Uptime Kuma |
+| **Browser Automation** | Browserless, LightPanda, Playwright Server, Scrapling, Steel Browser |
+| **Search** | Meilisearch, SearXNG |
+| **Communication** | Gotify, La Suite Meet (frontend/backend/agents), LiveKit, Matrix Synapse, Mattermost, ntfy, Rocket.Chat, UseSend |
+| **Streaming** | Stream Gateway |
+| **Security** | Authentik, CrowdSec, HexStrike, PentAGI, PentestAgent, SolidityGuard, Vaultwarden |
+| **Desktop** | Desktop Environment (KasmVNC) |
 
-Each service definition includes Docker image, ports, volumes, health checks, environment variables, resource limits, and dependency declarations.
+Every service definition includes a pinned Docker image tag, ports, volumes, health checks, environment variables, resource limits, and dependency declarations.
 
 ## Skill Packs
 
@@ -132,6 +182,34 @@ Pre-configured stack templates for quick starts:
 | **La Suite Meet** | Meet frontend/backend/agents, Redis, PostgreSQL, LiveKit | ~4 GB |
 | **Full Stack** | All core services + all skill packs | ~8 GB |
 
+## REST API
+
+The API runs on port 3456 with auto-generated OpenAPI docs at `/v1/docs`.
+
+```bash
+# List all services
+curl http://localhost:3456/v1/services
+
+# Get a specific service
+curl http://localhost:3456/v1/services/postgresql
+
+# Filter services by category
+curl http://localhost:3456/v1/services?category=database
+
+# List presets
+curl http://localhost:3456/v1/presets
+
+# Get preset with resolved service details
+curl http://localhost:3456/v1/presets/devops
+
+# Generate a stack
+curl -X POST http://localhost:3456/v1/generate \
+  -H "Content-Type: application/json" \
+  -d '{"services": ["postgresql", "redis", "n8n"], "proxy": "caddy"}'
+```
+
+API key authentication is supported via the `X-API-Key` header. Configure allowed keys with the `API_KEYS` environment variable (comma-separated).
+
 ## Architecture
 
 better-openclaw is a TypeScript monorepo managed with pnpm workspaces and Turborepo:
@@ -142,8 +220,7 @@ better-openclaw/
 │   ├── core/          # Schemas, service registry, resolver, composer, validators
 │   ├── cli/           # Interactive wizard + non-interactive CLI (Commander + Clack)
 │   ├── api/           # REST API (Hono + Zod OpenAPI)
-│   └── web/           # Web UI (Next.js 15 + Tailwind CSS 4)
-├── presets/           # JSON preset definitions
+│   └── web/           # Web UI (Next.js 16 + Tailwind CSS 4)
 ├── skills/            # Agent skill templates (Markdown)
 ├── turbo.json         # Turborepo task pipeline
 ├── biome.json         # Linting and formatting (Biome)
@@ -160,21 +237,22 @@ create-better-openclaw ┘
 
 ### Key Technologies
 
-- **Runtime**: Node.js 22
+- **Runtime**: Node.js >= 18
 - **Language**: TypeScript 5.7
 - **Monorepo**: pnpm workspaces + Turborepo
 - **API**: Hono with Zod OpenAPI
-- **Web**: Next.js 15 with React 19, Tailwind CSS 4, Framer Motion
+- **Web**: Next.js 16 with React 19, Tailwind CSS 4, Framer Motion
 - **CLI**: Commander + @clack/prompts
 - **Validation**: Zod schemas throughout
 - **Testing**: Vitest
 - **Linting**: Biome
+- **Build**: tsdown (ESM + CJS dual-format output)
 
 ## Development
 
 ### Prerequisites
 
-- Node.js >= 20
+- Node.js >= 18
 - pnpm 9.15.4
 
 ### Setup
@@ -232,7 +310,7 @@ Contributions are welcome! Please see the [Contributing Guide](CONTRIBUTING.md) 
 
 ## License
 
-[MIT](LICENSE) -- build freely.
+[AGPL-3.0](LICENSE)
 
 ---
 
