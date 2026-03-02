@@ -1,6 +1,6 @@
 {
   "name": "create-better-openclaw",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "description": "Scaffold production-ready OpenClaw Docker Compose stacks in one command. 95+ services, presets, auto-wiring, and skill packs.",
   "author": "bidew.io <bachir@bidew.io>",
@@ -10,10 +10,11 @@
     "url": "https://github.com/bidewio/better-openclaw.git",
     "directory": "packages/cli"
   },
-  "homepage": "https://better-openclaw.dev",
+  "homepage": "https://better-openclaw.com",
   "bugs": {
     "url": "https://github.com/bidewio/better-openclaw/issues"
   },
+  "sideEffects": false,
   "main": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "type": "module",

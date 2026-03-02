@@ -10,7 +10,7 @@
     "url": "https://github.com/bidewio/better-openclaw.git",
     "directory": "packages/core"
   },
-  "homepage": "https://better-openclaw.dev",
+  "homepage": "https://better-openclaw.com",
   "packageManager": "pnpm@9.15.4",
   "sideEffects": false,
   "main": "dist/index.mjs",
