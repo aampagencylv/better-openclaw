@@ -138,6 +138,7 @@ export default function NewStackPage() {
 				openclawVersion: "latest",
 				openclawImage: "official",
 				hardened: true,
+				openclawInstallMethod: "docker"
 			});
 			// Return the main file YAML as fallback for the composeYaml prop
 			return result.files[result.mainFile] ?? "";
