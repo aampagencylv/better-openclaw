@@ -30,6 +30,11 @@
       "default": "./dist/*.mjs"
     }
   },
+  "alias": {
+    "create-better-openclaw": "./dist/index.mjs",
+    "better-openclaw": "./dist/index.mjs",
+    "better-openclaw-cli": "./dist/index.mjs"
+  },
   "bin": {
     "create-better-openclaw": "./dist/index.mjs",
     "better-openclaw": "./dist/index.mjs",

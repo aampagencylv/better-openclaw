@@ -49,10 +49,10 @@ Deploy a generated stack directly to a self-hosted Dokploy or Coolify instance:
 
 ```bash
 # Interactive deploy wizard
-better-openclaw deploy
+pnpx create-better-openclaw deploy
 
 # Non-interactive deploy
-better-openclaw deploy \
+pnpx create-better-openclaw deploy \
   --provider dokploy \
   --url https://dokploy.example.com \
   --api-key YOUR_API_KEY \

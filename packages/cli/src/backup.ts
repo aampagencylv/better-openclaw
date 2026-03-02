@@ -140,7 +140,7 @@ export async function runBackupList(options: { dir: string; json?: boolean }): P
 			console.log(JSON.stringify({ backups: [] }));
 		} else {
 			console.log(pc.dim("\nNo backups found."));
-			console.log(pc.dim("Run 'better-openclaw backup create' to create one.\n"));
+			console.log(pc.dim("Run 'pnpx create-better-openclaw backup create' to create one.\n"));
 		}
 		return;
 	}

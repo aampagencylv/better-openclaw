@@ -13,7 +13,7 @@ interface ContainerInfo {
 }
 
 /**
- * Runs `better-openclaw status` — shows a formatted table of all services
+ * Runs `pnpx create-better-openclaw status` — shows a formatted table of all services
  * in the local Docker Compose stack with their state, ports, and health.
  */
 export async function runStatus(options: { dir: string; json?: boolean }): Promise<void> {
@@ -27,7 +27,7 @@ export async function runStatus(options: { dir: string; json?: boolean }): Promi
 			console.log(JSON.stringify({ error: "No docker-compose.yml found", dir }));
 		} else {
 			console.error(pc.red(`No docker-compose.yml found in "${dir}".`));
-			console.error(pc.dim("Run 'better-openclaw generate' first to create a stack."));
+			console.error(pc.dim("Run 'pnpx create-better-openclaw generate' first to create a stack."));
 		}
 		process.exit(1);
 	}
