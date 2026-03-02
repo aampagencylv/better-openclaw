@@ -101,6 +101,7 @@ export function PreviewPanel({
 				openclawVersion: "latest",
 				openclawImage: "official",
 				hardened: true,
+				openclawInstallMethod: "docker",
 			});
 		} catch {
 			return null;
