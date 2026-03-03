@@ -1,5 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
+import { secureHeaders } from 'hono/secure-headers';
 import { optionalApiKey } from "./middleware/api-key.js";
 import { generateRateLimiter, rateLimiter } from "./middleware/rate-limit.js";
 import { requestId } from "./middleware/request-id.js";
@@ -16,9 +17,27 @@ import { validateRoute } from "./routes/validate.js";
 
 const app = new OpenAPIHono().basePath("/v1");
 
+const trustedOrigins = process.env.TRUSTED_ORIGINS?.split(",") || ["http://localhost:5173", "http://localhost:3000", "http://localhost:5174", "http://localhost:5175", "http://localhost:3001"];
+
 // Middleware
 app.use("/*", requestId());
-app.use("/*", cors());
+// Security: Enable secure headers (X-Content-Type-Options, X-Frame-Options, etc.)
+app.use('/*', secureHeaders({
+    xFrameOptions: 'DENY',
+    xContentTypeOptions: 'nosniff',
+    referrerPolicy: 'strict-origin-when-cross-origin',
+    strictTransportSecurity: 'max-age=31536000; includeSubDomains',
+    xXssProtection: '1; mode=block',
+}));
+
+app.use('/*', cors({
+    origin: trustedOrigins,
+    allowHeaders: ['Set-Cookie', 'Cookie', 'Content-Type', 'Authorization', 'x-api-key', 'baggage', 'sentry-trace', 'sentry-release', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Idempotency-Key'],
+    allowMethods: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    exposeHeaders: ['Set-Cookie', 'Cookie', 'Content-Length', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Retry-After', 'Idempotency-Key', 'X-Idempotent-Replayed'],
+    maxAge: 600,
+    credentials: true,
+}));
 app.use("/*", optionalApiKey());
 app.use("/*", rateLimiter());
 app.use("/generate", generateRateLimiter());
