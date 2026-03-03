@@ -3,12 +3,15 @@ import { cors } from "hono/cors";
 import { optionalApiKey } from "./middleware/api-key.js";
 import { generateRateLimiter, rateLimiter } from "./middleware/rate-limit.js";
 import { requestId } from "./middleware/request-id.js";
+import { authRoute } from "./routes/auth.js";
 import { deployRoute } from "./routes/deploy.js";
+import { favoritesRoute } from "./routes/favorites.js";
 import { generateRoute } from "./routes/generate.js";
 import { healthRoute } from "./routes/health.js";
 import { presetsRoute } from "./routes/presets.js";
 import { servicesRoute } from "./routes/services.js";
 import { skillsRoute } from "./routes/skills.js";
+import { stacksRoute } from "./routes/stacks.js";
 import { validateRoute } from "./routes/validate.js";
 
 const app = new OpenAPIHono().basePath("/v1");
@@ -42,6 +45,9 @@ app.route("/presets", presetsRoute);
 app.route("/validate", validateRoute);
 app.route("/generate", generateRoute);
 app.route("/deploy", deployRoute);
+app.route("/auth", authRoute);
+app.route("/stacks", stacksRoute);
+app.route("/favorites", favoritesRoute);
 
 // Auto-generated OpenAPI spec
 app.doc("/openapi.json", {

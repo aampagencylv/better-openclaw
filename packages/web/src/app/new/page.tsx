@@ -39,6 +39,10 @@ import {
 } from "@/components/stack-builder/SkillSelectorModal";
 import { generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
+import { SaveStackModal } from "@/components/save-stack-modal";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { Save } from "lucide-react";
 
 const CLAWEXA_DEPLOY_URL = process.env.NEXT_PUBLIC_CLAWEXA_DEPLOY_URL ?? "";
 const CLAWEXA_SITE = "https://clawexa.net";
@@ -72,6 +76,10 @@ export default function NewStackPage() {
 	const [selectedIndividualSkills, setSelectedIndividualSkills] = useState<
 		Map<string, SelectedSkill>
 	>(new Map());
+	const [showSaveModal, setShowSaveModal] = useState(false);
+	const [savedStackId, setSavedStackId] = useState<string | null>(null);
+	const { data: session } = useSession();
+	const router = useRouter();
 
 	// Load all services, presets, and skill packs from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
@@ -335,9 +343,29 @@ export default function NewStackPage() {
 						</button>
 
 						<button
-							type="button"
-							onClick={() => setShowDeployToServerModal(true)}
-							disabled={selectedServices.size === 0}
+						type="button"
+						onClick={() => {
+							if (!session) {
+								router.push("/sign-in");
+								return;
+							}
+							setShowSaveModal(true);
+						}}
+						disabled={selectedServices.size === 0}
+						className={cn(
+							"hidden items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all sm:flex",
+							selectedServices.size > 0
+								? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+								: "border-border text-muted-foreground cursor-not-allowed",
+						)}
+					>
+						<Save className="h-3.5 w-3.5" />
+						{savedStackId ? "Saved ✓" : "Save Stack"}
+					</button>
+					<button
+						type="button"
+						onClick={() => setShowDeployToServerModal(true)}
+						disabled={selectedServices.size === 0}
 							className={cn(
 								"hidden items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all sm:flex",
 								selectedServices.size > 0
@@ -1099,6 +1127,29 @@ export default function NewStackPage() {
 				selectedSkills={selectedIndividualSkills}
 				onApply={(skills) => setSelectedIndividualSkills(skills)}
 			/>
+
+			{/* Save Stack Modal */}
+			{showSaveModal && (
+				<SaveStackModal
+					projectName={projectName || "my-stack"}
+					services={Array.from(selectedServices)}
+					config={{
+						projectName: projectName || "my-stack",
+						services: Array.from(selectedServices),
+						skillPacks: Array.from(selectedSkillPacks),
+						aiProviders: Array.from(selectedAiProviders),
+						gsdRuntimes: Array.from(selectedGsdRuntimes),
+						proxy: "none",
+						gpu: false,
+						platform: "linux/amd64",
+						deployment: "local",
+						deploymentType: "docker",
+						monitoring: false,
+					}}
+					onClose={() => setShowSaveModal(false)}
+					onSaved={(id) => setSavedStackId(id)}
+				/>
+			)}
 		</div>
 	);
 }

@@ -7,14 +7,16 @@ import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { Navbar } from "@/components/navbar";
 import { PresetsSection } from "@/components/presets-section";
+import { DemoVideo } from "@/components/demo-video";
 
 const SECTIONS = [
 	{ id: "hero", label: "01" },
 	{ id: "features", label: "02" },
 	{ id: "presets", label: "03" },
 	{ id: "flow", label: "04" },
-	{ id: "validation", label: "05" },
-	{ id: "pricing", label: "06" },
+	{ id: "demo", label: "05" },
+	{ id: "validation", label: "06" },
+	{ id: "pricing", label: "07" },
 ];
 
 const TICKER_MESSAGES = [
@@ -224,13 +226,17 @@ export default function HomePage() {
 					<CommonSetups />
 				</section>
 
-				<section id="validation" className="min-h-[60vh]">
-					{/* Validation Console is inside the Footer */}
-				</section>
+				<DemoVideo />
 
-				<section id="pricing" className="min-h-[60vh]">
-					{/* Pricing is inside the Footer */}
-				</section>
+				{/* Validation Console is inside the Footer */}
+				{/* <section id="validation" className="min-h-[60vh]">
+					
+				</section> */}
+
+				{/* Pricing is inside the Footer */}
+				{/* <section id="pricing" className="min-h-[60vh]">
+					
+				</section> */}
 			</main>
 
 			<div className="relative z-10 lg:pl-14">

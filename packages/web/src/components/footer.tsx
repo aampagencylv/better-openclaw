@@ -16,6 +16,8 @@ const resourceLinks = [
 const companyLinks = [
 	{ href: "/about", label: "About" },
 	{ href: "/blog", label: "Blog" },
+	{ href: "/roadmap", label: "Roadmap" },
+	{ href: "/changelog", label: "Changelog" },
 	{ href: "/careers", label: "Careers", badge: "HIRING" },
 ];
 

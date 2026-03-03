@@ -228,3 +228,80 @@ export async function generateStackAsZip(
 	}
 	return res.blob();
 }
+
+// ── Saved Stacks ─────────────────────────────────────────────────────────────
+
+export interface SavedStackResponse {
+	id: string;
+	userId: string;
+	name: string;
+	description: string | null;
+	services: unknown;
+	config: unknown;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export async function saveStack(input: {
+	name: string;
+	description?: string;
+	services: string[];
+	config: Record<string, unknown>;
+}): Promise<SavedStackResponse> {
+	const res = await apiFetch<{ stack: SavedStackResponse }>("/stacks", {
+		method: "POST",
+		credentials: "include",
+		body: JSON.stringify(input),
+	});
+	return res.stack;
+}
+
+export async function fetchSavedStacks(): Promise<SavedStackResponse[]> {
+	const res = await apiFetch<{ stacks: SavedStackResponse[] }>("/stacks", {
+		credentials: "include",
+	});
+	return res.stacks;
+}
+
+export async function deleteSavedStack(id: string): Promise<void> {
+	await apiFetch(`/stacks/${id}`, {
+		method: "DELETE",
+		credentials: "include",
+	});
+}
+
+// ── Favorites ─────────────────────────────────────────────────────────────────
+
+export interface FavoriteResponse {
+	id: string;
+	userId: string;
+	stackId: string;
+	createdAt: string;
+}
+
+export async function fetchFavorites(): Promise<FavoriteResponse[]> {
+	const res = await apiFetch<{ favorites: { favoriteId: string; createdAt: string; stack: SavedStackResponse }[] }>("/favorites", {
+		credentials: "include",
+	});
+	return res.favorites.map((f) => ({
+		id: f.favoriteId,
+		userId: f.stack.userId,
+		stackId: f.stack.id,
+		createdAt: f.createdAt,
+	}));
+}
+
+export async function toggleFavorite(stackId: string, action: "add" | "remove"): Promise<void> {
+	if (action === "add") {
+		await apiFetch("/favorites", {
+			method: "POST",
+			credentials: "include",
+			body: JSON.stringify({ stackId }),
+		});
+	} else {
+		await apiFetch(`/favorites/${stackId}`, {
+			method: "DELETE",
+			credentials: "include",
+		});
+	}
+}
