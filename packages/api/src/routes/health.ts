@@ -39,7 +39,8 @@ const healthGet = createRoute({
 	},
 });
 
-route.openapi(healthGet, (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(healthGet, (c: any) => {
 	try {
 		const serviceCount = getAllServices().length;
 		const uptimeMs = Date.now() - startedAt;

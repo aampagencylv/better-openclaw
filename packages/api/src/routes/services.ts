@@ -46,7 +46,8 @@ const servicesGet = createRoute({
 	},
 });
 
-route.openapi(servicesGet, (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(servicesGet, (c: any) => {
 	try {
 		const { category, maturity } = c.req.valid("query");
 
@@ -111,7 +112,8 @@ const serviceGetById = createRoute({
 	},
 });
 
-route.openapi(serviceGetById, (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(serviceGetById, (c: any) => {
 	const { id } = c.req.valid("param");
 	const service = getServiceById(id);
 

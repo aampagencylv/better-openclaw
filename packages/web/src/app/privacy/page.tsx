@@ -34,7 +34,7 @@ export default function PrivacyPage() {
 
 				<h2>2. Information We Collect</h2>
 				<p>
-					This website (better-openclaw.com) and our documentation may collect anonymous usage
+					This website (better-openclaw.dev) and our documentation may collect anonymous usage
 					statistics to help us improve the project:
 				</p>
 				<ul>

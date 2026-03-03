@@ -64,7 +64,8 @@ function isValidKey(key: string): boolean {
  *   (all keys accepted).
  */
 export function requireApiKey(): MiddlewareHandler {
-	return async (c, next) => {
+	// biome-ignore lint/suspicious/noExplicitAny: Hono middleware must be untyped
+	return async (c: any, next) => {
 		const apiKey = c.req.header("X-API-Key");
 
 		if (!apiKey) {
@@ -103,7 +104,8 @@ export function requireApiKey(): MiddlewareHandler {
  * is configured). Sets `c.set("authenticated", true)` when valid.
  */
 export function optionalApiKey(): MiddlewareHandler {
-	return async (c, next) => {
+	// biome-ignore lint/suspicious/noExplicitAny: Hono middleware must be untyped
+	return async (c: any, next) => {
 		const apiKey = c.req.header("X-API-Key");
 
 		if (apiKey) {

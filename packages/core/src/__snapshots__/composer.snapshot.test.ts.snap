@@ -11,6 +11,16 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
       FFMPEG_SHARED_DIR: /home/node/.openclaw/workspace/media
       MINIO_HOST: minio
       MINIO_PORT: "9000"
@@ -51,8 +61,8 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: \${MINIO_ROOT_PASSWORD}
     ports:
-      - \${MINIO_PORT_0:-9000}:9000
-      - \${MINIO_PORT_1:-9001}:9001
+      - \${MINIO_EXTERNAL_PORT_0:-9000}:9000
+      - \${MINIO_EXTERNAL_PORT_1:-9001}:9001
     volumes:
       - minio-data:/data
     healthcheck:
@@ -72,7 +82,7 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
     environment:
       REDIS_PASSWORD: \${REDIS_PASSWORD}
     ports:
-      - \${REDIS_PORT:-6379}:6379
+      - \${REDIS_EXTERNAL_PORT:-6379}:6379
     volumes:
       - redis-data:/data
     healthcheck:
@@ -91,10 +101,22 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_GATEWAY_HOST: openclaw-gateway
+      OPENCLAW_GATEWAY_PORT: "18789"
       BROWSER: echo
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
     volumes:
       - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
       - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
@@ -106,6 +128,10 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
     entrypoint:
       - node
       - dist/index.js
+    restart: no
+    depends_on:
+      openclaw-gateway:
+        condition: service_started
 volumes:
   ffmpeg-shared:
   minio-data:
@@ -128,13 +154,13 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
     restart: unless-stopped
     networks:
       - openclaw-network
-    command: tail -f /dev/null
+    entrypoint: tail -f /dev/null
     profiles:
       - media
   remotion:
     image: remotion-dev/studio:4
     ports:
-      - \${REMOTION_PORT:-3020}:3000
+      - \${REMOTION_EXTERNAL_PORT:-3020}:3000
     restart: unless-stopped
     networks:
       - openclaw-network
@@ -156,6 +182,16 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
       POSTGRES_HOST: postgresql
       POSTGRES_PORT: "5432"
       REDIS_HOST: redis
@@ -197,8 +233,9 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       POSTGRES_USER: openclaw
       POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
       POSTGRES_DB: openclaw
+      N8N_DB_PASSWORD: \${N8N_DB_PASSWORD}
     ports:
-      - \${POSTGRESQL_PORT:-5432}:5432
+      - \${POSTGRESQL_EXTERNAL_PORT:-5432}:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
@@ -218,7 +255,7 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
     environment:
       REDIS_PASSWORD: \${REDIS_PASSWORD}
     ports:
-      - \${REDIS_PORT:-6379}:6379
+      - \${REDIS_EXTERNAL_PORT:-6379}:6379
     volumes:
       - redis-data:/data
     healthcheck:
@@ -246,7 +283,7 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       N8N_PORT: "5678"
       WEBHOOK_URL: http://n8n:5678/
     ports:
-      - \${N8N_PORT:-5678}:5678
+      - \${N8N_EXTERNAL_PORT:-5678}:5678
     volumes:
       - n8n-data:/home/node/.n8n
     healthcheck:
@@ -261,18 +298,69 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
     networks:
       - openclaw-network
     depends_on:
+      postgres-setup:
+        condition: service_completed_successfully
+  postgres-setup:
+    image: postgres:17-alpine
+    depends_on:
       postgresql:
         condition: service_healthy
+    environment:
+      PGHOST: postgresql
+      PGUSER: \${POSTGRES_USER:-openclaw}
+      PGDATABASE: \${POSTGRES_DB:-openclaw}
+      PGPASSWORD: \${POSTGRES_PASSWORD}
+      N8N_DB_PASSWORD: \${N8N_DB_PASSWORD}
+    entrypoint:
+      - /bin/sh
+      - -c
+    command:
+      - >-
+        echo '=== PostgreSQL database setup ==='
+
+        FAILED=0
+
+        echo "Setting up database 'n8n' with user 'n8n'..."
+
+        psql -c "SELECT 1 FROM pg_roles WHERE rolname='n8n'" | grep -q 1 || psql -c "CREATE ROLE n8n WITH LOGIN PASSWORD
+        '$$N8N_DB_PASSWORD'"
+
+        psql -c "ALTER ROLE n8n WITH LOGIN PASSWORD '$$N8N_DB_PASSWORD'"
+
+        psql -tc "SELECT 1 FROM pg_database WHERE datname='n8n'" | grep -q 1 || psql -c "CREATE DATABASE n8n OWNER n8n"
+
+        psql -c "GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n" || FAILED=1
+
+        echo "  Done: n8n"
+
+        echo '=== All databases ready ==='
+
+        exit $$FAILED
+    restart: "no"
+    networks:
+      - openclaw-network
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_GATEWAY_HOST: openclaw-gateway
+      OPENCLAW_GATEWAY_PORT: "18789"
       BROWSER: echo
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
     volumes:
       - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
       - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
@@ -284,6 +372,10 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
     entrypoint:
       - node
       - dist/index.js
+    restart: no
+    depends_on:
+      openclaw-gateway:
+        condition: service_started
 volumes:
   grafana-data:
   n8n-data:
@@ -302,7 +394,7 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
   prometheus:
     image: prom/prometheus:v3.9.1
     ports:
-      - \${PROMETHEUS_PORT:-9090}:9090
+      - \${PROMETHEUS_EXTERNAL_PORT:-9090}:9090
     volumes:
       - prometheus-data:/prometheus
     healthcheck:
@@ -322,13 +414,13 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
   uptime-kuma:
     image: louislam/uptime-kuma:2
     ports:
-      - \${UPTIME_KUMA_PORT:-3001}:3001
+      - \${UPTIME_KUMA_EXTERNAL_PORT:-3001}:3001
     volumes:
       - uptime-kuma-data:/app/data
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:3001 || exit 1
+        - curl -sf http://localhost:3001 || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -344,13 +436,13 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: \${GF_SECURITY_ADMIN_PASSWORD}
     ports:
-      - \${GRAFANA_PORT:-3150}:3000
+      - \${GRAFANA_EXTERNAL_PORT:-3150}:3000
     volumes:
       - grafana-data:/var/lib/grafana
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:3000/api/health || exit 1
+        - curl -sf http://localhost:3000/api/health || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -381,6 +473,16 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
       BROWSERLESS_HOST: browserless
       BROWSERLESS_PORT: "3000"
       BROWSERLESS_TOKEN: \${BROWSERLESS_TOKEN}
@@ -388,7 +490,7 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       CADDY_HTTP_PORT: "80"
       FFMPEG_SHARED_DIR: /home/node/.openclaw/workspace/media
       GOTIFY_HOST: gotify
-      GOTIFY_PORT: "8080"
+      GOTIFY_PORT: "80"
       MEILISEARCH_HOST: meilisearch
       MEILISEARCH_PORT: "7700"
       MEILISEARCH_MASTER_KEY: \${MEILISEARCH_MASTER_KEY}
@@ -455,16 +557,16 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       n8n:
         condition: service_healthy
   browserless:
-    image: browserless/chrome:2.21.0
+    image: browserless/chrome:latest
     environment:
       TOKEN: \${TOKEN}
       MAX_CONCURRENT_SESSIONS: "5"
     ports:
-      - \${BROWSERLESS_PORT:-3010}:3000
+      - \${BROWSERLESS_EXTERNAL_PORT:-3010}:3000
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:3000/ || exit 1
+        - curl -sf http://localhost:3000/?token=$TOKEN || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -475,15 +577,15 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
   caddy:
     image: caddy:2.11.1
     ports:
-      - \${CADDY_PORT_0:-80}:80
-      - \${CADDY_PORT_1:-443}:443
+      - \${CADDY_EXTERNAL_PORT_0:-80}:80
+      - \${CADDY_EXTERNAL_PORT_1:-443}:443
     volumes:
       - caddy-data:/data
       - caddy-config:/config
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:80 || exit 1
+        - curl -sf http://localhost:80 || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -496,17 +598,17 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     environment:
       MEILI_MASTER_KEY: \${MEILI_MASTER_KEY}
     ports:
-      - \${MEILISEARCH_PORT:-7700}:7700
+      - \${MEILISEARCH_EXTERNAL_PORT:-7700}:7700
     volumes:
       - meilisearch-data:/meili_data
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:7700/health || exit 1
+        - curl -sf http://localhost:7700/health || exit 1
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 10s
+      retries: 5
+      start_period: 15s
     restart: unless-stopped
     networks:
       - openclaw-network
@@ -516,8 +618,8 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: \${MINIO_ROOT_PASSWORD}
     ports:
-      - \${MINIO_PORT_0:-9000}:9000
-      - \${MINIO_PORT_1:-9001}:9001
+      - \${MINIO_EXTERNAL_PORT_0:-9000}:9000
+      - \${MINIO_EXTERNAL_PORT_1:-9001}:9001
     volumes:
       - minio-data:/data
     healthcheck:
@@ -538,8 +640,9 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       POSTGRES_USER: openclaw
       POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
       POSTGRES_DB: openclaw
+      N8N_DB_PASSWORD: \${N8N_DB_PASSWORD}
     ports:
-      - \${POSTGRESQL_PORT:-5432}:5432
+      - \${POSTGRESQL_EXTERNAL_PORT:-5432}:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
@@ -559,13 +662,13 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     environment:
       QDRANT__SERVICE__GRPC_PORT: "6334"
     ports:
-      - \${QDRANT_PORT:-6333}:6333
+      - \${QDRANT_EXTERNAL_PORT:-6333}:6333
     volumes:
       - qdrant-data:/qdrant/storage
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:6333/healthz || exit 1
+        - bash -c 'echo > /dev/tcp/localhost/6333' || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -578,7 +681,7 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     environment:
       REDIS_PASSWORD: \${REDIS_PASSWORD}
     ports:
-      - \${REDIS_PORT:-6379}:6379
+      - \${REDIS_EXTERNAL_PORT:-6379}:6379
     volumes:
       - redis-data:/data
     healthcheck:
@@ -594,7 +697,7 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
   searxng:
     image: searxng/searxng:2026.2.23-4964d664f
     ports:
-      - \${SEARXNG_PORT:-8080}:8080
+      - \${SEARXNG_EXTERNAL_PORT:-8080}:8080
     volumes:
       - searxng-data:/etc/searxng
     healthcheck:
@@ -623,7 +726,7 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       N8N_PORT: "5678"
       WEBHOOK_URL: http://n8n:5678/
     ports:
-      - \${N8N_PORT:-5678}:5678
+      - \${N8N_EXTERNAL_PORT:-5678}:5678
     volumes:
       - n8n-data:/home/node/.n8n
     healthcheck:
@@ -638,18 +741,69 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     networks:
       - openclaw-network
     depends_on:
+      postgres-setup:
+        condition: service_completed_successfully
+  postgres-setup:
+    image: postgres:17-alpine
+    depends_on:
       postgresql:
         condition: service_healthy
+    environment:
+      PGHOST: postgresql
+      PGUSER: \${POSTGRES_USER:-openclaw}
+      PGDATABASE: \${POSTGRES_DB:-openclaw}
+      PGPASSWORD: \${POSTGRES_PASSWORD}
+      N8N_DB_PASSWORD: \${N8N_DB_PASSWORD}
+    entrypoint:
+      - /bin/sh
+      - -c
+    command:
+      - >-
+        echo '=== PostgreSQL database setup ==='
+
+        FAILED=0
+
+        echo "Setting up database 'n8n' with user 'n8n'..."
+
+        psql -c "SELECT 1 FROM pg_roles WHERE rolname='n8n'" | grep -q 1 || psql -c "CREATE ROLE n8n WITH LOGIN PASSWORD
+        '$$N8N_DB_PASSWORD'"
+
+        psql -c "ALTER ROLE n8n WITH LOGIN PASSWORD '$$N8N_DB_PASSWORD'"
+
+        psql -tc "SELECT 1 FROM pg_database WHERE datname='n8n'" | grep -q 1 || psql -c "CREATE DATABASE n8n OWNER n8n"
+
+        psql -c "GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n" || FAILED=1
+
+        echo "  Done: n8n"
+
+        echo '=== All databases ready ==='
+
+        exit $$FAILED
+    restart: "no"
+    networks:
+      - openclaw-network
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_GATEWAY_HOST: openclaw-gateway
+      OPENCLAW_GATEWAY_PORT: "18789"
       BROWSER: echo
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
     volumes:
       - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
       - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
@@ -661,6 +815,10 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     entrypoint:
       - node
       - dist/index.js
+    restart: no
+    depends_on:
+      openclaw-gateway:
+        condition: service_started
 volumes:
   caddy-config:
   caddy-data:
@@ -694,6 +852,16 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       REDIS_PASSWORD: \${REDIS_PASSWORD}
@@ -723,7 +891,7 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
     environment:
       REDIS_PASSWORD: \${REDIS_PASSWORD}
     ports:
-      - \${REDIS_PORT:-6379}:6379
+      - \${REDIS_EXTERNAL_PORT:-6379}:6379
     volumes:
       - redis-data:/data
     healthcheck:
@@ -742,10 +910,22 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_GATEWAY_HOST: openclaw-gateway
+      OPENCLAW_GATEWAY_PORT: "18789"
       BROWSER: echo
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
     volumes:
       - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
       - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
@@ -757,6 +937,10 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
     entrypoint:
       - node
       - dist/index.js
+    restart: no
+    depends_on:
+      openclaw-gateway:
+        condition: service_started
 volumes:
   redis-data:
 networks:
@@ -776,6 +960,16 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
       BROWSERLESS_HOST: browserless
       BROWSERLESS_PORT: "3000"
       BROWSERLESS_TOKEN: \${BROWSERLESS_TOKEN}
@@ -814,16 +1008,16 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
       searxng:
         condition: service_healthy
   browserless:
-    image: browserless/chrome:2.21.0
+    image: browserless/chrome:latest
     environment:
       TOKEN: \${TOKEN}
       MAX_CONCURRENT_SESSIONS: "5"
     ports:
-      - \${BROWSERLESS_PORT:-3010}:3000
+      - \${BROWSERLESS_EXTERNAL_PORT:-3010}:3000
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:3000/ || exit 1
+        - curl -sf http://localhost:3000/?token=$TOKEN || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -836,13 +1030,13 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
     environment:
       QDRANT__SERVICE__GRPC_PORT: "6334"
     ports:
-      - \${QDRANT_PORT:-6333}:6333
+      - \${QDRANT_EXTERNAL_PORT:-6333}:6333
     volumes:
       - qdrant-data:/qdrant/storage
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -q --spider http://localhost:6333/healthz || exit 1
+        - bash -c 'echo > /dev/tcp/localhost/6333' || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -855,7 +1049,7 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
     environment:
       REDIS_PASSWORD: \${REDIS_PASSWORD}
     ports:
-      - \${REDIS_PORT:-6379}:6379
+      - \${REDIS_EXTERNAL_PORT:-6379}:6379
     volumes:
       - redis-data:/data
     healthcheck:
@@ -871,7 +1065,7 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
   searxng:
     image: searxng/searxng:2026.2.23-4964d664f
     ports:
-      - \${SEARXNG_PORT:-8080}:8080
+      - \${SEARXNG_EXTERNAL_PORT:-8080}:8080
     volumes:
       - searxng-data:/etc/searxng
     healthcheck:
@@ -891,10 +1085,22 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
+      OPENCLAW_GATEWAY_HOST: openclaw-gateway
+      OPENCLAW_GATEWAY_PORT: "18789"
       BROWSER: echo
       CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENAI_API_KEY: \${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
+      GOOGLE_API_KEY: \${GOOGLE_API_KEY}
+      XAI_API_KEY: \${XAI_API_KEY}
+      DEEPSEEK_API_KEY: \${DEEPSEEK_API_KEY}
+      GROQ_API_KEY: \${GROQ_API_KEY}
+      OPENROUTER_API_KEY: \${OPENROUTER_API_KEY}
+      MISTRAL_API_KEY: \${MISTRAL_API_KEY}
+      TOGETHER_API_KEY: \${TOGETHER_API_KEY}
+      OLLAMA_API_KEY: \${OLLAMA_API_KEY}
     volumes:
       - \${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw
       - \${OPENCLAW_WORKSPACE_DIR:-./openclaw/workspace}:/home/node/.openclaw/workspace
@@ -906,6 +1112,10 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
     entrypoint:
       - node
       - dist/index.js
+    restart: no
+    depends_on:
+      openclaw-gateway:
+        condition: service_started
 volumes:
   qdrant-data:
   redis-data:

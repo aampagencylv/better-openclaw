@@ -4,14 +4,15 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import archiver from "archiver";
 
 const route = new OpenAPIHono({
-	defaultHook: (result, c) => {
+	// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI hook typing workaround
+	defaultHook: (result: any, c: any) => {
 		if (!result.success) {
 			return c.json(
 				{
 					error: {
 						code: "VALIDATION_ERROR" as const,
 						message: "Invalid generation input",
-						details: result.error.issues.map((issue) => ({
+						details: result.error.issues.map((issue: any) => ({
 							field: issue.path.join("."),
 							message: issue.message,
 						})),
@@ -72,7 +73,7 @@ const generatePost = createRoute({
 			content: {
 				"application/json": {
 					schema: z.object({
-						files: z.record(z.string()).optional(),
+						files: z.record(z.string(), z.string()).optional(),
 						metadata: z.any().optional(),
 						formatVersion: z.string().optional(),
 						input: z.any().optional(),
@@ -117,7 +118,8 @@ const generatePost = createRoute({
 	},
 });
 
-route.openapi(generatePost, async (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(generatePost, async (c: any) => {
 	try {
 		const input = c.req.valid("json");
 		const result = generate(input);

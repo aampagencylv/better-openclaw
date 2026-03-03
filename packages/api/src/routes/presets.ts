@@ -33,7 +33,8 @@ const presetsGet = createRoute({
 	},
 });
 
-route.openapi(presetsGet, (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(presetsGet, (c: any) => {
 	try {
 		const presets = getAllPresets();
 		return c.json({
@@ -91,7 +92,8 @@ const presetGetById = createRoute({
 	},
 });
 
-route.openapi(presetGetById, (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(presetGetById, (c: any) => {
 	const { id } = c.req.valid("param");
 	const preset = getPresetById(id);
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # better-openclaw one-liner installer
-# Usage: curl -fsSL https://better-openclaw.com/install.sh | bash -s -- --preset researcher
+# Usage: curl -fsSL https://better-openclaw.dev/install.sh | bash -s -- --preset researcher
 #
 # Options:
 #   --preset <name>   Use a preset (minimal, creator, researcher, devops, full, coding-team, ai-playground, la-suite-meet, content-creator)
@@ -51,7 +51,7 @@ while [[ $# -gt 0 ]]; do
     --help|-h)
       echo "better-openclaw installer"
       echo ""
-      echo "Usage: curl -fsSL https://better-openclaw.com/install.sh | bash -s -- [OPTIONS]"
+      echo "Usage: curl -fsSL https://better-openclaw.dev/install.sh | bash -s -- [OPTIONS]"
       echo ""
       echo "Options:"
       echo "  --preset <name>    Use a preset stack template"
@@ -66,9 +66,9 @@ while [[ $# -gt 0 ]]; do
       echo "         ai-playground, la-suite-meet, content-creator"
       echo ""
       echo "Examples:"
-      echo "  curl -fsSL https://better-openclaw.com/install.sh | bash"
-      echo "  curl -fsSL https://better-openclaw.com/install.sh | bash -s -- --preset researcher --up"
-      echo "  curl -fsSL https://better-openclaw.com/install.sh | bash -s -- --services postgresql,redis,n8n --proxy caddy --domain example.com"
+      echo "  curl -fsSL https://better-openclaw.dev/install.sh | bash"
+      echo "  curl -fsSL https://better-openclaw.dev/install.sh | bash -s -- --preset researcher --up"
+      echo "  curl -fsSL https://better-openclaw.dev/install.sh | bash -s -- --services postgresql,redis,n8n --proxy caddy --domain example.com"
       exit 0
       ;;
     *)

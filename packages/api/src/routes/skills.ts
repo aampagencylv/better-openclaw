@@ -39,14 +39,15 @@ const skillsGet = createRoute({
 	},
 });
 
-route.openapi(skillsGet, (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(skillsGet, (c: any) => {
 	try {
 		const { services: servicesParam } = c.req.valid("query");
 
 		if (servicesParam) {
-			const serviceIds = servicesParam
+			const serviceIds = (servicesParam as string)
 				.split(",")
-				.map((s) => s.trim())
+				.map((s: string) => s.trim())
 				.filter(Boolean);
 			const compatible = getCompatibleSkillPacks(serviceIds);
 			return c.json({

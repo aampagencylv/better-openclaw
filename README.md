@@ -56,17 +56,17 @@ npx create-better-openclaw --preset minimal --yes --json
 ### CLI Commands
 
 ```bash
-better-openclaw generate [dir]       # Generate a stack (default command)
-better-openclaw services list        # List all 94 available services
-better-openclaw presets list         # List all preset stacks
-better-openclaw presets info <id>    # Show preset details
-better-openclaw validate <dir>      # Validate an existing stack
-better-openclaw init                 # Initialize in current directory
-better-openclaw add <service-id>    # Add a service to existing stack
-better-openclaw remove <service-id> # Remove a service from existing stack
-better-openclaw deploy               # Deploy stack to Dokploy or Coolify (interactive)
-better-openclaw deploy --provider dokploy --url https://... --api-key ...  # Non-interactive
-better-openclaw completion <shell>  # Generate shell completions (bash/zsh/fish)
+npx create-better-openclaw generate [dir]       # Generate a stack (default command)
+npx create-better-openclaw services list        # List all 94 available services
+npx create-better-openclaw presets list         # List all preset stacks
+npx create-better-openclaw presets info <id>    # Show preset details
+npx create-better-openclaw validate <dir>      # Validate an existing stack
+npx create-better-openclaw init                 # Initialize in current directory
+npx create-better-openclaw add <service-id>    # Add a service to existing stack
+npx create-better-openclaw remove <service-id> # Remove a service from existing stack
+npx create-better-openclaw deploy               # Deploy stack to Dokploy or Coolify (interactive)
+npx create-better-openclaw deploy --provider dokploy --url https://... --api-key ...  # Non-interactive
+npx create-better-openclaw completion <shell>  # Generate shell completions (bash/zsh/fish)
 ```
 
 ### Advanced CLI Options

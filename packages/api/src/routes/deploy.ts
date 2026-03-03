@@ -63,7 +63,8 @@ const testConnectionPost = createRoute({
 	},
 });
 
-route.openapi(testConnectionPost, async (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(testConnectionPost, async (c: any) => {
 	const { provider, instanceUrl, apiKey } = c.req.valid("json");
 
 	const deployer = getDeployer(provider);
@@ -146,7 +147,8 @@ const deployPost = createRoute({
 	},
 });
 
-route.openapi(deployPost, async (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(deployPost, async (c: any) => {
 	const { provider, instanceUrl, apiKey, projectName, composeYaml, envContent, description } =
 		c.req.valid("json");
 
@@ -200,7 +202,8 @@ const providersGet = createRoute({
 	},
 });
 
-route.openapi(providersGet, async (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(providersGet, async (c: any) => {
 	const ids = getAvailableDeployers();
 	const providers = ids.map((id) => {
 		const deployer = getDeployer(id);

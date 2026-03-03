@@ -52,7 +52,7 @@
   <rect x="0" y="290" width="1200" height="50" fill="url(#glow)" />
 
   <!-- Lobster emoji -->
-  <text x="600" y="220" text-anchor="middle" font-size="80">>ž</text>
+  <text x="600" y="220" text-anchor="middle" font-size="80">>ï¿½</text>
 
   <!-- Title -->
   <text x="600" y="320" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="52" fill="#FF6B35">

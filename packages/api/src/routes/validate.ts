@@ -2,14 +2,15 @@ import { resolve, ValidateRequestSchema } from "@better-openclaw/core";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
 const route = new OpenAPIHono({
-	defaultHook: (result, c) => {
+	// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI hook typing workaround
+	defaultHook: (result: any, c: any) => {
 		if (!result.success) {
 			return c.json(
 				{
 					error: {
 						code: "VALIDATION_ERROR" as const,
 						message: "Invalid request body",
-						details: result.error.issues.map((issue) => ({
+						details: result.error.issues.map((issue: any) => ({
 							field: issue.path.join("."),
 							message: issue.message,
 						})),
@@ -79,7 +80,8 @@ const validatePost = createRoute({
 	},
 });
 
-route.openapi(validatePost, (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(validatePost, (c: any) => {
 	try {
 		const { services, skillPacks, proxy, gpu, platform } = c.req.valid("json");
 
