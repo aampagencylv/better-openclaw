@@ -1,14 +1,38 @@
 {
     "name": "@better-openclaw/db",
     "version": "1.0.0",
-    "private": true,
+    "private": false,
     "description": "Shared database client and schema for better-openclaw",
+    "author": "bidew.io <bachir@bidew.io>",
+    "license": "AGPL-3.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bidewio/better-openclaw-db.git",
+        "directory": "packages/db"
+    },
+    "homepage": "https://better-openclaw.dev",
+    "packageManager": "pnpm@10.30.3",
+    "sideEffects": false,
+    "main": "dist/index.mjs",
+    "types": "dist/index.d.ts",
     "type": "module",
-    "main": "./src/index.ts",
     "exports": {
-        ".": "./src/index.ts"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.cjs",
+            "default": "./dist/index.mjs"
+        },
+        "./*": {
+            "types": "./dist/*.d.ts",
+            "import": "./dist/*.mjs",
+            "require": "./dist/*.cjs",
+            "default": "./dist/*.mjs"
+        }
     },
     "scripts": {
+        "build": "tsdown",
+        "build:tsc": "tsc",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "db:push": "drizzle-kit push",
@@ -16,12 +40,15 @@
     },
     "dependencies": {
         "better-auth": "^1.5.2",
-        "drizzle-orm": "^0.43.1",
+        "drizzle-orm": "^0.45.1",
         "postgres": "^3.4.8"
     },
     "devDependencies": {
         "@types/node": "^25.3.3",
         "drizzle-kit": "^0.31.0",
-        "typescript": "^5.9.3"
+        "@biomejs/biome": "^2.4.4",
+        "tsdown": "^0.20.3",
+        "typescript": "^5.9.3",
+        "vitest": "^4.0.18"
     }
 }
