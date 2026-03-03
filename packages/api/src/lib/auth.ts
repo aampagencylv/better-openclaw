@@ -12,6 +12,11 @@ import {
 	buildMagicLinkEmail,
 } from "./email.js";
 
+const trustedOrigins = process.env.WEB_URL?.split(",") ?? [
+	"http://localhost:3654",
+	"http://localhost:3000",
+];
+
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
@@ -25,10 +30,7 @@ export const auth = betterAuth({
 	secret: process.env.BETTER_AUTH_SECRET ?? "change-this-secret-in-production-32chars",
 	baseURL: process.env.API_URL ?? "http://localhost:3456",
 	basePath: "/v1/auth",
-	trustedOrigins: [
-		process.env.WEB_URL ?? "http://localhost:3654",
-		"http://localhost:3000",
-	],
+	trustedOrigins: trustedOrigins,
 
 	// ── Email + password ──────────────────────────────────────────────────────
 	emailAndPassword: {
