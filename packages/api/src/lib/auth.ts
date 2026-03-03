@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { magicLink } from "better-auth/plugins";
 import { passkey } from "@better-auth/passkey";
+import { dash, sentinel } from "@better-auth/infra"; 
 import { db, schema } from "@better-openclaw/db";
 import {
 	sendEmail,
@@ -92,6 +93,12 @@ export const auth = betterAuth({
 			},
 			expiresIn: 15 * 60, // 15 minutes
 		}),
+		dash({ 
+      apiKey: process.env.BETTER_AUTH_API_KEY, 
+    }),
+	sentinel({ 
+      apiKey: process.env.BETTER_AUTH_API_KEY, 
+    }) ,
 		// Passkey / WebAuthn (biometrics + hardware keys)
 		passkey(),
 	],
