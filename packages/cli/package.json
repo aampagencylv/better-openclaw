@@ -1,6 +1,6 @@
 {
   "name": "create-better-openclaw",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": false,
   "description": "Scaffold production-ready OpenClaw Docker Compose stacks in one command. 95+ services, presets, auto-wiring, and skill packs.",
   "author": "bidew.io <bachir@bidew.io>",
