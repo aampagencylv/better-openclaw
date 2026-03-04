@@ -1,6 +1,6 @@
-import { Hono } from "hono";
 import { db, favorite, savedStack } from "@better-openclaw/db";
-import { eq, and } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { Hono } from "hono";
 import { requireSession } from "../middleware/session.js";
 
 const route = new Hono();
@@ -52,10 +52,7 @@ route.post("/", async (c) => {
 		return c.json({ favorite: existing[0] });
 	}
 
-	const [fav] = await db
-		.insert(favorite)
-		.values({ userId: user.id, stackId })
-		.returning();
+	const [fav] = await db.insert(favorite).values({ userId: user.id, stackId }).returning();
 
 	return c.json({ favorite: fav }, 201);
 });
@@ -65,9 +62,7 @@ route.delete("/:stackId", async (c) => {
 	const user = c.get("user" as never) as { id: string };
 	const stackId = c.req.param("stackId");
 
-	await db
-		.delete(favorite)
-		.where(and(eq(favorite.userId, user.id), eq(favorite.stackId, stackId)));
+	await db.delete(favorite).where(and(eq(favorite.userId, user.id), eq(favorite.stackId, stackId)));
 
 	return c.json({ success: true });
 });

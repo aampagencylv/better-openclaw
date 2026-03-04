@@ -1,5 +1,5 @@
-import { auth } from "../lib/auth.js";
 import type { MiddlewareHandler } from "hono";
+import { auth } from "../lib/auth.js";
 
 type Variables = {
 	user: { id: string; name: string; email: string; image: string | null };
@@ -16,10 +16,7 @@ export function requireSession(): MiddlewareHandler<{ Variables: Variables }> {
 	return async (c: any, next: any) => {
 		const session = await auth.api.getSession({ headers: c.req.raw.headers });
 		if (!session) {
-			return c.json(
-				{ error: { code: "UNAUTHORIZED", message: "Authentication required." } },
-				401,
-			);
+			return c.json({ error: { code: "UNAUTHORIZED", message: "Authentication required." } }, 401);
 		}
 		c.set("user", session.user);
 		c.set("session", session.session);

@@ -1,4 +1,4 @@
-import type { BlogPost } from '../types';
+import type { BlogPost } from "../types";
 
 export const post: BlogPost = {
 	slug: "nextcloud-vs-owncloud-data-sovereignty",

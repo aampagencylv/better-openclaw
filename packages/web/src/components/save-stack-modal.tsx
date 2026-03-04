@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Loader2, Save, X } from "lucide-react";
-import { saveStack } from "@/lib/api-client";
+import { useState } from "react";
 import type { GenerateResponse } from "@/lib/api-client";
+import { saveStack } from "@/lib/api-client";
 
 interface SaveStackModalProps {
 	projectName: string;
@@ -76,7 +76,10 @@ export function SaveStackModal({
 					)}
 
 					<div className="mb-4">
-						<label htmlFor="stack-name" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+						<label
+							htmlFor="stack-name"
+							className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+						>
 							Stack Name *
 						</label>
 						<input
@@ -91,7 +94,10 @@ export function SaveStackModal({
 					</div>
 
 					<div className="mb-4">
-						<label htmlFor="stack-desc" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+						<label
+							htmlFor="stack-desc"
+							className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+						>
 							Description <span className="text-muted-foreground/50">(optional)</span>
 						</label>
 						<textarea
@@ -124,9 +130,15 @@ export function SaveStackModal({
 							className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-60"
 						>
 							{isSaving ? (
-								<><Loader2 className="h-4 w-4 animate-spin" />Saving…</>
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Saving…
+								</>
 							) : (
-								<><Save className="h-4 w-4" />Save Stack</>
+								<>
+									<Save className="h-4 w-4" />
+									Save Stack
+								</>
 							)}
 						</button>
 					</div>

@@ -24,11 +24,14 @@ import {
 	Loader2,
 	Rocket,
 	RotateCcw,
+	Save,
 	Search,
 	X,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
+import { SaveStackModal } from "@/components/save-stack-modal";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { DeployModal } from "@/components/stack-builder/DeployModal";
 import { PreviewPanel } from "@/components/stack-builder/PreviewPanel";
@@ -38,11 +41,8 @@ import {
 	SkillSelectorModal,
 } from "@/components/stack-builder/SkillSelectorModal";
 import { generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
-import { cn } from "@/lib/utils";
-import { SaveStackModal } from "@/components/save-stack-modal";
 import { useSession } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { Save } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const CLAWEXA_DEPLOY_URL = process.env.NEXT_PUBLIC_CLAWEXA_DEPLOY_URL ?? "";
 const CLAWEXA_SITE = "https://clawexa.net";
@@ -343,29 +343,29 @@ export default function NewStackPage() {
 						</button>
 
 						<button
-						type="button"
-						onClick={() => {
-							if (!session) {
-								router.push("/sign-in");
-								return;
-							}
-							setShowSaveModal(true);
-						}}
-						disabled={selectedServices.size === 0}
-						className={cn(
-							"hidden items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all sm:flex",
-							selectedServices.size > 0
-								? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-								: "border-border text-muted-foreground cursor-not-allowed",
-						)}
-					>
-						<Save className="h-3.5 w-3.5" />
-						{savedStackId ? "Saved ✓" : "Save Stack"}
-					</button>
-					<button
-						type="button"
-						onClick={() => setShowDeployToServerModal(true)}
-						disabled={selectedServices.size === 0}
+							type="button"
+							onClick={() => {
+								if (!session) {
+									router.push("/sign-in");
+									return;
+								}
+								setShowSaveModal(true);
+							}}
+							disabled={selectedServices.size === 0}
+							className={cn(
+								"hidden items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all sm:flex",
+								selectedServices.size > 0
+									? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+									: "border-border text-muted-foreground cursor-not-allowed",
+							)}
+						>
+							<Save className="h-3.5 w-3.5" />
+							{savedStackId ? "Saved ✓" : "Save Stack"}
+						</button>
+						<button
+							type="button"
+							onClick={() => setShowDeployToServerModal(true)}
+							disabled={selectedServices.size === 0}
 							className={cn(
 								"hidden items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all sm:flex",
 								selectedServices.size > 0

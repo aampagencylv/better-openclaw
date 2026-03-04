@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { ArrowLeft, CheckCircle, Loader2, Mail } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Loader2, CheckCircle, ArrowLeft, Mail } from "lucide-react";
 
 export default function ForgotPasswordPage() {
 	const [email, setEmail] = useState("");
@@ -46,9 +46,14 @@ export default function ForgotPasswordPage() {
 
 			<div className="relative z-10 w-full max-w-sm">
 				<div className="mb-8 text-center">
-					<Link href="/" className="inline-flex items-center gap-2 transition-opacity hover:opacity-80">
+					<Link
+						href="/"
+						className="inline-flex items-center gap-2 transition-opacity hover:opacity-80"
+					>
 						<span className="text-2xl">🦞</span>
-						<span className="text-xl font-bold tracking-tight text-foreground">better-openclaw</span>
+						<span className="text-xl font-bold tracking-tight text-foreground">
+							better-openclaw
+						</span>
 					</Link>
 				</div>
 
@@ -60,8 +65,8 @@ export default function ForgotPasswordPage() {
 							</div>
 							<h1 className="text-xl font-bold text-foreground">Check your email</h1>
 							<p className="mt-2 text-sm text-muted-foreground">
-								We sent a password reset link to <strong className="text-foreground">{email}</strong>.
-								The link expires in 1 hour.
+								We sent a password reset link to{" "}
+								<strong className="text-foreground">{email}</strong>. The link expires in 1 hour.
 							</p>
 							<Link
 								href="/sign-in"
@@ -93,7 +98,10 @@ export default function ForgotPasswordPage() {
 
 							<form onSubmit={handleSubmit} className="space-y-4">
 								<div>
-									<label htmlFor="email" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+									<label
+										htmlFor="email"
+										className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+									>
 										Email address
 									</label>
 									<div className="relative">
@@ -116,7 +124,10 @@ export default function ForgotPasswordPage() {
 									className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-60"
 								>
 									{isLoading ? (
-										<><Loader2 className="h-4 w-4 animate-spin" />Sending…</>
+										<>
+											<Loader2 className="h-4 w-4 animate-spin" />
+											Sending…
+										</>
 									) : (
 										"Send reset link"
 									)}

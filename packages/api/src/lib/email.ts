@@ -89,7 +89,10 @@ ${bodyText("Questions? Just reply to this email.")}`,
 	return { subject, html };
 }
 
-export function buildVerificationEmail(name: string, url: string): { subject: string; html: string } {
+export function buildVerificationEmail(
+	name: string,
+	url: string,
+): { subject: string; html: string } {
 	const subject = "Verify your email — better-openclaw";
 	const html = baseLayout(
 		subject,
@@ -102,7 +105,10 @@ ${bodyText("This link expires in 24 hours.")}
 	return { subject, html };
 }
 
-export function buildResetPasswordEmail(name: string, url: string): { subject: string; html: string } {
+export function buildResetPasswordEmail(
+	name: string,
+	url: string,
+): { subject: string; html: string } {
 	const subject = "Reset your password — better-openclaw";
 	const html = baseLayout(
 		subject,

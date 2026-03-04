@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Loader2, CheckCircle, Eye, EyeOff } from "lucide-react";
 
 function ResetPasswordForm() {
 	const router = useRouter();
@@ -48,8 +48,13 @@ function ResetPasswordForm() {
 	if (!token) {
 		return (
 			<div className="text-center">
-				<p className="text-sm text-red-400">Invalid or missing reset token. Please request a new link.</p>
-				<Link href="/forgot-password" className="mt-4 inline-block text-sm text-primary hover:underline">
+				<p className="text-sm text-red-400">
+					Invalid or missing reset token. Please request a new link.
+				</p>
+				<Link
+					href="/forgot-password"
+					className="mt-4 inline-block text-sm text-primary hover:underline"
+				>
 					Request new link
 				</Link>
 			</div>
@@ -69,7 +74,9 @@ function ResetPasswordForm() {
 			) : (
 				<>
 					<h1 className="mb-1 text-xl font-bold text-foreground">Set new password</h1>
-					<p className="mb-6 text-sm text-muted-foreground">Choose a strong password for your account.</p>
+					<p className="mb-6 text-sm text-muted-foreground">
+						Choose a strong password for your account.
+					</p>
 
 					{error && (
 						<div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
@@ -79,7 +86,10 @@ function ResetPasswordForm() {
 
 					<form onSubmit={handleSubmit} className="space-y-4">
 						<div>
-							<label htmlFor="password" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+							<label
+								htmlFor="password"
+								className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+							>
 								New password
 							</label>
 							<div className="relative">
@@ -104,7 +114,10 @@ function ResetPasswordForm() {
 							</div>
 						</div>
 						<div>
-							<label htmlFor="confirm" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+							<label
+								htmlFor="confirm"
+								className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+							>
 								Confirm password
 							</label>
 							<input
@@ -122,7 +135,14 @@ function ResetPasswordForm() {
 							disabled={isLoading}
 							className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-60"
 						>
-							{isLoading ? <><Loader2 className="h-4 w-4 animate-spin" />Updating…</> : "Update password"}
+							{isLoading ? (
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Updating…
+								</>
+							) : (
+								"Update password"
+							)}
 						</button>
 					</form>
 				</>
@@ -139,9 +159,14 @@ export default function ResetPasswordPage() {
 			</div>
 			<div className="relative z-10 w-full max-w-sm">
 				<div className="mb-8 text-center">
-					<Link href="/" className="inline-flex items-center gap-2 transition-opacity hover:opacity-80">
+					<Link
+						href="/"
+						className="inline-flex items-center gap-2 transition-opacity hover:opacity-80"
+					>
 						<span className="text-2xl">🦞</span>
-						<span className="text-xl font-bold tracking-tight text-foreground">better-openclaw</span>
+						<span className="text-xl font-bold tracking-tight text-foreground">
+							better-openclaw
+						</span>
 					</Link>
 				</div>
 				<div className="rounded-xl border border-border bg-background/80 p-8 shadow-2xl backdrop-blur-md">

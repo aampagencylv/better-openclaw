@@ -5,12 +5,12 @@
  *
  * Import `testAuth` and `getTestHelpers()` from here in every auth test.
  */
+
+import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { memoryAdapter } from "better-auth/adapters/memory";
-import { testUtils } from "better-auth/plugins";
-import { magicLink } from "better-auth/plugins";
-import { passkey } from "@better-auth/passkey";
 import type { TestHelpers } from "better-auth/plugins";
+import { magicLink, testUtils } from "better-auth/plugins";
 
 const db = {
 	user: [] as Record<string, unknown>[],

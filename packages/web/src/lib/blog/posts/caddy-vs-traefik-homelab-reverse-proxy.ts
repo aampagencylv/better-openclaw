@@ -1,4 +1,4 @@
-import type { BlogPost } from '../types';
+import type { BlogPost } from "../types";
 
 export const post: BlogPost = {
 	slug: "caddy-vs-traefik-homelab-reverse-proxy",

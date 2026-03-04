@@ -56,7 +56,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 		try {
 			const res = await fetch(`${API_BASE}${path}`, {
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
 				},
 				...options,
 				signal: controller.signal,
@@ -199,6 +199,26 @@ export async function testDeployConnection(config: {
 	});
 }
 
+/** Server available on a PaaS platform. */
+export interface PaasServer {
+	id: string;
+	name: string;
+	ip?: string;
+}
+
+/** List available servers on a PaaS instance (after connection test succeeds). */
+export async function fetchDeployServers(config: {
+	provider: string;
+	instanceUrl: string;
+	apiKey: string;
+}): Promise<PaasServer[]> {
+	const res = await apiFetch<{ servers: PaasServer[] }>("/deploy/servers", {
+		method: "POST",
+		body: JSON.stringify(config),
+	});
+	return res.servers;
+}
+
 /** Deploy a generated stack to a PaaS provider. */
 export async function deployStack(config: {
 	provider: string;
@@ -208,6 +228,7 @@ export async function deployStack(config: {
 	composeYaml: string;
 	envContent: string;
 	description?: string;
+	serverId?: string;
 }): Promise<DeployResult> {
 	return apiFetch<DeployResult>("/deploy", {
 		method: "POST",
@@ -282,7 +303,13 @@ export interface FavoriteResponse {
 }
 
 export async function fetchFavorites(): Promise<FavoriteResponse[]> {
-	const res = await apiFetch<{ favorites: { favoriteId: string; createdAt: string; stack: SavedStackResponse }[] }>("/favorites", {
+	const res = await apiFetch<{
+		favorites: {
+			favoriteId: string;
+			createdAt: string;
+			stack: SavedStackResponse;
+		}[];
+	}>("/favorites", {
 		credentials: "include",
 	});
 	return res.favorites.map((f) => ({

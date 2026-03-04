@@ -29,7 +29,8 @@ const nextConfig: NextConfig = {
 					},
 					{
 						key: "Access-Control-Allow-Headers",
-						value: "Set-Cookie, Cookie, Content-Type, Authorization, x-api-key, x-request-id, x-visitor-id, x-idempotency-key, baggage, sentry-trace, sentry-release, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Access-Control-Allow-Origin",
+						value:
+							"Set-Cookie, Cookie, Content-Type, Authorization, x-api-key, x-request-id, x-visitor-id, x-idempotency-key, baggage, sentry-trace, sentry-release, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Access-Control-Allow-Origin",
 					},
 					{
 						key: "Cache-Control",
@@ -39,7 +40,6 @@ const nextConfig: NextConfig = {
 			},
 		];
 	},
-
 
 	// Allow Next.js 16 to use webpack (our config requires it for node: protocol handling)
 	turbopack: {},

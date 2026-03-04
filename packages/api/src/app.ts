@@ -1,11 +1,11 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
-import { secureHeaders } from 'hono/secure-headers';
+import { secureHeaders } from "hono/secure-headers";
+import { auth } from "./lib/auth.js";
 import { optionalApiKey } from "./middleware/api-key.js";
 import { generateRateLimiter, rateLimiter } from "./middleware/rate-limit.js";
 import { requestId } from "./middleware/request-id.js";
 import { authRoute } from "./routes/auth.js";
-import { auth } from "./lib/auth.js";
 import { deployRoute } from "./routes/deploy.js";
 import { favoritesRoute } from "./routes/favorites.js";
 import { generateRoute } from "./routes/generate.js";
@@ -17,49 +17,83 @@ import { stacksRoute } from "./routes/stacks.js";
 import { validateRoute } from "./routes/validate.js";
 
 const app = new OpenAPIHono<{
-    Variables: {
-        user: typeof auth.$Infer.Session.user | null;
-        session: typeof auth.$Infer.Session.session | null
-    }
+	Variables: {
+		user: typeof auth.$Infer.Session.user | null;
+		session: typeof auth.$Infer.Session.session | null;
+	};
 }>().basePath("/api");
 
-
-const trustedOrigins = process.env.TRUSTED_ORIGINS?.split(",") || ["http://localhost:3456", "http://localhost:3654"];
+const trustedOrigins = process.env.TRUSTED_ORIGINS?.split(",") || [
+	"http://localhost:3456",
+	"http://localhost:3654",
+];
 
 // Middleware
 app.use("/*", requestId());
 // Security: Enable secure headers (X-Content-Type-Options, X-Frame-Options, etc.)
-app.use('/*', secureHeaders({
-    xFrameOptions: 'DENY',
-    xContentTypeOptions: 'nosniff',
-    referrerPolicy: 'strict-origin-when-cross-origin',
-    strictTransportSecurity: 'max-age=31536000; includeSubDomains',
-    xXssProtection: '1; mode=block',
-}));
+app.use(
+	"/*",
+	secureHeaders({
+		xFrameOptions: "DENY",
+		xContentTypeOptions: "nosniff",
+		referrerPolicy: "strict-origin-when-cross-origin",
+		strictTransportSecurity: "max-age=31536000; includeSubDomains",
+		xXssProtection: "1; mode=block",
+	}),
+);
 
-app.use('/*', cors({
-    origin: trustedOrigins,
-    allowHeaders: ['Set-Cookie', 'Cookie', 'Content-Type', 'Authorization', 'x-api-key', 'x-request-id', 'x-visitor-id', 'x-idempotency-key', 'baggage', 'sentry-trace', 'sentry-release', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Idempotency-Key'],
-    allowMethods: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    exposeHeaders: ['Set-Cookie', 'Cookie', 'Content-Length', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Retry-After', 'Idempotency-Key', 'X-Idempotent-Replayed'],
-    maxAge: 600,
-    credentials: true,
-}));
+app.use(
+	"/*",
+	cors({
+		origin: trustedOrigins,
+		allowHeaders: [
+			"Set-Cookie",
+			"Cookie",
+			"Content-Type",
+			"Authorization",
+			"x-api-key",
+			"x-request-id",
+			"x-visitor-id",
+			"x-idempotency-key",
+			"baggage",
+			"sentry-trace",
+			"sentry-release",
+			"X-RateLimit-Limit",
+			"X-RateLimit-Remaining",
+			"X-RateLimit-Reset",
+			"Idempotency-Key",
+		],
+		allowMethods: ["POST", "GET", "PUT", "PATCH", "DELETE", "OPTIONS"],
+		exposeHeaders: [
+			"Set-Cookie",
+			"Cookie",
+			"Content-Length",
+			"X-RateLimit-Limit",
+			"X-RateLimit-Remaining",
+			"X-RateLimit-Reset",
+			"Retry-After",
+			"Idempotency-Key",
+			"X-Idempotent-Replayed",
+		],
+		maxAge: 600,
+		credentials: true,
+	}),
+);
 app.use("/*", optionalApiKey());
 app.use("/*", rateLimiter());
 app.use("/v1/generate", generateRateLimiter());
 
 app.use("/*", async (c, next) => {
-    const session = await auth.api.getSession({ headers: c.req.raw.headers });
-    if (!session) {
-        c.set("user", null);
-        c.set("session", null);
-        await next();
-        return;
-    }
-    c.set("user", session.user);
-    c.set("session", session.session);
-    await next();
+	const session = await auth.api.getSession({ headers: c.req.raw.headers });
+	if (!session) {
+		c.set("user", null);
+		c.set("session", null);
+		await next();
+		return;
+	}
+	c.set("user", session.user);
+	c.set("session", session.session);
+	await next();
 });
 
 // Error handler
@@ -95,7 +129,7 @@ app.doc("/v1/openapi.json", {
 		title: "better-openclaw API",
 		description: "REST API for generating production-ready OpenClaw Docker Compose stacks",
 		version: "1.0.0",
-		contact: { name: "bachir@bidew.io" }
+		contact: { name: "bachir@bidew.io" },
 	},
 	servers: [{ url: "", description: "API v1" }],
 });
@@ -117,6 +151,5 @@ app.get("/v1/docs", (c) => {
 </body>
 </html>`);
 });
-
 
 export { app };

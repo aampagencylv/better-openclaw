@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { CommonSetups } from "@/components/common-setups";
+import { DemoVideo } from "@/components/demo-video";
 import { FeaturesGrid } from "@/components/features-grid";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { Navbar } from "@/components/navbar";
 import { PresetsSection } from "@/components/presets-section";
-import { DemoVideo } from "@/components/demo-video";
 
 const SECTIONS = [
 	{ id: "hero", label: "01" },

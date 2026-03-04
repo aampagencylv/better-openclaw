@@ -107,6 +107,7 @@ const deployPost = createRoute({
 						composeYaml: z.string().min(1).describe("Raw docker-compose.yml content"),
 						envContent: z.string().describe("Raw .env file content"),
 						description: z.string().optional().describe("Optional project description"),
+						serverId: z.string().optional().describe("Optional server ID to deploy to"),
 					}),
 				},
 			},
@@ -149,8 +150,16 @@ const deployPost = createRoute({
 
 // biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
 route.openapi(deployPost, async (c: any) => {
-	const { provider, instanceUrl, apiKey, projectName, composeYaml, envContent, description } =
-		c.req.valid("json");
+	const {
+		provider,
+		instanceUrl,
+		apiKey,
+		projectName,
+		composeYaml,
+		envContent,
+		description,
+		serverId,
+	} = c.req.valid("json");
 
 	const deployer = getDeployer(provider);
 	if (!deployer) {
@@ -171,6 +180,7 @@ route.openapi(deployPost, async (c: any) => {
 		composeYaml,
 		envContent,
 		description,
+		serverId,
 	});
 
 	return c.json(result);
@@ -210,6 +220,85 @@ route.openapi(providersGet, async (c: any) => {
 		return { id, name: deployer?.name ?? id };
 	});
 	return c.json({ providers });
+});
+
+// ── List Servers ────────────────────────────────────────────────────────────
+
+const serversPost = createRoute({
+	method: "post",
+	path: "/servers",
+	tags: ["Deploy"],
+	summary: "List available servers on a PaaS instance",
+	description:
+		"Fetches the list of servers managed by the PaaS instance. " +
+		"Requires valid credentials. Not all providers support multiple servers.",
+	request: {
+		body: {
+			required: true,
+			content: {
+				"application/json": {
+					schema: z.object({
+						provider: z.string().describe('PaaS provider ID (e.g. "dokploy", "coolify")'),
+						instanceUrl: z.string().url().describe("Base URL of the PaaS instance"),
+						apiKey: z.string().min(1).describe("API key or bearer token"),
+					}),
+				},
+			},
+		},
+	},
+	responses: {
+		200: {
+			description: "List of available servers",
+			content: {
+				"application/json": {
+					schema: z.object({
+						servers: z.array(
+							z.object({
+								id: z.string(),
+								name: z.string(),
+								ip: z.string().optional(),
+							}),
+						),
+					}),
+				},
+			},
+		},
+		400: {
+			description: "Invalid provider or provider does not support server listing",
+			content: {
+				"application/json": {
+					schema: z.object({
+						error: z.object({ code: z.string(), message: z.string() }),
+					}),
+				},
+			},
+		},
+	},
+});
+
+// biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
+route.openapi(serversPost, async (c: any) => {
+	const { provider, instanceUrl, apiKey } = c.req.valid("json");
+
+	const deployer = getDeployer(provider);
+	if (!deployer) {
+		return c.json(
+			{
+				error: {
+					code: "INVALID_PROVIDER" as const,
+					message: `Unknown provider "${provider}". Available: ${getAvailableDeployers().join(", ")}`,
+				},
+			},
+			400,
+		);
+	}
+
+	if (!deployer.listServers) {
+		return c.json({ servers: [] });
+	}
+
+	const servers = await deployer.listServers({ instanceUrl, apiKey });
+	return c.json({ servers });
 });
 
 export { route as deployRoute };

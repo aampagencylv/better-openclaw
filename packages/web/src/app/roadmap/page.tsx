@@ -1,5 +1,5 @@
-import { Metadata } from "next";
 import { CheckCircle2, CircleDashed, Clock } from "lucide-react";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
 	title: "Roadmap | better-openclaw",
@@ -19,7 +19,8 @@ const ROADMAP: { quarter: string; items: RoadmapItem[] }[] = [
 		items: [
 			{
 				title: "Core Infrastructure Engine",
-				description: "The foundation of better-openclaw. A robust engine capable of generating complex Docker Compose stacks in seconds.",
+				description:
+					"The foundation of better-openclaw. A robust engine capable of generating complex Docker Compose stacks in seconds.",
 				status: "completed",
 				features: [
 					"90+ Service Catalog across 21 categories",
@@ -35,7 +36,8 @@ const ROADMAP: { quarter: string; items: RoadmapItem[] }[] = [
 		items: [
 			{
 				title: "User Experience & Persistence",
-				description: "Moving from stateless generation to stateful user accounts, enabling cloud saves and community sharing.",
+				description:
+					"Moving from stateless generation to stateful user accounts, enabling cloud saves and community sharing.",
 				status: "current",
 				features: [
 					"User Accounts via Better-Auth (Email, Magic Link, Passkeys)",
@@ -51,7 +53,8 @@ const ROADMAP: { quarter: string; items: RoadmapItem[] }[] = [
 		items: [
 			{
 				title: "Enterprise Deployments",
-				description: "Bridging the gap between homelabs and enterprise production with advanced deployment targets and native execution.",
+				description:
+					"Bridging the gap between homelabs and enterprise production with advanced deployment targets and native execution.",
 				status: "upcoming",
 				features: [
 					"Native Bare-Metal Recipes (PostgreSQL, Caddy, Redis)",
@@ -67,7 +70,8 @@ const ROADMAP: { quarter: string; items: RoadmapItem[] }[] = [
 		items: [
 			{
 				title: "Platform Extensibility",
-				description: "Empowering developers to extend the better-openclaw ecosystem with their own custom logic and automated backups.",
+				description:
+					"Empowering developers to extend the better-openclaw ecosystem with their own custom logic and automated backups.",
 				status: "planned",
 				features: [
 					"Automated Stack Backups to MinIO/S3",
@@ -101,13 +105,29 @@ const StatusIcon = ({ status }: { status: RoadmapItem["status"] }) => {
 const StatusBadge = ({ status }: { status: RoadmapItem["status"] }) => {
 	switch (status) {
 		case "completed":
-			return <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-500 border border-emerald-500/20">Completed</span>;
+			return (
+				<span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-500 border border-emerald-500/20">
+					Completed
+				</span>
+			);
 		case "current":
-			return <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary border border-primary/20">In Progress</span>;
+			return (
+				<span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary border border-primary/20">
+					In Progress
+				</span>
+			);
 		case "upcoming":
-			return <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-blue-400 border border-blue-500/20">Upcoming</span>;
+			return (
+				<span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-blue-400 border border-blue-500/20">
+					Upcoming
+				</span>
+			);
 		case "planned":
-			return <span className="inline-flex items-center rounded-full bg-secondary/30 px-2.5 py-0.5 text-xs font-semibold text-muted-foreground border border-border">Planned</span>;
+			return (
+				<span className="inline-flex items-center rounded-full bg-secondary/30 px-2.5 py-0.5 text-xs font-semibold text-muted-foreground border border-border">
+					Planned
+				</span>
+			);
 	}
 };
 
@@ -121,11 +141,15 @@ export default function RoadmapPage() {
 			<div className="relative z-10 mx-auto max-w-5xl px-6 lg:px-8">
 				<div className="text-center mb-20">
 					<h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-						The <span className="bg-gradient-to-r from-amber-200 to-primary bg-clip-text text-transparent">Roadmap</span>
+						The{" "}
+						<span className="bg-gradient-to-r from-amber-200 to-primary bg-clip-text text-transparent">
+							Roadmap
+						</span>
 					</h1>
 					<p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-						A transparent look at what we've built, what we're working on, and where better-openclaw is heading. 
-						Our goal is to build the ultimate open-source, vendor-agnostic stack builder.
+						A transparent look at what we've built, what we're working on, and where better-openclaw
+						is heading. Our goal is to build the ultimate open-source, vendor-agnostic stack
+						builder.
 					</p>
 				</div>
 
@@ -143,30 +167,31 @@ export default function RoadmapPage() {
 
 							<div className="grid gap-8">
 								{quarterData.items.map((item, iIdx) => (
-									<div 
-										key={item.title} 
+									<div
+										key={item.title}
 										className="group relative rounded-2xl border border-border/50 bg-[#0a0a0a]/50 p-6 md:p-8 backdrop-blur-sm transition-all hover:bg-secondary/20 hover:border-border overflow-hidden"
 									>
-                                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                                            <StatusIcon status={item.status} />
-                                        </div>
+										<div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+											<StatusIcon status={item.status} />
+										</div>
 
 										<div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
 											<div className="flex items-center gap-3">
-												<h3 className="text-xl font-bold text-foreground">
-													{item.title}
-												</h3>
+												<h3 className="text-xl font-bold text-foreground">{item.title}</h3>
 											</div>
 											<StatusBadge status={item.status} />
 										</div>
-										
+
 										<p className="text-muted-foreground mb-6 max-w-3xl leading-relaxed">
 											{item.description}
 										</p>
 
 										<ul className="grid sm:grid-cols-2 gap-3">
 											{item.features.map((feature, fIdx) => (
-												<li key={fIdx} className="flex items-start gap-2 text-sm text-foreground/80">
+												<li
+													key={fIdx}
+													className="flex items-start gap-2 text-sm text-foreground/80"
+												>
 													<div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/60" />
 													<span>{feature}</span>
 												</li>
@@ -178,16 +203,25 @@ export default function RoadmapPage() {
 						</div>
 					))}
 				</div>
-                
-                <div className="mt-32 text-center">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-secondary/50 px-4 py-2 text-sm text-muted-foreground backdrop-blur-sm">
-                        <span className="relative flex h-2 w-2">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-                        </span>
-                        Have a feature request? Let us know on <a href="https://github.com/bidewio/better-openclaw" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">GitHub</a>.
-                    </div>
-                </div>
+
+				<div className="mt-32 text-center">
+					<div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-secondary/50 px-4 py-2 text-sm text-muted-foreground backdrop-blur-sm">
+						<span className="relative flex h-2 w-2">
+							<span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+							<span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+						</span>
+						Have a feature request? Let us know on{" "}
+						<a
+							href="https://github.com/bidewio/better-openclaw"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-primary hover:underline font-medium"
+						>
+							GitHub
+						</a>
+						.
+					</div>
+				</div>
 			</div>
 		</main>
 	);

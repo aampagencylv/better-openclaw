@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import type { TestHelpers } from "better-auth/plugins";
-import { testAuth, getTestHelpers } from "./fixtures/test-auth.js";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { getTestHelpers, testAuth } from "./fixtures/test-auth.js";
 
 describe("Auth — email + password", () => {
 	let test: TestHelpers;

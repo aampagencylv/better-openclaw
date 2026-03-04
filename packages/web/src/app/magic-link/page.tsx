@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { ArrowLeft, CheckCircle, Loader2, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Loader2, Mail, CheckCircle, ArrowLeft } from "lucide-react";
 
 function MagicLinkContent() {
 	const router = useRouter();
@@ -46,7 +46,8 @@ function MagicLinkContent() {
 					</div>
 					<h1 className="text-xl font-bold text-foreground">Magic link sent!</h1>
 					<p className="mt-2 text-sm text-muted-foreground">
-						We emailed a sign-in link to <strong className="text-foreground">{email}</strong>. Check your inbox — the link expires in 15 minutes.
+						We emailed a sign-in link to <strong className="text-foreground">{email}</strong>. Check
+						your inbox — the link expires in 15 minutes.
 					</p>
 					<button
 						type="button"
@@ -81,7 +82,10 @@ function MagicLinkContent() {
 
 					<form onSubmit={handleSubmit} className="space-y-4">
 						<div>
-							<label htmlFor="email" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+							<label
+								htmlFor="email"
+								className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+							>
 								Email address
 							</label>
 							<input
@@ -101,9 +105,15 @@ function MagicLinkContent() {
 							className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-60"
 						>
 							{isLoading ? (
-								<><Loader2 className="h-4 w-4 animate-spin" />Sending…</>
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Sending…
+								</>
 							) : (
-								<><Mail className="h-4 w-4" />Send magic link</>
+								<>
+									<Mail className="h-4 w-4" />
+									Send magic link
+								</>
 							)}
 						</button>
 					</form>
@@ -121,9 +131,14 @@ export default function MagicLinkPage() {
 			</div>
 			<div className="relative z-10 w-full max-w-sm">
 				<div className="mb-8 text-center">
-					<Link href="/" className="inline-flex items-center gap-2 transition-opacity hover:opacity-80">
+					<Link
+						href="/"
+						className="inline-flex items-center gap-2 transition-opacity hover:opacity-80"
+					>
 						<span className="text-2xl">🦞</span>
-						<span className="text-xl font-bold tracking-tight text-foreground">better-openclaw</span>
+						<span className="text-xl font-bold tracking-tight text-foreground">
+							better-openclaw
+						</span>
 					</Link>
 				</div>
 				<Suspense fallback={<Loader2 className="mx-auto h-6 w-6 animate-spin text-primary" />}>

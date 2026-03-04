@@ -11,12 +11,14 @@
 
 "use client";
 
-import { CheckCircle, ExternalLink, Loader2, Server, X } from "lucide-react";
+import { CheckCircle, ExternalLink, Loader2, Monitor, Server, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import {
 	type DeployResult,
 	type DeployStep,
 	deployStack,
+	fetchDeployServers,
+	type PaasServer,
 	testDeployConnection,
 } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
@@ -50,7 +52,7 @@ interface DeployModalProps {
 	envContent: string;
 }
 
-type Phase = "configure" | "testing" | "deploying" | "result";
+type Phase = "configure" | "testing" | "select-server" | "deploying" | "result";
 
 export function DeployModal({
 	open,
@@ -66,6 +68,9 @@ export function DeployModal({
 	const [testError, setTestError] = useState<string | null>(null);
 	const [deployResult, setDeployResult] = useState<DeployResult | null>(null);
 	const [showApiKey, setShowApiKey] = useState(false);
+	const [servers, setServers] = useState<PaasServer[]>([]);
+	const [selectedServerId, setSelectedServerId] = useState<string>("");
+	const [loadingServers, setLoadingServers] = useState(false);
 
 	const provider = PROVIDERS.find((p) => p.id === selectedProvider) ?? PROVIDERS[0];
 
@@ -100,7 +105,7 @@ export function DeployModal({
 		);
 	}, [selectedProvider, instanceUrl, apiKey]);
 
-	const handleTestAndDeploy = useCallback(async () => {
+	const handleTestConnection = useCallback(async () => {
 		if (!instanceUrl.trim() || !apiKey.trim()) return;
 
 		setTestError(null);
@@ -122,8 +127,33 @@ export function DeployModal({
 			// Save credentials on successful test
 			saveCredentials();
 
-			// Proceed to deploy
-			setPhase("deploying");
+			// Fetch available servers
+			setLoadingServers(true);
+			try {
+				const serverList = await fetchDeployServers({
+					provider: selectedProvider,
+					instanceUrl: instanceUrl.trim(),
+					apiKey: apiKey.trim(),
+				});
+				setServers(serverList);
+				setSelectedServerId(serverList.length > 0 ? serverList[0].id : "");
+			} catch {
+				setServers([]);
+				setSelectedServerId("");
+			}
+			setLoadingServers(false);
+
+			// Show server selection if servers are available, otherwise deploy directly
+			setPhase("select-server");
+		} catch (err) {
+			setTestError(err instanceof Error ? err.message : "Connection test failed");
+			setPhase("configure");
+		}
+	}, [selectedProvider, instanceUrl, apiKey, saveCredentials]);
+
+	const handleDeploy = useCallback(async () => {
+		setPhase("deploying");
+		try {
 			const result = await deployStack({
 				provider: selectedProvider,
 				instanceUrl: instanceUrl.trim(),
@@ -131,6 +161,7 @@ export function DeployModal({
 				projectName,
 				composeYaml,
 				envContent,
+				serverId: selectedServerId || undefined,
 			});
 
 			setDeployResult(result);
@@ -146,7 +177,7 @@ export function DeployModal({
 		projectName,
 		composeYaml,
 		envContent,
-		saveCredentials,
+		selectedServerId,
 	]);
 
 	if (!open) return null;
@@ -282,6 +313,61 @@ export function DeployModal({
 						</div>
 					)}
 
+					{phase === "select-server" && (
+						<div className="py-2">
+							<div className="mb-3 flex items-center gap-2 text-sm font-medium text-green-500">
+								<CheckCircle className="h-4 w-4" />
+								Connected to {provider.name}
+							</div>
+
+							{loadingServers ? (
+								<div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Fetching servers...
+								</div>
+							) : servers.length > 0 ? (
+								<div className="mb-3">
+									<label className="mb-2 block text-sm font-medium text-foreground">
+										Select Server
+									</label>
+									<div className="space-y-2">
+										{servers.map((s) => (
+											<button
+												key={s.id}
+												type="button"
+												onClick={() => setSelectedServerId(s.id)}
+												className={cn(
+													"w-full rounded-lg border px-3 py-2.5 text-left transition-all flex items-center gap-3",
+													selectedServerId === s.id
+														? "border-primary bg-primary/10 text-foreground"
+														: "border-border bg-surface/50 text-muted-foreground hover:border-border hover:bg-surface",
+												)}
+											>
+												<Monitor className="h-4 w-4 shrink-0" />
+												<div className="flex-1 min-w-0">
+													<span className="block text-sm font-semibold truncate">{s.name}</span>
+													{s.ip && (
+														<span className="block text-xs text-muted-foreground font-mono">
+															{s.ip}
+														</span>
+													)}
+												</div>
+												{selectedServerId === s.id && (
+													<CheckCircle className="h-4 w-4 shrink-0 text-primary" />
+												)}
+											</button>
+										))}
+									</div>
+								</div>
+							) : (
+								<div className="rounded-lg border border-border bg-surface/30 px-3 py-2 text-xs text-muted-foreground">
+									No remote servers found. Your stack will be deployed to the {provider.name} host
+									server.
+								</div>
+							)}
+						</div>
+					)}
+
 					{phase === "deploying" && (
 						<div className="flex flex-col items-center gap-3 py-8">
 							<Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -346,11 +432,29 @@ export function DeployModal({
 							</button>
 							<button
 								type="button"
-								onClick={handleTestAndDeploy}
+								onClick={handleTestConnection}
 								disabled={!instanceUrl.trim() || !apiKey.trim()}
 								className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
 							>
-								Test & Deploy
+								Test Connection
+							</button>
+						</>
+					)}
+					{phase === "select-server" && (
+						<>
+							<button
+								type="button"
+								onClick={() => setPhase("configure")}
+								className="rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
+							>
+								Back
+							</button>
+							<button
+								type="button"
+								onClick={handleDeploy}
+								className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+							>
+								Deploy
 							</button>
 						</>
 					)}

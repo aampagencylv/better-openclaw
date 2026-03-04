@@ -7,9 +7,10 @@
  *
  * Using the in-memory test auth fixture so no real email is sent.
  */
-import { describe, it, expect, beforeAll } from "vitest";
+
 import type { TestHelpers } from "better-auth/plugins";
-import { testAuth, getTestHelpers } from "./fixtures/test-auth.js";
+import { beforeAll, describe, expect, it } from "vitest";
+import { getTestHelpers, testAuth } from "./fixtures/test-auth.js";
 
 describe("Magic link", () => {
 	let test: TestHelpers;

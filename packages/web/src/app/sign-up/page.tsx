@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { signUp } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
 
 export default function SignUpPage() {
 	const router = useRouter();
@@ -41,15 +41,22 @@ export default function SignUpPage() {
 
 			<div className="relative z-10 w-full max-w-sm">
 				<div className="mb-8 text-center">
-					<Link href="/" className="inline-flex items-center gap-2 transition-opacity hover:opacity-80">
+					<Link
+						href="/"
+						className="inline-flex items-center gap-2 transition-opacity hover:opacity-80"
+					>
 						<span className="text-2xl">🦞</span>
-						<span className="text-xl font-bold tracking-tight text-foreground">better-openclaw</span>
+						<span className="text-xl font-bold tracking-tight text-foreground">
+							better-openclaw
+						</span>
 					</Link>
 				</div>
 
 				<div className="rounded-xl border border-border bg-background/80 p-8 shadow-2xl backdrop-blur-md">
 					<h1 className="mb-1 text-xl font-bold text-foreground">Create account</h1>
-					<p className="mb-6 text-sm text-muted-foreground">Start saving and managing your stacks</p>
+					<p className="mb-6 text-sm text-muted-foreground">
+						Start saving and managing your stacks
+					</p>
 
 					{error && (
 						<div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
@@ -59,7 +66,10 @@ export default function SignUpPage() {
 
 					<form onSubmit={handleSignUp} className="space-y-4">
 						<div>
-							<label htmlFor="name" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+							<label
+								htmlFor="name"
+								className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+							>
 								Name
 							</label>
 							<input
@@ -74,7 +84,10 @@ export default function SignUpPage() {
 							/>
 						</div>
 						<div>
-							<label htmlFor="email" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+							<label
+								htmlFor="email"
+								className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+							>
 								Email
 							</label>
 							<input
@@ -89,7 +102,10 @@ export default function SignUpPage() {
 							/>
 						</div>
 						<div>
-							<label htmlFor="password" className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+							<label
+								htmlFor="password"
+								className="mb-1.5 block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+							>
 								Password
 							</label>
 							<input
@@ -109,7 +125,14 @@ export default function SignUpPage() {
 							disabled={isLoading}
 							className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-60"
 						>
-							{isLoading ? <><Loader2 className="h-4 w-4 animate-spin" />Creating account…</> : "Create account"}
+							{isLoading ? (
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Creating account…
+								</>
+							) : (
+								"Create account"
+							)}
 						</button>
 					</form>
 

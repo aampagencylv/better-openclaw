@@ -1,29 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession, signOut } from "@/lib/auth-client";
-import {
-	fetchSavedStacks,
-	deleteSavedStack,
-	toggleFavorite,
-	fetchFavorites,
-	generateStack,
-	type SavedStackResponse,
-} from "@/lib/api-client";
 import JSZip from "jszip";
 import {
-	Download,
-	Trash2,
-	Star,
-	LogOut,
-	Plus,
 	ArrowLeft,
-	Loader2,
-	Package,
+	Download,
 	LayoutGrid,
+	Loader2,
+	LogOut,
+	Package,
+	Plus,
+	Star,
+	Trash2,
 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+	deleteSavedStack,
+	fetchFavorites,
+	fetchSavedStacks,
+	generateStack,
+	type SavedStackResponse,
+	toggleFavorite,
+} from "@/lib/api-client";
+import { signOut, useSession } from "@/lib/auth-client";
 
 export default function DashboardPage() {
 	const router = useRouter();
@@ -50,10 +50,7 @@ export default function DashboardPage() {
 	async function loadData() {
 		setIsLoading(true);
 		try {
-			const [stacksData, favData] = await Promise.all([
-				fetchSavedStacks(),
-				fetchFavorites(),
-			]);
+			const [stacksData, favData] = await Promise.all([fetchSavedStacks(), fetchFavorites()]);
 			setStacks(stacksData);
 			setFavoriteIds(new Set(favData.map((f) => f.stackId)));
 		} catch (err) {
@@ -191,9 +188,7 @@ export default function DashboardPage() {
 					<h1 className="text-2xl font-bold text-foreground">
 						Welcome back, {session.user.name?.split(" ")[0] ?? "builder"}
 					</h1>
-					<p className="mt-1 text-sm text-muted-foreground">
-						Manage your saved OpenClaw stacks
-					</p>
+					<p className="mt-1 text-sm text-muted-foreground">Manage your saved OpenClaw stacks</p>
 				</div>
 
 				{/* Stats */}
@@ -215,10 +210,7 @@ export default function DashboardPage() {
 							icon: <LayoutGrid className="h-4 w-4" />,
 						},
 					].map((stat) => (
-						<div
-							key={stat.label}
-							className="rounded-xl border border-border bg-surface/50 p-4"
-						>
+						<div key={stat.label} className="rounded-xl border border-border bg-surface/50 p-4">
 							<div className="flex items-center gap-2 text-muted-foreground">
 								{stat.icon}
 								<span className="text-xs uppercase tracking-wider">{stat.label}</span>
@@ -318,7 +310,10 @@ export default function DashboardPage() {
 												: "border-border text-muted-foreground hover:border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-400"
 										}`}
 									>
-										<Star className="h-3.5 w-3.5" fill={favoriteIds.has(stack.id) ? "currentColor" : "none"} />
+										<Star
+											className="h-3.5 w-3.5"
+											fill={favoriteIds.has(stack.id) ? "currentColor" : "none"}
+										/>
 									</button>
 
 									{/* Download */}

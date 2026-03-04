@@ -7,10 +7,11 @@
  *  - Verify 401 is returned when no session cookie is present
  *  - Verify session headers produced by testUtils are accepted
  */
-import { describe, it, expect, beforeAll } from "vitest";
-import { Hono } from "hono";
+
 import type { TestHelpers } from "better-auth/plugins";
-import { testAuth, getTestHelpers } from "./fixtures/test-auth.js";
+import { Hono } from "hono";
+import { beforeAll, describe, expect, it } from "vitest";
+import { getTestHelpers, testAuth } from "./fixtures/test-auth.js";
 
 // ── Build a minimal test app with session middleware ─────────────────────────
 
@@ -18,7 +19,10 @@ function buildTestApp() {
 	const app = new Hono();
 
 	// Replicate session middleware — use testAuth instead of real auth
-	const sessionMiddleware = async (c: Parameters<Parameters<typeof app.use>[0]>[0], next: () => Promise<void>) => {
+	const sessionMiddleware = async (
+		c: Parameters<Parameters<typeof app.use>[0]>[0],
+		next: () => Promise<void>,
+	) => {
 		const session = await testAuth.api.getSession({ headers: c.req.raw.headers });
 		if (!session) {
 			return c.json({ error: { code: "UNAUTHORIZED", message: "Unauthorized" } }, 401);

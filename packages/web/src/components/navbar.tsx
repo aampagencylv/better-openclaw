@@ -1,11 +1,11 @@
 "use client";
 
-import { Github, Menu, X, LayoutDashboard, LogIn } from "lucide-react";
+import { Github, LayoutDashboard, LogIn, Menu, X } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useSession, signOut } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { signOut, useSession } from "@/lib/auth-client";
 
 const navLinks = [
 	{ href: "/new", label: "BUILDER" },
