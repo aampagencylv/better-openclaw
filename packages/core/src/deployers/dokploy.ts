@@ -206,44 +206,35 @@ export class DokployDeployer implements PaasDeployer {
 
       step3.status = "running";
 
-      const stacks = await dokployFetch<DokployEnvironment[]>(
-        input.target,
-        `environment.byProjectId?projectId=${project.projectId}`,
-      );
-
-      const checkStack = stacks.find(
-        (s) =>
-          s.name === input.projectName ||
-          s.applications.find(
-            (a) =>
-              a.name === input.projectName || a.appName === input.projectName,
-          ),
-      );
-
       let stack: DokployCompose | null = null;
-      if (!checkStack) {
-        stack = await dokployFetch<DokployCompose>(
-          input.target,
-          "compose.create",
-          {
-            method: "POST",
-            body: {
-              name: input.projectName,
 
-              description: input.description ?? `Stack ${input.projectName}`,
-
-              environmentId: env.environmentId,
-
-              sourceType: "raw",
-
-              composeType: "stack",
-
-              compose: input.composeYaml,
-
-              composeFile: input.composeYaml,
-            },
+      stack = await dokployFetch<DokployCompose>(
+        input.target,
+        "compose.create",
+        {
+          method: "POST",
+          body: {
+            name: input.projectName,
+            description: input.description ?? `Stack ${input.projectName}`,
+            environmentId: env.environmentId,
+            composeType: "docker-compose",
+            composeFile: input.composeYaml,
           },
-        );
+        },
+      );
+
+      // Dokploy's compose.create schema does NOT accept sourceType;
+      // it defaults to "github". We must update it to "raw" so the
+      // deploy step writes the compose file from the stored YAML
+      // instead of attempting to clone from a Git provider.
+      if (stack?.composeId) {
+        await dokployFetch(input.target, "compose.update", {
+          method: "POST",
+          body: {
+            composeId: stack.composeId,
+            sourceType: "raw",
+          },
+        });
       }
 
       result.composeId = stack?.composeId;
@@ -270,11 +261,7 @@ export class DokployDeployer implements PaasDeployer {
           method: "POST",
           body: {
             composeId: stack?.composeId,
-
-            compose: input.composeYaml,
-
             composeFile: input.composeYaml,
-
             env: input.envContent ?? "",
           },
         });
@@ -310,7 +297,7 @@ export class DokployDeployer implements PaasDeployer {
 
       const base = input.target.instanceUrl.replace(/\/+$/, "");
 
-      result.dashboardUrl = `${base}/dashboard/project/${project.projectId}`;
+      result.dashboardUrl = `${base}/dashboard/project/${project.projectId}/environment/${env.environmentId}/services/compose/${stack?.composeId}?tab=deployments`;
 
       return result;
     } catch (err) {
