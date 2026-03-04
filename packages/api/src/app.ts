@@ -5,6 +5,7 @@ import { optionalApiKey } from "./middleware/api-key.js";
 import { generateRateLimiter, rateLimiter } from "./middleware/rate-limit.js";
 import { requestId } from "./middleware/request-id.js";
 import { authRoute } from "./routes/auth.js";
+import { auth } from "./lib/auth.js";
 import { deployRoute } from "./routes/deploy.js";
 import { favoritesRoute } from "./routes/favorites.js";
 import { generateRoute } from "./routes/generate.js";
@@ -15,9 +16,15 @@ import { skillsRoute } from "./routes/skills.js";
 import { stacksRoute } from "./routes/stacks.js";
 import { validateRoute } from "./routes/validate.js";
 
-const app = new OpenAPIHono().basePath("/v1");
+const app = new OpenAPIHono<{
+    Variables: {
+        user: typeof auth.$Infer.Session.user | null;
+        session: typeof auth.$Infer.Session.session | null
+    }
+}>().basePath("/api");
 
-const trustedOrigins = process.env.TRUSTED_ORIGINS?.split(",") || ["http://localhost:5173", "http://localhost:3000", "http://localhost:5174", "http://localhost:5175", "http://localhost:3001"];
+
+const trustedOrigins = process.env.TRUSTED_ORIGINS?.split(",") || ["http://localhost:3456", "http://localhost:3654"];
 
 // Middleware
 app.use("/*", requestId());
@@ -32,7 +39,7 @@ app.use('/*', secureHeaders({
 
 app.use('/*', cors({
     origin: trustedOrigins,
-    allowHeaders: ['Set-Cookie', 'Cookie', 'Content-Type', 'Authorization', 'x-api-key', 'baggage', 'sentry-trace', 'sentry-release', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Idempotency-Key'],
+    allowHeaders: ['Set-Cookie', 'Cookie', 'Content-Type', 'Authorization', 'x-api-key', 'x-request-id', 'x-visitor-id', 'x-idempotency-key', 'baggage', 'sentry-trace', 'sentry-release', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Idempotency-Key'],
     allowMethods: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     exposeHeaders: ['Set-Cookie', 'Cookie', 'Content-Length', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Retry-After', 'Idempotency-Key', 'X-Idempotent-Replayed'],
     maxAge: 600,
@@ -40,7 +47,20 @@ app.use('/*', cors({
 }));
 app.use("/*", optionalApiKey());
 app.use("/*", rateLimiter());
-app.use("/generate", generateRateLimiter());
+app.use("/v1/generate", generateRateLimiter());
+
+app.use("/*", async (c, next) => {
+    const session = await auth.api.getSession({ headers: c.req.raw.headers });
+    if (!session) {
+        c.set("user", null);
+        c.set("session", null);
+        await next();
+        return;
+    }
+    c.set("user", session.user);
+    c.set("session", session.session);
+    await next();
+});
 
 // Error handler
 app.onError((err, c) => {
@@ -57,31 +77,31 @@ app.onError((err, c) => {
 });
 
 // Routes
-app.route("/health", healthRoute);
-app.route("/services", servicesRoute);
-app.route("/skills", skillsRoute);
-app.route("/presets", presetsRoute);
-app.route("/validate", validateRoute);
-app.route("/generate", generateRoute);
-app.route("/deploy", deployRoute);
 app.route("/auth", authRoute);
-app.route("/stacks", stacksRoute);
-app.route("/favorites", favoritesRoute);
+app.route("/v1/health", healthRoute);
+app.route("/v1/services", servicesRoute);
+app.route("/v1/skills", skillsRoute);
+app.route("/v1/presets", presetsRoute);
+app.route("/v1/validate", validateRoute);
+app.route("/v1/generate", generateRoute);
+app.route("/v1/deploy", deployRoute);
+app.route("/v1/stacks", stacksRoute);
+app.route("/v1/favorites", favoritesRoute);
 
 // Auto-generated OpenAPI spec
-app.doc("/openapi.json", {
+app.doc("/v1/openapi.json", {
 	openapi: "3.1.0",
 	info: {
 		title: "better-openclaw API",
 		description: "REST API for generating production-ready OpenClaw Docker Compose stacks",
 		version: "1.0.0",
-		contact: { name: "bachir@bidew.io" },
+		contact: { name: "bachir@bidew.io" }
 	},
-	servers: [{ url: "/v1", description: "API v1" }],
+	servers: [{ url: "", description: "API v1" }],
 });
 
 // Swagger UI
-app.get("/docs", (c) => {
+app.get("/v1/docs", (c) => {
 	return c.html(`<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,5 +117,6 @@ app.get("/docs", (c) => {
 </body>
 </html>`);
 });
+
 
 export { app };

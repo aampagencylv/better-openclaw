@@ -2,7 +2,7 @@ import { UseSend } from "usesend-js";
 
 const apiKey = process.env.UNSEND_API_KEY ?? "";
 const apiUrl = process.env.UNSEND_API_URL ?? "https://app.usesend.com";
-const FROM = process.env.EMAIL_FROM ?? "better-openclaw <noreply@bidewio.tech>";
+const FROM = process.env.EMAIL_FROM ?? "better-openclaw <noreply@better-openclaw.dev>";
 
 // Create a mock client if there's no API key (e.g., in tests or local dev without email configured)
 const client = apiKey

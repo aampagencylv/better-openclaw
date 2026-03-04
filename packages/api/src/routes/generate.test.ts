@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { app } from "../app.js";
 
-describe("POST /v1/generate", () => {
+describe("POST /api/v1/generate", () => {
 	it("returns 400 for invalid input", async () => {
-		const res = await app.request("/v1/generate", {
+		const res = await app.request("/api/v1/generate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ invalid: true }),
@@ -17,7 +17,7 @@ describe("POST /v1/generate", () => {
 	});
 
 	it("generates files for valid input (default format)", async () => {
-		const res = await app.request("/v1/generate", {
+		const res = await app.request("/api/v1/generate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -45,7 +45,7 @@ describe("POST /v1/generate", () => {
 	});
 
 	it("returns complete format when requested", async () => {
-		const res = await app.request("/v1/generate?format=complete", {
+		const res = await app.request("/api/v1/generate?format=complete", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -72,7 +72,7 @@ describe("POST /v1/generate", () => {
 	});
 
 	it("returns ZIP when format=zip", async () => {
-		const res = await app.request("/v1/generate?format=zip", {
+		const res = await app.request("/api/v1/generate?format=zip", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -96,7 +96,7 @@ describe("POST /v1/generate", () => {
 	});
 
 	it("returns 409 for conflicting services", async () => {
-		const res = await app.request("/v1/generate", {
+		const res = await app.request("/api/v1/generate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({

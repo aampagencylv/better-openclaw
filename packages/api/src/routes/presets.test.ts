@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { app } from "../app.js";
 
-describe("GET /v1/presets", () => {
+describe("GET /api/v1/presets", () => {
 	it("returns list of presets", async () => {
-		const res = await app.request("/v1/presets");
+		const res = await app.request("/api/v1/presets");
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body).toHaveProperty("presets");
@@ -13,9 +13,9 @@ describe("GET /v1/presets", () => {
 	});
 });
 
-describe("GET /v1/presets/:id", () => {
+describe("GET /api/v1/presets/:id", () => {
 	it("returns preset details with services for valid ID", async () => {
-		const res = await app.request("/v1/presets/minimal");
+		const res = await app.request("/api/v1/presets/minimal");
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body).toHaveProperty("preset");
@@ -27,7 +27,7 @@ describe("GET /v1/presets/:id", () => {
 	});
 
 	it("returns preset with all service details resolved", async () => {
-		const res = await app.request("/v1/presets/researcher");
+		const res = await app.request("/api/v1/presets/researcher");
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body.preset.id).toBe("researcher");
@@ -38,7 +38,7 @@ describe("GET /v1/presets/:id", () => {
 	});
 
 	it("returns 404 for unknown preset", async () => {
-		const res = await app.request("/v1/presets/nonexistent-preset");
+		const res = await app.request("/api/v1/presets/nonexistent-preset");
 		expect(res.status).toBe(404);
 		const body = await res.json();
 		expect(body.error.code).toBe("NOT_FOUND");

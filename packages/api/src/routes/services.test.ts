@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { app } from "../app.js";
 
-describe("GET /v1/services", () => {
+describe("GET /api/v1/services", () => {
 	it("returns list of services", async () => {
-		const res = await app.request("/v1/services");
+		const res = await app.request("/api/v1/services");
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body).toHaveProperty("services");
@@ -14,7 +14,7 @@ describe("GET /v1/services", () => {
 	});
 
 	it("filters by category", async () => {
-		const res = await app.request("/v1/services?category=database");
+		const res = await app.request("/api/v1/services?category=database");
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		for (const svc of body.services) {
@@ -23,9 +23,9 @@ describe("GET /v1/services", () => {
 	});
 });
 
-describe("GET /v1/services/:id", () => {
+describe("GET /api/v1/services/:id", () => {
 	it("returns service details for valid ID", async () => {
-		const res = await app.request("/v1/services/redis");
+		const res = await app.request("/api/v1/services/redis");
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body).toHaveProperty("service");
@@ -36,7 +36,7 @@ describe("GET /v1/services/:id", () => {
 	});
 
 	it("returns 404 for unknown service", async () => {
-		const res = await app.request("/v1/services/nonexistent-service");
+		const res = await app.request("/api/v1/services/nonexistent-service");
 		expect(res.status).toBe(404);
 		const body = await res.json();
 		expect(body.error.code).toBe("NOT_FOUND");

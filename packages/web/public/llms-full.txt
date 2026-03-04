@@ -30,23 +30,23 @@ User Input → Resolve → Partition → Compose → Validate → Generate
 
 ## 2. API Reference
 
-Base: `/v1`
+Base: `/api/v1`
 
-### GET /v1/health
+### GET /api/v1/health
 Returns API status, version, uptime, service count, memory usage.
 
-### GET /v1/services
+### GET /api/v1/services
 Query params: `category` (string), `maturity` (stable|beta|experimental)
 Returns: `{ services: ServiceDefinition[], categories: CategoryInfo[], total: number }`
 
-### GET /v1/skills
+### GET /api/v1/skills
 Query params: `services` (comma-separated IDs to filter compatible packs)
 Returns: `{ skillPacks: SkillPack[], total: number, filteredBy?: string[] }`
 
-### GET /v1/presets
+### GET /api/v1/presets
 Returns: `{ presets: Preset[], total: number }`
 
-### POST /v1/validate
+### POST /api/v1/validate
 Body (ValidateRequestSchema):
 ```json
 {
@@ -60,7 +60,7 @@ Body (ValidateRequestSchema):
 ```
 Returns: `{ valid: boolean, resolvedServices: string[], addedDependencies, warnings, conflicts, estimatedMemoryMB }`
 
-### POST /v1/generate
+### POST /api/v1/generate
 Body (GenerationInputSchema):
 ```json
 {
@@ -84,10 +84,10 @@ Returns: `{ files: Record<string, string>, metadata: GenerationMetadata }`
 Or with `?format=complete`: `{ formatVersion: "1", input, files, metadata }`
 Or with `?format=zip`: Binary ZIP file
 
-### GET /v1/openapi.json
+### GET /api/v1/openapi.json
 Auto-generated OpenAPI 3.1 specification (via @hono/zod-openapi)
 
-### GET /v1/docs
+### GET /api/v1/docs
 Interactive Swagger UI for the API
 
 ### Rate Limiting
@@ -254,7 +254,7 @@ Interactive Swagger UI for the API
 
 ## 6. Configuration Schema
 
-### GenerationInput (POST /v1/generate body)
+### GenerationInput (POST /api/v1/generate body)
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|

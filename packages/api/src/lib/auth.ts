@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { magicLink } from "better-auth/plugins";
+import { magicLink, openAPI } from "better-auth/plugins";
 import { passkey } from "@better-auth/passkey";
 import { dash, sentinel } from "@better-auth/infra"; 
 import { db, schema } from "@better-openclaw/db";
@@ -14,6 +14,7 @@ import {
 
 const trustedOrigins = process.env.WEB_URL?.split(",") ?? [
 	"http://localhost:3654",
+	"http://localhost:3456",
 	"http://localhost:3000",
 ];
 
@@ -29,7 +30,7 @@ export const auth = betterAuth({
 	}),
 	secret: process.env.BETTER_AUTH_SECRET ?? "change-this-secret-in-production-32chars",
 	baseURL: process.env.API_URL ?? "http://localhost:3456",
-	basePath: "/v1/auth",
+	basePath: "/api/auth",
 	trustedOrigins: trustedOrigins,
 
 	// ── Email + password ──────────────────────────────────────────────────────
@@ -87,6 +88,7 @@ export const auth = betterAuth({
 
 	// ── Plugins ──────────────────────────────────────────────────────────────
 	plugins: [
+		openAPI(),
 		// Magic link sign-in (passwordless)
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
@@ -96,11 +98,11 @@ export const auth = betterAuth({
 			expiresIn: 15 * 60, // 15 minutes
 		}),
 		dash({ 
-      apiKey: process.env.BETTER_AUTH_API_KEY, 
-    }),
-	sentinel({ 
-      apiKey: process.env.BETTER_AUTH_API_KEY, 
-    }) ,
+			apiKey: process.env.BETTER_AUTH_API_KEY, 
+		}),
+		sentinel({ 
+			apiKey: process.env.BETTER_AUTH_API_KEY, 
+		}),
 		// Passkey / WebAuthn (biometrics + hardware keys)
 		passkey(),
 	],

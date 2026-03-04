@@ -23,7 +23,7 @@ export const testAuth = betterAuth({
 	database: memoryAdapter(db),
 	secret: "test-secret-key-32-chars-minimum!!",
 	baseURL: "http://localhost:3456",
-	basePath: "/v1/auth",
+	basePath: "/api/auth",
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,

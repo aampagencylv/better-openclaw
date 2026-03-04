@@ -23,7 +23,7 @@ Transport: stdio. Compatible with Claude Desktop, Cursor, Claude Code, and any M
 
 ### REST API
 
-Base URL: `http://localhost:3456/v1`
+Base URL: `http://localhost:3456/api/v1`
 
 OpenAPI spec: `GET /openapi.json`
 Swagger docs: `GET /docs`

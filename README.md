@@ -98,7 +98,7 @@ npx create-better-openclaw \
 - **Preset stacks** -- pre-configured templates for common use cases
 - **Skill packs** -- bundles of agent skills wired to their backing services
 - **Reverse proxy configs** -- auto-generated Caddy or Traefik configuration with label generation and custom port support
-- **Auto-generated OpenAPI spec** -- live Swagger UI at `/v1/docs`
+- **Auto-generated OpenAPI spec** -- live Swagger UI at `/api/v1/docs`
 - **Distributed rate limiting** -- optional Redis-backed rate limiter for production
 - **Config migrations** -- forward-compatible configuration versioning
 - **Monitoring dashboards** -- Grafana + Prometheus pre-wired with service exporters
@@ -184,26 +184,26 @@ Pre-configured stack templates for quick starts:
 
 ## REST API
 
-The API runs on port 3456 with auto-generated OpenAPI docs at `/v1/docs`.
+The API runs on port 3456 with auto-generated OpenAPI docs at `/api/v1/docs`.
 
 ```bash
 # List all services
-curl http://localhost:3456/v1/services
+curl http://localhost:3456/api/v1/services
 
 # Get a specific service
-curl http://localhost:3456/v1/services/postgresql
+curl http://localhost:3456/api/v1/services/postgresql
 
 # Filter services by category
-curl http://localhost:3456/v1/services?category=database
+curl http://localhost:3456/api/v1/services?category=database
 
 # List presets
-curl http://localhost:3456/v1/presets
+curl http://localhost:3456/api/v1/presets
 
 # Get preset with resolved service details
-curl http://localhost:3456/v1/presets/devops
+curl http://localhost:3456/api/v1/presets/devops
 
 # Generate a stack
-curl -X POST http://localhost:3456/v1/generate \
+curl -X POST http://localhost:3456/api/v1/generate \
   -H "Content-Type: application/json" \
   -d '{"services": ["postgresql", "redis", "n8n"], "proxy": "caddy"}'
 ```

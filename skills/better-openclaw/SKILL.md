@@ -13,11 +13,11 @@ Use this skill to generate Docker Compose stacks via the better-openclaw API. Th
 ## API Base URL
 
 - **Web API**: `https://better-openclaw.dev/api`
-- **Standalone API**: `https://api.better-openclaw.dev/v1` (or configured `API_URL`)
+- **Standalone API**: `https://api.better-openclaw.dev/api/v1` (or configured `API_URL`)
 
 ## Generate a Stack
 
-POST to `/generate` (web) or `/v1/generate` (standalone):
+POST to `/generate` (web) or `/api/v1/generate` (standalone):
 
 ```bash
 curl -X POST "https://better-openclaw.dev/api/generate" \
@@ -37,15 +37,15 @@ curl -X POST "https://better-openclaw.dev/api/generate" \
 GET available services (standalone API only):
 
 ```bash
-curl "https://api.better-openclaw.dev/v1/services"
-curl "https://api.better-openclaw.dev/v1/services?category=ai"
+curl "https://api.better-openclaw.dev/api/v1/services"
+curl "https://api.better-openclaw.dev/api/v1/services?category=ai"
 ```
 
 ## List Skill Packs
 
 ```bash
-curl "https://api.better-openclaw.dev/v1/skills"
-curl "https://api.better-openclaw.dev/v1/skills?services=ollama,qdrant"
+curl "https://api.better-openclaw.dev/api/v1/skills"
+curl "https://api.better-openclaw.dev/api/v1/skills?services=ollama,qdrant"
 ```
 
 ## Validate Before Generation
@@ -53,7 +53,7 @@ curl "https://api.better-openclaw.dev/v1/skills?services=ollama,qdrant"
 Validate a stack configuration without generating files:
 
 ```bash
-curl -X POST "https://api.better-openclaw.dev/v1/validate" \
+curl -X POST "https://api.better-openclaw.dev/api/v1/validate" \
   -H "Content-Type: application/json" \
   -d '{
     "services": ["ollama", "qdrant"],

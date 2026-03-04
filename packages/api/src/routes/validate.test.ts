@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { app } from "../app.js";
 
-describe("POST /v1/validate", () => {
+describe("POST /api/v1/validate", () => {
 	it("returns 200 with resolved services for valid input", async () => {
-		const res = await app.request("/v1/validate", {
+		const res = await app.request("/api/v1/validate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -23,7 +23,7 @@ describe("POST /v1/validate", () => {
 	});
 
 	it("returns 400 for invalid request body", async () => {
-		const res = await app.request("/v1/validate", {
+		const res = await app.request("/api/v1/validate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ invalid: true }),
@@ -36,7 +36,7 @@ describe("POST /v1/validate", () => {
 	});
 
 	it("includes added dependencies when skill packs require services", async () => {
-		const res = await app.request("/v1/validate", {
+		const res = await app.request("/api/v1/validate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -52,7 +52,7 @@ describe("POST /v1/validate", () => {
 	});
 
 	it("detects conflicts between services", async () => {
-		const res = await app.request("/v1/validate", {
+		const res = await app.request("/api/v1/validate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({

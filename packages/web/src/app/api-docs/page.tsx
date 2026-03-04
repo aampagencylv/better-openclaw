@@ -15,19 +15,19 @@ interface Endpoint {
 	curl: string;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3456/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3456/api/v1";
 
 const endpoints: Endpoint[] = [
 	{
 		method: "GET",
-		path: "/v1/health",
+		path: "/api/v1/health",
 		description: "Health check endpoint. Returns 200 when the API server is running.",
 		response: { status: "ok", version: "1.0.0", uptime: 12345 },
 		curl: `curl ${BASE_URL}/health`,
 	},
 	{
 		method: "GET",
-		path: "/v1/services",
+		path: "/api/v1/services",
 		description: "List all available companion services that can be added to a stack.",
 		params: [
 			{
@@ -55,7 +55,7 @@ const endpoints: Endpoint[] = [
 	},
 	{
 		method: "GET",
-		path: "/v1/skills",
+		path: "/api/v1/skills",
 		description:
 			"List available skill packs. Optionally filter to only those compatible with the given services.",
 		params: [
@@ -78,7 +78,7 @@ const endpoints: Endpoint[] = [
 	},
 	{
 		method: "GET",
-		path: "/v1/presets",
+		path: "/api/v1/presets",
 		description:
 			"List all preset configurations. Presets are curated combinations of services and skill packs.",
 		response: {
@@ -95,7 +95,7 @@ const endpoints: Endpoint[] = [
 	},
 	{
 		method: "POST",
-		path: "/v1/validate",
+		path: "/api/v1/validate",
 		description:
 			"Validate a stack configuration without generating files. Returns any errors or warnings.",
 		body: {
@@ -116,7 +116,7 @@ const endpoints: Endpoint[] = [
 	},
 	{
 		method: "POST",
-		path: "/v1/generate",
+		path: "/api/v1/generate",
 		description:
 			"Generate a complete Docker Compose stack (or bare-metal: native + Docker hybrid). Returns a ZIP archive with all configuration files. Use deploymentType: 'bare-metal' for install scripts and native services.",
 		body: {
@@ -142,7 +142,7 @@ const endpoints: Endpoint[] = [
 	},
 	{
 		method: "GET",
-		path: "/v1/openapi.json",
+		path: "/api/v1/openapi.json",
 		description: "Download the full OpenAPI 3.0 specification for this API.",
 		response: {
 			openapi: "3.0.0",

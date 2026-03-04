@@ -33,18 +33,18 @@ pnpm create better-openclaw@latest --open                   # Open web UI in bro
 
 ## API Endpoints
 
-Base URL (standalone API): `https://api.better-openclaw.dev/v1` (or configured API_URL)
+Base URL (standalone API): `https://api.better-openclaw.dev/api/v1` (or configured API_URL)
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | /v1/health | Health check |
-| GET | /v1/services | List all services (?category=, ?maturity=) |
-| GET | /v1/skills | List skill packs (?services=id1,id2) |
-| GET | /v1/presets | List preset stacks |
-| POST | /v1/validate | Validate stack config before generation |
-| POST | /v1/generate | Generate stack (returns files + metadata) |
-| GET | /v1/openapi.json | Auto-generated OpenAPI 3.1 specification |
-| GET | /v1/docs | Interactive Swagger UI documentation |
+| GET | /api/v1/health | Health check |
+| GET | /api/v1/services | List all services (?category=, ?maturity=) |
+| GET | /api/v1/skills | List skill packs (?services=id1,id2) |
+| GET | /api/v1/presets | List preset stacks |
+| POST | /api/v1/validate | Validate stack config before generation |
+| POST | /api/v1/generate | Generate stack (returns files + metadata) |
+| GET | /api/v1/openapi.json | Auto-generated OpenAPI 3.1 specification |
+| GET | /api/v1/docs | Interactive Swagger UI documentation |
 
 Web API (Next.js): `POST https://better-openclaw.dev/api/generate` — generates stack directly
 
@@ -85,5 +85,5 @@ Pre-bundled OpenClaw skills: video-creator, research-agent, social-media, dev-op
 
 - Docs: https://better-openclaw.dev/docs
 - API Reference: https://better-openclaw.dev/api-docs
-- Swagger UI: /v1/docs (live interactive API documentation)
+- Swagger UI: /api/v1/docs (live interactive API documentation)
 - Full AI-friendly docs: /llms-full.txt

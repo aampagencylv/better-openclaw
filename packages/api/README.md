@@ -4,7 +4,7 @@ A scalable, rate-limited REST API bridging web clients, agents, and CLIs to the 
 
 ## Available Endpoints
 
-The API is mounted at `/v1`.
+The API is mounted at `/api/v1`.
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -33,12 +33,12 @@ The deploy endpoints act as a server-side relay between the web UI and the user'
 
 ```bash
 # Test PaaS connection
-curl -X POST http://localhost:3456/v1/deploy/test \
+curl -X POST http://localhost:3456/api/v1/deploy/test \
   -H "Content-Type: application/json" \
   -d '{"provider":"dokploy","instanceUrl":"https://dokploy.example.com","apiKey":"..."}'
 
 # Deploy a stack
-curl -X POST http://localhost:3456/v1/deploy \
+curl -X POST http://localhost:3456/api/v1/deploy \
   -H "Content-Type: application/json" \
   -d '{"provider":"dokploy","instanceUrl":"https://...","apiKey":"...","projectName":"my-stack","composeYaml":"...","envContent":"..."}'
 ```

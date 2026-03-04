@@ -30,7 +30,7 @@ export default function ApiOverviewPage() {
 			</pre>
 			<p>
 				All endpoints are prefixed with <code>/api</code> followed by the version (currently{" "}
-				<code>/v1</code>), giving you a full base URL of:
+				<code>/api/v1</code>), giving you a full base URL of:
 			</p>
 			<pre>
 				<code>{`https://better-openclaw.dev/api/v1`}</code>
@@ -74,43 +74,43 @@ OPENCLAW_API_KEY=your-secret-api-key-here`}</code>
 				<tbody>
 					<tr>
 						<td>
-							<code>GET /v1/health</code>
+							<code>GET /api/v1/health</code>
 						</td>
 						<td>No</td>
 					</tr>
 					<tr>
 						<td>
-							<code>GET /v1/services</code>
+							<code>GET /api/v1/services</code>
 						</td>
 						<td>No</td>
 					</tr>
 					<tr>
 						<td>
-							<code>GET /v1/skills</code>
+							<code>GET /api/v1/skills</code>
 						</td>
 						<td>No</td>
 					</tr>
 					<tr>
 						<td>
-							<code>GET /v1/presets</code>
+							<code>GET /api/v1/presets</code>
 						</td>
 						<td>No</td>
 					</tr>
 					<tr>
 						<td>
-							<code>POST /v1/validate</code>
+							<code>POST /api/v1/validate</code>
 						</td>
 						<td>Yes</td>
 					</tr>
 					<tr>
 						<td>
-							<code>POST /v1/generate</code>
+							<code>POST /api/v1/generate</code>
 						</td>
 						<td>Yes</td>
 					</tr>
 					<tr>
 						<td>
-							<code>GET /v1/presets/:name</code>
+							<code>GET /api/v1/presets/:name</code>
 						</td>
 						<td>No</td>
 					</tr>

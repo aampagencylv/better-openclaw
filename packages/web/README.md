@@ -19,7 +19,7 @@ Ensure the `.env.local` accurately targets the backing execution tier:
 
 ```env
 # URL pointer to the api package process
-NEXT_PUBLIC_API_URL=http://localhost:3456/v1
+NEXT_PUBLIC_API_URL=http://localhost:3456/api/v1
 
 # Destination webhook for parsing and pushing JSON complete generation payloads
 NEXT_PUBLIC_CLAWEXA_DEPLOY_URL=https://clawexa.net/deploy

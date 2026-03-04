@@ -19,7 +19,7 @@ export default function EndpointsPage() {
 			<hr />
 
 			<h2 id="health">
-				<code>GET /v1/health</code> — Health Check
+				<code>GET /api/v1/health</code> — Health Check
 			</h2>
 			<p>Returns the API status. Use for monitoring and uptime checks.</p>
 			<h3>Request</h3>
@@ -46,7 +46,7 @@ export default function EndpointsPage() {
 			<hr />
 
 			<h2 id="services">
-				<code>GET /v1/services</code> — List Services
+				<code>GET /api/v1/services</code> — List Services
 			</h2>
 			<p>Returns all available companion services grouped by category.</p>
 			<h3>Query Parameters</h3>
@@ -120,7 +120,7 @@ export default function EndpointsPage() {
 			<hr />
 
 			<h2 id="skills">
-				<code>GET /v1/skills</code> — List Skill Packs
+				<code>GET /api/v1/skills</code> — List Skill Packs
 			</h2>
 			<p>Returns all available skill packs with their descriptions and required services.</p>
 			<h3>Request</h3>
@@ -158,7 +158,7 @@ export default function EndpointsPage() {
 			<hr />
 
 			<h2 id="presets">
-				<code>GET /v1/presets</code> — List Presets
+				<code>GET /api/v1/presets</code> — List Presets
 			</h2>
 			<p>Returns all preset configurations.</p>
 			<h3>Request</h3>
@@ -196,7 +196,7 @@ export default function EndpointsPage() {
 			<hr />
 
 			<h2 id="preset-detail">
-				<code>GET /v1/presets/:name</code> — Get Preset Detail
+				<code>GET /api/v1/presets/:name</code> — Get Preset Detail
 			</h2>
 			<p>
 				Returns detailed information about a specific preset, including the full service and skill
@@ -267,7 +267,7 @@ export default function EndpointsPage() {
 			<hr />
 
 			<h2 id="validate">
-				<code>POST /v1/validate</code> — Validate Configuration
+				<code>POST /api/v1/validate</code> — Validate Configuration
 			</h2>
 			<p>
 				Validates a stack configuration without generating any files. Useful for checking for
@@ -372,7 +372,7 @@ export default function EndpointsPage() {
 			<hr />
 
 			<h2 id="generate">
-				<code>POST /v1/generate</code> — Generate Stack
+				<code>POST /api/v1/generate</code> — Generate Stack
 			</h2>
 			<p>
 				Generates a complete stack configuration and returns the files as a JSON bundle or
