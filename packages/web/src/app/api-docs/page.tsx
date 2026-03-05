@@ -17,7 +17,9 @@ interface Endpoint {
 
 const BASE_URL =
 	process.env.NEXT_PUBLIC_API_URL ||
-	(typeof window !== "undefined" ? `${window.location.origin}/api/v1` : "http://localhost:3456/api/v1");
+	(typeof window !== "undefined"
+		? `${window.location.origin}/api/v1`
+		: "http://localhost:3456/api/v1");
 
 const endpoints: Endpoint[] = [
 	{

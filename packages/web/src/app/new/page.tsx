@@ -40,7 +40,12 @@ import {
 	type SelectedSkill,
 	SkillSelectorModal,
 } from "@/components/stack-builder/SkillSelectorModal";
-import { fetchSavedStack, generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
+import {
+	fetchSavedStack,
+	generateStack,
+	generateStackAsZip,
+	generateStackComplete,
+} from "@/lib/api-client";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
@@ -1201,9 +1206,9 @@ export default function NewStackPage() {
 						skillPacks: Array.from(selectedSkillPacks),
 						aiProviders: Array.from(selectedAiProviders),
 						gsdRuntimes: Array.from(selectedGsdRuntimes),
-					individualSkills: Array.from(selectedIndividualSkills.values()).map(
-						(skill) => ({ ...skill }),
-					),
+						individualSkills: Array.from(selectedIndividualSkills.values()).map((skill) => ({
+							...skill,
+						})),
 						proxy: "none",
 						gpu: false,
 						platform: "linux/amd64",
