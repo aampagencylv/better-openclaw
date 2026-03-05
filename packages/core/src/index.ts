@@ -15,6 +15,7 @@ export type {
 	DeployStep as PaasDeployStep,
 	DeployTarget as PaasDeployTarget,
 	PaasDeployer,
+	PaasServer,
 } from "./deployers/index.js";
 export {
 	CoolifyDeployer,
@@ -29,10 +30,16 @@ export { generate, generateServicesDoc } from "./generate.js";
 export { generateCaddyfile } from "./generators/caddy.js";
 export type { EnvVarGroup } from "./generators/env.js";
 export { generateEnvFiles, getStructuredEnvVars } from "./generators/env.js";
-export { generateGrafanaConfig, generateGrafanaDashboard } from "./generators/grafana.js";
+export {
+	generateGrafanaConfig,
+	generateGrafanaDashboard,
+} from "./generators/grafana.js";
 export { generateHealthCheck } from "./generators/health-check.js";
 export { generateN8nWorkflows } from "./generators/n8n-workflows.js";
-export { generatePostgresInit, getDbRequirements } from "./generators/postgres-init.js";
+export {
+	generatePostgresInit,
+	getDbRequirements,
+} from "./generators/postgres-init.js";
 export { generatePrometheusConfig } from "./generators/prometheus.js";
 export { generateReadme } from "./generators/readme.js";
 export { generateScripts } from "./generators/scripts.js";
@@ -44,12 +51,20 @@ export type {
 } from "./generators/stack-manifest.js";
 export { generateStackManifest } from "./generators/stack-manifest.js";
 // ─── Config Migrations ──────────────────────────────────────────────────────
-export { CURRENT_CONFIG_VERSION, migrateConfig, needsMigration } from "./migrations.js";
+export {
+	CURRENT_CONFIG_VERSION,
+	migrateConfig,
+	needsMigration,
+} from "./migrations.js";
 // ─── Port Scanner ───────────────────────────────────────────────────────────
 export type { PortConflict } from "./port-scanner.js";
 export { formatPortConflicts, scanPortConflicts } from "./port-scanner.js";
 // ─── Presets ────────────────────────────────────────────────────────────────
-export { getAllPresets, getPresetById, presetRegistry } from "./presets/registry.js";
+export {
+	getAllPresets,
+	getPresetById,
+	presetRegistry,
+} from "./presets/registry.js";
 export { resolve } from "./resolver.js";
 export {
 	AddedDependencySchema,

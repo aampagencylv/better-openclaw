@@ -8,7 +8,7 @@ import type { ResolverOutput } from "../types.js";
  * service's `openclawEnvVars` array at generation time.
  */
 const skillTemplates: Record<string, string> = {
-  "redis-cache": `---
+	"redis-cache": `---
 name: redis-cache
 description: "Cache data and manage key-value state using Redis"
 metadata:
@@ -49,7 +49,7 @@ redis-cli -h {{REDIS_HOST}} -p {{REDIS_PORT}} -a $REDIS_PASSWORD KEYS "*"
 - Password authentication is required.
 `,
 
-  "qdrant-memory": `---
+	"qdrant-memory": `---
 name: qdrant-memory
 description: "Store and retrieve vector embeddings for semantic search and RAG"
 metadata:
@@ -95,7 +95,7 @@ curl -X POST "http://{{QDRANT_HOST}}:{{QDRANT_PORT}}/collections/my_collection/p
 - Qdrant supports filtering, batch operations, and named vectors.
 `,
 
-  "n8n-trigger": `---
+	"n8n-trigger": `---
 name: n8n-trigger
 description: "Trigger and manage automation workflows using n8n"
 metadata:
@@ -142,7 +142,7 @@ curl -X PATCH "http://{{N8N_HOST}}:{{N8N_PORT}}/api/v1/workflows/<id>" \\
 - n8n stores workflow state in PostgreSQL.
 `,
 
-  "ffmpeg-process": `---
+	"ffmpeg-process": `---
 name: ffmpeg-process
 description: "Process media files using FFmpeg for transcoding, conversion, and manipulation"
 metadata:
@@ -187,7 +187,7 @@ docker exec ffmpeg ffmpeg -i /data/input.mp4 -vf scale=1280:720 /data/output_720
 - Output files appear in the same shared directory.
 `,
 
-  "minio-storage": `---
+	"minio-storage": `---
 name: minio-storage
 description: "Store and retrieve files using S3-compatible object storage"
 metadata:
@@ -236,7 +236,7 @@ mc ls local/my-bucket/
 - Create separate buckets for different data types (assets, backups, uploads).
 `,
 
-  "browserless-browse": `---
+	"browserless-browse": `---
 name: browserless-browse
 description: "Automate browser interactions, scrape web pages, and generate PDFs"
 metadata:
@@ -286,7 +286,7 @@ curl -X POST "http://{{BROWSERLESS_HOST}}:{{BROWSERLESS_PORT}}/content?token=$BR
 - Supports Puppeteer and Playwright WebSocket connections.
 `,
 
-  "searxng-search": `---
+	"searxng-search": `---
 name: searxng-search
 description: "Search the web using a privacy-respecting metasearch engine"
 metadata:
@@ -327,7 +327,7 @@ curl "http://{{SEARXNG_HOST}}:{{SEARXNG_PORT}}/search?q=hello&language=en&format
 - SearXNG aggregates results from many search engines without tracking.
 `,
 
-  "whisper-transcribe": `---
+	"whisper-transcribe": `---
 name: whisper-transcribe
 description: "Transcribe audio files to text using Faster Whisper"
 metadata:
@@ -373,7 +373,7 @@ curl "http://{{WHISPER_HOST}}:{{WHISPER_PORT}}/v1/models"
 - GPU acceleration significantly improves transcription speed.
 `,
 
-  "ollama-local-llm": `---
+	"ollama-local-llm": `---
 name: ollama-local-llm
 description: "Run local language models for text generation, chat, and embeddings"
 metadata:
@@ -428,7 +428,7 @@ curl -X POST "http://{{OLLAMA_HOST}}:{{OLLAMA_PORT}}/api/embeddings" \\
 - The Ollama API is OpenAI-compatible at /v1/ endpoints.
 `,
 
-  "remotion-render": `---
+	"remotion-render": `---
 name: remotion-render
 description: "Create and render videos programmatically using React"
 metadata:
@@ -469,7 +469,7 @@ docker exec remotion npx remotion render src/index.tsx MyComposition out/video.m
 - Combine with FFmpeg for post-processing.
 `,
 
-  "lightpanda-browse": `---
+	"lightpanda-browse": `---
 name: lightpanda-browse
 description: "Browse the web using the ultra-fast LightPanda headless browser via CDP"
 metadata:
@@ -500,7 +500,7 @@ const content = await page.evaluate(() => document.body.innerText);
 - Full CDP compatibility with Puppeteer and Playwright
 `,
 
-  "steel-browse": `---
+	"steel-browse": `---
 name: steel-browse
 description: "Browse the web using Steel Browser API with session management and anti-detection"
 metadata:
@@ -545,68 +545,66 @@ curl -X POST http://{{STEEL_HOST}}:{{STEEL_PORT}}/v1/scrape \\
  * Handlebars is used to replace `{{VAR}}` placeholders with actual values
  * from each service's `openclawEnvVars`.
  */
-export function generateSkillFiles(
-  resolved: ResolverOutput,
-): Record<string, string> {
-  const files: Record<string, string> = {};
+export function generateSkillFiles(resolved: ResolverOutput): Record<string, string> {
+	const files: Record<string, string> = {};
 
-  for (const { definition } of resolved.services) {
-    if (definition.skills.length === 0) continue;
+	for (const { definition } of resolved.services) {
+		if (definition.skills.length === 0) continue;
 
-    // Build a variable map from openclawEnvVars for Handlebars
-    const vars: Record<string, string> = {};
-    for (const envVar of definition.openclawEnvVars) {
-      // Resolve ${REFERENCES} to the default value (just strip the ${} wrapper)
-      const val = envVar.defaultValue.startsWith("${")
-        ? envVar.defaultValue.slice(2, -1)
-        : envVar.defaultValue;
-      vars[envVar.key] = val;
-    }
+		// Build a variable map from openclawEnvVars for Handlebars
+		const vars: Record<string, string> = {};
+		for (const envVar of definition.openclawEnvVars) {
+			// Resolve ${REFERENCES} to the default value (just strip the ${} wrapper)
+			const val = envVar.defaultValue.startsWith("${")
+				? envVar.defaultValue.slice(2, -1)
+				: envVar.defaultValue;
+			vars[envVar.key] = val;
+		}
 
-    for (const skill of definition.skills) {
-      const template = skillTemplates[skill.skillId];
-      if (!template) {
-        // Generate a generic skill file if no template exists
-        const generic = generateGenericSkill(
-          skill.skillId,
-          definition.name,
-          definition.icon,
-          definition.description,
-          vars,
-        );
-        files[`openclaw/workspace/skills/${skill.skillId}/SKILL.md`] = generic;
-        continue;
-      }
+		for (const skill of definition.skills) {
+			const template = skillTemplates[skill.skillId];
+			if (!template) {
+				// Generate a generic skill file if no template exists
+				const generic = generateGenericSkill(
+					skill.skillId,
+					definition.name,
+					definition.icon,
+					definition.description,
+					vars,
+				);
+				files[`openclaw/workspace/skills/${skill.skillId}/SKILL.md`] = generic;
+				continue;
+			}
 
-      const compiled = Handlebars.compile(template, { noEscape: true });
-      const rendered = compiled(vars);
-      files[`openclaw/workspace/skills/${skill.skillId}/SKILL.md`] = rendered;
-    }
-  }
+			const compiled = Handlebars.compile(template, { noEscape: true });
+			const rendered = compiled(vars);
+			files[`openclaw/workspace/skills/${skill.skillId}/SKILL.md`] = rendered;
+		}
+	}
 
-  return files;
+	return files;
 }
 
 /**
  * Generate a generic SKILL.md for skills that don't have a dedicated template.
  */
 function generateGenericSkill(
-  skillId: string,
-  serviceName: string,
-  icon: string,
-  description: string,
-  vars: Record<string, string>,
+	skillId: string,
+	serviceName: string,
+	icon: string,
+	description: string,
+	vars: Record<string, string>,
 ): string {
-  const title = skillId
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+	const title = skillId
+		.split("-")
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+		.join(" ");
 
-  const envSection = Object.entries(vars)
-    .map(([key, value]) => `- **${key}:** \`${value}\``)
-    .join("\n");
+	const envSection = Object.entries(vars)
+		.map(([key, value]) => `- **${key}:** \`${value}\``)
+		.join("\n");
 
-  return `---
+	return `---
 name: ${skillId}
 description: "${description}"
 metadata:

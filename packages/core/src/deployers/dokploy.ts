@@ -6,90 +6,92 @@
  * Endpoints use dot-notation (e.g. /api/project.create, /api/compose.deploy)
  */
 
+import { sanitizeComposeForPaas } from "./strip-host-ports.js";
 import type {
-  DeployInput,
-  DeployResult,
-  DeployStep,
-  DeployTarget,
-  DokployEnvironment,
-  PaasDeployer,
+	DeployInput,
+	DeployResult,
+	DeployStep,
+	DeployTarget,
+	DokployEnvironment,
+	PaasDeployer,
+	PaasServer,
 } from "./types.js";
 
 interface DokployProject {
-  projectId: string;
-  name: string;
-  description: string;
-  environments?: DokployEnvironment[];
+	projectId: string;
+	name: string;
+	description: string;
+	environments?: DokployEnvironment[];
 }
 
 interface DokployCompose {
-  composeId: string;
-  name: string;
-  status?: string;
-  compose?: string;
+	composeId: string;
+	name: string;
+	status?: string;
+	compose?: string;
 }
 
 interface ProjectCreateResult {
-  project: DokployProject;
-  projectId: string;
-  name: string;
-  description: string;
-  environments?: { environmentId: string; name: string }[];
+	project: DokployProject;
+	projectId: string;
+	name: string;
+	description: string;
+	environments?: { environmentId: string; name: string }[];
 }
 
 /** Build a full Dokploy API URL from a dot-notation endpoint (e.g. "project.create"). */
 function apiUrl(target: DeployTarget, endpoint: string): string {
-  const base = target.instanceUrl.replace(/\/+$/, "");
-  return `${base}/api/${endpoint}`;
+	const base = target.instanceUrl.replace(/\/+$/, "");
+	return `${base}/api/${endpoint}`;
 }
 /**
  * Typed fetch wrapper for the Dokploy API.
  * Handles JSON serialisation, x-api-key auth, and error extraction.
  */
 async function dokployFetch<T>(
-  target: DeployTarget,
-  endpoint: string,
-  options: { method?: string; body?: unknown } = {},
+	target: DeployTarget,
+	endpoint: string,
+	options: { method?: string; body?: unknown } = {},
 ): Promise<T> {
-  const res = await fetch(apiUrl(target, endpoint), {
-    method: options.method ?? "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": target.apiKey,
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+	const res = await fetch(apiUrl(target, endpoint), {
+		method: options.method ?? "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"x-api-key": target.apiKey,
+		},
+		body: options.body ? JSON.stringify(options.body) : undefined,
+	});
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    let detail = text;
+	if (!res.ok) {
+		const text = await res.text().catch(() => "");
+		let detail = text;
 
-    try {
-      const json = JSON.parse(text);
-      detail = json.message || json.error || text;
-    } catch {}
+		try {
+			const json = JSON.parse(text);
+			detail = json.message || json.error || text;
+		} catch {}
 
-    throw new Error(`Dokploy API ${res.status}: ${detail}`);
-  }
+		throw new Error(`Dokploy API ${res.status}: ${detail}`);
+	}
 
-  const text = await res.text();
-  if (!text) return undefined as T;
+	const text = await res.text();
+	if (!text) return undefined as T;
 
-  return JSON.parse(text) as T;
+	return JSON.parse(text) as T;
 }
 
 /**
  * Simple hash for compose diff detection
  */
 function hashString(str: string) {
-  let hash = 0;
+	let hash = 0;
 
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
+	for (let i = 0; i < str.length; i++) {
+		hash = (hash << 5) - hash + str.charCodeAt(i);
+		hash |= 0;
+	}
 
-  return hash;
+	return hash;
 }
 
 /**
@@ -103,215 +105,223 @@ function hashString(str: string) {
  */
 
 export class DokployDeployer implements PaasDeployer {
-  readonly name = "Dokploy";
-  readonly id = "dokploy";
+	readonly name = "Dokploy";
+	readonly id = "dokploy";
 
-  async testConnection(
-    target: DeployTarget,
-  ): Promise<{ ok: boolean; error?: string }> {
-    try {
-      await dokployFetch<DokployProject[]>(target, "project.all");
+	async testConnection(target: DeployTarget): Promise<{ ok: boolean; error?: string }> {
+		try {
+			await dokployFetch<DokployProject[]>(target, "project.all");
 
-      return { ok: true };
-    } catch (err) {
-      return {
-        ok: false,
-        error: err instanceof Error ? err.message : String(err),
-      };
-    }
-  }
+			return { ok: true };
+		} catch (err) {
+			return {
+				ok: false,
+				error: err instanceof Error ? err.message : String(err),
+			};
+		}
+	}
 
-  async deploy(input: DeployInput): Promise<DeployResult> {
-    const step1: DeployStep = {
-      step: "Find or create project",
-      status: "pending",
-    };
-    const step2: DeployStep = {
-      step: "Find default environment",
-      status: "pending",
-    };
-    const step3: DeployStep = {
-      step: "Find or create compose stack",
-      status: "pending",
-    };
-    const step4: DeployStep = {
-      step: "Update stack configuration",
-      status: "pending",
-    };
-    const step5: DeployStep = { step: "Deploy stack", status: "pending" };
-    const steps: DeployStep[] = [step1, step2, step3, step4, step5];
+	async listServers(target: DeployTarget): Promise<PaasServer[]> {
+		try {
+			const servers = await dokployFetch<{ serverId: string; name: string; ipAddress: string }[]>(
+				target,
+				"server.all",
+			);
+			return servers.map((s) => ({
+				id: s.serverId,
+				name: s.name,
+				ip: s.ipAddress,
+			}));
+		} catch {
+			// Return empty list if server API is not available
+			return [];
+		}
+	}
 
-    const result: DeployResult = { success: false, steps };
+	async deploy(input: DeployInput): Promise<DeployResult> {
+		const step1: DeployStep = {
+			step: "Find or create project",
+			status: "pending",
+		};
+		const step2: DeployStep = {
+			step: "Find default environment",
+			status: "pending",
+		};
+		const step3: DeployStep = {
+			step: "Find or create compose stack",
+			status: "pending",
+		};
+		const step4: DeployStep = {
+			step: "Update stack configuration",
+			status: "pending",
+		};
+		const step5: DeployStep = { step: "Deploy stack", status: "pending" };
+		const steps: DeployStep[] = [step1, step2, step3, step4, step5];
 
-    try {
-      /**
-       * STEP 1
-       * Find or create project
-       */
+		const result: DeployResult = { success: false, steps };
 
-      step1.status = "running";
+		// Strip host port bindings — Dokploy routes via Traefik,
+		// so host ports are unnecessary and cause "port already allocated" errors.
+		const composeYaml = sanitizeComposeForPaas(input.composeYaml);
 
-      const projects = await dokployFetch<DokployProject[]>(
-        input.target,
-        "project.all",
-      );
+		try {
+			/**
+			 * STEP 1
+			 * Find or create project
+			 */
 
-      let project = projects.find((p) => p.name === input.projectName);
+			step1.status = "running";
 
-      if (!project) {
-        const created = await dokployFetch<ProjectCreateResult>(
-          input.target,
-          "project.create",
-          {
-            method: "POST",
-            body: {
-              name: input.projectName,
-              description:
-                input.description ?? `OpenClaw stack: ${input.projectName}`,
-            },
-          },
-        );
+			const projects = await dokployFetch<DokployProject[]>(input.target, "project.all");
 
-        project = created.project;
-      }
+			let project = projects.find((p) => p.name === input.projectName);
 
-      result.projectId = project.projectId;
+			if (!project) {
+				const created = await dokployFetch<ProjectCreateResult>(input.target, "project.create", {
+					method: "POST",
+					body: {
+						name: input.projectName,
+						description: input.description ?? `OpenClaw stack: ${input.projectName}`,
+					},
+				});
 
-      step1.status = "done";
-      step1.detail = `Project ID: ${project.projectId}`;
+				project = created.project;
+			}
 
-      /**
-       * STEP 2
-       * Find default environment
-       */
+			result.projectId = project.projectId;
 
-      step2.status = "running";
+			step1.status = "done";
+			step1.detail = `Project ID: ${project.projectId}`;
 
-      const projectDetail = await dokployFetch<DokployProject>(
-        input.target,
-        `project.one?projectId=${project.projectId}`,
-      );
+			/**
+			 * STEP 2
+			 * Find default environment
+			 */
 
-      const env = projectDetail.environments?.find((e) => e.isDefault);
+			step2.status = "running";
 
-      if (!env) throw new Error("No default environment");
+			const projectDetail = await dokployFetch<DokployProject>(
+				input.target,
+				`project.one?projectId=${project.projectId}`,
+			);
 
-      step2.status = "done";
-      step2.detail = env.environmentId;
+			const env = projectDetail.environments?.find((e) => e.isDefault);
 
-      /**
-       * STEP 3
-       * Find or create compose stack
-       */
+			if (!env) throw new Error("No default environment");
 
-      step3.status = "running";
+			step2.status = "done";
+			step2.detail = env.environmentId;
 
-      let stack: DokployCompose | null = null;
+			/**
+			 * STEP 3
+			 * Find or create compose stack
+			 */
 
-      stack = await dokployFetch<DokployCompose>(
-        input.target,
-        "compose.create",
-        {
-          method: "POST",
-          body: {
-            name: input.projectName,
-            description: input.description ?? `Stack ${input.projectName}`,
-            environmentId: env.environmentId,
-            composeType: "docker-compose",
-            composeFile: input.composeYaml,
-          },
-        },
-      );
+			step3.status = "running";
 
-      // Dokploy's compose.create schema does NOT accept sourceType;
-      // it defaults to "github". We must update it to "raw" so the
-      // deploy step writes the compose file from the stored YAML
-      // instead of attempting to clone from a Git provider.
-      if (stack?.composeId) {
-        await dokployFetch(input.target, "compose.update", {
-          method: "POST",
-          body: {
-            composeId: stack.composeId,
-            sourceType: "raw",
-          },
-        });
-      }
+			let stack: DokployCompose | null = null;
 
-      result.composeId = stack?.composeId;
-      step3.status = "done";
-      step3.detail = stack?.composeId;
+			stack = await dokployFetch<DokployCompose>(input.target, "compose.create", {
+				method: "POST",
+				body: {
+					name: input.projectName,
+					description: input.description ?? `Stack ${input.projectName}`,
+					environmentId: env.environmentId,
+					composeType: "docker-compose",
+					composeFile: composeYaml,
+					...(input.serverId ? { serverId: input.serverId } : {}),
+				},
+			});
 
-      /**
-       * STEP 4
-       * Update stack if compose changed
-       */
+			// Dokploy's compose.create schema does NOT accept sourceType;
+			// it defaults to "github". We must update it to "raw" so the
+			// deploy step writes the compose file from the stored YAML
+			// instead of attempting to clone from a Git provider.
+			if (stack?.composeId) {
+				await dokployFetch(input.target, "compose.update", {
+					method: "POST",
+					body: {
+						composeId: stack.composeId,
+						sourceType: "raw",
+					},
+				});
+			}
 
-      step4.status = "running";
+			result.composeId = stack?.composeId;
+			step3.status = "done";
+			step3.detail = stack?.composeId;
 
-      const existingStack = await dokployFetch<DokployCompose>(
-        input.target,
-        `compose.one?composeId=${stack?.composeId}`,
-      );
+			/**
+			 * STEP 4
+			 * Update stack if compose changed
+			 */
 
-      const newHash = hashString(input.composeYaml);
-      const oldHash = hashString(existingStack.compose ?? "");
+			step4.status = "running";
 
-      if (newHash !== oldHash) {
-        await dokployFetch(input.target, "compose.update", {
-          method: "POST",
-          body: {
-            composeId: stack?.composeId,
-            composeFile: input.composeYaml,
-            env: input.envContent ?? "",
-          },
-        });
+			const existingStack = await dokployFetch<DokployCompose>(
+				input.target,
+				`compose.one?composeId=${stack?.composeId}`,
+			);
 
-        step4.detail = "Stack updated";
-      } else {
-        step4.detail = "No compose changes";
-      }
+			const newHash = hashString(composeYaml);
+			const oldHash = hashString(existingStack.compose ?? "");
 
-      step4.status = "done";
+			if (newHash !== oldHash) {
+				await dokployFetch(input.target, "compose.update", {
+					method: "POST",
+					body: {
+						composeId: stack?.composeId,
+						composeFile: composeYaml,
+						env: input.envContent ?? "",
+					},
+				});
 
-      /**
-       * STEP 5
-       * Deploy
-       */
+				step4.detail = "Stack updated";
+			} else {
+				step4.detail = "No compose changes";
+			}
 
-      step5.status = "running";
+			step4.status = "done";
 
-      await dokployFetch(input.target, "compose.deploy", {
-        method: "POST",
-        body: {
-          composeId: stack?.composeId,
+			/**
+			 * STEP 5
+			 * Deploy
+			 */
 
-          title: `Deploy ${input.projectName}`,
+			step5.status = "running";
 
-          description: "CI deployment",
-        },
-      });
+			await dokployFetch(input.target, "compose.deploy", {
+				method: "POST",
+				body: {
+					composeId: stack?.composeId,
 
-      step5.status = "done";
+					title: `Deploy ${input.projectName}`,
 
-      result.success = true;
+					description: "CI deployment",
+				},
+			});
 
-      const base = input.target.instanceUrl.replace(/\/+$/, "");
+			step5.status = "done";
 
-      result.dashboardUrl = `${base}/dashboard/project/${project.projectId}/environment/${env.environmentId}/services/compose/${stack?.composeId}?tab=deployments`;
+			result.success = true;
 
-      return result;
-    } catch (err) {
-      const running = steps.find((s) => s.status === "running");
+			const base = input.target.instanceUrl.replace(/\/+$/, "");
 
-      if (running) {
-        running.status = "error";
+			result.dashboardUrl = `${base}/dashboard/project/${project.projectId}/environment/${env.environmentId}/services/compose/${stack?.composeId}?tab=deployments`;
 
-        running.detail = err instanceof Error ? err.message : String(err);
-      }
+			return result;
+		} catch (err) {
+			const running = steps.find((s) => s.status === "running");
 
-      result.error = err instanceof Error ? err.message : String(err);
+			if (running) {
+				running.status = "error";
 
-      return result;
-    }
-  }
+				running.detail = err instanceof Error ? err.message : String(err);
+			}
+
+			result.error = err instanceof Error ? err.message : String(err);
+
+			return result;
+		}
+	}
 }

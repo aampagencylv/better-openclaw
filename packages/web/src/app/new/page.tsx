@@ -29,8 +29,8 @@ import {
 	X,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SaveStackModal } from "@/components/save-stack-modal";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { DeployModal } from "@/components/stack-builder/DeployModal";
@@ -40,7 +40,7 @@ import {
 	type SelectedSkill,
 	SkillSelectorModal,
 } from "@/components/stack-builder/SkillSelectorModal";
-import { generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
+import { fetchSavedStack, generateStack, generateStackAsZip, generateStackComplete } from "@/lib/api-client";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
@@ -78,8 +78,60 @@ export default function NewStackPage() {
 	>(new Map());
 	const [showSaveModal, setShowSaveModal] = useState(false);
 	const [savedStackId, setSavedStackId] = useState<string | null>(null);
+	const [isLoadingStack, setIsLoadingStack] = useState(false);
 	const { data: session } = useSession();
 	const router = useRouter();
+	const searchParams = useSearchParams();
+
+	// ── Load saved stack from URL ──────────────────────────────────────────────
+	useEffect(() => {
+		const loadId = searchParams.get("load");
+		if (!loadId) return;
+
+		let cancelled = false;
+		setIsLoadingStack(true);
+
+		fetchSavedStack(loadId)
+			.then((stack) => {
+				if (cancelled) return;
+				const config = (stack.config ?? {}) as Record<string, unknown>;
+				const services = (stack.services ?? config.services ?? []) as string[];
+
+				setProjectName((config.projectName as string) ?? stack.name ?? "my-stack");
+				setSelectedServices(new Set(services));
+				setSavedStackId(stack.id);
+
+				if (Array.isArray(config.skillPacks)) {
+					setSelectedSkillPacks(new Set(config.skillPacks as string[]));
+				}
+				if (Array.isArray(config.aiProviders)) {
+					setSelectedAiProviders(new Set(config.aiProviders as AiProvider[]));
+				}
+				if (Array.isArray(config.gsdRuntimes)) {
+					setSelectedGsdRuntimes(new Set(config.gsdRuntimes as GsdRuntime[]));
+				}
+				if (Array.isArray(config.individualSkills)) {
+					const map = new Map<string, SelectedSkill>();
+					for (const s of config.individualSkills as Array<SelectedSkill & { id: string }>) {
+						if (s.id) map.set(s.id, s);
+					}
+					setSelectedIndividualSkills(map);
+				}
+			})
+			.catch((err) => {
+				if (!cancelled) {
+					console.error("Failed to load saved stack:", err);
+					setGenerateError("Failed to load saved stack. It may have been deleted.");
+				}
+			})
+			.finally(() => {
+				if (!cancelled) setIsLoadingStack(false);
+			});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [searchParams]);
 
 	// Load all services, presets, and skill packs from core registry
 	const allServices: ServiceDefinition[] = useMemo(() => getAllServices(), []);
@@ -299,6 +351,16 @@ export default function NewStackPage() {
 
 	return (
 		<div className="flex min-h-screen flex-col">
+			{/* Loading overlay when hydrating a saved stack */}
+			{isLoadingStack && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+					<div className="flex flex-col items-center gap-3">
+						<Loader2 className="h-8 w-8 animate-spin text-primary" />
+						<p className="text-sm text-muted-foreground">Loading saved stack…</p>
+					</div>
+				</div>
+			)}
+
 			{/* Header */}
 			<header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur-md">
 				<div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 md:px-6">
@@ -1139,6 +1201,9 @@ export default function NewStackPage() {
 						skillPacks: Array.from(selectedSkillPacks),
 						aiProviders: Array.from(selectedAiProviders),
 						gsdRuntimes: Array.from(selectedGsdRuntimes),
+					individualSkills: Array.from(selectedIndividualSkills.values()).map(
+						(skill) => ({ ...skill }),
+					),
 						proxy: "none",
 						gpu: false,
 						platform: "linux/amd64",

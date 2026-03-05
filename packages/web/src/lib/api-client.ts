@@ -327,6 +327,13 @@ export async function deleteSavedStack(id: string): Promise<void> {
   });
 }
 
+export async function fetchSavedStack(id: string): Promise<SavedStackResponse> {
+  const res = await apiFetch<{ stack: SavedStackResponse }>(`/stacks/${id}`, {
+    credentials: "include",
+  });
+  return res.stack;
+}
+
 // ── Favorites ─────────────────────────────────────────────────────────────────
 
 export interface FavoriteResponse {

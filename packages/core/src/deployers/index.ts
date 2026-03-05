@@ -13,6 +13,7 @@ export type {
 	DeployStep,
 	DeployTarget,
 	PaasDeployer,
+	PaasServer,
 } from "./types.js";
 
 import { CoolifyDeployer } from "./coolify.js";

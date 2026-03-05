@@ -13,43 +13,38 @@
  * /api/v1
  */
 
-import type {
-  DeployInput,
-  DeployResult,
-  DeployStep,
-  DeployTarget,
-  PaasDeployer
-} from "./types.js";
+import { sanitizeComposeForPaas } from "./strip-host-ports.js";
+import type { DeployInput, DeployResult, DeployStep, DeployTarget, PaasDeployer } from "./types.js";
 
 /* ----------------------------- */
 /* Coolify API Types */
 /* ----------------------------- */
 
 interface CoolifyProject {
-  uuid: string;
-  name: string;
-  environments?: {
-    uuid: string;
-    name: string;
-  }[];
+	uuid: string;
+	name: string;
+	environments?: {
+		uuid: string;
+		name: string;
+	}[];
 }
 
 interface CoolifyServer {
-  uuid: string;
-  name: string;
-  ip: string;
+	uuid: string;
+	name: string;
+	ip: string;
 }
 
 interface CoolifyService {
-  uuid: string;
-  name: string;
-  docker_compose_raw?: string;
+	uuid: string;
+	name: string;
+	docker_compose_raw?: string;
 }
 
 interface CoolifyDeployment {
-  message: string;
-  resource_uuid: string;
-  deployment_uuid: string;
+	message: string;
+	resource_uuid: string;
+	deployment_uuid: string;
 }
 
 /* ----------------------------- */
@@ -57,86 +52,81 @@ interface CoolifyDeployment {
 /* ----------------------------- */
 
 function apiUrl(target: DeployTarget, path: string) {
-  const base = target.instanceUrl.replace(/\/+$/, "");
-  return `${base}/api/v1${path}`;
+	const base = target.instanceUrl.replace(/\/+$/, "");
+	return `${base}/api/v1${path}`;
 }
 
 async function coolifyFetch<T>(
-  target: DeployTarget,
-  path: string,
-  options: { method?: string; body?: unknown } = {}
+	target: DeployTarget,
+	path: string,
+	options: { method?: string; body?: unknown } = {},
 ): Promise<T> {
+	const res = await fetch(apiUrl(target, path), {
+		method: options.method ?? "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${target.apiKey}`,
+		},
+		body: options.body ? JSON.stringify(options.body) : undefined,
+	});
 
-  const res = await fetch(apiUrl(target, path), {
-    method: options.method ?? "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${target.apiKey}`
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined
-  });
+	if (!res.ok) {
+		const text = await res.text().catch(() => "");
+		let detail = text;
 
-  if (!res.ok) {
+		try {
+			const json = JSON.parse(text);
+			detail = json.message || json.error || text;
+		} catch {}
 
-    const text = await res.text().catch(() => "");
-    let detail = text;
+		throw new Error(`Coolify API ${res.status}: ${detail}`);
+	}
 
-    try {
-      const json = JSON.parse(text);
-      detail = json.message || json.error || text;
-    } catch {}
+	const text = await res.text();
 
-    throw new Error(`Coolify API ${res.status}: ${detail}`);
-  }
+	if (!text) return undefined as T;
 
-  const text = await res.text();
-
-  if (!text) return undefined as T;
-
-  return JSON.parse(text);
+	return JSON.parse(text);
 }
 
 function hashString(str: string) {
-  let hash = 0;
+	let hash = 0;
 
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
+	for (let i = 0; i < str.length; i++) {
+		hash = (hash << 5) - hash + str.charCodeAt(i);
+		hash |= 0;
+	}
 
-  return hash;
+	return hash;
 }
 
 function parseEnvContent(envContent?: string) {
+	if (!envContent) return [];
 
-  if (!envContent) return [];
+	const result = [];
 
-  const result = [];
+	for (const line of envContent.split("\n")) {
+		const trimmed = line.trim();
 
-  for (const line of envContent.split("\n")) {
+		if (!trimmed || trimmed.startsWith("#")) continue;
 
-    const trimmed = line.trim();
+		const idx = trimmed.indexOf("=");
 
-    if (!trimmed || trimmed.startsWith("#")) continue;
+		if (idx <= 0) continue;
 
-    const idx = trimmed.indexOf("=");
+		const key = trimmed.slice(0, idx);
+		const value = trimmed.slice(idx + 1);
 
-    if (idx <= 0) continue;
+		result.push({
+			key,
+			value,
+			is_preview: false,
+			is_build_time: false,
+			is_literal: true,
+		});
+	}
 
-    const key = trimmed.slice(0, idx);
-    const value = trimmed.slice(idx + 1);
-
-    result.push({
-      key,
-      value,
-      is_preview: false,
-      is_build_time: false,
-      is_literal: true
-    });
-
-  }
-
-  return result;
+	return result;
 }
 
 /* ----------------------------- */
@@ -144,246 +134,202 @@ function parseEnvContent(envContent?: string) {
 /* ----------------------------- */
 
 export class CoolifyDeployer implements PaasDeployer {
+	readonly name = "Coolify";
+	readonly id = "coolify";
 
-  readonly name = "Coolify";
-  readonly id = "coolify";
+	async testConnection(target: DeployTarget) {
+		try {
+			await coolifyFetch(target, "/version");
 
-  async testConnection(target: DeployTarget) {
+			return { ok: true };
+		} catch (err) {
+			return {
+				ok: false,
+				error: err instanceof Error ? err.message : String(err),
+			};
+		}
+	}
 
-    try {
-
-      await coolifyFetch(target, "/version");
-
-      return { ok: true };
-
-    } catch (err) {
-
-      return {
-        ok: false,
-        error: err instanceof Error ? err.message : String(err)
-      };
-
-    }
-
-  }
-
-  async deploy(input: DeployInput): Promise<DeployResult> {
-
-	const step1: DeployStep = { step: "Discover server", status: "pending" };
-		const step2: DeployStep = { step: "Find or create project", status: "pending" };
-		const step3: DeployStep = { step: "Find or create service", status: "pending" };
-		const step4: DeployStep = { step: "Update environment variables", status: "pending" };
+	async deploy(input: DeployInput): Promise<DeployResult> {
+		const step1: DeployStep = { step: "Discover server", status: "pending" };
+		const step2: DeployStep = {
+			step: "Find or create project",
+			status: "pending",
+		};
+		const step3: DeployStep = {
+			step: "Find or create service",
+			status: "pending",
+		};
+		const step4: DeployStep = {
+			step: "Update environment variables",
+			status: "pending",
+		};
 		const step5: DeployStep = { step: "Trigger deployment", status: "pending" };
 		const steps: DeployStep[] = [step1, step2, step3, step4, step5];
 
 		const result: DeployResult = { success: false, steps };
 
-    try {
+		// Strip host port bindings — Coolify routes via Traefik,
+		// so host ports are unnecessary and cause "port already allocated" errors.
+		const composeYaml = sanitizeComposeForPaas(input.composeYaml);
 
-      /* ----------------------------- */
-      /* STEP 1: Discover server */
-      /* ----------------------------- */
+		try {
+			/* ----------------------------- */
+			/* STEP 1: Discover server */
+			/* ----------------------------- */
 
-      step1.status = "running";
+			step1.status = "running";
 
-      const servers = await coolifyFetch<CoolifyServer[]>(
-        input.target,
-        "/servers"
-      );
+			const servers = await coolifyFetch<CoolifyServer[]>(input.target, "/servers");
 
-      if (!servers.length) {
-        throw new Error("No Coolify servers available");
-      }
+			if (!servers.length) {
+				throw new Error("No Coolify servers available");
+			}
 
-      const server = servers[0]!;
+			const server = servers[0]!;
 
-      step1.status = "done";
-      step1.detail = `${server.name} (${server.ip})`;
+			step1.status = "done";
+			step1.detail = `${server.name} (${server.ip})`;
 
-      /* ----------------------------- */
-      /* STEP 2: Find or create project */
-      /* ----------------------------- */
+			/* ----------------------------- */
+			/* STEP 2: Find or create project */
+			/* ----------------------------- */
 
-      step2.status = "running";
+			step2.status = "running";
 
-      const projects = await coolifyFetch<CoolifyProject[]>(
-        input.target,
-        "/projects"
-      );
+			const projects = await coolifyFetch<CoolifyProject[]>(input.target, "/projects");
 
-      let project = projects.find(
-        p => p.name === input.projectName
-      );
+			let project = projects.find((p) => p.name === input.projectName);
 
-      if (!project) {
+			if (!project) {
+				project = await coolifyFetch<CoolifyProject>(input.target, "/projects", {
+					method: "POST",
+					body: {
+						name: input.projectName,
+						description: input.description ?? `Stack ${input.projectName}`,
+					},
+				});
+			}
 
-        project = await coolifyFetch<CoolifyProject>(
-          input.target,
-          "/projects",
-          {
-            method: "POST",
-            body: {
-              name: input.projectName,
-              description:
-                input.description ??
-                `Stack ${input.projectName}`
-            }
-          }
-        );
+			result.projectId = project.uuid;
 
-      }
+			step2.status = "done";
+			step2.detail = project.uuid;
 
-      result.projectId = project.uuid;
+			/* ----------------------------- */
+			/* Find environment */
+			/* ----------------------------- */
 
-      step2.status = "done";
-      step2.detail = project.uuid;
+			const projectDetail = await coolifyFetch<CoolifyProject>(
+				input.target,
+				`/projects/${project.uuid}`,
+			);
 
-      /* ----------------------------- */
-      /* Find environment */
-      /* ----------------------------- */
+			const env =
+				projectDetail.environments?.find((e) => e.name === "production") ??
+				projectDetail.environments?.[0];
 
-      const projectDetail = await coolifyFetch<CoolifyProject>(
-        input.target,
-        `/projects/${project.uuid}`
-      );
+			if (!env) throw new Error("No environment found");
 
-      const env =
-        projectDetail.environments?.find(e => e.name === "production")
-        ?? projectDetail.environments?.[0];
+			/* ----------------------------- */
+			/* STEP 3: Find or create service */
+			/* ----------------------------- */
 
-      if (!env) throw new Error("No environment found");
+			step3.status = "running";
 
-      /* ----------------------------- */
-      /* STEP 3: Find or create service */
-      /* ----------------------------- */
+			const services = await coolifyFetch<CoolifyService[]>(
+				input.target,
+				`/projects/${project.uuid}/services`,
+			);
 
-      step3.status = "running";
+			let service = services.find((s) => s.name === input.projectName);
 
-      const services = await coolifyFetch<CoolifyService[]>(
-        input.target,
-        `/projects/${project.uuid}/services`
-      );
+			if (!service) {
+				service = await coolifyFetch<CoolifyService>(input.target, "/services", {
+					method: "POST",
+					body: {
+						project_uuid: project.uuid,
 
-      let service = services.find(
-        s => s.name === input.projectName
-      );
+						server_uuid: server.uuid,
 
-      if (!service) {
+						environment_uuid: env.uuid,
 
-        service = await coolifyFetch<CoolifyService>(
-          input.target,
-          "/services",
-          {
-            method: "POST",
-            body: {
+						environment_name: env.name,
 
-              project_uuid: project.uuid,
+						docker_compose_raw: composeYaml,
 
-              server_uuid: server.uuid,
+						name: input.projectName,
+					},
+				});
+			} else {
+				const newHash = hashString(composeYaml);
+				const oldHash = hashString(service.docker_compose_raw ?? "");
 
-              environment_uuid: env.uuid,
+				if (newHash !== oldHash) {
+					await coolifyFetch(input.target, `/services/${service.uuid}`, {
+						method: "PATCH",
+						body: {
+							docker_compose_raw: composeYaml,
+						},
+					});
+				}
+			}
 
-              environment_name: env.name,
+			result.composeId = service.uuid;
 
-              docker_compose_raw: input.composeYaml,
+			step3.status = "done";
+			step3.detail = service.uuid;
 
-              name: input.projectName
+			/* ----------------------------- */
+			/* STEP 4: Environment variables */
+			/* ----------------------------- */
 
-            }
-          }
-        );
+			step4.status = "running";
 
-      } else {
+			const envVars = parseEnvContent(input.envContent);
 
-        const newHash = hashString(input.composeYaml);
-        const oldHash = hashString(service.docker_compose_raw ?? "");
+			if (envVars.length) {
+				await coolifyFetch(input.target, `/services/${service.uuid}/envs`, {
+					method: "PATCH",
+					body: envVars,
+				});
+			}
 
-        if (newHash !== oldHash) {
+			step4.status = "done";
+			step4.detail = `${envVars.length} vars`;
 
-          await coolifyFetch(
-            input.target,
-            `/services/${service.uuid}`,
-            {
-              method: "PATCH",
-              body: {
-                docker_compose_raw: input.composeYaml
-              }
-            }
-          );
+			/* ----------------------------- */
+			/* STEP 5: Deploy */
+			/* ----------------------------- */
 
-        }
+			step5.status = "running";
 
-      }
+			const deploy = await coolifyFetch<{ deployments: CoolifyDeployment[] }>(
+				input.target,
+				`/deploy?uuid=${service.uuid}&force=true`,
+			);
 
-      result.composeId = service.uuid;
+			step5.status = "done";
+			step5.detail = deploy.deployments?.[0]?.deployment_uuid ?? "Deployment started";
 
-      step3.status = "done";
-      step3.detail = service.uuid;
+			result.success = true;
 
-      /* ----------------------------- */
-      /* STEP 4: Environment variables */
-      /* ----------------------------- */
+			const base = input.target.instanceUrl.replace(/\/+$/, "");
 
-      step4.status = "running";
+			result.dashboardUrl = `${base}/project/${project.uuid}`;
 
-      const envVars = parseEnvContent(input.envContent);
+			return result;
+		} catch (err) {
+			const running = steps.find((s) => s.status === "running");
 
-      if (envVars.length) {
+			if (running) {
+				running.status = "error";
+				running.detail = err instanceof Error ? err.message : String(err);
+			}
 
-        await coolifyFetch(
-          input.target,
-          `/services/${service.uuid}/envs`,
-          {
-            method: "PATCH",
-            body: envVars
-          }
-        );
+			result.error = err instanceof Error ? err.message : String(err);
 
-      }
-
-      step4.status = "done";
-      step4.detail = `${envVars.length} vars`;
-
-      /* ----------------------------- */
-      /* STEP 5: Deploy */
-      /* ----------------------------- */
-
-      step5.status = "running";
-
-      const deploy = await coolifyFetch<{ deployments: CoolifyDeployment[] }>(
-        input.target,
-        `/deploy?uuid=${service.uuid}&force=true`
-      );
-
-      step5.status = "done";
-      step5.detail =
-        deploy.deployments?.[0]?.deployment_uuid ?? "Deployment started";
-
-      result.success = true;
-
-      const base = input.target.instanceUrl.replace(/\/+$/, "");
-
-      result.dashboardUrl = `${base}/project/${project.uuid}`;
-
-      return result;
-
-    } catch (err) {
-
-      const running = steps.find(s => s.status === "running");
-
-      if (running) {
-        running.status = "error";
-        running.detail =
-          err instanceof Error ? err.message : String(err);
-      }
-
-      result.error =
-        err instanceof Error ? err.message : String(err);
-
-      return result;
-
-    }
-
-  }
-
+			return result;
+		}
+	}
 }

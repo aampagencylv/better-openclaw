@@ -8,6 +8,7 @@ import {
 	Loader2,
 	LogOut,
 	Package,
+	Pencil,
 	Plus,
 	Star,
 	Trash2,
@@ -299,6 +300,15 @@ export default function DashboardPage() {
 								</div>
 
 								<div className="flex items-center gap-2 shrink-0">
+									{/* Edit in Builder */}
+									<Link
+										href={`/new?load=${stack.id}`}
+										title="Edit in Builder"
+										className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground transition-all hover:border-accent/30 hover:bg-accent/10 hover:text-accent"
+									>
+										<Pencil className="h-3.5 w-3.5" />
+									</Link>
+
 									{/* Favorite toggle */}
 									<button
 										type="button"

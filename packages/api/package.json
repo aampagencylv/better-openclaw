@@ -21,7 +21,8 @@
   "scripts": {
     "build": "tsdown",
     "build:tsc": "tsc",
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/index.ts --env-file=.env",
+    "dev:dot": "dotenvx run -f.env -- tsx watch src/index.ts --env-file=.env",
     "start": "NODE_ENV=production node dist/index.mjs",
     "start:windows": "NODE_ENV=production node dist/index.mjs",
     "test": "vitest run",
@@ -54,6 +55,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.3.3",
     "better-sqlite3": "^12.6.2",
+    "dotenv": "^17.3.1",
     "tsdown": "^0.20.3",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",

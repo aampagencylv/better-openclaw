@@ -33,6 +33,8 @@ export interface DeployInput {
 	envContent: string;
 	/** Optional description */
 	description?: string;
+	/** Optional server ID to deploy to (for PaaS platforms managing multiple servers) */
+	serverId?: string;
 }
 
 /** Step-level status for deploy progress. */
@@ -57,6 +59,16 @@ export interface DeployResult {
 	error?: string;
 }
 
+/** Server available on a PaaS platform. */
+export interface PaasServer {
+	/** Server ID (used as identifier when deploying) */
+	id: string;
+	/** Human-readable server name */
+	name: string;
+	/** Server IP address or hostname */
+	ip?: string;
+}
+
 /** Interface that all PaaS deployers implement. */
 export interface PaasDeployer {
 	/** Human-readable name */
@@ -67,177 +79,176 @@ export interface PaasDeployer {
 	testConnection(target: DeployTarget): Promise<{ ok: boolean; error?: string }>;
 	/** Deploy a compose stack */
 	deploy(input: DeployInput): Promise<DeployResult>;
+	/** List available servers on the PaaS instance (optional — not all providers manage multiple servers) */
+	listServers?(target: DeployTarget): Promise<PaasServer[]>;
 }
 
-
-
 export interface ProviderCapabilities {
-  compose: boolean
-  dockerImage: boolean
-  volumes: boolean
-  domains: boolean
-  secrets: boolean
+	compose: boolean;
+	dockerImage: boolean;
+	volumes: boolean;
+	domains: boolean;
+	secrets: boolean;
 }
 
 export interface DeploymentResult {
-  success: boolean
-  url?: string
-  message?: string
+	success: boolean;
+	url?: string;
+	message?: string;
 }
 
 export interface DeploymentProvider {
-  id: string
-  name: string
+	id: string;
+	name: string;
 
-  capabilities: ProviderCapabilities
+	capabilities: ProviderCapabilities;
 
-  deploy(config: NormalizedApp): Promise<DeploymentResult>
+	deploy(config: NormalizedApp): Promise<DeploymentResult>;
 
-  createSecret?(key: string, value: string): Promise<void>
+	createSecret?(key: string, value: string): Promise<void>;
 
-  createDomain?(service: string, domain: string): Promise<void>
+	createDomain?(service: string, domain: string): Promise<void>;
 }
 
 export interface NormalizedApp {
-  name: string
-  services: NormalizedService[]
-  env: Record<string,string>
+	name: string;
+	services: NormalizedService[];
+	env: Record<string, string>;
 }
 
 export interface NormalizedService {
-  name: string
-  image?: string
-  build?: string
-  ports?: number[]
-  volumes?: string[]
-  env?: Record<string,string>
+	name: string;
+	image?: string;
+	build?: string;
+	ports?: number[];
+	volumes?: string[];
+	env?: Record<string, string>;
 }
 
-
 export interface DokployEnvironment {
-  environmentId: string
-  name: string
-  description: string
-  createdAt: string
-  env: string
-  projectId: string
-  isDefault: boolean
-  applications: DokployApplication[]
-  mariadb: any[]
-  mongo: any[]
-  mysql: any[]
-  postgres: any[]
-  redis: any[]
-  compose: any[]
-  project: Project
+	environmentId: string;
+	name: string;
+	description: string;
+	createdAt: string;
+	env: string;
+	projectId: string;
+	isDefault: boolean;
+	applications: DokployApplication[];
+	mariadb: any[];
+	mongo: any[];
+	mysql: any[];
+	postgres: any[];
+	redis: any[];
+	compose: any[];
+	project: Project;
 }
 
 export interface DokployApplication {
-  applicationId: string
-  name: string
-  appName: string
-  description: string
-  env: string
-  previewEnv: any
-  watchPaths: any[]
-  previewBuildArgs: any
-  previewBuildSecrets: any
-  previewLabels: any
-  previewWildcard: any
-  previewPort: number
-  previewHttps: boolean
-  previewPath: string
-  previewCertificateType: string
-  previewCustomCertResolver: any
-  previewLimit: number
-  isPreviewDeploymentsActive: boolean
-  previewRequireCollaboratorPermissions: boolean
-  rollbackActive: boolean
-  buildArgs: string
-  buildSecrets: string
-  memoryReservation: any
-  memoryLimit: any
-  cpuReservation: any
-  cpuLimit: any
-  title: any
-  enabled: any
-  subtitle: any
-  command: any
-  args: any
-  refreshToken: string
-  sourceType: string
-  cleanCache: boolean
-  repository: string
-  owner: string
-  branch: string
-  buildPath: string
-  triggerType: string
-  autoDeploy: boolean
-  gitlabProjectId: any
-  gitlabRepository: any
-  gitlabOwner: any
-  gitlabBranch: any
-  gitlabBuildPath: string
-  gitlabPathNamespace: any
-  giteaRepository: any
-  giteaOwner: any
-  giteaBranch: any
-  giteaBuildPath: string
-  bitbucketRepository: any
-  bitbucketRepositorySlug: any
-  bitbucketOwner: any
-  bitbucketBranch: any
-  bitbucketBuildPath: string
-  username: any
-  password: any
-  dockerImage: any
-  registryUrl: any
-  customGitUrl: any
-  customGitBranch: any
-  customGitBuildPath: any
-  customGitSSHKeyId: any
-  enableSubmodules: boolean
-  dockerfile: any
-  dockerContextPath: any
-  dockerBuildStage: any
-  dropBuildPath: any
-  healthCheckSwarm: any
-  restartPolicySwarm: any
-  placementSwarm: any
-  updateConfigSwarm: any
-  rollbackConfigSwarm: any
-  modeSwarm: any
-  labelsSwarm: any
-  networkSwarm: any
-  stopGracePeriodSwarm: any
-  endpointSpecSwarm: any
-  ulimitsSwarm: any
-  replicas: number
-  applicationStatus: string
-  buildType: string
-  railpackVersion: string
-  herokuVersion: any
-  publishDirectory: any
-  isStaticSpa: any
-  createEnvFile: boolean
-  createdAt: string
-  registryId: any
-  rollbackRegistryId: any
-  environmentId: string
-  githubId: string
-  gitlabId: any
-  giteaId: any
-  bitbucketId: any
-  serverId: string
-  buildServerId: any
-  buildRegistryId: any
+	applicationId: string;
+	name: string;
+	appName: string;
+	description: string;
+	env: string;
+	previewEnv: any;
+	watchPaths: any[];
+	previewBuildArgs: any;
+	previewBuildSecrets: any;
+	previewLabels: any;
+	previewWildcard: any;
+	previewPort: number;
+	previewHttps: boolean;
+	previewPath: string;
+	previewCertificateType: string;
+	previewCustomCertResolver: any;
+	previewLimit: number;
+	isPreviewDeploymentsActive: boolean;
+	previewRequireCollaboratorPermissions: boolean;
+	rollbackActive: boolean;
+	buildArgs: string;
+	buildSecrets: string;
+	memoryReservation: any;
+	memoryLimit: any;
+	cpuReservation: any;
+	cpuLimit: any;
+	title: any;
+	enabled: any;
+	subtitle: any;
+	command: any;
+	args: any;
+	refreshToken: string;
+	sourceType: string;
+	cleanCache: boolean;
+	repository: string;
+	owner: string;
+	branch: string;
+	buildPath: string;
+	triggerType: string;
+	autoDeploy: boolean;
+	gitlabProjectId: any;
+	gitlabRepository: any;
+	gitlabOwner: any;
+	gitlabBranch: any;
+	gitlabBuildPath: string;
+	gitlabPathNamespace: any;
+	giteaRepository: any;
+	giteaOwner: any;
+	giteaBranch: any;
+	giteaBuildPath: string;
+	bitbucketRepository: any;
+	bitbucketRepositorySlug: any;
+	bitbucketOwner: any;
+	bitbucketBranch: any;
+	bitbucketBuildPath: string;
+	username: any;
+	password: any;
+	dockerImage: any;
+	registryUrl: any;
+	customGitUrl: any;
+	customGitBranch: any;
+	customGitBuildPath: any;
+	customGitSSHKeyId: any;
+	enableSubmodules: boolean;
+	dockerfile: any;
+	dockerContextPath: any;
+	dockerBuildStage: any;
+	dropBuildPath: any;
+	healthCheckSwarm: any;
+	restartPolicySwarm: any;
+	placementSwarm: any;
+	updateConfigSwarm: any;
+	rollbackConfigSwarm: any;
+	modeSwarm: any;
+	labelsSwarm: any;
+	networkSwarm: any;
+	stopGracePeriodSwarm: any;
+	endpointSpecSwarm: any;
+	ulimitsSwarm: any;
+	replicas: number;
+	applicationStatus: string;
+	buildType: string;
+	railpackVersion: string;
+	herokuVersion: any;
+	publishDirectory: any;
+	isStaticSpa: any;
+	createEnvFile: boolean;
+	createdAt: string;
+	registryId: any;
+	rollbackRegistryId: any;
+	environmentId: string;
+	githubId: string;
+	gitlabId: any;
+	giteaId: any;
+	bitbucketId: any;
+	serverId: string;
+	buildServerId: any;
+	buildRegistryId: any;
 }
 
 export interface Project {
-  projectId: string
-  name: string
-  description: string
-  createdAt: string
-  organizationId: string
-  env: string
+	projectId: string;
+	name: string;
+	description: string;
+	createdAt: string;
+	organizationId: string;
+	env: string;
 }

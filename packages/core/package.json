@@ -11,7 +11,7 @@
     "directory": "packages/core"
   },
   "homepage": "https://better-openclaw.dev",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.30.3",
   "sideEffects": false,
   "main": "dist/index.mjs",
   "types": "dist/index.d.ts",
