@@ -69,7 +69,7 @@ export default function SignInPage() {
 					onSuccess: () => {
 						router.push("/dashboard");
 					},
-					onError: (ctx) => {
+					onError: (ctx: { error: { message?: string } }) => {
 						setError(ctx.error.message ?? "Passkey authentication failed");
 					},
 				},

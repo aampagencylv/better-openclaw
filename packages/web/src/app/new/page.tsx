@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { SaveStackModal } from "@/components/save-stack-modal";
 import { DependencyGraph } from "@/components/stack-builder/DependencyGraph";
 import { DeployModal } from "@/components/stack-builder/DeployModal";
@@ -53,6 +53,18 @@ const CLAWEXA_DEPLOY_URL = process.env.NEXT_PUBLIC_CLAWEXA_DEPLOY_URL ?? "";
 const CLAWEXA_SITE = "https://clawexa.net";
 
 export default function NewStackPage() {
+	return (
+		<Suspense fallback={
+			<div className="flex min-h-screen items-center justify-center bg-background">
+				<Loader2 className="h-8 w-8 animate-spin text-primary" />
+			</div>
+		}>
+			<NewStackPageInner />
+		</Suspense>
+	);
+}
+
+function NewStackPageInner() {
 	const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set(["tailscale"]));
 	const [projectName, setProjectName] = useState("my-stack");
 	const [searchQuery, setSearchQuery] = useState("");
