@@ -146,8 +146,20 @@ export const ragflowDefinition: ServiceDefinition = {
 
 	skills: [{ skillId: "ragflow-pipeline", autoInstall: true }],
 	openclawEnvVars: [
-		{ key: "RAGFLOW_HOST", defaultValue: "ragflow", description: "RAGFlow API host" },
-		{ key: "RAGFLOW_PORT", defaultValue: "9380", description: "RAGFlow HTTP port" },
+		{
+			key: "RAGFLOW_HOST",
+			defaultValue: "ragflow",
+			description: "RAGFlow API host",
+			secret: false,
+			required: false,
+		},
+		{
+			key: "RAGFLOW_PORT",
+			defaultValue: "9380",
+			description: "RAGFlow HTTP port",
+			secret: false,
+			required: false,
+		},
 	],
 
 	docsUrl: "https://ragflow.io/docs/configurations",

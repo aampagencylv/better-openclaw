@@ -156,8 +156,16 @@ export const appwriteDefinition: ServiceDefinition = {
 			key: "APPWRITE_HOST",
 			defaultValue: "appwrite",
 			description: "Appwrite service host for API calls",
+			secret: false,
+			required: false,
 		},
-		{ key: "APPWRITE_PORT", defaultValue: "80", description: "Appwrite HTTP port" },
+		{
+			key: "APPWRITE_PORT",
+			defaultValue: "80",
+			description: "Appwrite HTTP port",
+			secret: false,
+			required: false,
+		},
 	],
 
 	docsUrl: "https://appwrite.io/docs/advanced/self-hosting/installation",

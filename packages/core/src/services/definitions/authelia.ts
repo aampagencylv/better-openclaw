@@ -127,6 +127,8 @@ authelia --config /config/configuration.yml"`,
 			key: "AUTHELIA_PORTAL_URL",
 			defaultValue: "http://authelia:9091",
 			description: "Authelia portal URL for reverse proxy",
+			secret: false,
+			required: false,
 		},
 	],
 
