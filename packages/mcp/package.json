@@ -42,7 +42,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@better-openclaw/core": "^1.0.21",
+    "@better-openclaw/core": "^1.0.22",
     "@modelcontextprotocol/sdk": "^1.12.0"
   },
   "devDependencies": {

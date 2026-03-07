@@ -35,10 +35,10 @@ jobs:
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # - name: Publish MCP to npm
-      #   run: pnpm publish --filter @better-openclaw/mcp --no-git-checks --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish MCP to npm
+        run: pnpm publish --filter @better-openclaw/mcp --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish CLI to npm
         run: pnpm publish --filter create-better-openclaw --no-git-checks --access public
