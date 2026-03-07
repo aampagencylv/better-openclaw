@@ -36,21 +36,19 @@ export default function SkillsPage({ onRegisterStack }: SkillsPageProps) {
 				onRegister={onRegisterStack}
 			/>
 
-			{selectedStackId && skills && (
-				<>
-					{skills.length > 0 ? (
-						<div className="space-y-3">
-							{skills.map((skill) => (
-								<SkillCard key={skill._id} skill={skill} onEdit={() => setEditingSkill(skill)} />
-							))}
-						</div>
-					) : (
-						<p className="text-sm text-muted-foreground text-center py-12">
-							No skills found in this stack.
-						</p>
-					)}
-				</>
-			)}
+			{selectedStackId &&
+				skills &&
+				(skills.length > 0 ? (
+					<div className="space-y-3">
+						{skills.map((skill) => (
+							<SkillCard key={skill._id} skill={skill} onEdit={() => setEditingSkill(skill)} />
+						))}
+					</div>
+				) : (
+					<p className="text-sm text-muted-foreground text-center py-12">
+						No skills found in this stack.
+					</p>
+				))}
 
 			{!selectedStackId && (
 				<p className="text-sm text-muted-foreground text-center py-12">

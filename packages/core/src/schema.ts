@@ -23,6 +23,17 @@ export const ServiceCategorySchema = z.enum([
 	"desktop",
 	"streaming",
 	"security",
+	"billing",
+	"crm",
+	"email-marketing",
+	"forms",
+	"api-gateway",
+	"backup",
+	"voice",
+	"ecommerce",
+	"collaboration",
+	"ai-observability",
+	"fine-tuning",
 ]);
 
 export const MaturitySchema = z.enum(["stable", "beta", "experimental"]);

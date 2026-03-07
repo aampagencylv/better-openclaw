@@ -1,18 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-	Bot,
-	Cpu,
-	Globe,
-	Layers,
-	LayoutDashboard,
-	Package,
-	ShieldCheck,
-	Terminal,
-	Zap,
-} from "lucide-react";
-import { ReactNode } from "react";
+import { Bot, Globe, LayoutDashboard, Package, Terminal } from "lucide-react";
 
 /* ── Feature Data ──────────────────────────────────────────────────────────── */
 const features = [
@@ -109,7 +98,7 @@ export function FeaturesGridAlternative() {
 					viewport={{ once: true, amount: 0.1 }}
 					className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 auto-rows-[minmax(180px,auto)]"
 				>
-					{features.map((f, i) => {
+					{features.map((f, _i) => {
 						const Icon = f.icon;
 						return (
 							<motion.div

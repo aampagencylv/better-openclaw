@@ -43,6 +43,10 @@ describe("preset smoke tests", () => {
 				generateSecrets: false,
 				openclawVersion: "latest",
 				monitoring: false,
+				openclawImage: "official",
+				openclawInstallMethod: "docker",
+				deployTarget: "local",
+				hardened: false,
 			});
 
 			expect(result.files["docker-compose.yml"]).toBeDefined();

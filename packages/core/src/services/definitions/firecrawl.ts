@@ -1,0 +1,146 @@
+import type { ServiceDefinition } from "../../types.js";
+
+export const firecrawlDefinition: ServiceDefinition = {
+	id: "firecrawl",
+	name: "Firecrawl",
+	description:
+		"Web ingestion and crawling API for turning live websites into clean documents, markdown, and structured data for agent and RAG workflows.",
+	category: "browser",
+	icon: "🔥",
+
+	image: "ghcr.io/firecrawl/firecrawl",
+	imageTag: "latest",
+	ports: [
+		{
+			host: 3002,
+			container: 3002,
+			description: "Firecrawl API",
+			exposed: true,
+		},
+	],
+	volumes: [],
+	environment: [
+		{
+			key: "PORT",
+			defaultValue: "3002",
+			secret: false,
+			description: "Firecrawl API port",
+			required: true,
+		},
+		{
+			key: "HOST",
+			defaultValue: "0.0.0.0",
+			secret: false,
+			description: "Host interface for Firecrawl",
+			required: true,
+		},
+		{
+			key: "REDIS_URL",
+			defaultValue: "redis://:${REDIS_PASSWORD}@redis:6379",
+			secret: true,
+			description: "Redis URL for Firecrawl state and caching",
+			required: true,
+		},
+		{
+			key: "PLAYWRIGHT_MICROSERVICE_URL",
+			defaultValue: "http://firecrawl-playwright:3000/scrape",
+			secret: false,
+			description: "Internal Playwright microservice URL",
+			required: true,
+		},
+		{
+			key: "NUQ_RABBITMQ_URL",
+			defaultValue: "amqp://openclaw:${RABBITMQ_PASSWORD}@rabbitmq:5672/",
+			secret: true,
+			description: "RabbitMQ URL for Firecrawl job queues",
+			required: true,
+		},
+		{
+			key: "POSTGRES_USER",
+			defaultValue: "firecrawl",
+			secret: false,
+			description: "PostgreSQL user for Firecrawl",
+			required: true,
+		},
+		{
+			key: "POSTGRES_PASSWORD",
+			defaultValue: "${FIRECRAWL_DB_PASSWORD}",
+			secret: true,
+			description: "PostgreSQL password for Firecrawl",
+			required: true,
+		},
+		{
+			key: "POSTGRES_DB",
+			defaultValue: "firecrawl",
+			secret: false,
+			description: "PostgreSQL database name for Firecrawl",
+			required: true,
+		},
+		{
+			key: "POSTGRES_HOST",
+			defaultValue: "postgresql",
+			secret: false,
+			description: "PostgreSQL host for Firecrawl",
+			required: true,
+		},
+		{
+			key: "POSTGRES_PORT",
+			defaultValue: "5432",
+			secret: false,
+			description: "PostgreSQL port for Firecrawl",
+			required: true,
+		},
+		{
+			key: "NUM_WORKERS_PER_QUEUE",
+			defaultValue: "8",
+			secret: false,
+			description: "Workers per Firecrawl queue",
+			required: true,
+		},
+		{
+			key: "CRAWL_CONCURRENT_REQUESTS",
+			defaultValue: "10",
+			secret: false,
+			description: "Concurrent crawl requests",
+			required: true,
+		},
+		{
+			key: "MAX_CONCURRENT_JOBS",
+			defaultValue: "5",
+			secret: false,
+			description: "Maximum concurrent jobs",
+			required: true,
+		},
+		{
+			key: "BROWSER_POOL_SIZE",
+			defaultValue: "5",
+			secret: false,
+			description: "Size of the browser pool",
+			required: true,
+		},
+	],
+	healthcheck: {
+		test: "curl -sf http://localhost:3002/ || exit 1",
+		interval: "30s",
+		timeout: "10s",
+		retries: 5,
+		startPeriod: "45s",
+	},
+	dependsOn: ["postgresql", "redis", "rabbitmq", "firecrawl-playwright"],
+	restartPolicy: "unless-stopped",
+	networks: ["openclaw-network"],
+
+	skills: [],
+	openclawEnvVars: [],
+
+	docsUrl: "https://docs.firecrawl.dev/contributing/self-host",
+	tags: ["crawl", "scrape", "browser", "rag", "research", "web-ingestion"],
+	maturity: "beta",
+
+	requires: ["postgresql", "redis", "rabbitmq", "firecrawl-playwright"],
+	recommends: ["meilisearch", "qdrant", "open-webui"],
+	conflictsWith: [],
+
+	minMemoryMB: 2048,
+	gpuRequired: false,
+};

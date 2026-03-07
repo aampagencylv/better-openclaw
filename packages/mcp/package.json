@@ -1,0 +1,68 @@
+{
+  "name": "@better-openclaw/mcp",
+  "version": "1.0.0",
+  "private": false,
+  "description": "MCP server for OpenClaw — exposes Docker Compose stack generation capabilities to AI agents via the Model Context Protocol",
+  "author": "bidew.io <bachir@bidew.io>",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bidewio/better-openclaw.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://better-openclaw.dev",
+  "bugs": {
+    "url": "https://github.com/bidewio/better-openclaw/issues"
+  },
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "bin": {
+    "better-openclaw-mcp": "./dist/index.mjs"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.mjs",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "lint": "biome check src/",
+    "typecheck": "tsdown --config tsdown.config.ts --no-write --dts --logLevel error",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@better-openclaw/core": "^1.0.21",
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.2",
+    "tsdown": "^0.21.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "openclaw",
+    "better-openclaw",
+    "mcp",
+    "model-context-protocol",
+    "ai-agent",
+    "docker-compose",
+    "infrastructure",
+    "self-hosted"
+  ]
+}

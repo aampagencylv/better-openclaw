@@ -73,7 +73,12 @@ export default function AddTaskModal({ onClose, onCreated, initialAssigneeId }: 
 
 	return (
 		<div className="fixed inset-0 z-200 flex items-center justify-center">
-			<div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+			<button
+				aria-label="Close modal backdrop"
+				type="button"
+				className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+				onClick={onClose}
+			/>
 			<form
 				onSubmit={handleSubmit}
 				className="relative z-10 bg-card border border-border rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4"
@@ -91,21 +96,26 @@ export default function AddTaskModal({ onClose, onCreated, initialAssigneeId }: 
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Title</label>
+					<label htmlFor="task-title" className="mb-1 block text-sm text-muted-foreground">
+						Title
+					</label>
 					<input
+						id="task-title"
 						type="text"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
 						className="w-full px-3 py-2 bg-input rounded-lg border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
 						placeholder="What needs to be done?"
 						required
-						autoFocus
 					/>
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Description</label>
+					<label htmlFor="task-description" className="mb-1 block text-sm text-muted-foreground">
+						Description
+					</label>
 					<textarea
+						id="task-description"
 						value={description}
 						onChange={(e) => setDescription(e.target.value)}
 						className="w-full px-3 py-2 bg-input rounded-lg border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-none"
@@ -115,7 +125,7 @@ export default function AddTaskModal({ onClose, onCreated, initialAssigneeId }: 
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Tags</label>
+					<p className="mb-1 block text-sm text-muted-foreground">Tags</p>
 					<div className="flex flex-wrap gap-1.5">
 						{TAG_PRESETS.map((tag) => (
 							<button
@@ -136,7 +146,7 @@ export default function AddTaskModal({ onClose, onCreated, initialAssigneeId }: 
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Color</label>
+					<p className="mb-1 block text-sm text-muted-foreground">Color</p>
 					<div className="flex gap-2">
 						{BORDER_COLORS.map((color) => (
 							<button

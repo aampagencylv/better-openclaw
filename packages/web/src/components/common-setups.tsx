@@ -50,7 +50,7 @@ export function CommonSetups() {
 							style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
 						/>
 						<span className="font-mono text-xs tracking-widest text-primary uppercase">
-							// OPERATIONAL_LOGIC
+							OPERATIONAL_LOGIC
 						</span>
 					</div>
 

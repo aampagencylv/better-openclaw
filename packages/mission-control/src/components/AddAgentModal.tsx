@@ -43,7 +43,12 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 
 	return (
 		<div className="fixed inset-0 z-200 flex items-center justify-center">
-			<div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+			<button
+				aria-label="Close modal backdrop"
+				type="button"
+				className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+				onClick={onClose}
+			/>
 			<form
 				onSubmit={handleSubmit}
 				className="relative z-10 bg-card border border-border rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-4"
@@ -61,7 +66,7 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Avatar</label>
+					<p className="mb-1 block text-sm text-muted-foreground">Avatar</p>
 					<div className="flex flex-wrap gap-2">
 						{AVATARS.map((a) => (
 							<button
@@ -82,21 +87,26 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Name</label>
+					<label htmlFor="agent-name" className="mb-1 block text-sm text-muted-foreground">
+						Name
+					</label>
 					<input
+						id="agent-name"
 						type="text"
 						value={name}
 						onChange={(e) => setName(e.target.value)}
 						className="w-full px-3 py-2 bg-input rounded-lg border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
 						placeholder="Agent name"
 						required
-						autoFocus
 					/>
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Role</label>
+					<label htmlFor="agent-role" className="mb-1 block text-sm text-muted-foreground">
+						Role
+					</label>
 					<input
+						id="agent-role"
 						type="text"
 						value={role}
 						onChange={(e) => setRole(e.target.value)}
@@ -106,7 +116,7 @@ export default function AddAgentModal({ onClose, onCreated }: AddAgentModalProps
 				</div>
 
 				<div>
-					<label className="block text-sm text-muted-foreground mb-1">Level</label>
+					<p className="mb-1 block text-sm text-muted-foreground">Level</p>
 					<div className="flex gap-2">
 						{LEVELS.map((l) => (
 							<button

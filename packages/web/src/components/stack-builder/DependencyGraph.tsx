@@ -158,6 +158,7 @@ export function DependencyGraph({ resolverOutput }: DependencyGraphProps) {
 				className="mx-auto block max-w-full"
 				style={{ minWidth: Math.min(svgWidth, 300) }}
 			>
+				<title>Service dependency graph</title>
 				<defs>
 					<marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
 						<polygon points="0 0, 8 3, 0 6" fill="var(--color-accent, #FF6B35)" />
@@ -165,7 +166,7 @@ export function DependencyGraph({ resolverOutput }: DependencyGraphProps) {
 				</defs>
 
 				{/* Edges */}
-				{edges.map((edge, i) => {
+				{edges.map((edge) => {
 					const fromNode = nodeMap.get(edge.from);
 					const toNode = nodeMap.get(edge.to);
 					if (!fromNode || !toNode) return null;
@@ -180,7 +181,7 @@ export function DependencyGraph({ resolverOutput }: DependencyGraphProps) {
 
 					return (
 						<path
-							key={`edge-${i}`}
+							key={`${edge.from}-${edge.to}`}
 							d={`M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`}
 							fill="none"
 							stroke="var(--color-accent, #FF6B35)"

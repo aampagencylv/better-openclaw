@@ -128,6 +128,94 @@ const presets: Preset[] = [
 		skillPacks: [],
 		estimatedMemoryMB: 2048,
 	},
+	// ── New service presets ─────────────────────────────────────────────────
+	{
+		id: "backend-platform",
+		name: "Backend Platform",
+		description:
+			"BaaS stack with Appwrite, MariaDB, Redis, RabbitMQ for auth, storage, and async workflows",
+		services: ["appwrite", "mariadb", "redis", "rabbitmq", "caddy"],
+		skillPacks: ["appwrite-platform"],
+		estimatedMemoryMB: 3072,
+	},
+	{
+		id: "rag-platform",
+		name: "RAG Platform",
+		description:
+			"RAGFlow with MySQL, Redis, MinIO, OpenSearch for knowledge ingestion and grounded AI assistants",
+		services: ["ragflow", "mysql", "redis", "minio", "opensearch", "caddy"],
+		skillPacks: ["ragflow-platform"],
+		estimatedMemoryMB: 6144,
+	},
+	{
+		id: "zero-trust",
+		name: "Zero-Trust Security",
+		description:
+			"SSO, secrets management, and access control with Authelia, Keycloak, and Infisical",
+		services: ["authelia", "keycloak", "infisical", "postgresql", "redis", "caddy"],
+		skillPacks: ["authelia-security"],
+		estimatedMemoryMB: 3584,
+	},
+	{
+		id: "content-platform",
+		name: "Content Platform",
+		description: "CMS and newsletter stack with Directus, Strapi, Listmonk, and Stirling PDF",
+		services: ["directus", "strapi", "listmonk", "postgresql", "redis", "stirling-pdf", "caddy"],
+		skillPacks: ["cms-stack"],
+		estimatedMemoryMB: 3584,
+	},
+	{
+		id: "ai-orchestrator",
+		name: "AI Orchestrator",
+		description: "Langflow and Firecrawl for building and deploying AI workflows",
+		services: ["langflow", "firecrawl", "postgresql", "redis", "caddy"],
+		skillPacks: ["ai-agent-orchestra"],
+		estimatedMemoryMB: 3072,
+	},
+	// ── New Presets (from feature analysis) ───────────────────────────────────
+	{
+		id: "support-desk",
+		name: "Support Desk",
+		description:
+			"AI-powered customer support with live chat, LLM observability, and ticket management",
+		services: ["chatwoot", "chatwoot-worker", "langfuse", "redis", "postgresql", "caddy"],
+		skillPacks: ["customer-support"],
+		estimatedMemoryMB: 3072,
+	},
+	{
+		id: "sales-machine",
+		name: "Sales Machine",
+		description:
+			"CRM-driven sales pipeline with email marketing, newsletters, and workflow automation",
+		services: ["twenty", "mautic", "listmonk", "n8n", "postgresql", "mysql", "redis", "caddy"],
+		skillPacks: ["sales-pipeline"],
+		estimatedMemoryMB: 4096,
+	},
+	{
+		id: "data-warehouse",
+		name: "Data Warehouse",
+		description: "End-to-end data pipeline with DAG orchestration, 300+ connectors, and monitoring",
+		services: ["airflow", "airbyte", "postgresql", "grafana", "prometheus", "redis", "caddy"],
+		skillPacks: ["data-pipeline"],
+		estimatedMemoryMB: 4096,
+	},
+	{
+		id: "voice-center",
+		name: "Voice Center",
+		description:
+			"AI voice agent stack with programmable telephony, transcription, and real-time comms",
+		services: ["fonoster", "livekit", "whisper", "redis", "caddy"],
+		skillPacks: ["voice-agent"],
+		estimatedMemoryMB: 3072,
+	},
+	{
+		id: "shopfront",
+		name: "Shopfront",
+		description: "AI-managed headless e-commerce with product management and object storage",
+		services: ["medusa", "minio", "postgresql", "redis", "caddy"],
+		skillPacks: ["ecommerce-ops"],
+		estimatedMemoryMB: 2560,
+	},
 ];
 
 const presetMap = new Map<string, Preset>();

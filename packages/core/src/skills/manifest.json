@@ -883,6 +883,14 @@
       ]
     },
     {
+      "id": "authelia-auth",
+      "path": "authelia-auth/SKILL.md",
+      "emoji": "🔒",
+      "services": [
+        "authelia"
+      ]
+    },
+    {
       "id": "haystack-rag",
       "path": "haystack-rag/SKILL.md",
       "emoji": "🔍",

@@ -21,7 +21,7 @@
 <p align="center">
   <img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg" />
   <img alt="Node" src="https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg" />
-  <img alt="pnpm" src="https://img.shields.io/badge/pnpm-9.15.4-orange.svg" />
+  <img alt="pnpm" src="https://img.shields.io/badge/pnpm-10.30.3-orange.svg" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.7-blue.svg" />
 </p>
 
@@ -212,32 +212,32 @@ API key authentication is supported via the `X-API-Key` header. Configure allowe
 
 ## Architecture
 
-better-openclaw is a TypeScript monorepo managed with pnpm workspaces and Turborepo:
+Main workspace packages and repo tooling:
 
 ```
 better-openclaw/
 ├── packages/
-│   ├── core/          # Schemas, service registry, resolver, composer, validators
-│   ├── cli/           # Interactive wizard + non-interactive CLI (Commander + Clack)
-│   ├── api/           # REST API (Hono + Zod OpenAPI)
-│   └── web/           # Web UI (Next.js 16 + Tailwind CSS 4)
-├── skills/            # Agent skill templates (Markdown)
-├── turbo.json         # Turborepo task pipeline
-├── biome.json         # Linting and formatting (Biome)
-└── vitest.config.ts   # Test configuration (Vitest)
+│   ├── core/             # Schemas, service registry, resolver, composer, validators
+│   ├── cli/              # Interactive wizard + non-interactive CLI (Commander + Clack)
+│   ├── api/              # REST API (Hono + Zod OpenAPI)
+│   ├── web/              # Web UI (Next.js 16 + Tailwind CSS 4)
+│   ├── db/               # Shared Drizzle schema and database client
+│   ├── mcp/              # MCP server for agent integrations
+│   └── mission-control/  # Vite + Convex operations dashboard
+├── turbo.json            # Turborepo task pipeline
+├── biome.json            # Linting and formatting (Biome)
+└── vitest.config.ts      # Shared Vitest defaults for non-UI packages
 ```
 
 ### Package Dependency Graph
 
-```
-@better-openclaw/web ──┐
-@better-openclaw/api ──┤──▶ @better-openclaw/core
-create-better-openclaw ┘
-```
+- `core` powers the CLI, API, web app, and MCP server.
+- `db` is shared by the API/auth layer for persisted user data.
+- `mission-control` is a separate Vite + Convex app within the same workspace.
 
 ### Key Technologies
 
-- **Runtime**: Node.js >= 18
+- **Runtime**: Node.js >= 22
 - **Language**: TypeScript 5.7
 - **Monorepo**: pnpm workspaces + Turborepo
 - **API**: Hono with Zod OpenAPI
@@ -252,8 +252,8 @@ create-better-openclaw ┘
 
 ### Prerequisites
 
-- Node.js >= 18
-- pnpm 9.15.4
+- Node.js >= 22
+- pnpm 10.30.3
 
 ### Setup
 
@@ -265,20 +265,24 @@ cd better-openclaw
 # Install dependencies
 pnpm install
 
-# Start all packages in development mode
+# Start the main local apps in development mode
 pnpm dev
 ```
 
 This starts:
 - **API** at `http://localhost:3456` (with hot reload via tsx)
 - **Web** at `http://localhost:3654` (with Next.js fast refresh)
-- **Core** and **CLI** in watch mode
+- **Mission Control** at `http://localhost:3660` (with Vite + Convex dev tooling)
+
+Run `pnpm dev:mcp` to start the MCP server separately. `packages/db` is a shared library package and exposes `db:*` scripts for schema and migration work rather than a long-running dev server.
 
 ### Commands
 
 | Command | Description |
 |---|---|
-| `pnpm dev` | Start all packages in dev mode |
+| `pnpm dev` | Start the main local apps in dev mode |
+| `pnpm dev:mcp` | Start the MCP server in dev mode |
+| `pnpm dev:all` | Start the main apps plus the MCP server |
 | `pnpm build` | Build all packages |
 | `pnpm test` | Run all tests |
 | `pnpm lint` | Lint all packages |

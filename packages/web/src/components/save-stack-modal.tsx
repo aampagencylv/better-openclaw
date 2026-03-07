@@ -2,7 +2,6 @@
 
 import { Loader2, Save, X } from "lucide-react";
 import { useState } from "react";
-import type { GenerateResponse } from "@/lib/api-client";
 import { saveStack } from "@/lib/api-client";
 
 interface SaveStackModalProps {

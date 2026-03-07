@@ -1,12 +1,8 @@
 "use client";
 
-import { getAllPresets } from "@better-openclaw/core";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
-
-// We'll map the actual presets to the highly-styled tabs Axion uses
-const corePresets = getAllPresets().slice(0, 4);
 
 const TABS = [
 	{
@@ -108,7 +104,7 @@ export function PresetsSection() {
 					<div className="flex items-center gap-3 mb-4">
 						<span className="h-1.5 w-1.5 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
 						<span className="font-mono text-[10px] tracking-widest text-primary uppercase">
-							// SYSTEM_APPLICATIONS
+							SYSTEM_APPLICATIONS
 						</span>
 					</div>
 
@@ -135,6 +131,7 @@ export function PresetsSection() {
 							return (
 								<button
 									key={tab.id}
+									type="button"
 									onClick={() => setActiveTab(idx)}
 									className={`group relative flex flex-col items-start justify-center border-b border-border/50 p-6 text-left transition-colors last:border-b-0 hover:bg-secondary/30
 										${isActive ? "bg-secondary/50" : ""}
@@ -191,8 +188,8 @@ export function PresetsSection() {
 								</p>
 
 								<ul className="mt-8 flex flex-col gap-4 font-mono text-[10px] tracking-widest text-foreground/80">
-									{TABS[activeTab].bullets.map((bullet, i) => (
-										<li key={i} className="flex items-center gap-3">
+									{TABS[activeTab].bullets.map((bullet) => (
+										<li key={bullet} className="flex items-center gap-3">
 											<span className="h-1 w-1 bg-primary shadow-[0_0_8px_rgba(163,135,95,0.8)]" />
 											{bullet}
 										</li>
@@ -236,9 +233,9 @@ export function PresetsSection() {
 										exit={{ opacity: 0 }}
 										className="flex flex-col gap-1"
 									>
-										{TABS[activeTab].terminal.map((line, i) => (
+										{TABS[activeTab].terminal.map((line) => (
 											<span
-												key={i}
+												key={line}
 												className={line.startsWith(">") ? "text-muted-foreground" : "text-primary"}
 											>
 												{line}

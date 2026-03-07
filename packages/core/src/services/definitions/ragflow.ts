@@ -1,0 +1,163 @@
+import type { ServiceDefinition } from "../../types.js";
+
+export const ragflowDefinition: ServiceDefinition = {
+	id: "ragflow",
+	name: "RAGFlow",
+	description:
+		"End-to-end retrieval-augmented generation platform for ingesting knowledge, indexing content, and serving grounded AI assistants over your own data.",
+	category: "ai-platform",
+	icon: "🧠",
+
+	image: "infiniflow/ragflow",
+	imageTag: "v0.15.0-slim",
+	ports: [
+		{
+			host: 9380,
+			container: 9380,
+			description: "RAGFlow web UI and API",
+			exposed: true,
+		},
+	],
+	volumes: [],
+	environment: [
+		{
+			key: "SVR_HTTP_PORT",
+			defaultValue: "9380",
+			secret: false,
+			description: "RAGFlow HTTP port",
+			required: true,
+		},
+		{
+			key: "MYSQL_HOST",
+			defaultValue: "mysql",
+			secret: false,
+			description: "MySQL host for RAGFlow metadata",
+			required: true,
+		},
+		{
+			key: "MYSQL_PORT",
+			defaultValue: "3306",
+			secret: false,
+			description: "MySQL port",
+			required: true,
+		},
+		{
+			key: "MYSQL_USER",
+			defaultValue: "ragflow",
+			secret: false,
+			description: "MySQL user for RAGFlow",
+			required: true,
+		},
+		{
+			key: "MYSQL_PASSWORD",
+			defaultValue: "${RAGFLOW_DB_PASSWORD}",
+			secret: true,
+			description: "MySQL password for RAGFlow",
+			required: true,
+		},
+		{
+			key: "MYSQL_DATABASE",
+			defaultValue: "ragflow",
+			secret: false,
+			description: "MySQL database name for RAGFlow",
+			required: true,
+		},
+		{
+			key: "REDIS_HOST",
+			defaultValue: "redis",
+			secret: false,
+			description: "Redis host for queues and caching",
+			required: true,
+		},
+		{
+			key: "REDIS_PORT",
+			defaultValue: "6379",
+			secret: false,
+			description: "Redis port",
+			required: true,
+		},
+		{
+			key: "REDIS_PASSWORD",
+			defaultValue: "${REDIS_PASSWORD}",
+			secret: true,
+			description: "Redis password",
+			required: true,
+		},
+		{
+			key: "MINIO_HOST",
+			defaultValue: "minio",
+			secret: false,
+			description: "MinIO host for object storage",
+			required: true,
+		},
+		{
+			key: "MINIO_PORT",
+			defaultValue: "9000",
+			secret: false,
+			description: "MinIO API port",
+			required: true,
+		},
+		{
+			key: "MINIO_USER",
+			defaultValue: "minioadmin",
+			secret: false,
+			description: "MinIO access key",
+			required: true,
+		},
+		{
+			key: "MINIO_PASSWORD",
+			defaultValue: "${MINIO_ROOT_PASSWORD}",
+			secret: true,
+			description: "MinIO secret key",
+			required: true,
+		},
+		{
+			key: "OPENSEARCH_HOST",
+			defaultValue: "opensearch",
+			secret: false,
+			description: "OpenSearch host for retrieval indexes",
+			required: true,
+		},
+		{
+			key: "OPENSEARCH_PORT",
+			defaultValue: "9200",
+			secret: false,
+			description: "OpenSearch HTTP port",
+			required: true,
+		},
+		{
+			key: "OPENSEARCH_PASSWORD",
+			defaultValue: "${OPENSEARCH_INITIAL_ADMIN_PASSWORD}",
+			secret: true,
+			description: "OpenSearch admin password",
+			required: true,
+		},
+	],
+	healthcheck: {
+		test: "curl -sf http://localhost:9380/ || exit 1",
+		interval: "30s",
+		timeout: "10s",
+		retries: 5,
+		startPeriod: "60s",
+	},
+	dependsOn: ["mysql", "redis", "minio", "opensearch"],
+	restartPolicy: "unless-stopped",
+	networks: ["openclaw-network"],
+
+	skills: [{ skillId: "ragflow-pipeline", autoInstall: true }],
+	openclawEnvVars: [
+		{ key: "RAGFLOW_HOST", defaultValue: "ragflow", description: "RAGFlow API host" },
+		{ key: "RAGFLOW_PORT", defaultValue: "9380", description: "RAGFlow HTTP port" },
+	],
+
+	docsUrl: "https://ragflow.io/docs/configurations",
+	tags: ["rag", "knowledge", "retrieval", "ai-platform", "search", "documents"],
+	maturity: "beta",
+
+	requires: ["mysql", "redis", "minio", "opensearch"],
+	recommends: ["open-webui", "qdrant", "meilisearch"],
+	conflictsWith: [],
+
+	minMemoryMB: 4096,
+	gpuRequired: false,
+};

@@ -67,7 +67,7 @@ export function FeaturesGrid() {
 							style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
 						/>
 						<span className="font-mono text-xs tracking-widest text-primary uppercase">
-							// CORE_CAPABILITIES
+							CORE_CAPABILITIES
 						</span>
 					</div>
 

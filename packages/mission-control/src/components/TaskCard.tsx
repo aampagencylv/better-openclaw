@@ -37,10 +37,11 @@ export default function TaskCard({ task, agents, isSelected, onClick }: TaskCard
 	const isRunning = task.status === "in_progress";
 
 	return (
-		<div
+		<button
+			type="button"
 			onClick={onClick}
 			className={[
-				"p-3 rounded-lg border cursor-pointer transition-all",
+				"w-full p-3 rounded-lg border cursor-pointer text-left transition-all",
 				"bg-card hover:shadow-md",
 				isSelected
 					? "ring-2 ring-primary border-primary"
@@ -84,6 +85,6 @@ export default function TaskCard({ task, agents, isSelected, onClick }: TaskCard
 					<span className="text-[10px] text-muted-foreground">{timeAgo(task.lastMessageTime)}</span>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 }

@@ -1,6 +1,6 @@
 {
   "name": "@better-openclaw/core",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "private": false,
   "description": "Core logic for better-openclaw: schemas, service registry, resolver, composer, validators and generators",
   "author": "bidew.io <bachir@bidew.io>",
@@ -50,12 +50,12 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
     "@types/node": "^25.3.3",
-    "tsdown": "^0.20.3",
+    "tsdown": "^0.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "keywords": [
     "openclaw",

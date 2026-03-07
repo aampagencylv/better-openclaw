@@ -1,6 +1,6 @@
 # Build from repo root: docker build -f packages/web/Dockerfile .
 FROM node:22-alpine AS base
-RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 FROM base AS deps
 WORKDIR /app

@@ -44,6 +44,7 @@ export function DemoVideo() {
 						<div className="absolute inset-0 flex items-center justify-center">
 							<button
 								aria-label="Play Demo Video"
+								type="button"
 								className="group/btn relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/20 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-primary/30 border border-primary/50"
 							>
 								<div className="absolute inset-0 rounded-full bg-primary/20 blur-xl transition-all duration-300 group-hover/btn:bg-primary/40 group-hover/btn:blur-2xl" />

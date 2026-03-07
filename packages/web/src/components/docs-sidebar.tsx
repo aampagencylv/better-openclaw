@@ -3,7 +3,6 @@
 import {
 	BookOpen,
 	ChevronRight,
-	Download,
 	Globe,
 	Menu,
 	Package,

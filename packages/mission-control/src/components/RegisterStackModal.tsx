@@ -13,6 +13,46 @@ interface RegisterStackModalProps {
 	onRegistered: () => void;
 }
 
+interface ManifestPortInput {
+	container: string | number | undefined;
+	host?: string | number | undefined;
+	exposed?: boolean;
+	description?: string;
+}
+
+interface ManifestServiceInput {
+	id: string;
+	name: string;
+	category: string;
+	icon: string;
+	image: string;
+	imageTag: string;
+	ports?: ManifestPortInput[];
+	docsUrl?: string;
+	addedBy?: string;
+	dependencyOf?: string;
+}
+
+interface ManifestSkillInput {
+	id: string;
+	name: string;
+	path: string;
+	content: string;
+	serviceIds?: string[];
+}
+
+interface StackManifestInput {
+	projectName?: string;
+	domain?: string;
+	deployment?: string;
+	deploymentType?: string;
+	platform?: string;
+	proxy?: string;
+	formatVersion?: string;
+	services?: ManifestServiceInput[];
+	skills?: ManifestSkillInput[];
+}
+
 export default function RegisterStackModal({ onClose, onRegistered }: RegisterStackModalProps) {
 	const registerStack = useMutation(api.stacks.registerStack);
 	const [jsonInput, setJsonInput] = useState("");
@@ -39,7 +79,7 @@ export default function RegisterStackModal({ onClose, onRegistered }: RegisterSt
 			e.preventDefault();
 			setError(null);
 
-			let manifest: any;
+			let manifest: StackManifestInput;
 			try {
 				manifest = JSON.parse(jsonInput);
 			} catch {
@@ -62,16 +102,17 @@ export default function RegisterStackModal({ onClose, onRegistered }: RegisterSt
 					platform: manifest.platform,
 					proxy: manifest.proxy,
 					manifestVersion: manifest.formatVersion ?? "1",
-					services: (manifest.services ?? []).map((s: any) => ({
+					services: (manifest.services ?? []).map((s) => ({
 						id: s.id,
 						name: s.name,
 						category: s.category,
 						icon: s.icon,
 						image: s.image,
 						imageTag: s.imageTag,
-						ports: (s.ports ?? []).map((p: any) => ({
-							container: p.container,
-							host: p.host,
+						ports: (s.ports ?? []).map((p) => ({
+							container: typeof p.container === "number" ? p.container : Number(p.container) || 0,
+							host:
+								p.host != null ? (typeof p.host === "number" ? p.host : Number(p.host)) : undefined,
 							exposed: p.exposed ?? false,
 							description: p.description ?? "",
 						})),
@@ -79,7 +120,7 @@ export default function RegisterStackModal({ onClose, onRegistered }: RegisterSt
 						addedBy: s.addedBy ?? "user",
 						dependencyOf: s.dependencyOf,
 					})),
-					skills: (manifest.skills ?? []).map((sk: any) => ({
+					skills: (manifest.skills ?? []).map((sk) => ({
 						id: sk.id,
 						name: sk.name,
 						path: sk.path,
@@ -104,6 +145,7 @@ export default function RegisterStackModal({ onClose, onRegistered }: RegisterSt
 				<div className="flex items-center justify-between border-b border-border px-5 py-4">
 					<h2 className="text-lg font-semibold text-foreground">Register Stack</h2>
 					<button
+						aria-label="Close"
 						type="button"
 						onClick={onClose}
 						className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -128,6 +170,7 @@ export default function RegisterStackModal({ onClose, onRegistered }: RegisterSt
 						Upload stack-manifest.json
 					</button>
 					<input
+						aria-label="Upload stack-manifest.json"
 						ref={fileInputRef}
 						type="file"
 						accept=".json"

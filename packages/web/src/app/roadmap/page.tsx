@@ -154,7 +154,7 @@ export default function RoadmapPage() {
 				</div>
 
 				<div className="relative border-l border-border/50 ml-4 md:ml-8 pl-8 md:pl-16 space-y-24">
-					{ROADMAP.map((quarterData, qIdx) => (
+					{ROADMAP.map((quarterData, _qIdx) => (
 						<div key={quarterData.quarter} className="relative">
 							{/* Quarter Marker Line */}
 							<div className="absolute -left-[33px] md:-left-[65px] top-2 flex items-center justify-center bg-background p-1">
@@ -166,7 +166,7 @@ export default function RoadmapPage() {
 							</h2>
 
 							<div className="grid gap-8">
-								{quarterData.items.map((item, iIdx) => (
+								{quarterData.items.map((item, _iIdx) => (
 									<div
 										key={item.title}
 										className="group relative rounded-2xl border border-border/50 bg-[#0a0a0a]/50 p-6 md:p-8 backdrop-blur-sm transition-all hover:bg-secondary/20 hover:border-border overflow-hidden"

@@ -117,10 +117,14 @@ export default function SubmitPage() {
 
 							<div className="space-y-4">
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="stack-name"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Project Name
 									</label>
 									<input
+										id="stack-name"
 										type="text"
 										value={stackName}
 										onChange={(e) => setStackName(e.target.value)}
@@ -130,10 +134,14 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="stack-description"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Description
 									</label>
 									<textarea
+										id="stack-description"
 										value={stackDescription}
 										onChange={(e) => setStackDescription(e.target.value)}
 										placeholder="Brief description of what your stack does..."
@@ -143,10 +151,14 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="stack-github"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										GitHub URL
 									</label>
 									<input
+										id="stack-github"
 										type="url"
 										value={stackGithub}
 										onChange={(e) => setStackGithub(e.target.value)}
@@ -156,10 +168,14 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="stack-screenshot"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Screenshot URL
 									</label>
 									<input
+										id="stack-screenshot"
 										type="url"
 										value={stackScreenshot}
 										onChange={(e) => setStackScreenshot(e.target.value)}
@@ -196,10 +212,14 @@ export default function SubmitPage() {
 
 							<div className="space-y-4">
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="service-name"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Service Name
 									</label>
 									<input
+										id="service-name"
 										type="text"
 										value={serviceName}
 										onChange={(e) => setServiceName(e.target.value)}
@@ -209,10 +229,14 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="docker-image"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Docker Image
 									</label>
 									<input
+										id="docker-image"
 										type="text"
 										value={dockerImage}
 										onChange={(e) => setDockerImage(e.target.value)}
@@ -222,13 +246,16 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="service-category"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Category
 									</label>
 									<select
+										id="service-category"
 										value={serviceCategory}
 										onChange={(e) => setServiceCategory(e.target.value)}
-										aria-label="Category"
 										className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
 									>
 										<option value="">Select a category...</option>
@@ -241,10 +268,14 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="service-description"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Description
 									</label>
 									<textarea
+										id="service-description"
 										value={serviceDescription}
 										onChange={(e) => setServiceDescription(e.target.value)}
 										placeholder="What does this service do?"
@@ -254,10 +285,14 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="service-website"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Website URL
 									</label>
 									<input
+										id="service-website"
 										type="url"
 										value={serviceWebsite}
 										onChange={(e) => setServiceWebsite(e.target.value)}
@@ -267,10 +302,14 @@ export default function SubmitPage() {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-sm font-medium text-foreground">
+									<label
+										htmlFor="service-why"
+										className="mb-1.5 block text-sm font-medium text-foreground"
+									>
 										Why include it?
 									</label>
 									<textarea
+										id="service-why"
 										value={serviceWhy}
 										onChange={(e) => setServiceWhy(e.target.value)}
 										placeholder="Why should this service be part of better-openclaw?"

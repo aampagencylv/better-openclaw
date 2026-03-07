@@ -94,9 +94,11 @@ export function getPostsByCategory(category: BlogCategory): BlogPost[] {
 
 export function getAllTags(): string[] {
 	const tags = new Set<string>();
-	blogPosts.forEach((post) => {
-		post.tags.forEach((tag) => tags.add(tag));
-	});
+	for (const post of blogPosts) {
+		for (const tag of post.tags) {
+			tags.add(tag);
+		}
+	}
 	return Array.from(tags).sort();
 }
 

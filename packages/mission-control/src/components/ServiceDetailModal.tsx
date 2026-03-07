@@ -50,6 +50,7 @@ export default function ServiceDetailModal({ service, onClose }: ServiceDetailMo
 						</div>
 					</div>
 					<button
+						aria-label="Close service details modal"
 						type="button"
 						onClick={onClose}
 						className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -98,9 +99,9 @@ export default function ServiceDetailModal({ service, onClose }: ServiceDetailMo
 								Ports
 							</h3>
 							<div className="space-y-1">
-								{service.ports.map((p, i) => (
+								{service.ports.map((p) => (
 									<div
-										key={i}
+										key={`${p.host ?? "internal"}-${p.container}-${p.description ?? "port"}`}
 										className="flex items-center gap-2 text-sm rounded bg-secondary/50 px-3 py-1.5"
 									>
 										<code className="text-foreground">

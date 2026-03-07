@@ -3,7 +3,6 @@
 import { ArrowLeft, CheckCircle, Loader2, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
 
 export default function ForgotPasswordPage() {
 	const [email, setEmail] = useState("");
@@ -110,7 +109,6 @@ export default function ForgotPasswordPage() {
 											id="email"
 											type="email"
 											required
-											autoFocus
 											value={email}
 											onChange={(e) => setEmail(e.target.value)}
 											placeholder="you@example.com"

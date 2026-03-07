@@ -27,7 +27,7 @@ ENV CONVEX_SELF_HOSTED_ADMIN_KEY=${CONVEX_SELF_HOSTED_ADMIN_KEY}
 WORKDIR /app
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 # Install dependencies
 COPY package.json pnpm-lock.yaml* ./

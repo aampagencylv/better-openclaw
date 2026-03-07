@@ -7,8 +7,13 @@ import App from "./App";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+const rootElement = document.getElementById("root");
 
-createRoot(document.getElementById("root")!).render(
+if (!rootElement) {
+	throw new Error("Root element not found");
+}
+
+createRoot(rootElement).render(
 	<StrictMode>
 		<ConvexAuthProvider client={convex}>
 			<ErrorBoundary>

@@ -71,6 +71,7 @@ export default function TaskDetailPanel({
 				<h2 className="text-base font-semibold text-card-foreground truncate pr-4">{task.title}</h2>
 				<button
 					aria-label="Close task detail panel"
+					type="button"
 					onClick={onClose}
 					className="p-1.5 hover:bg-accent rounded-md text-muted-foreground"
 				>
@@ -140,6 +141,7 @@ export default function TaskDetailPanel({
 						{documents.map((doc) => (
 							<button
 								key={doc._id}
+								type="button"
 								onClick={() => onPreviewDocument(doc._id)}
 								className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-accent text-left transition-colors"
 							>
@@ -187,6 +189,7 @@ export default function TaskDetailPanel({
 						className="flex-1 text-sm px-3 py-2 bg-input rounded-lg border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
 					/>
 					<button
+						type="button"
 						onClick={handleSend}
 						className="px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:opacity-90 transition-opacity"
 					>

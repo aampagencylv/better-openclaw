@@ -68,12 +68,12 @@
   "devDependencies": {
     "@types/node": "^25.3.3",
     "dotenv": "^17.3.1",
-    "tsdown": "^0.20.3",
+    "tsdown": "^0.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "keywords": [
     "openclaw",

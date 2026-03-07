@@ -1,0 +1,173 @@
+import type { ServiceDefinition } from "../../types.js";
+
+export const appwriteDefinition: ServiceDefinition = {
+	id: "appwrite",
+	name: "Appwrite",
+	description:
+		"Self-hosted backend platform for auth, databases, storage, functions, and realtime APIs for web and mobile apps.",
+	category: "dev-tools",
+	icon: "🧱",
+
+	image: "appwrite/appwrite",
+	imageTag: "latest",
+	ports: [
+		{
+			host: 8114,
+			container: 80,
+			description: "Appwrite API and console",
+			exposed: true,
+		},
+	],
+	volumes: [
+		{
+			name: "appwrite-storage",
+			containerPath: "/storage",
+			description: "Appwrite file storage and persistent assets",
+		},
+	],
+	environment: [
+		{
+			key: "_APP_ENV",
+			defaultValue: "production",
+			secret: false,
+			description: "Appwrite runtime environment",
+			required: true,
+		},
+		{
+			key: "_APP_OPENSSL_KEY_V1",
+			defaultValue: "${APPWRITE_OPENSSL_KEY_V1}",
+			secret: true,
+			description: "Primary encryption key for Appwrite secrets and storage",
+			required: true,
+		},
+		{
+			key: "_APP_DOMAIN",
+			defaultValue: "localhost",
+			secret: false,
+			description: "Primary Appwrite domain",
+			required: true,
+		},
+		{
+			key: "_APP_DOMAIN_TARGET",
+			defaultValue: "localhost",
+			secret: false,
+			description: "Target domain for Appwrite endpoints",
+			required: true,
+		},
+		{
+			key: "_APP_DOMAIN_FUNCTIONS",
+			defaultValue: "localhost",
+			secret: false,
+			description: "Domain for Appwrite functions",
+			required: true,
+		},
+		{
+			key: "_APP_DB_HOST",
+			defaultValue: "mariadb",
+			secret: false,
+			description: "MariaDB host",
+			required: true,
+		},
+		{
+			key: "_APP_DB_PORT",
+			defaultValue: "3306",
+			secret: false,
+			description: "MariaDB port",
+			required: true,
+		},
+		{
+			key: "_APP_DB_SCHEMA",
+			defaultValue: "appwrite",
+			secret: false,
+			description: "MariaDB schema name",
+			required: true,
+		},
+		{
+			key: "_APP_DB_USER",
+			defaultValue: "appwrite",
+			secret: false,
+			description: "MariaDB user",
+			required: true,
+		},
+		{
+			key: "_APP_DB_PASS",
+			defaultValue: "${APPWRITE_DB_PASSWORD}",
+			secret: true,
+			description: "MariaDB password",
+			required: true,
+		},
+		{
+			key: "_APP_REDIS_HOST",
+			defaultValue: "redis",
+			secret: false,
+			description: "Redis host",
+			required: true,
+		},
+		{
+			key: "_APP_REDIS_PORT",
+			defaultValue: "6379",
+			secret: false,
+			description: "Redis port",
+			required: true,
+		},
+		{
+			key: "_APP_REDIS_PASS",
+			defaultValue: "${REDIS_PASSWORD}",
+			secret: true,
+			description: "Redis password",
+			required: true,
+		},
+		{
+			key: "_APP_RABBITMQ",
+			defaultValue: "amqp://openclaw:${RABBITMQ_PASSWORD}@rabbitmq:5672/",
+			secret: true,
+			description: "RabbitMQ connection URL",
+			required: true,
+		},
+		{
+			key: "_APP_SYSTEM_EMAIL_NAME",
+			defaultValue: "Appwrite",
+			secret: false,
+			description: "System email sender name",
+			required: true,
+		},
+		{
+			key: "_APP_SYSTEM_EMAIL_ADDRESS",
+			defaultValue: "noreply@appwrite.local",
+			secret: false,
+			description: "System email sender address",
+			required: true,
+		},
+	],
+	healthcheck: {
+		test: "curl -sf http://localhost/v1/health || exit 1",
+		interval: "30s",
+		timeout: "10s",
+		retries: 5,
+		startPeriod: "60s",
+	},
+	dependsOn: ["mariadb", "redis", "rabbitmq"],
+	restartPolicy: "unless-stopped",
+	networks: ["openclaw-network"],
+
+	skills: [{ skillId: "appwrite-backend", autoInstall: true }],
+	openclawEnvVars: [
+		{
+			key: "APPWRITE_HOST",
+			defaultValue: "appwrite",
+			description: "Appwrite service host for API calls",
+		},
+		{ key: "APPWRITE_PORT", defaultValue: "80", description: "Appwrite HTTP port" },
+	],
+
+	docsUrl: "https://appwrite.io/docs/advanced/self-hosting/installation",
+	tags: ["backend", "baas", "auth", "storage", "functions", "realtime"],
+	maturity: "beta",
+
+	requires: ["mariadb", "redis", "rabbitmq"],
+	recommends: [],
+	conflictsWith: [],
+
+	minMemoryMB: 1024,
+	gpuRequired: false,
+};

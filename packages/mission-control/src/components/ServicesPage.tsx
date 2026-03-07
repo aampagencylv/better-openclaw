@@ -131,7 +131,7 @@ function ServiceCard({ service, onClick }: { service: Doc<"stackServices">; onCl
 		<button
 			type="button"
 			onClick={onClick}
-			className="flex flex-col gap-2 rounded-xl border border-border bg-background p-4 text-left hover:border-primary/50 hover:bg-secondary/30 transition-all group"
+			className="flex flex-col gap-2 rounded-xl border border-border bg-background p-4 text-left hover:border-primary/50 hover:bg-secondary/30 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary group"
 		>
 			<div className="flex items-start justify-between">
 				<div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ function ServiceCard({ service, onClick }: { service: Doc<"stackServices">; onCl
 					/>
 					<IconSettings
 						size={14}
-						className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+						className="text-muted-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
 					/>
 				</div>
 			</div>

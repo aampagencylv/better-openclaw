@@ -45,8 +45,11 @@ export default function SignInForm() {
 					)}
 
 					<div>
-						<label className="block text-sm text-muted-foreground mb-1">Email</label>
+						<label htmlFor="sign-in-email" className="block text-sm text-muted-foreground mb-1">
+							Email
+						</label>
 						<input
+							id="sign-in-email"
 							type="email"
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
@@ -57,8 +60,11 @@ export default function SignInForm() {
 					</div>
 
 					<div>
-						<label className="block text-sm text-muted-foreground mb-1">Password</label>
+						<label htmlFor="sign-in-password" className="block text-sm text-muted-foreground mb-1">
+							Password
+						</label>
 						<input
+							id="sign-in-password"
 							type="password"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}

@@ -38,6 +38,12 @@ const DB_REQUIREMENTS: Record<string, Omit<DbRequirement, "serviceId" | "service
 	"cal-com": { dbName: "calcom", dbUser: "calcom", passwordEnvVar: "CALCOM_DB_PASSWORD" },
 	immich: { dbName: "immich", dbUser: "immich", passwordEnvVar: "IMMICH_DB_PASSWORD" },
 	authentik: { dbName: "authentik", dbUser: "authentik", passwordEnvVar: "AUTHENTIK_DB_PASSWORD" },
+	chatwoot: { dbName: "chatwoot", dbUser: "chatwoot", passwordEnvVar: "CHATWOOT_DB_PASSWORD" },
+	firecrawl: { dbName: "firecrawl", dbUser: "firecrawl", passwordEnvVar: "FIRECRAWL_DB_PASSWORD" },
+	flagsmith: { dbName: "flagsmith", dbUser: "flagsmith", passwordEnvVar: "FLAGSMITH_DB_PASSWORD" },
+	infisical: { dbName: "infisical", dbUser: "infisical", passwordEnvVar: "INFISICAL_DB_PASSWORD" },
+	keycloak: { dbName: "keycloak", dbUser: "keycloak", passwordEnvVar: "KEYCLOAK_DB_PASSWORD" },
+	listmonk: { dbName: "listmonk", dbUser: "listmonk", passwordEnvVar: "LISTMONK_DB_PASSWORD" },
 	"lasuite-meet-backend": {
 		dbName: "meet",
 		dbUser: "meet",

@@ -10,9 +10,9 @@
     "url": "https://github.com/bidewio/better-openclaw.git"
   },
   "homepage": "https://better-openclaw.dev",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.30.3",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "build": "turbo run build",

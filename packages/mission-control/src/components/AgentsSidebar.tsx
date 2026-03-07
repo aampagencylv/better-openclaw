@@ -56,6 +56,7 @@ export default function AgentsSidebar({
 				</h2>
 				<div className="flex items-center gap-1">
 					<button
+						type="button"
 						onClick={() => onAddAgent()}
 						className="p-1.5 hover:bg-sidebar-accent rounded-md text-muted-foreground hover:text-sidebar-foreground transition-colors"
 						aria-label="Add agent"
@@ -63,6 +64,7 @@ export default function AgentsSidebar({
 						<IconPlus size={16} />
 					</button>
 					<button
+						type="button"
 						onClick={onClose}
 						className="md:hidden p-1.5 hover:bg-sidebar-accent rounded-md text-muted-foreground"
 						aria-label="Close sidebar"
@@ -78,31 +80,37 @@ export default function AgentsSidebar({
 					return (
 						<div
 							key={agent._id}
-							className="group flex items-center gap-3 p-2.5 rounded-lg hover:bg-sidebar-accent cursor-pointer transition-colors"
-							onClick={() => onSelectAgent(agent._id)}
+							className="group flex items-center gap-3 rounded-lg p-2.5 transition-colors hover:bg-sidebar-accent"
 						>
-							<div className="relative">
-								<span className="text-2xl">{agent.avatar}</span>
-								<span
-									className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-sidebar ${statusColor[agent.status] ?? "bg-gray-400"}`}
-								/>
-							</div>
-							<div className="flex-1 min-w-0">
-								<div className="flex items-center gap-2">
-									<span className="text-sm font-medium text-sidebar-foreground truncate">
-										{agent.name}
-									</span>
-									{badge && (
-										<span
-											className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${badge.className}`}
-										>
-											{badge.text}
-										</span>
-									)}
-								</div>
-								<p className="text-xs text-muted-foreground truncate">{agent.role}</p>
-							</div>
 							<button
+								type="button"
+								onClick={() => onSelectAgent(agent._id)}
+								className="flex flex-1 items-center gap-3 text-left"
+							>
+								<div className="relative">
+									<span className="text-2xl">{agent.avatar}</span>
+									<span
+										className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-sidebar ${statusColor[agent.status] ?? "bg-gray-400"}`}
+									/>
+								</div>
+								<div className="flex-1 min-w-0">
+									<div className="flex items-center gap-2">
+										<span className="text-sm font-medium text-sidebar-foreground truncate">
+											{agent.name}
+										</span>
+										{badge && (
+											<span
+												className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${badge.className}`}
+											>
+												{badge.text}
+											</span>
+										)}
+									</div>
+									<p className="text-xs text-muted-foreground truncate">{agent.role}</p>
+								</div>
+							</button>
+							<button
+								type="button"
 								onClick={(e) => {
 									e.stopPropagation();
 									onAddTask(agent._id);

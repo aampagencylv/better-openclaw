@@ -34,6 +34,7 @@ export default function AgentDetailTray({ agentId, onClose }: AgentDetailTrayPro
 							</div>
 							<button
 								aria-label="Close tray"
+								type="button"
 								onClick={onClose}
 								className="p-1.5 hover:bg-accent rounded-md text-muted-foreground"
 							>

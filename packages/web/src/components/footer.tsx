@@ -75,7 +75,7 @@ export function Footer() {
 					<div className="mb-12 flex items-center gap-3">
 						<span className="h-1.5 w-1.5 bg-zinc-600" />
 						<span className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-							// SYSTEM_AUDIT_PROTOCOL_V4
+							SYSTEM_AUDIT_PROTOCOL_V4
 						</span>
 					</div>
 					<h2 className="text-4xl font-bold tracking-tight text-foreground md:text-6xl mb-6">
@@ -243,7 +243,7 @@ export function Footer() {
 						{/* Right CTA */}
 						<div className="lg:col-span-1">
 							<h4 className="mb-4 font-mono text-[10px] uppercase tracking-widest text-primary">
-								// SET_STARTED
+								SET_STARTED
 							</h4>
 							<h3 className="font-sans text-xl font-bold text-foreground mb-2">START BUILDING</h3>
 							<p className="font-mono text-[10px] text-muted-foreground leading-relaxed mb-6">

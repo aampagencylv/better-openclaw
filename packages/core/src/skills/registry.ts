@@ -354,6 +354,44 @@ const skillPacks: SkillPack[] = [
 		tags: ["backend", "baas", "api", "database", "messaging"],
 	},
 	{
+		id: "appwrite-platform",
+		name: "Appwrite Platform",
+		description: "BaaS with Appwrite for auth, databases, storage, functions, and realtime APIs",
+		requiredServices: ["appwrite"],
+		skills: ["appwrite-backend", "rabbitmq-queue"],
+		icon: "🧱",
+		tags: ["backend", "baas", "auth", "storage", "functions"],
+	},
+	{
+		id: "authelia-security",
+		name: "Authelia Security",
+		description:
+			"SSO, MFA, and access control for protecting self-hosted apps behind reverse proxy",
+		requiredServices: ["authelia"],
+		skills: ["authelia-auth"],
+		icon: "🔒",
+		tags: ["auth", "sso", "mfa", "access-control", "security"],
+	},
+	{
+		id: "ragflow-platform",
+		name: "RAGFlow Platform",
+		description:
+			"End-to-end RAG platform for knowledge ingestion, indexing, and grounded AI assistants",
+		requiredServices: ["ragflow"],
+		skills: ["ragflow-pipeline", "firecrawl-scrape"],
+		icon: "🧠",
+		tags: ["rag", "knowledge", "retrieval", "ai-platform"],
+	},
+	{
+		id: "cms-stack",
+		name: "CMS Stack",
+		description: "Headless CMS and publishing with Directus, Strapi, Listmonk, and Stirling PDF",
+		requiredServices: ["directus"],
+		skills: ["strapi-cms", "directus-cms", "listmonk-email", "stirling-pdf-tools"],
+		icon: "📝",
+		tags: ["cms", "publishing", "newsletter", "documents"],
+	},
+	{
 		id: "observability-stack",
 		name: "Observability Stack",
 		description:
@@ -427,6 +465,87 @@ const skillPacks: SkillPack[] = [
 		],
 		icon: "🎨",
 		tags: ["frontend", "design", "animation", "css", "ui", "web-design"],
+	},
+	// ── New Skill Packs (from feature analysis) ──────────────────────
+	{
+		id: "customer-support",
+		name: "Customer Support",
+		description:
+			"AI-powered helpdesk with live chat, LLM observability, and ticket management across channels",
+		requiredServices: ["chatwoot", "langfuse", "postgresql", "redis"],
+		skills: ["chatwoot-inbox", "langfuse-trace", "postgresql-query", "redis-cache"],
+		icon: "💬",
+		tags: ["support", "chat", "helpdesk", "tickets", "customer-service"],
+	},
+	{
+		id: "sales-pipeline",
+		name: "Sales Pipeline",
+		description:
+			"CRM-driven sales pipeline with email marketing, newsletter management, and lead nurturing",
+		requiredServices: ["twenty", "mautic", "listmonk", "postgresql"],
+		skills: ["twenty-crm", "mautic-campaign", "listmonk-newsletter", "postgresql-query"],
+		icon: "📈",
+		tags: ["sales", "crm", "email", "leads", "marketing"],
+	},
+	{
+		id: "data-pipeline",
+		name: "Data Pipeline",
+		description:
+			"End-to-end data pipeline with DAG orchestration, 300+ source connectors, and monitoring dashboards",
+		requiredServices: ["airflow", "airbyte", "postgresql", "grafana"],
+		skills: ["airflow-dag", "airbyte-sync", "postgresql-query", "grafana-dashboard"],
+		icon: "🔄",
+		tags: ["data", "etl", "pipeline", "orchestration", "connectors"],
+	},
+	{
+		id: "voice-agent",
+		name: "Voice Agent",
+		description:
+			"AI-powered voice agent with programmable telephony, speech-to-text transcription, and real-time communication",
+		requiredServices: ["fonoster", "whisper", "livekit", "redis"],
+		skills: ["fonoster-voice", "whisper-transcribe", "livekit-stream", "redis-cache"],
+		icon: "📞",
+		tags: ["voice", "telephony", "transcription", "speech", "phone"],
+	},
+	{
+		id: "ecommerce-ops",
+		name: "E-Commerce Ops",
+		description:
+			"AI-managed online store with headless commerce, product management, and object storage for media",
+		requiredServices: ["medusa", "minio", "postgresql", "redis"],
+		skills: ["medusa-commerce", "minio-storage", "postgresql-query", "redis-cache"],
+		icon: "🛒",
+		tags: ["ecommerce", "store", "products", "orders", "commerce"],
+	},
+	{
+		id: "infra-security",
+		name: "Infra Security",
+		description:
+			"Infrastructure security with intrusion detection, encrypted secret management, and uptime monitoring",
+		requiredServices: ["crowdsec", "infisical", "uptime-kuma"],
+		skills: ["crowdsec-protect", "infisical-secrets", "uptime-kuma-monitor"],
+		icon: "🛡️",
+		tags: ["security", "secrets", "monitoring", "intrusion-detection"],
+	},
+	{
+		id: "fine-tuning-lab",
+		name: "Fine-Tuning Lab",
+		description:
+			"Custom LLM fine-tuning pipeline with LoRA/QLoRA support, local model inference, and dataset storage",
+		requiredServices: ["axolotl", "ollama", "minio", "postgresql"],
+		skills: ["axolotl-finetune", "ollama-local-llm", "minio-storage", "postgresql-query"],
+		icon: "🎯",
+		tags: ["fine-tuning", "llm", "training", "lora", "models"],
+	},
+	{
+		id: "marketing-suite",
+		name: "Marketing Suite",
+		description:
+			"Full marketing stack with blogging, email automation, newsletter management, and web analytics",
+		requiredServices: ["ghost", "mautic", "listmonk", "umami"],
+		skills: ["ghost-publish", "mautic-campaign", "listmonk-newsletter", "umami-analytics"],
+		icon: "📣",
+		tags: ["marketing", "blog", "email", "analytics", "content"],
 	},
 ];
 

@@ -40,6 +40,7 @@ export default function ConversationTray({
 					<div className="flex items-center gap-1">
 						{!showPreview && (
 							<button
+								type="button"
 								onClick={onOpenPreview}
 								className="p-1.5 hover:bg-accent rounded-md text-muted-foreground"
 								title="Show preview"
@@ -49,6 +50,7 @@ export default function ConversationTray({
 						)}
 						<button
 							aria-label="Close tray"
+							type="button"
 							onClick={onClose}
 							className="p-1.5 hover:bg-accent rounded-md text-muted-foreground"
 						>

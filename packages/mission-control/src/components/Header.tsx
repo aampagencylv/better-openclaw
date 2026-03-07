@@ -40,6 +40,7 @@ export default function Header({
 			<div className="flex items-center gap-3">
 				{/* Mobile drawer toggles */}
 				<button
+					type="button"
 					className="md:hidden p-2 hover:bg-accent rounded-lg"
 					onClick={onOpenAgents}
 					aria-label="Open agents sidebar"
@@ -74,6 +75,7 @@ export default function Header({
 
 			<div className="flex items-center gap-4">
 				<button
+					type="button"
 					className="hidden md:flex p-2 hover:bg-accent rounded-lg items-center gap-2 text-muted-foreground transition-colors"
 					onClick={onOpenClawRecipes}
 					aria-label="Open ClawRecipes Server Configuration"
@@ -82,6 +84,7 @@ export default function Header({
 					<span className="text-sm font-medium">ClawRecipes</span>
 				</button>
 				<button
+					type="button"
 					className="md:hidden p-2 hover:bg-accent rounded-lg"
 					onClick={onOpenLiveFeed}
 					aria-label="Open live feed"
@@ -89,6 +92,7 @@ export default function Header({
 					<IconLayoutSidebar size={20} />
 				</button>
 				<button
+					type="button"
 					className="relative p-2 hover:bg-accent rounded-lg text-muted-foreground"
 					aria-label="Notifications"
 				>

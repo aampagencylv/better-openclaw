@@ -28,7 +28,7 @@ function timeAgo(timestamp: number): string {
 
 export default function DocumentsPanel({
 	selectedDocumentId,
-	onSelectDocument,
+	onSelectDocument: _onSelectDocument,
 	onPreviewDocument,
 }: DocumentsPanelProps) {
 	const documents = useQuery(api.documents.listAll, {});
@@ -38,6 +38,7 @@ export default function DocumentsPanel({
 			{documents?.map((doc) => (
 				<button
 					key={doc._id}
+					type="button"
 					onClick={() => onPreviewDocument(doc._id)}
 					className={[
 						"w-full flex items-start gap-2.5 p-2.5 rounded-lg text-left transition-colors",

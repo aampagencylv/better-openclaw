@@ -7,7 +7,7 @@ import { Suspense, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
 function MagicLinkContent() {
-	const router = useRouter();
+	const _router = useRouter();
 	const searchParams = useSearchParams();
 	const defaultEmail = searchParams.get("email") ?? "";
 
@@ -92,7 +92,6 @@ function MagicLinkContent() {
 								id="email"
 								type="email"
 								required
-								autoFocus
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								placeholder="you@example.com"

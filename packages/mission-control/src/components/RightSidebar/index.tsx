@@ -35,6 +35,7 @@ export default function RightSidebar({
 			{/* Tab Header */}
 			<div className="flex items-center border-b border-sidebar-border">
 				<button
+					type="button"
 					className={[
 						"flex-1 py-3 text-xs font-semibold uppercase tracking-wider transition-colors",
 						activeTab === "feed"
@@ -46,6 +47,7 @@ export default function RightSidebar({
 					Live Feed
 				</button>
 				<button
+					type="button"
 					className={[
 						"flex-1 py-3 text-xs font-semibold uppercase tracking-wider transition-colors",
 						activeTab === "documents"
@@ -57,6 +59,7 @@ export default function RightSidebar({
 					Documents
 				</button>
 				<button
+					type="button"
 					className="md:hidden p-2 hover:bg-sidebar-accent rounded-md text-muted-foreground mx-1"
 					onClick={onClose}
 					aria-label="Close sidebar"

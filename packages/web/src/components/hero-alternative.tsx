@@ -155,6 +155,7 @@ export function HeroAlternative() {
 								<span className="text-muted-foreground">$</span>
 								<span>npx create-better-openclaw</span>
 								<button
+									type="button"
 									className="ml-2 rounded p-1 hover:bg-muted transition-colors"
 									onClick={() => navigator.clipboard.writeText("npx create-better-openclaw")}
 									aria-label="Copy command"
@@ -201,8 +202,11 @@ export function HeroAlternative() {
 
 							{/* Status Bar */}
 							<div className="grid grid-cols-4 gap-px border-b border-border/40 bg-white/5">
-								{systemStatus.map((stat, i) => (
-									<div key={i} className="flex flex-col items-center justify-center py-2 px-1">
+								{systemStatus.map((stat) => (
+									<div
+										key={stat.label}
+										className="flex flex-col items-center justify-center py-2 px-1"
+									>
 										<stat.icon className={`h-4 w-4 mb-1 ${stat.color}`} />
 										<span className="text-[10px] uppercase tracking-wider text-muted-foreground">
 											{stat.label}
@@ -217,7 +221,10 @@ export function HeroAlternative() {
 							{/* Terminal Body */}
 							<div className="p-5 font-mono text-xs sm:text-sm leading-relaxed min-h-[340px]">
 								{terminalLines.map((line, i) => (
-									<div key={i} className={`min-h-[1.5em] mb-1 ${line.style}`}>
+									<div
+										key={`${line.text}-${line.style}`}
+										className={`min-h-[1.5em] mb-1 ${line.style}`}
+									>
 										{typed[i] ?? ""}
 										{i === typed.length - 1 && (typed[i]?.length ?? 0) < line.text.length && (
 											<span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse bg-primary align-middle shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
