@@ -1,6 +1,6 @@
 {
   "name": "@better-openclaw/web",
-  "version": "1.0.0",
+  "version": "1.0.22",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3654 --webpack",

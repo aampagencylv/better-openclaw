@@ -1,6 +1,6 @@
 {
   "name": "@better-openclaw/api",
-  "version": "1.0.0",
+  "version": "1.0.22",
   "private": true,
   "description": "REST API for better-openclaw stack generation",
   "main": "dist/index.mjs",

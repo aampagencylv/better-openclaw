@@ -1,6 +1,6 @@
 {
   "name": "@better-openclaw/mcp",
-  "version": "1.0.0",
+  "version": "1.0.22",
   "private": false,
   "description": "MCP server for OpenClaw — exposes Docker Compose stack generation capabilities to AI agents via the Model Context Protocol",
   "author": "bidew.io <bachir@bidew.io>",
