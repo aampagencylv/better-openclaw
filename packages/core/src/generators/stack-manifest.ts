@@ -13,8 +13,9 @@ export interface StackManifestService {
 	name: string;
 	category: string;
 	icon: string;
-	image: string;
-	imageTag: string;
+	image?: string;
+	imageTag?: string;
+	gitRepoUrl?: string;
 	ports: { container: number; host?: number; exposed: boolean; description: string }[];
 	docsUrl: string;
 	addedBy: string;
@@ -72,6 +73,7 @@ export function generateStackManifest(
 			icon: def.icon,
 			image: def.image,
 			imageTag: def.imageTag,
+			gitRepoUrl: def.gitSource?.repoUrl,
 			ports: def.ports.map((p) => ({
 				container: p.container,
 				host: p.host,

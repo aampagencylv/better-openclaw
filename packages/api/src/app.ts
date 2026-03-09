@@ -14,6 +14,7 @@ import { presetsRoute } from "./routes/presets.js";
 import { servicesRoute } from "./routes/services.js";
 import { skillsRoute } from "./routes/skills.js";
 import { stacksRoute } from "./routes/stacks.js";
+import { analyticsRoute } from "./routes/analytics.js";
 import { validateRoute } from "./routes/validate.js";
 
 const app = new OpenAPIHono<{
@@ -123,6 +124,7 @@ app.route("/v1/generate", generateRoute);
 app.route("/v1/deploy", deployRoute);
 app.route("/v1/stacks", stacksRoute);
 app.route("/v1/favorites", favoritesRoute);
+app.route("/v1/analytics", analyticsRoute);
 
 // Auto-generated OpenAPI spec
 app.doc("/v1/openapi.json", {

@@ -48,9 +48,11 @@ describe("pinImageTags", () => {
 		expect(pinned.services).toHaveLength(resolved.services.length);
 
 		for (const svc of pinned.services) {
+			// Git-based services (e.g., mission-control) don't have imageTag
+			if (svc.definition.gitSource) continue;
 			expect(svc.definition.imageTag).toBeDefined();
 			expect(typeof svc.definition.imageTag).toBe("string");
-			expect(svc.definition.imageTag.length).toBeGreaterThan(0);
+			expect(svc.definition.imageTag!.length).toBeGreaterThan(0);
 		}
 	});
 
@@ -63,10 +65,12 @@ describe("pinImageTags", () => {
 			platform: "linux/amd64",
 		});
 
-		const originalTag = resolved.services[0]?.definition.imageTag;
+		const redis = resolved.services.find((s) => s.definition.id === "redis");
+		const originalTag = redis?.definition.imageTag;
 		pinImageTags(resolved);
 
-		expect(resolved.services[0]?.definition.imageTag).toBe(originalTag);
+		const redisAfter = resolved.services.find((s) => s.definition.id === "redis");
+		expect(redisAfter?.definition.imageTag).toBe(originalTag);
 	});
 
 	it("preserves non-tag properties", () => {
@@ -79,8 +83,9 @@ describe("pinImageTags", () => {
 		});
 
 		const pinned = pinImageTags(resolved);
-		expect(pinned.services[0]?.definition.id).toBe("redis");
-		expect(pinned.services[0]?.definition.name).toBe("Redis");
+		const redis = pinned.services.find((s) => s.definition.id === "redis");
+		expect(redis).toBeDefined();
+		expect(redis!.definition.name).toBe("Redis");
 		expect(pinned.estimatedMemoryMB).toBe(resolved.estimatedMemoryMB);
 	});
 });

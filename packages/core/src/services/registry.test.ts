@@ -31,6 +31,14 @@ describe("service registry", () => {
 		expect(tailscale!.mandatory).toBe(true);
 	});
 
+	it("finds mission-control and it is mandatory with gitSource", () => {
+		const mc = getServiceById("mission-control");
+		expect(mc).toBeDefined();
+		expect(mc!.mandatory).toBe(true);
+		expect(mc!.gitSource).toBeDefined();
+		expect(mc!.gitSource!.repoUrl).toContain("better-openclaw-mission-control");
+	});
+
 	it("finds coolify, dokploy, livekit, and La Suite Meet services by ID", () => {
 		expect(getServiceById("coolify")).toBeDefined();
 		expect(getServiceById("dokploy")).toBeDefined();

@@ -8,8 +8,18 @@ export const missionControlDefinition: ServiceDefinition = {
 	category: "dev-tools",
 	icon: "🛸",
 
-	image: "ghcr.io/bidewio/mission-control",
-	imageTag: "latest",
+	// Pre-built image available at ghcr.io/bidewio/mission-control:latest
+	// but gitSource is preferred so users always get the latest source
+	gitSource: {
+		repoUrl: "https://github.com/bidewio/better-openclaw-mission-control.git",
+		branch: "main",
+		postCloneCommands: [],
+	},
+	buildContext: {
+		dockerfile: "Dockerfile",
+		context: ".",
+	},
+
 	ports: [
 		{
 			host: 3660,
@@ -44,6 +54,13 @@ export const missionControlDefinition: ServiceDefinition = {
 			required: true,
 		},
 	],
+	healthcheck: {
+		test: "wget -q --spider http://localhost:3660/ || exit 1",
+		interval: "10s",
+		timeout: "5s",
+		retries: 3,
+		startPeriod: "15s",
+	},
 	dependsOn: ["convex"],
 	restartPolicy: "unless-stopped",
 	networks: ["openclaw-network"],

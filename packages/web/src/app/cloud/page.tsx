@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 	keywords: [
 		"Clawexa",
 		"Clawexa cloud",
+		"Better-Openclaw cloudd",
 		"hosted OpenClaw",
 		"cloud docker compose",
 		"managed AI stack",

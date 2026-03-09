@@ -1,5 +1,6 @@
 import type { GenerationInput, Preset, ServiceDefinition, SkillPack } from "@better-openclaw/core";
 import {
+	buildAnalyticsPayload,
 	formatPortConflicts,
 	generate,
 	getAllPresets,
@@ -9,6 +10,7 @@ import {
 	resolve,
 	SERVICE_CATEGORIES,
 	scanPortConflicts,
+	trackAnalytics,
 } from "@better-openclaw/core";
 import {
 	cancel,
@@ -633,6 +635,10 @@ export async function runWizard(initialProjectDir?: string): Promise<void> {
 		console.error(pc.red(`\n${err instanceof Error ? err.message : String(err)}`));
 		process.exit(1);
 	}
+
+	// Fire-and-forget analytics tracking
+	const analyticsPayload = buildAnalyticsPayload(input, result.metadata, "cli", preset?.id);
+	trackAnalytics(analyticsPayload);
 
 	await writeProject(String(projectDir), result.files, {
 		outputFormat: String(outputFormat),

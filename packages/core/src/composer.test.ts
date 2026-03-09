@@ -38,8 +38,10 @@ describe("compose", () => {
 		// Should have CLI companion service
 		expect(parsed.services).toHaveProperty("openclaw-cli");
 
-		// Gateway should have no depends_on (no companions)
-		expect(parsed.services["openclaw-gateway"]).not.toHaveProperty("depends_on");
+		// Gateway should have depends_on for mandatory services (convex, mission-control, tailscale)
+		// Even with no user-selected services, mandatory services are always present
+		expect(parsed.services).toHaveProperty("convex");
+		expect(parsed.services).toHaveProperty("mission-control");
 
 		// Gateway should have restart policy
 		expect(parsed.services["openclaw-gateway"].restart).toBe("unless-stopped");

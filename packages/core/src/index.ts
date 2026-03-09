@@ -28,6 +28,7 @@ export {
 export { StackConfigError, ValidationError } from "./errors.js";
 export { generate, generateServicesDoc } from "./generate.js";
 export { generateCaddyfile } from "./generators/caddy.js";
+export { generateCloneScripts } from "./generators/clone-repos.js";
 export type { EnvVarGroup } from "./generators/env.js";
 export { generateEnvFiles, getStructuredEnvVars } from "./generators/env.js";
 export {
@@ -44,6 +45,9 @@ export { generatePrometheusConfig } from "./generators/prometheus.js";
 export { generateReadme } from "./generators/readme.js";
 export { generateScripts } from "./generators/scripts.js";
 export { generateSkillFiles } from "./generators/skills.js";
+// ─── Analytics ─────────────────────────────────────────────────────────────
+export type { AnalyticsPayload } from "./track-analytics.js";
+export { buildAnalyticsPayload, trackAnalytics } from "./track-analytics.js";
 export type {
 	StackManifest,
 	StackManifestService,
@@ -69,6 +73,7 @@ export { resolve } from "./resolver.js";
 export {
 	AddedDependencySchema,
 	ApiErrorSchema,
+	BuildContextSchema,
 	ComposeOptionsSchema,
 	DeploymentTargetSchema,
 	DeploymentTypeSchema,
@@ -77,6 +82,7 @@ export {
 	EnvVariableSchema,
 	ErrorSchema,
 	GenerationInputSchema,
+	GitSourceSchema,
 	HealthCheckSchema,
 	MaturitySchema,
 	NativePlatformSchema,
@@ -127,6 +133,7 @@ export type {
 	AddedDependency,
 	AiProvider,
 	ApiError,
+	BuildContext,
 	CategoryInfo,
 	ComposeOptions,
 	Deploy,
@@ -138,6 +145,7 @@ export type {
 	GenerationInput,
 	GenerationMetadata,
 	GenerationResult,
+	GitSource,
 	GsdRuntime,
 	HealthCheck,
 	Maturity,

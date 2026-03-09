@@ -150,7 +150,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						Clawexa Cloud
+						Better-Openclaw Cloud
 					</a>{" "}
 					&mdash; the hosted version of better-openclaw.
 				</p>

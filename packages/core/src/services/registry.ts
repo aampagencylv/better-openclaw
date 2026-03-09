@@ -10,6 +10,13 @@ for (const def of allServiceDefinitions) {
 			`Duplicate service definition ID: "${def.id}". Each service must have a unique ID.`,
 		);
 	}
+	const hasImage = def.image && def.imageTag;
+	const hasGitSource = def.gitSource && def.buildContext;
+	if (!hasImage && !hasGitSource) {
+		throw new Error(
+			`Service "${def.id}" must specify either image+imageTag or gitSource+buildContext.`,
+		);
+	}
 	registryMap.set(def.id, def);
 }
 

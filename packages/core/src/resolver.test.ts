@@ -1,18 +1,30 @@
 import { describe, expect, it } from "vitest";
 import { resolve } from "./resolver.js";
 
+// Mandatory services (convex, mission-control, tailscale) are always auto-included.
+// These IDs and their combined memory are accounted for in all tests.
+const MANDATORY_IDS = ["convex", "mission-control", "tailscale"];
+const MANDATORY_MEMORY = 256 + 128 + 64; // convex + mission-control + tailscale
+
 describe("resolve", () => {
-	it("returns empty services for empty input", () => {
+	it("returns only mandatory services for empty input", () => {
 		const result = resolve({ services: [], skillPacks: [] });
-		expect(result.services).toHaveLength(0);
+		const ids = result.services.map((s) => s.definition.id);
+		for (const id of MANDATORY_IDS) {
+			expect(ids).toContain(id);
+		}
 		expect(result.isValid).toBe(true);
-		expect(result.estimatedMemoryMB).toBe(512); // base OpenClaw only
+		// 512 (base) + mandatory services memory
+		expect(result.estimatedMemoryMB).toBe(512 + MANDATORY_MEMORY);
 	});
 
-	it("resolves a single service with no dependencies", () => {
+	it("resolves a single service alongside mandatory services", () => {
 		const result = resolve({ services: ["redis"], skillPacks: [] });
-		expect(result.services).toHaveLength(1);
-		expect(result.services[0]!.definition.id).toBe("redis");
+		const ids = result.services.map((s) => s.definition.id);
+		expect(ids).toContain("redis");
+		for (const id of MANDATORY_IDS) {
+			expect(ids).toContain(id);
+		}
 		expect(result.isValid).toBe(true);
 	});
 
@@ -97,8 +109,8 @@ describe("resolve", () => {
 
 	it("estimates memory correctly", () => {
 		const result = resolve({ services: ["redis"], skillPacks: [] });
-		// 512 (base) + 128 (redis) = 640
-		expect(result.estimatedMemoryMB).toBe(640);
+		// 512 (base) + 128 (redis) + mandatory services
+		expect(result.estimatedMemoryMB).toBe(512 + 128 + MANDATORY_MEMORY);
 	});
 
 	it("adds proxy service when specified", () => {
@@ -133,18 +145,15 @@ describe("resolve", () => {
 	});
 
 	it("warns about GPU when AI services selected without gpu flag", () => {
-		// Ollama doesn't have gpuRequired=true (it's recommended not required)
-		// but we should still check GPU warning logic works
 		const result = resolve({ services: ["redis"], skillPacks: [], gpu: false });
-		// Redis doesn't need GPU, so no GPU warnings
 		const gpuWarnings = result.warnings.filter((w) => w.type === "gpu");
 		expect(gpuWarnings).toHaveLength(0);
 	});
 
-	it("resolves tailscale as single service with no dependencies", () => {
-		const result = resolve({ services: ["tailscale"], skillPacks: [] });
-		expect(result.services).toHaveLength(1);
-		expect(result.services[0]!.definition.id).toBe("tailscale");
+	it("resolves tailscale (mandatory, always present)", () => {
+		const result = resolve({ services: [], skillPacks: [] });
+		const ids = result.services.map((s) => s.definition.id);
+		expect(ids).toContain("tailscale");
 		expect(result.isValid).toBe(true);
 	});
 
@@ -200,5 +209,34 @@ describe("resolve", () => {
 		expect(backendIdx).toBeGreaterThan(redisIdx);
 		expect(backendIdx).toBeGreaterThan(livekitIdx);
 		expect(frontendIdx).toBeGreaterThan(backendIdx);
+	});
+
+	// ── Mandatory services enforcement ──────────────────────────────────────
+
+	it("auto-includes mandatory services even when not selected", () => {
+		const result = resolve({ services: ["redis"], skillPacks: [] });
+		const ids = result.services.map((s) => s.definition.id);
+		expect(ids).toContain("mission-control");
+		expect(ids).toContain("convex");
+		expect(ids).toContain("tailscale");
+		const mc = result.services.find((s) => s.definition.id === "mission-control");
+		expect(mc!.addedBy).toBe("mandatory");
+	});
+
+	it("marks user-selected mandatory services as 'user' not 'mandatory'", () => {
+		const result = resolve({ services: ["mission-control"], skillPacks: [] });
+		const mc = result.services.find((s) => s.definition.id === "mission-control");
+		expect(mc!.addedBy).toBe("user");
+		// convex should still be auto-added as dependency of mission-control
+		const convex = result.services.find((s) => s.definition.id === "convex");
+		expect(convex).toBeDefined();
+	});
+
+	it("orders convex before mission-control (dependency ordering)", () => {
+		const result = resolve({ services: ["redis"], skillPacks: [] });
+		const ids = result.services.map((s) => s.definition.id);
+		const convexIdx = ids.indexOf("convex");
+		const mcIdx = ids.indexOf("mission-control");
+		expect(convexIdx).toBeLessThan(mcIdx);
 	});
 });

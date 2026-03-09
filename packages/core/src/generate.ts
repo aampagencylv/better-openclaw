@@ -7,6 +7,7 @@ import { composeMultiFile } from "./composer.js";
 import { StackConfigError, ValidationError } from "./errors.js";
 import { generateBareMetalInstall } from "./generators/bare-metal-install.js";
 import { generateCaddyfile } from "./generators/caddy.js";
+import { generateCloneScripts } from "./generators/clone-repos.js";
 import { generateCloudInit } from "./generators/cloud-init.js";
 import { generateEnvFiles } from "./generators/env.js";
 import { generateGsdScripts } from "./generators/get-shit-done.js";
@@ -149,6 +150,7 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 		".env.*.local",
 		"*.log",
 		"docker-compose.override.yml",
+		"repos/",
 	].join("\n");
 
 	// Stack manifest (consumed by Mission Control)
@@ -181,8 +183,15 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 	});
 
 	// Scripts
-	const scripts = generateScripts();
+	const hasGitServices = resolvedForCompose.services.some((s) => s.definition.gitSource);
+	const scripts = generateScripts({ hasGitServices });
 	for (const [path, content] of Object.entries(scripts)) {
+		files[path] = content;
+	}
+
+	// Clone scripts for git-based services (SaaS boilerplates)
+	const cloneScripts = generateCloneScripts(resolvedForCompose);
+	for (const [path, content] of Object.entries(cloneScripts)) {
 		files[path] = content;
 	}
 

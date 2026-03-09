@@ -38,6 +38,7 @@ export const ServiceCategorySchema = z.enum([
 	"business-intelligence",
 	"dns-networking",
 	"iot",
+	"saas-boilerplate",
 ]);
 
 export const MaturitySchema = z.enum(["stable", "beta", "experimental"]);
@@ -153,6 +154,30 @@ export const NativeRecipeSchema = z.object({
 	systemdUnit: z.string().optional(),
 });
 
+// ─── Git Source / Build Context (for repo-based services) ───────────────────
+
+export const GitSourceSchema = z.object({
+	/** Git clone URL, e.g. "https://github.com/wasp-lang/open-saas.git" */
+	repoUrl: z.string().url(),
+	/** Branch or tag to clone. Defaults to repo's default branch. */
+	branch: z.string().optional(),
+	/** Subdirectory within the cloned repo to use as build context root. */
+	subdirectory: z.string().optional(),
+	/** Commands to run after cloning (e.g. "cp .env.example .env"). */
+	postCloneCommands: z.array(z.string()).default([]),
+});
+
+export const BuildContextSchema = z.object({
+	/** Path to Dockerfile relative to the context root. Defaults to "Dockerfile". */
+	dockerfile: z.string().optional(),
+	/** Build context path relative to the subdirectory root. Defaults to ".". */
+	context: z.string().default("."),
+	/** Docker build args to pass at build time. */
+	args: z.record(z.string(), z.string()).optional(),
+	/** Target stage in a multi-stage Dockerfile. */
+	target: z.string().optional(),
+});
+
 // ─── Service Definition ─────────────────────────────────────────────────────
 
 export const ServiceDefinitionSchema = z.object({
@@ -166,9 +191,13 @@ export const ServiceDefinitionSchema = z.object({
 	category: ServiceCategorySchema,
 	icon: z.string(),
 
-	// Docker
-	image: z.string().min(1),
-	imageTag: z.string().min(1),
+	// Docker (required for image-based services, omitted for git-based)
+	image: z.string().min(1).optional(),
+	imageTag: z.string().min(1).optional(),
+
+	// Git source (for services built from cloned repositories)
+	gitSource: GitSourceSchema.optional(),
+	buildContext: BuildContextSchema.optional(),
 	ports: z.array(PortMappingSchema).default([]),
 	volumes: z.array(VolumeMappingSchema).default([]),
 	environment: z.array(EnvVariableSchema).default([]),
@@ -278,7 +307,7 @@ export const GenerationInputSchema = z.object({
 
 export const ResolvedServiceSchema = z.object({
 	definition: ServiceDefinitionSchema,
-	addedBy: z.enum(["user", "dependency", "skill-pack", "proxy", "monitoring"]).default("user"),
+	addedBy: z.enum(["user", "dependency", "skill-pack", "proxy", "monitoring", "mandatory"]).default("user"),
 });
 
 export const AddedDependencySchema = z.object({

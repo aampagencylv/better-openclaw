@@ -1,5 +1,6 @@
 import { Writable } from "node:stream";
-import { GenerationInputSchema, generate } from "@better-openclaw/core";
+import { GenerationInputSchema, buildAnalyticsPayload, generate } from "@better-openclaw/core";
+import { analyticsEvent, db } from "@better-openclaw/db";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import archiver from "archiver";
 
@@ -123,6 +124,11 @@ route.openapi(generatePost, async (c: any) => {
 	try {
 		const input = c.req.valid("json");
 		const result = generate(input);
+
+		// Fire-and-forget analytics tracking
+		const analyticsPayload = buildAnalyticsPayload(input, result.metadata, "api");
+		db.insert(analyticsEvent).values(analyticsPayload).catch(() => {});
+
 		const accept = c.req.header("Accept") ?? "";
 		const { format } = c.req.valid("query");
 

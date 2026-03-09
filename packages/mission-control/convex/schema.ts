@@ -126,8 +126,9 @@ export default defineSchema({
 		name: v.string(),
 		category: v.string(),
 		icon: v.string(),
-		image: v.string(),
-		imageTag: v.string(),
+		image: v.optional(v.string()),
+		imageTag: v.optional(v.string()),
+		gitRepoUrl: v.optional(v.string()),
 		ports: v.array(
 			v.object({
 				container: v.number(),
@@ -216,6 +217,54 @@ export default defineSchema({
 	})
 		.index("by_tenant", ["tenantId"])
 		.index("by_resource", ["tenantId", "resourceType"]),
+	// ── Claude Code Sessions ──────────────────────────────────────────────
+	claudeSessions: defineTable({
+		sessionId: v.string(),
+		projectSlug: v.string(),
+		projectPath: v.optional(v.string()),
+		model: v.optional(v.string()),
+		gitBranch: v.optional(v.string()),
+		userMessages: v.number(),
+		assistantMessages: v.number(),
+		toolUses: v.number(),
+		inputTokens: v.number(),
+		outputTokens: v.number(),
+		estimatedCost: v.number(),
+		firstMessageAt: v.optional(v.string()),
+		lastMessageAt: v.optional(v.string()),
+		lastUserPrompt: v.optional(v.string()),
+		isActive: v.boolean(),
+		scannedAt: v.number(),
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_session", ["tenantId", "sessionId"]),
+	// ── Chat System ───────────────────────────────────────────────────────
+	chatMessages: defineTable({
+		conversationId: v.string(),
+		fromAgentId: v.optional(v.id("agents")),
+		fromUser: v.optional(v.string()), // for human/system messages
+		toAgentId: v.optional(v.id("agents")),
+		content: v.string(),
+		messageType: v.union(v.literal("text"), v.literal("system"), v.literal("handoff"), v.literal("command")),
+		readAt: v.optional(v.number()),
+		metadata: v.optional(v.string()), // JSON blob
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_conversation", ["tenantId", "conversationId"]),
+	// ── Standup Reports ───────────────────────────────────────────────────
+	standupReports: defineTable({
+		date: v.string(), // YYYY-MM-DD
+		generatedAt: v.number(),
+		summary: v.string(), // JSON blob
+		agentReports: v.string(), // JSON blob
+		teamAccomplishments: v.string(), // JSON blob
+		teamBlockers: v.string(), // JSON blob
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_date", ["tenantId", "date"]),
 	compliancePolicies: defineTable({
 		name: v.string(),
 		description: v.string(),

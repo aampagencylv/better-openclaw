@@ -180,6 +180,13 @@ export { woodpeckerCiDefinition } from "./woodpecker-ci.js";
 export { xyopsDefinition } from "./xyops.js";
 export { zulipDefinition } from "./zulip.js";
 
+// ── SaaS Boilerplates ──────────────────────────────────────────────────────
+export { openSaasDefinition } from "./open-saas.js";
+export { apptensionSaasDefinition } from "./apptension-saas.js";
+export { boxyhqSaasDefinition } from "./boxyhq-saas.js";
+export { ixartzSaasDefinition } from "./ixartz-saas.js";
+export { cmsaasStarterDefinition } from "./cmsaas-starter.js";
+
 import type { ServiceDefinition } from "../../types.js";
 import { adguardHomeDefinition } from "./adguard-home.js";
 import { airbyteDefinition } from "./airbyte.js";
@@ -362,6 +369,13 @@ import { wireguardDefinition } from "./wireguard.js";
 import { woodpeckerCiDefinition } from "./woodpecker-ci.js";
 import { xyopsDefinition } from "./xyops.js";
 import { zulipDefinition } from "./zulip.js";
+
+// ── SaaS Boilerplates ──────────────────────────────────────────────────────
+import { openSaasDefinition } from "./open-saas.js";
+import { apptensionSaasDefinition } from "./apptension-saas.js";
+import { boxyhqSaasDefinition } from "./boxyhq-saas.js";
+import { ixartzSaasDefinition } from "./ixartz-saas.js";
+import { cmsaasStarterDefinition } from "./cmsaas-starter.js";
 
 export const allServiceDefinitions: ServiceDefinition[] = [
 	redisDefinition,
@@ -547,4 +561,10 @@ export const allServiceDefinitions: ServiceDefinition[] = [
 	vikunjaDefinition,
 	wireguardDefinition,
 	woodpeckerCiDefinition,
+	// ── SaaS Boilerplates ────────────────────────────────────────────────────
+	openSaasDefinition,
+	apptensionSaasDefinition,
+	boxyhqSaasDefinition,
+	ixartzSaasDefinition,
+	cmsaasStarterDefinition,
 ];

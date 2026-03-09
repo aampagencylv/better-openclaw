@@ -9,8 +9,23 @@ export default defineConfig({
 		react(),
 		tailwindcss(),
 		{
-			name: "local-file-server",
+			name: "local-api-server",
 			configureServer(server) {
+				// Claude Code session scanner endpoint
+				server.middlewares.use("/api/claude-sessions", async (_req, res) => {
+					try {
+						const { scanClaudeSessions } = await import("./src/lib/claude-sessions");
+						const sessions = scanClaudeSessions();
+						res.setHeader("Content-Type", "application/json");
+						res.end(JSON.stringify({ ok: true, sessions }));
+					} catch (err: any) {
+						res.statusCode = 500;
+						res.setHeader("Content-Type", "application/json");
+						res.end(JSON.stringify({ ok: false, error: err.message }));
+					}
+				});
+
+				// Local file server for images/PDFs
 				server.middlewares.use("/api/local-file", (req, res) => {
 					const url = new URL(req.url || "", "http://localhost");
 					const filePath = url.searchParams.get("path");

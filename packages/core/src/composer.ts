@@ -50,6 +50,7 @@ const CATEGORY_PROFILE_MAP: Partial<Record<ServiceCategory, { file: string; prof
 	"social-media": { file: "docker-compose.social.yml", profile: "social" },
 	knowledge: { file: "docker-compose.knowledge.yml", profile: "knowledge" },
 	communication: { file: "docker-compose.communication.yml", profile: "communication" },
+	"saas-boilerplate": { file: "docker-compose.saas.yml", profile: "saas" },
 };
 
 const YAML_OPTIONS = { lineWidth: 120, nullStr: "" };
@@ -230,7 +231,25 @@ function buildCompanionService(
 	const svc: Record<string, unknown> = {};
 	const volumeNames: string[] = [];
 
-	svc.image = `${def.image}:${def.imageTag}`;
+	// Git-based services use build: context; image-based services use image:
+	if (def.gitSource && def.buildContext) {
+		const subdir = def.gitSource.subdirectory || ".";
+		const ctxPath = def.buildContext.context || ".";
+		const contextFull = subdir === "." ? `./repos/${def.id}/${ctxPath}` : `./repos/${def.id}/${subdir}/${ctxPath}`;
+		const buildBlock: Record<string, unknown> = { context: contextFull };
+		if (def.buildContext.dockerfile) {
+			buildBlock.dockerfile = def.buildContext.dockerfile;
+		}
+		if (def.buildContext.args && Object.keys(def.buildContext.args).length > 0) {
+			buildBlock.args = def.buildContext.args;
+		}
+		if (def.buildContext.target) {
+			buildBlock.target = def.buildContext.target;
+		}
+		svc.build = buildBlock;
+	} else {
+		svc.image = `${def.image}:${def.imageTag}`;
+	}
 
 	if (def.environment.length > 0) {
 		const env: Record<string, string> = {};

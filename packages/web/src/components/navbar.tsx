@@ -16,6 +16,7 @@ const navLinks = [
 	{ href: "/blog", label: "BLOG" },
 	{ href: "/api-docs", label: "API" },
 	{ href: "/showcase", label: "SHOWCASE" },
+	{ href: "/analytics", label: "ANALYTICS" },
 	{ href: "https://clawexa.net", label: "CLOUD", external: true },
 ];
 

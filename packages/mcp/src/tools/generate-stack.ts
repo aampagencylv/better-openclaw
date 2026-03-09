@@ -1,4 +1,4 @@
-import { generate } from "@better-openclaw/core";
+import { buildAnalyticsPayload, generate, trackAnalytics } from "@better-openclaw/core";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
@@ -59,6 +59,32 @@ export function registerGenerateStack(server: McpServer): void {
 					deployTarget: "local",
 					hardened: true,
 				});
+
+				// Fire-and-forget analytics tracking
+				const analyticsPayload = buildAnalyticsPayload(
+					{
+						projectName: params.projectName,
+						services: params.services,
+						skillPacks: params.skillPacks ?? [],
+						aiProviders: [],
+						gsdRuntimes: [],
+						proxy: params.proxy ?? "none",
+						domain: params.domain,
+						gpu: params.gpu ?? false,
+						platform: params.platform ?? "linux/amd64",
+						monitoring: params.monitoring ?? false,
+						generateSecrets: params.generateSecrets ?? true,
+						openclawVersion: "latest",
+						deployment: "local",
+						deploymentType: "docker",
+						openclawImage: "official",
+						deployTarget: "local",
+						hardened: true,
+					},
+					result.metadata,
+					"mcp",
+				);
+				trackAnalytics(analyticsPayload);
 
 				return {
 					content: [

@@ -3,6 +3,7 @@ import type {
 	AddedDependencySchema,
 	AiProviderSchema,
 	ApiErrorSchema,
+	BuildContextSchema,
 	ComposeOptionsSchema,
 	DeploymentTargetSchema,
 	DeploymentTypeSchema,
@@ -11,6 +12,7 @@ import type {
 	EnvVariableSchema,
 	ErrorSchema,
 	GenerationInputSchema,
+	GitSourceSchema,
 	GsdRuntimeSchema,
 	HealthCheckSchema,
 	MaturitySchema,
@@ -50,6 +52,8 @@ export type DeploymentTarget = z.infer<typeof DeploymentTargetSchema>;
 export type DeploymentType = z.infer<typeof DeploymentTypeSchema>;
 export type NativePlatform = z.infer<typeof NativePlatformSchema>;
 export type NativeRecipe = z.infer<typeof NativeRecipeSchema>;
+export type GitSource = z.infer<typeof GitSourceSchema>;
+export type BuildContext = z.infer<typeof BuildContextSchema>;
 export type OutputFormat = z.infer<typeof OutputFormatSchema>;
 export type OpenclawImageVariant = z.infer<typeof OpenclawImageVariantSchema>;
 export type OpenclawInstallMethod = z.infer<typeof OpenclawInstallMethodSchema>;
@@ -368,5 +372,12 @@ export const SERVICE_CATEGORIES: CategoryInfo[] = [
 		description: "IoT & Edge",
 		label: "IoT & Edge",
 		icon: "📡",
+	},
+	{
+		id: "saas-boilerplate",
+		name: "SaaS Boilerplates",
+		description: "Full-stack SaaS starter kits and boilerplates",
+		label: "SaaS Boilerplates",
+		icon: "🚀",
 	},
 ];

@@ -9,6 +9,7 @@ import type {
 	SkillPack,
 } from "@better-openclaw/core";
 import {
+	buildAnalyticsPayload,
 	formatPortConflicts,
 	generate,
 	getAllPresets,
@@ -18,6 +19,7 @@ import {
 	getServiceById,
 	getSkillPackById,
 	scanPortConflicts,
+	trackAnalytics,
 } from "@better-openclaw/core";
 import pc from "picocolors";
 import { writeProject } from "./writer.js";
@@ -262,6 +264,10 @@ export async function runNonInteractive(options: NonInteractiveOptions): Promise
 
 	// Generate
 	const result = generate(input);
+
+	// Fire-and-forget analytics tracking
+	const analyticsPayload = buildAnalyticsPayload(input, result.metadata, "cli", options.preset);
+	trackAnalytics(analyticsPayload);
 
 	if (options.json) {
 		console.log(

@@ -3,7 +3,8 @@
  *
  * Returns a map of file paths (relative to project root) to file contents.
  */
-export function generateScripts(): Record<string, string> {
+export function generateScripts(options?: { hasGitServices?: boolean }): Record<string, string> {
+	const hasGit = options?.hasGitServices ?? false;
 	const files: Record<string, string> = {};
 
 	// ── scripts/start.sh ────────────────────────────────────────────────────
@@ -136,6 +137,14 @@ if [ "$EMPTY_SECRETS" -gt 0 ]; then
   echo ""
 fi
 
+# ── Clone git-based repositories (if any) ────────────────────────────────────
+
+if [ -f "$SCRIPT_DIR/clone-repos.sh" ]; then
+  info "Cloning/updating SaaS boilerplate repositories..."
+  bash "$SCRIPT_DIR/clone-repos.sh"
+  ok "Repositories ready."
+fi
+
 # ── Pull and start ───────────────────────────────────────────────────────────
 
 echo ""
@@ -144,7 +153,7 @@ docker compose pull --quiet 2>/dev/null || docker compose pull
 
 echo ""
 info "Starting services..."
-docker compose up -d --remove-orphans
+docker compose up -d --remove-orphans${hasGit ? " --build" : ""}
 
 # ── Health-check loop ────────────────────────────────────────────────────────
 
@@ -243,13 +252,19 @@ cd "$PROJECT_DIR"
 echo "🐾 OpenClaw — Updating services..."
 echo ""
 
+# Update git-based repositories (if any)
+if [ -f "$SCRIPT_DIR/clone-repos.sh" ]; then
+  echo "📂 Updating SaaS boilerplate repositories..."
+  bash "$SCRIPT_DIR/clone-repos.sh"
+fi
+
 # Pull latest images
 echo "📦 Pulling latest images..."
 docker compose pull
 
 echo ""
 echo "🔄 Restarting services with new images..."
-docker compose up -d --remove-orphans
+docker compose up -d --remove-orphans${hasGit ? " --build" : ""}
 
 echo ""
 echo "⏳ Waiting for services to stabilize..."
@@ -356,6 +371,339 @@ echo "── Network ───────────────────�
 echo ""
 
 docker network ls --filter "name=openclaw" --format "table {{.Name}}\\t{{.Driver}}\\t{{.Scope}}" 2>/dev/null || true
+`;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// PowerShell equivalents
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// ── scripts/start.ps1 ───────────────────────────────────────────────────
+
+	files["scripts/start.ps1"] = `#Requires -Version 5.1
+<#
+.SYNOPSIS
+  OpenClaw Start Script — validates prerequisites, auto-generates secrets,
+  creates required directories, and starts all services via Docker Compose.
+#>
+
+$ErrorActionPreference = 'Stop'
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectDir = Split-Path -Parent $ScriptDir
+Set-Location $ProjectDir
+
+function Info  { param($Msg) Write-Host "  i  $Msg" -ForegroundColor Cyan }
+function Ok    { param($Msg) Write-Host "  +  $Msg" -ForegroundColor Green }
+function Warn  { param($Msg) Write-Host "  !  $Msg" -ForegroundColor Yellow }
+function Err   { param($Msg) Write-Host "  x  $Msg" -ForegroundColor Red }
+
+Write-Host ""
+Write-Host "OpenClaw - Starting services..." -ForegroundColor White
+Write-Host ""
+
+# ── Prerequisite checks ─────────────────────────────────────────────────
+if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+    Err "Docker is not installed. Please install Docker Desktop."
+    Write-Host "   https://docs.docker.com/desktop/install/windows-install/"
+    exit 1
+}
+
+$composeCheck = docker compose version 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Err "Docker Compose (v2) is not available."
+    Write-Host "   https://docs.docker.com/compose/install/"
+    exit 1
+}
+
+$dockerInfo = docker info 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Err "Docker daemon is not running. Please start Docker Desktop."
+    exit 1
+}
+
+# ── Source .env if it exists ─────────────────────────────────────────────
+if (Test-Path ".env") {
+    Info "Loading existing .env file..."
+    Get-Content ".env" | ForEach-Object {
+        if ($_ -match '^([^#=]+)=(.*)$') {
+            [Environment]::SetEnvironmentVariable($Matches[1].Trim(), $Matches[2].Trim(), 'Process')
+        }
+    }
+} else {
+    Warn ".env file not found - will create one from .env.example if available."
+    if (Test-Path ".env.example") {
+        Copy-Item ".env.example" ".env"
+        Info "Created .env from .env.example"
+        Get-Content ".env" | ForEach-Object {
+            if ($_ -match '^([^#=]+)=(.*)$') {
+                [Environment]::SetEnvironmentVariable($Matches[1].Trim(), $Matches[2].Trim(), 'Process')
+            }
+        }
+    }
+}
+
+# ── Auto-generate OPENCLAW_GATEWAY_TOKEN if missing ──────────────────────
+if (-not $env:OPENCLAW_GATEWAY_TOKEN) {
+    Info "Generating OPENCLAW_GATEWAY_TOKEN..."
+    $bytes = New-Object byte[] 32
+    [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+    $env:OPENCLAW_GATEWAY_TOKEN = ($bytes | ForEach-Object { $_.ToString("x2") }) -join ''
+
+    if (Test-Path ".env") {
+        $envContent = Get-Content ".env" -Raw
+        if ($envContent -match '(?m)^OPENCLAW_GATEWAY_TOKEN=') {
+            $envContent = $envContent -replace '(?m)^OPENCLAW_GATEWAY_TOKEN=.*', "OPENCLAW_GATEWAY_TOKEN=$($env:OPENCLAW_GATEWAY_TOKEN)"
+            Set-Content ".env" $envContent -NoNewline
+        } else {
+            Add-Content ".env" "OPENCLAW_GATEWAY_TOKEN=$($env:OPENCLAW_GATEWAY_TOKEN)"
+        }
+    }
+    Ok "Gateway token generated and saved."
+}
+
+# ── Apply defaults ───────────────────────────────────────────────────────
+if (-not $env:OPENCLAW_VERSION)       { $env:OPENCLAW_VERSION       = "latest" }
+if (-not $env:OPENCLAW_GATEWAY_PORT)  { $env:OPENCLAW_GATEWAY_PORT  = "18789" }
+if (-not $env:OPENCLAW_BRIDGE_PORT)   { $env:OPENCLAW_BRIDGE_PORT   = "18790" }
+if (-not $env:OPENCLAW_GATEWAY_BIND)  { $env:OPENCLAW_GATEWAY_BIND  = "lan" }
+if (-not $env:OPENCLAW_CONFIG_DIR)    { $env:OPENCLAW_CONFIG_DIR    = "./openclaw/config" }
+if (-not $env:OPENCLAW_WORKSPACE_DIR) { $env:OPENCLAW_WORKSPACE_DIR = "./openclaw/workspace" }
+
+# ── Create required host directories ────────────────────────────────────
+Info "Ensuring host directories exist..."
+New-Item -ItemType Directory -Force -Path $env:OPENCLAW_CONFIG_DIR    | Out-Null
+New-Item -ItemType Directory -Force -Path $env:OPENCLAW_WORKSPACE_DIR | Out-Null
+Ok "Directories ready: $($env:OPENCLAW_CONFIG_DIR), $($env:OPENCLAW_WORKSPACE_DIR)"
+
+# ── Clone git-based repositories (if any) ─────────────────────────────
+$cloneScript = Join-Path $ScriptDir "clone-repos.ps1"
+if (Test-Path $cloneScript) {
+    Info "Cloning/updating SaaS boilerplate repositories..."
+    & $cloneScript
+    Ok "Repositories ready."
+}
+
+# ── Pull and start ───────────────────────────────────────────────────────
+Write-Host ""
+Info "Pulling latest images..."
+docker compose pull 2>$null
+if ($LASTEXITCODE -ne 0) { docker compose pull }
+
+Write-Host ""
+Info "Starting services..."
+docker compose up -d --remove-orphans${hasGit ? " --build" : ""}
+
+# ── Health-check loop ────────────────────────────────────────────────────
+Write-Host ""
+Info "Waiting for services to become healthy..."
+Start-Sleep -Seconds 5
+
+$retries = 0
+$maxRetries = 30
+while ($retries -lt $maxRetries) {
+    $psOutput = docker compose ps --format json 2>$null
+    $unhealthy = ($psOutput | Select-String -Pattern '"unhealthy"' -SimpleMatch).Count
+    $starting  = ($psOutput | Select-String -Pattern '"starting"'  -SimpleMatch).Count
+    if ($unhealthy -eq 0 -and $starting -eq 0) { break }
+    $retries++
+    Start-Sleep -Seconds 2
+}
+
+Write-Host ""
+docker compose ps
+Write-Host ""
+
+if ($retries -ge $maxRetries) {
+    Warn "Some services may still be starting. Check: docker compose ps"
+} else {
+    Ok "All services are running!"
+}
+
+# ── Print service URLs & token ───────────────────────────────────────────
+$gatewayHost = if ($env:OPENCLAW_GATEWAY_BIND -eq "lan") { "0.0.0.0" } else { "localhost" }
+
+Write-Host ""
+Write-Host "==============================================================================="
+Write-Host " OpenClaw is ready!"
+Write-Host "==============================================================================="
+Write-Host ""
+Write-Host "  Gateway URL:         http://\${gatewayHost}:$($env:OPENCLAW_GATEWAY_PORT)"
+Write-Host "  Bridge (WebSocket):  ws://\${gatewayHost}:$($env:OPENCLAW_BRIDGE_PORT)"
+Write-Host "  Config directory:    $($env:OPENCLAW_CONFIG_DIR)"
+Write-Host "  Workspace directory: $($env:OPENCLAW_WORKSPACE_DIR)"
+Write-Host ""
+Write-Host "  Gateway Token:       $($env:OPENCLAW_GATEWAY_TOKEN)"
+Write-Host ""
+Write-Host "  Manage:"
+Write-Host "    Stop:   .\\scripts\\stop.ps1"
+Write-Host "    Status: .\\scripts\\status.ps1"
+Write-Host "    Update: .\\scripts\\update.ps1"
+Write-Host "    Logs:   docker compose logs -f"
+Write-Host ""
+Write-Host "==============================================================================="
+`;
+
+	// ── scripts/stop.ps1 ────────────────────────────────────────────────────
+
+	files["scripts/stop.ps1"] = `#Requires -Version 5.1
+<#
+.SYNOPSIS
+  OpenClaw Stop Script — gracefully stops all services.
+#>
+
+$ErrorActionPreference = 'Stop'
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectDir = Split-Path -Parent $ScriptDir
+Set-Location $ProjectDir
+
+Write-Host ""
+Write-Host "OpenClaw - Stopping services..." -ForegroundColor White
+Write-Host ""
+
+docker compose down --timeout 30
+
+Write-Host ""
+Write-Host "  +  All services stopped." -ForegroundColor Green
+`;
+
+	// ── scripts/update.ps1 ──────────────────────────────────────────────────
+
+	files["scripts/update.ps1"] = `#Requires -Version 5.1
+<#
+.SYNOPSIS
+  OpenClaw Update Script — pulls latest images and restarts services.
+#>
+
+$ErrorActionPreference = 'Stop'
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectDir = Split-Path -Parent $ScriptDir
+Set-Location $ProjectDir
+
+Write-Host ""
+Write-Host "OpenClaw - Updating services..." -ForegroundColor White
+Write-Host ""
+
+# Update git-based repositories (if any)
+$cloneScript = Join-Path $ScriptDir "clone-repos.ps1"
+if (Test-Path $cloneScript) {
+    Write-Host "  Updating SaaS boilerplate repositories..." -ForegroundColor Cyan
+    & $cloneScript
+}
+
+Write-Host "  Pulling latest images..." -ForegroundColor Cyan
+docker compose pull
+
+Write-Host ""
+Write-Host "  Restarting services with new images..." -ForegroundColor Cyan
+docker compose up -d --remove-orphans${hasGit ? " --build" : ""}
+
+Write-Host ""
+Write-Host "  Waiting for services to stabilize..." -ForegroundColor Cyan
+Start-Sleep -Seconds 10
+
+docker compose ps
+
+Write-Host ""
+Write-Host "  +  Update complete!" -ForegroundColor Green
+`;
+
+	// ── scripts/backup.ps1 ──────────────────────────────────────────────────
+
+	files["scripts/backup.ps1"] = `#Requires -Version 5.1
+<#
+.SYNOPSIS
+  OpenClaw Backup Script — backs up all named Docker volumes to a timestamped directory.
+#>
+
+$ErrorActionPreference = 'Stop'
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectDir = Split-Path -Parent $ScriptDir
+Set-Location $ProjectDir
+
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$backupDir = Join-Path $ProjectDir "backups\\$timestamp"
+New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
+
+Write-Host ""
+Write-Host "OpenClaw - Backing up volumes..." -ForegroundColor White
+Write-Host "   Backup directory: $backupDir"
+Write-Host ""
+
+# Get project name from docker compose
+$projectName = "openclaw"
+try {
+    $configJson = docker compose config --format json 2>$null | ConvertFrom-Json
+    if ($configJson.name) { $projectName = $configJson.name }
+} catch {}
+
+# List all volumes for this project
+$volumes = docker volume ls --filter "name=$projectName" --format "{{.Name}}" 2>$null
+if (-not $volumes) {
+    Write-Host "  !  No volumes found for project: $projectName" -ForegroundColor Yellow
+    Write-Host "     Trying to list all openclaw volumes..."
+    $volumes = docker volume ls --filter "name=openclaw" --format "{{.Name}}" 2>$null
+}
+
+if (-not $volumes) {
+    Write-Host "  x  No volumes found to back up." -ForegroundColor Red
+    exit 1
+}
+
+$backedUp = 0
+foreach ($volume in $volumes) {
+    $vol = $volume.Trim()
+    if (-not $vol) { continue }
+    Write-Host "  Backing up: $vol" -ForegroundColor Cyan
+    docker run --rm -v "\${vol}:/source:ro" -v "\${backupDir}:/backup" alpine tar czf "/backup/$vol.tar.gz" -C /source .
+    $size = (Get-Item (Join-Path $backupDir "$vol.tar.gz")).Length / 1MB
+    Write-Host "     + $vol ($([math]::Round($size, 1))MB)" -ForegroundColor Green
+    $backedUp++
+}
+
+$totalSize = ((Get-ChildItem $backupDir -Recurse | Measure-Object -Property Length -Sum).Sum) / 1MB
+Write-Host ""
+Write-Host "  +  Backed up $backedUp volume(s) ($([math]::Round($totalSize, 1))MB total)" -ForegroundColor Green
+Write-Host "     Location: $backupDir"
+`;
+
+	// ── scripts/status.ps1 ──────────────────────────────────────────────────
+
+	files["scripts/status.ps1"] = `#Requires -Version 5.1
+<#
+.SYNOPSIS
+  OpenClaw Status Script — shows the current status of all services.
+#>
+
+$ErrorActionPreference = 'Stop'
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectDir = Split-Path -Parent $ScriptDir
+Set-Location $ProjectDir
+
+Write-Host ""
+Write-Host "OpenClaw - Service Status" -ForegroundColor White
+Write-Host ""
+
+# Show compose status
+docker compose ps
+
+Write-Host ""
+Write-Host "-- Resource Usage ----------------------------------------------------------"
+Write-Host ""
+
+try { docker compose top 2>$null } catch {}
+
+Write-Host ""
+Write-Host "-- Disk Usage --------------------------------------------------------------"
+Write-Host ""
+
+try { docker system df 2>$null } catch {}
+
+Write-Host ""
+Write-Host "-- Network -----------------------------------------------------------------"
+Write-Host ""
+
+try {
+    docker network ls --filter "name=openclaw" --format "table {{.Name}}\\t{{.Driver}}\\t{{.Scope}}" 2>$null
+} catch {}
 `;
 
 	return files;

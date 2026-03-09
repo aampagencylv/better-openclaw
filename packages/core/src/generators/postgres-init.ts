@@ -52,6 +52,23 @@ const DB_REQUIREMENTS: Record<string, Omit<DbRequirement, "serviceId" | "service
 	openpanel: { dbName: "openpanel", dbUser: "openpanel", passwordEnvVar: "OPENPANEL_DB_PASSWORD" },
 	usesend: { dbName: "usesend", dbUser: "usesend", passwordEnvVar: "USESEND_DB_PASSWORD" },
 	nextcloud: { dbName: "nextcloud", dbUser: "nextcloud", passwordEnvVar: "NEXTCLOUD_DB_PASSWORD" },
+	// ── SaaS Boilerplates ────────────────────────────────────────────────────
+	"open-saas": { dbName: "opensaas", dbUser: "opensaas", passwordEnvVar: "OPENSAAS_DB_PASSWORD" },
+	"apptension-saas": {
+		dbName: "apptensionsaas",
+		dbUser: "apptensionsaas",
+		passwordEnvVar: "APPTENSION_SAAS_DB_PASSWORD",
+	},
+	"boxyhq-saas": {
+		dbName: "boxyhqsaas",
+		dbUser: "boxyhqsaas",
+		passwordEnvVar: "BOXYHQ_SAAS_DB_PASSWORD",
+	},
+	"ixartz-saas": {
+		dbName: "ixartzsaas",
+		dbUser: "ixartzsaas",
+		passwordEnvVar: "IXARTZ_SAAS_DB_PASSWORD",
+	},
 };
 
 /**

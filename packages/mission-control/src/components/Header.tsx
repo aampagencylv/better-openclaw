@@ -2,13 +2,19 @@ import {
 	IconBell,
 	IconChartBar,
 	IconChefHat,
+	IconCoins,
 	IconLayoutSidebar,
 	IconMenu2,
+	IconMessageCircle,
 	IconNetwork,
+	IconPlugConnected,
+	IconReport,
+	IconSearch,
 	IconServer,
 	IconShieldCheck,
 	IconSparkles,
 	IconTargetArrow,
+	IconTerminal2,
 } from "@tabler/icons-react";
 import SignOut from "./Signout";
 
@@ -18,12 +24,18 @@ export type ActiveView =
 	| "skills"
 	| "observability"
 	| "fleet"
-	| "compliance";
+	| "compliance"
+	| "sessions"
+	| "gateway"
+	| "chat"
+	| "tokens"
+	| "standup";
 
 interface HeaderProps {
 	onOpenAgents: () => void;
 	onOpenLiveFeed: () => void;
 	onOpenClawRecipes: () => void;
+	onOpenSearch: () => void;
 	activeView: ActiveView;
 	onChangeView: (view: ActiveView) => void;
 }
@@ -35,12 +47,18 @@ const NAV_ITEMS: { view: ActiveView; label: string; icon: React.ReactNode }[] = 
 	{ view: "observability", label: "Observability", icon: <IconChartBar size={16} /> },
 	{ view: "fleet", label: "Fleet", icon: <IconNetwork size={16} /> },
 	{ view: "compliance", label: "Compliance", icon: <IconShieldCheck size={16} /> },
+	{ view: "sessions", label: "Sessions", icon: <IconTerminal2 size={16} /> },
+	{ view: "gateway", label: "Gateway", icon: <IconPlugConnected size={16} /> },
+	{ view: "chat", label: "Chat", icon: <IconMessageCircle size={16} /> },
+	{ view: "tokens", label: "Tokens", icon: <IconCoins size={16} /> },
+	{ view: "standup", label: "Standup", icon: <IconReport size={16} /> },
 ];
 
 export default function Header({
 	onOpenAgents,
 	onOpenLiveFeed,
 	onOpenClawRecipes,
+	onOpenSearch,
 	activeView,
 	onChangeView,
 }: HeaderProps) {
@@ -86,6 +104,18 @@ export default function Header({
 			</div>
 
 			<div className="flex items-center gap-4">
+				<button
+					type="button"
+					className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground bg-secondary/50 hover:bg-secondary rounded-lg transition-colors"
+					onClick={onOpenSearch}
+					aria-label="Search"
+				>
+					<IconSearch size={16} />
+					<span className="text-xs">Search</span>
+					<kbd className="ml-1 text-[10px] px-1.5 py-0.5 bg-background rounded border border-border/50">
+						Ctrl+K
+					</kbd>
+				</button>
 				<button
 					type="button"
 					className="hidden md:flex p-2 hover:bg-accent rounded-lg items-center gap-2 text-muted-foreground transition-colors"

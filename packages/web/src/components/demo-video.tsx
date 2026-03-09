@@ -1,5 +1,3 @@
-import { PlayCircle } from "lucide-react";
-
 export function DemoVideo() {
 	return (
 		<section
@@ -22,54 +20,19 @@ export function DemoVideo() {
 				</div>
 
 				<div className="mx-auto max-w-5xl">
-					{/* Video Player Placeholder */}
-					<div className="relative aspect-video w-full rounded-2xl border border-border/50 bg-[#0a0a0a] shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden group">
-						{/* Placeholder Gradient / Grid */}
-						<div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[32px_32px] opacity-20" />
-						<div className="absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-primary/5" />
-
-						{/* Mock Video UI Controls */}
-						<div className="absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-black/80 to-transparent flex items-end px-6 pb-4">
-							<div className="w-full flex items-center gap-4">
-								<div className="h-2 flex-1 rounded-full bg-white/20 overflow-hidden">
-									<div className="h-full w-1/3 bg-primary rounded-full relative">
-										<div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
-									</div>
-								</div>
-								<div className="text-xs font-mono text-white/70">01:24 / 03:45</div>
-							</div>
-						</div>
-
-						{/* Play Button Overlay */}
-						<div className="absolute inset-0 flex items-center justify-center">
-							<button
-								aria-label="Play Demo Video"
-								type="button"
-								className="group/btn relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/20 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-primary/30 border border-primary/50"
-							>
-								<div className="absolute inset-0 rounded-full bg-primary/20 blur-xl transition-all duration-300 group-hover/btn:bg-primary/40 group-hover/btn:blur-2xl" />
-								<PlayCircle className="relative z-10 h-10 w-10 text-primary-foreground ml-1" />
-							</button>
-						</div>
-
-						{/* Mock Top Bar */}
-						<div className="absolute top-0 inset-x-0 h-12 bg-linear-to-b from-black/60 to-transparent flex items-start justify-between px-6 pt-4">
-							<div className="font-mono text-xs uppercase tracking-widest text-white/50">
-								better-openclaw architecture builder demo
-							</div>
-							<div className="flex gap-1.5">
-								<div className="w-2 h-2 rounded-full bg-red-500/50" />
-								<div className="w-2 h-2 rounded-full bg-amber-500/50" />
-								<div className="w-2 h-2 rounded-full bg-emerald-500/50" />
-							</div>
-						</div>
-
-						{/* Placeholder text for User to replace */}
-						<div className="absolute inset-0 flex items-center justify-center z-[-1] opacity-50">
-							<span className="font-mono text-muted-foreground/30 text-2xl uppercase tracking-[0.2em] pointer-events-none">
-								[ Placeholder Video Element ]
-							</span>
-						</div>
+					{/* Supademo Interactive Demo */}
+					<div className="relative w-full rounded-2xl border border-border/50 bg-[#0a0a0a] shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden"
+						style={{ boxSizing: "content-box", maxHeight: "80vh", aspectRatio: "1.93", padding: "40px 0" }}
+					>
+						<iframe
+							src="https://app.supademo.com/embed/cmmixxhcp1qkjzdh1mp8a1z4w?embed_v=2&utm_source=embed"
+							loading="lazy"
+							title="Set up full-stack AI with Anthropic, Video Creator, Research Agent"
+							allow="clipboard-write"
+							frameBorder="0"
+							allowFullScreen
+							className="absolute top-0 left-0 w-full h-full"
+						/>
 					</div>
 				</div>
 			</div>

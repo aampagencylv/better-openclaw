@@ -187,7 +187,8 @@ describe("generate (end-to-end)", () => {
 		for (const id of lasuiteMeetServices) {
 			expect(allServiceIds.has(id), `missing service ${id}`).toBe(true);
 		}
-		expect(result.metadata.serviceCount).toBe(lasuiteMeetServices.length);
+		// Service count includes user services + mandatory platform services (convex, mission-control, tailscale)
+		expect(result.metadata.serviceCount).toBeGreaterThanOrEqual(lasuiteMeetServices.length);
 	});
 
 	it("generates bare-metal installer for Windows (install.ps1)", () => {

@@ -5,17 +5,23 @@ import AddAgentModal from "./components/AddAgentModal";
 import AddTaskModal from "./components/AddTaskModal";
 import AgentDetailTray from "./components/AgentDetailTray";
 import AgentsSidebar from "./components/AgentsSidebar";
+import ChatPanel from "./components/ChatPanel";
 import CompliancePage from "./components/CompliancePage";
 import FleetPage from "./components/FleetPage";
+import GatewayPanel from "./components/GatewayPanel";
 import Header, { type ActiveView } from "./components/Header";
 import MissionQueue from "./components/MissionQueue";
 import ObservabilityPage from "./components/ObservabilityPage";
 import RegisterStackModal from "./components/RegisterStackModal";
 import RightSidebar from "./components/RightSidebar";
 import ServicesPage from "./components/ServicesPage";
+import SessionsPage from "./components/SessionsPage";
 import SignInForm from "./components/SignIn";
 import SkillsPage from "./components/SkillsPage";
+import SearchOverlay from "./components/SearchOverlay";
+import StandupPanel from "./components/StandupPanel";
 import TaskDetailPanel from "./components/TaskDetailPanel";
+import TokenDashboard from "./components/TokenDashboard";
 import ClawRecipesTray from "./components/Trays/ClawRecipesTray";
 import TrayContainer from "./components/Trays/TrayContainer";
 
@@ -61,6 +67,19 @@ export default function App() {
 	const [showConversationTray, setShowConversationTray] = useState(false);
 	const [showPreviewTray, setShowPreviewTray] = useState(false);
 	const [showClawRecipesTray, setShowClawRecipesTray] = useState(false);
+	const [showSearch, setShowSearch] = useState(false);
+
+	// Ctrl+K global shortcut for search
+	useEffect(() => {
+		const onKeyDown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+				e.preventDefault();
+				setShowSearch((prev) => !prev);
+			}
+		};
+		document.addEventListener("keydown", onKeyDown);
+		return () => document.removeEventListener("keydown", onKeyDown);
+	}, []);
 
 	const handleSelectDocument = useCallback((id: Id<"documents"> | null) => {
 		if (id === null) {
@@ -112,6 +131,7 @@ export default function App() {
 							setIsLeftSidebarOpen(false);
 						}}
 						onOpenClawRecipes={() => setShowClawRecipesTray(true)}
+						onOpenSearch={() => setShowSearch(true)}
 						activeView={activeView}
 						onChangeView={setActiveView}
 					/>
@@ -228,6 +248,41 @@ export default function App() {
 							<CompliancePage />
 						</div>
 					)}
+
+					{/* Sessions view */}
+					{activeView === "sessions" && (
+						<div style={{ gridArea: "main" }}>
+							<SessionsPage />
+						</div>
+					)}
+
+					{/* Gateway view */}
+					{activeView === "gateway" && (
+						<div style={{ gridArea: "main" }}>
+							<GatewayPanel />
+						</div>
+					)}
+
+					{/* Chat view */}
+					{activeView === "chat" && (
+						<div style={{ gridArea: "main" }}>
+							<ChatPanel />
+						</div>
+					)}
+
+					{/* Tokens view */}
+					{activeView === "tokens" && (
+						<div style={{ gridArea: "main" }}>
+							<TokenDashboard />
+						</div>
+					)}
+
+					{/* Standup view */}
+					{activeView === "standup" && (
+						<div style={{ gridArea: "main" }}>
+							<StandupPanel />
+						</div>
+					)}
 				</main>
 			</Authenticated>
 			<Unauthenticated>
@@ -235,6 +290,7 @@ export default function App() {
 			</Unauthenticated>
 
 			<ClawRecipesTray isOpen={showClawRecipesTray} onClose={() => setShowClawRecipesTray(false)} />
+			<SearchOverlay isOpen={showSearch} onClose={() => setShowSearch(false)} />
 
 			{showRegisterStackModal && (
 				<RegisterStackModal

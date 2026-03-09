@@ -1,4 +1,4 @@
-import { getServiceById } from "./services/registry.js";
+import { getAllServices, getServiceById } from "./services/registry.js";
 import { getSkillPackById } from "./skills/registry.js";
 import type {
 	AddedDependency,
@@ -96,6 +96,18 @@ export function resolve(input: ResolverInput): ResolverOutput {
 					reason: "Included with monitoring stack",
 				});
 			}
+		}
+	}
+
+	// Add mandatory platform services (mission-control, convex, tailscale, etc.)
+	for (const def of getAllServices()) {
+		if (def.mandatory && !serviceIds.has(def.id)) {
+			serviceIds.add(def.id);
+			serviceAddedBy.set(def.id, "mandatory");
+			addedDependencies.push({
+				service: def.id,
+				reason: "Mandatory OpenClaw platform service",
+			});
 		}
 	}
 

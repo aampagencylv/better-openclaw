@@ -10,7 +10,7 @@ export function getImageTag(serviceId: string): string | undefined {
 /** Get the full image reference (image:tag) for a service */
 export function getImageReference(serviceId: string): string | undefined {
 	const svc = getServiceById(serviceId);
-	if (!svc) return undefined;
+	if (!svc || !svc.image || !svc.imageTag) return undefined;
 	return `${svc.image}:${svc.imageTag}`;
 }
 
