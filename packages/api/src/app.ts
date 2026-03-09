@@ -26,6 +26,8 @@ const app = new OpenAPIHono<{
 const trustedOrigins = process.env.TRUSTED_ORIGINS?.split(",") || [
 	"http://localhost:3456",
 	"http://localhost:3654",
+	"https://clawexa.net",
+	"https://www.clawexa.net",
 ];
 
 // Middleware
@@ -127,7 +129,8 @@ app.doc("/v1/openapi.json", {
 	openapi: "3.1.0",
 	info: {
 		title: "better-openclaw API",
-		description: "REST API for generating production-ready OpenClaw Docker Compose stacks",
+		description:
+			"REST API for generating production-ready OpenClaw Docker Compose stacks. Cloud-hosted version available at https://clawexa.net",
 		version: "1.0.0",
 		contact: { name: "bachir@bidew.io" },
 	},

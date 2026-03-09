@@ -127,7 +127,15 @@ export function HeroContent() {
 
 			<motion.div variants={fadeUp} className="mt-10">
 				<span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60">
-					NO CREDIT CARD REQ. | INSTANT PROVISIONING
+					NO CREDIT CARD REQ. | INSTANT PROVISIONING |{" "}
+					<a
+						href="https://clawexa.net"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-primary/60 transition-colors hover:text-primary"
+					>
+						CLAWEXA CLOUD
+					</a>
 				</span>
 			</motion.div>
 		</motion.div>

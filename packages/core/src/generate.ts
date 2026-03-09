@@ -307,6 +307,7 @@ export function generate(rawInput: GenerationInput): GenerationResult {
 			serviceCount: resolved.services.length,
 			skillCount,
 			estimatedMemoryMB: resolved.estimatedMemoryMB,
+			resolvedServices: resolved.services.map((s) => s.definition.id),
 			generatedAt: new Date().toISOString(),
 		},
 	};

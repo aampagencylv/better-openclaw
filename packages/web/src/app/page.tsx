@@ -8,6 +8,7 @@ import { NotificationTicker } from "@/components/NotificationTicker";
 import { Navbar } from "@/components/navbar";
 import { PresetsSection } from "@/components/presets-section";
 import { SideNavigation } from "@/components/SideNavigation";
+import { UseCaseCarousel } from "@/components/use-case-carousel";
 
 export default function HomePage() {
 	return (
@@ -36,6 +37,10 @@ export default function HomePage() {
 				</section>
 
 				<DemoVideo />
+
+				<section id="use-cases" className="min-h-[80vh]">
+					<UseCaseCarousel />
+				</section>
 			</main>
 
 			<div className="relative z-10 lg:pl-14">

@@ -203,6 +203,54 @@ export function generateEnvFiles(
 		actualValue: "",
 	});
 
+	lines.push({
+		comment: formatComment(
+			"Alternative auth: gateway password (use token OR password, not both)",
+			"OpenClaw Core",
+			false,
+			true,
+		),
+		key: "OPENCLAW_GATEWAY_PASSWORD",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Override state directory path (default: ~/.openclaw)",
+			"OpenClaw Core",
+			false,
+			false,
+		),
+		key: "OPENCLAW_STATE_DIR",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Override config file path (default: ~/.openclaw/openclaw.json)",
+			"OpenClaw Core",
+			false,
+			false,
+		),
+		key: "OPENCLAW_CONFIG_PATH",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Import missing keys from login shell profile (set to 1 to enable)",
+			"OpenClaw Core",
+			false,
+			false,
+		),
+		key: "OPENCLAW_LOAD_SHELL_ENV",
+		exampleValue: "",
+		actualValue: "",
+	});
+
 	if (options.domain) {
 		lines.push({
 			comment: formatComment("Primary domain for service routing", "OpenClaw Core", false, false),
@@ -211,6 +259,98 @@ export function generateEnvFiles(
 			actualValue: options.domain,
 		});
 	}
+
+	// ── Tools API Keys (web search, fetch) ──────────────────────────────────
+
+	lines.push({
+		comment:
+			"\n# ═══════════════════════════════════════════════════════════════════════════════\n# Tools API Keys (web search, fetch, voice)\n# ═══════════════════════════════════════════════════════════════════════════════",
+		key: "",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Brave Search API key for web search tool (default provider)",
+			"OpenClaw Tools",
+			false,
+			true,
+		),
+		key: "BRAVE_API_KEY",
+		exampleValue: "your_brave_api_key_here",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Perplexity API key for web search tool (alternative provider)",
+			"OpenClaw Tools",
+			false,
+			true,
+		),
+		key: "PERPLEXITY_API_KEY",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Firecrawl API key for enhanced web fetch fallback",
+			"OpenClaw Tools",
+			false,
+			true,
+		),
+		key: "FIRECRAWL_API_KEY",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"ElevenLabs API key for Talk mode (text-to-speech)",
+			"OpenClaw Tools",
+			false,
+			true,
+		),
+		key: "ELEVENLABS_API_KEY",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	// ── Swarm / Remote Gateway ───────────────────────────────────────────────
+
+	lines.push({
+		comment:
+			"\n# ═══════════════════════════════════════════════════════════════════════════════\n# Swarm / Remote Gateway Connection\n# ═══════════════════════════════════════════════════════════════════════════════",
+		key: "",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Auth token for connecting to a remote OpenClaw gateway (swarm upstream)",
+			"OpenClaw Swarm",
+			false,
+			true,
+		),
+		key: "OPENCLAW_REMOTE_GATEWAY_TOKEN",
+		exampleValue: "",
+		actualValue: "",
+	});
+
+	lines.push({
+		comment: formatComment(
+			"Password for remote gateway auth (alternative to token)",
+			"OpenClaw Swarm",
+			false,
+			true,
+		),
+		key: "OPENCLAW_REMOTE_GATEWAY_PASSWORD",
+		exampleValue: "",
+		actualValue: "",
+	});
 
 	// ── AI Provider API Keys ─────────────────────────────────────────────────
 
@@ -334,7 +474,17 @@ export function generateEnvFiles(
 		"OPENCLAW_EXTRA_MOUNTS",
 		"OPENCLAW_HOME_VOLUME",
 		"OPENCLAW_DOCKER_APT_PACKAGES",
+		"OPENCLAW_GATEWAY_PASSWORD",
+		"OPENCLAW_STATE_DIR",
+		"OPENCLAW_CONFIG_PATH",
+		"OPENCLAW_LOAD_SHELL_ENV",
 		"OPENCLAW_DOMAIN",
+		"BRAVE_API_KEY",
+		"PERPLEXITY_API_KEY",
+		"FIRECRAWL_API_KEY",
+		"ELEVENLABS_API_KEY",
+		"OPENCLAW_REMOTE_GATEWAY_TOKEN",
+		"OPENCLAW_REMOTE_GATEWAY_PASSWORD",
 		"CLAUDE_AI_SESSION_KEY",
 		"CLAUDE_WEB_SESSION_KEY",
 		"CLAUDE_WEB_COOKIE",
@@ -406,6 +556,7 @@ export function generateEnvFiles(
 		"# ═══════════════════════════════════════════════════════════════════════════════",
 		"# OpenClaw Environment Configuration",
 		`# Generated at ${new Date().toISOString()}`,
+		"# Docs: https://better-openclaw.dev/docs | Cloud: https://clawexa.net",
 		"# ═══════════════════════════════════════════════════════════════════════════════",
 		"",
 	].join("\n");
@@ -490,6 +641,69 @@ export function getStructuredEnvVars(resolved: ResolverOutput): EnvVarGroup[] {
 			secret: false,
 			required: true,
 			defaultValue: "18789",
+		},
+		{
+			key: "OPENCLAW_GATEWAY_PASSWORD",
+			description: "Alternative auth: gateway password (use token OR password)",
+			secret: true,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "OPENCLAW_STATE_DIR",
+			description: "Override state directory path (default: ~/.openclaw)",
+			secret: false,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "OPENCLAW_CONFIG_PATH",
+			description: "Override config file path (default: ~/.openclaw/openclaw.json)",
+			secret: false,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "BRAVE_API_KEY",
+			description: "Brave Search API key for web search tool (default provider)",
+			secret: true,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "PERPLEXITY_API_KEY",
+			description: "Perplexity API key for web search (alternative provider)",
+			secret: true,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "FIRECRAWL_API_KEY",
+			description: "Firecrawl API key for enhanced web fetch fallback",
+			secret: true,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "ELEVENLABS_API_KEY",
+			description: "ElevenLabs API key for Talk mode (text-to-speech)",
+			secret: true,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "OPENCLAW_REMOTE_GATEWAY_TOKEN",
+			description: "Auth token for connecting to a remote OpenClaw gateway (swarm upstream)",
+			secret: true,
+			required: false,
+			defaultValue: "",
+		},
+		{
+			key: "OPENCLAW_REMOTE_GATEWAY_PASSWORD",
+			description: "Password for remote gateway auth (alternative to token)",
+			secret: true,
+			required: false,
+			defaultValue: "",
 		},
 	];
 

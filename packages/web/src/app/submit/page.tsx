@@ -1,29 +1,10 @@
 "use client";
 
+import { SERVICE_CATEGORIES } from "@better-openclaw/core";
 import { Layers, Package, Send } from "lucide-react";
 import { useState } from "react";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
-
-const SERVICE_CATEGORIES = [
-	"AI / Local Models",
-	"AI Platforms",
-	"Automation",
-	"Browser Automation",
-	"Coding Agents",
-	"Communication",
-	"Database",
-	"Dev Tools",
-	"Knowledge",
-	"Media",
-	"Monitoring",
-	"Proxy",
-	"Search",
-	"Social Media",
-	"Storage",
-	"Vector DB",
-	"Analytics",
-];
 
 export default function SubmitPage() {
 	// Stack submission state
@@ -260,8 +241,8 @@ export default function SubmitPage() {
 									>
 										<option value="">Select a category...</option>
 										{SERVICE_CATEGORIES.map((cat) => (
-											<option key={cat} value={cat}>
-												{cat}
+											<option key={cat.id} value={cat.name}>
+												{cat.icon} {cat.name}
 											</option>
 										))}
 									</select>

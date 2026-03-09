@@ -83,10 +83,11 @@ function buildGatewayServices(
 		HOME: "/home/node",
 		TERM: "xterm-256color",
 		OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}",
+		OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: "${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}",
 		// Claude web-provider session vars (optional, user fills in .env)
-		CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY}",
-		CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY}",
-		CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE}",
+		CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY:-}",
+		CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY:-}",
+		CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE:-}",
 	};
 
 	// Add AI provider API keys to gateway environment
@@ -150,7 +151,20 @@ function buildGatewayServices(
 			"${OPENCLAW_GATEWAY_BIND:-lan}",
 			"--port",
 			"18789",
+			"--allow-unconfigured",
 		],
+		healthcheck: {
+			test: [
+				"CMD",
+				"node",
+				"-e",
+				"fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+			],
+			interval: "30s",
+			timeout: "5s",
+			retries: 5,
+			start_period: "20s",
+		},
 	};
 
 	// Traefik labels for the gateway
@@ -173,13 +187,11 @@ function buildGatewayServices(
 		HOME: "/home/node",
 		TERM: "xterm-256color",
 		OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}",
-		// Gateway connection: use Docker service name so CLI can reach the gateway over the bridge network
-		OPENCLAW_GATEWAY_HOST: "openclaw-gateway",
-		OPENCLAW_GATEWAY_PORT: "18789",
+		OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: "${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}",
 		BROWSER: "echo",
-		CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY}",
-		CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY}",
-		CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE}",
+		CLAUDE_AI_SESSION_KEY: "${CLAUDE_AI_SESSION_KEY:-}",
+		CLAUDE_WEB_SESSION_KEY: "${CLAUDE_WEB_SESSION_KEY:-}",
+		CLAUDE_WEB_COOKIE: "${CLAUDE_WEB_COOKIE:-}",
 	};
 
 	// Add same AI provider API keys to CLI for direct AI interactions
@@ -189,6 +201,9 @@ function buildGatewayServices(
 
 	const cliService: Record<string, unknown> = {
 		image: `\${OPENCLAW_IMAGE:-${defaultImage}}`,
+		network_mode: "service:openclaw-gateway",
+		cap_drop: ["NET_RAW", "NET_ADMIN"],
+		security_opt: ["no-new-privileges:true"],
 		environment: cliEnv,
 		volumes: [
 			"${OPENCLAW_CONFIG_DIR:-./openclaw/config}:/home/node/.openclaw",
@@ -197,13 +212,8 @@ function buildGatewayServices(
 		stdin_open: true,
 		tty: true,
 		init: true,
-		networks: ["openclaw-network"],
 		entrypoint: ["node", "dist/index.js"],
-		// CLI is interactive — don't auto-restart, but wait for gateway to be ready
-		restart: "no",
-		depends_on: {
-			"openclaw-gateway": { condition: "service_started" },
-		},
+		depends_on: ["openclaw-gateway"],
 	};
 
 	return { gatewayService: gateway, cliService: cliService, allVolumes };

@@ -178,6 +178,7 @@ function SkillEditorModal({ skill, onClose }: { skill: Doc<"stackSkills">; onClo
 							)}
 						</button>
 						<button
+							title="Close"
 							type="button"
 							onClick={onClose}
 							className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"

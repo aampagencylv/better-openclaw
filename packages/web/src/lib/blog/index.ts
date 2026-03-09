@@ -1,4 +1,5 @@
 import { post as post24 } from "./posts/ai-agent-memory-redis-persistent-context";
+import { post as post41 } from "./posts/ai-powerhouse-self-hosted-manus-alternative";
 import { post as post5 } from "./posts/ai-skill-packs-explained";
 import { post as post33 } from "./posts/authentik-vs-keycloak-identity-management";
 import { post as post15 } from "./posts/backing-up-docker-volumes-guide";
@@ -81,6 +82,7 @@ export const blogPosts: BlogPost[] = [
 	post38,
 	post39,
 	post40,
+	post41,
 ];
 
 // Helper functions for accessing posts

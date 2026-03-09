@@ -34,6 +34,10 @@ export const ServiceCategorySchema = z.enum([
 	"collaboration",
 	"ai-observability",
 	"fine-tuning",
+	"project-management",
+	"business-intelligence",
+	"dns-networking",
+	"iot",
 ]);
 
 export const MaturitySchema = z.enum(["stable", "beta", "experimental"]);

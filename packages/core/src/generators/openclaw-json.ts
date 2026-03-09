@@ -459,7 +459,31 @@ export function generateOpenClawConfig(
 				workspace: isDocker ? "/home/node/.openclaw/workspace" : "./workspace",
 				compaction: { mode: "safeguard" },
 				maxConcurrent: 4,
-				subagents: { maxConcurrent: 8 },
+				subagents: {
+					maxConcurrent: 8,
+					// Allow spawning sub-agents under any agent ID (essential for swarm collaboration)
+					allowAgents: ["*"],
+				},
+				// Sandbox defaults for agent exec isolation
+				...(isDocker
+					? {
+							sandbox: {
+								docker: {
+									containerPrefix: "openclaw-sandbox",
+									workdir: "/workspace",
+									readOnlyRoot: true,
+									network: "none",
+									capDrop: ["ALL"],
+									pidsLimit: 256,
+									memory: "512m",
+								},
+								browser: {
+									enabled: false,
+									autoStart: false,
+								},
+							},
+						}
+					: {}),
 			},
 		},
 		messages: {
@@ -490,12 +514,23 @@ export function generateOpenClawConfig(
 			wideArea: {
 				enabled: true,
 			},
+			// mDNS/Bonjour for local-network instance discovery (swarm auto-discovery)
+			// "minimal" hides sensitive metadata; "full" exposes cliPath/sshPort for easier discovery
+			mdns: {
+				mode: isDocker ? "off" : "minimal",
+			},
 		},
 		canvasHost: {
 			enabled: true,
 			liveReload: true,
 		},
 		channels: {},
+		// Node host config — controls how this instance exposes services to other gateway nodes
+		nodeHost: {
+			browserProxy: {
+				enabled: true,
+			},
+		},
 		gateway: {
 			port: options.gatewayPort,
 			mode: "local",
@@ -517,9 +552,41 @@ export function generateOpenClawConfig(
 			},
 			// Tailscale serve only works on bare-metal/local (not inside Docker containers)
 			...(isDocker ? {} : { tailscale: { mode: "serve", resetOnExit: true } }),
+			reload: {
+				mode: "hybrid",
+			},
+			http: {
+				endpoints: {
+					chatCompletions: { enabled: false },
+					responses: { enabled: false },
+				},
+			},
 			nodes: {
+				browser: {
+					// "auto" lets gateway pick best node for browser proxying; "manual" pins to specific node
+					mode: "auto",
+				},
+				// Allowlist/denylist for node.invoke commands across the swarm
+				allowCommands: [],
 				denyCommands: ["camera.snap", "camera.clip", "screen.record"],
 			},
+			// Remote gateway connection — enables this instance to connect to another OpenClaw gateway
+			// Configure for swarm topologies: each instance can connect to one upstream gateway
+			// Transport: "direct" = WebSocket (ws/wss), "ssh" = SSH tunnel for secure remote access
+			remote: {
+				// url: "wss://gateway.example.com:18789",  // Remote gateway WebSocket URL
+				transport: "direct",
+				// token: "${OPENCLAW_REMOTE_GATEWAY_TOKEN}",  // Auth token for the remote gateway
+				// sshTarget: "user@gateway-host",  // For SSH tunnel transport
+				// sshIdentity: "~/.ssh/id_ed25519",  // SSH key for tunnel
+				// tlsFingerprint: "",  // Pin remote gateway TLS cert (sha256)
+			},
+			channelHealthCheckMinutes: 5,
+		},
+		browser: {
+			enabled: true,
+			// WSL2 users may need relayBindHost: "0.0.0.0" for cross-namespace access
+			...(isDocker ? {} : { relayBindHost: "127.0.0.1" }),
 		},
 		skills: {
 			install: { nodeManager: "pnpm" },
@@ -527,6 +594,94 @@ export function generateOpenClawConfig(
 				watch: true,
 			},
 			...(Object.keys(defaultSkills).length > 0 ? { entries: defaultSkills } : {}),
+		},
+		// ACP (Agent Client Protocol) — external agents can connect to the gateway
+		// Disabled by default; enable when using ACP-compatible agents (e.g. acpx)
+		acp: {
+			enabled: false,
+			dispatch: { enabled: false },
+			maxConcurrentSessions: 4,
+			stream: {
+				deliveryMode: "live",
+				repeatSuppression: true,
+			},
+			runtime: {
+				ttlMinutes: 30,
+			},
+		},
+		// Tools configuration — web search, fetch, exec security, loop detection
+		tools: {
+			web: {
+				search: {
+					// Enabled when a search API key is available (BRAVE_API_KEY, etc.)
+					enabled: true,
+					provider: "brave",
+					maxResults: 5,
+					timeoutSeconds: 10,
+					cacheTtlMinutes: 60,
+				},
+				fetch: {
+					enabled: true,
+					maxChars: 30000,
+					timeoutSeconds: 15,
+					cacheTtlMinutes: 30,
+					readability: true,
+				},
+			},
+			exec: {
+				// Docker: sandbox exec inside a nested container; bare-metal: deny by default
+				host: isDocker ? "sandbox" : "gateway",
+				security: "allowlist",
+				ask: "on-miss",
+				backgroundMs: 30000,
+				timeoutSec: 300,
+			},
+			// Filesystem path guards
+			fs: {
+				// In Docker the workspace is already isolated; on bare-metal restrict to workspace
+				workspaceOnly: !isDocker,
+			},
+			// Prevent stuck tool-call loops
+			loopDetection: {
+				enabled: true,
+				historySize: 30,
+				warningThreshold: 10,
+				criticalThreshold: 20,
+				globalCircuitBreakerThreshold: 30,
+			},
+			sessions: {
+				visibility: "tree",
+			},
+			// Agent-to-agent messaging — allows agents to invoke each other at runtime
+			// Essential for swarm architectures where multiple OpenClaw instances collaborate
+			agentToAgent: {
+				enabled: true,
+				// Allowlist of agent IDs or patterns that can be reached; "*" = any agent
+				allow: ["*"],
+			},
+		},
+		// Session-level agent-to-agent safety limits
+		session: {
+			agentToAgent: {
+				// Max ping-pong turns between requester and target agent (prevents infinite loops)
+				maxPingPongTurns: 5,
+			},
+		},
+		// Memory — vector search over session history and markdown notes
+		memory: {
+			backend: "builtin",
+			citations: "auto",
+		},
+		// UI customization
+		ui: {
+			assistant: {
+				name: "OpenClaw",
+			},
+		},
+		// Media retention
+		media: {
+			preserveFilenames: true,
+			ttlHours: 168, // 7 days
 		},
 		plugins: {
 			enabled: true,

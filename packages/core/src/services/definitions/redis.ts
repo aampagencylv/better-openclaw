@@ -75,7 +75,7 @@ export const redisDefinition: ServiceDefinition = {
 
 	requires: [],
 	recommends: [],
-	conflictsWith: ["valkey"],
+	conflictsWith: ["valkey", "dragonfly"],
 
 	minMemoryMB: 128,
 	gpuRequired: false,

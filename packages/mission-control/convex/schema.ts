@@ -162,4 +162,68 @@ export default defineSchema({
 		windowStartMs: v.number(),
 		count: v.number(),
 	}).index("by_tenant", ["tenantId"]),
+	// ── Agent Observability ─────────────────────────────────────────────────
+	agentEvents: defineTable({
+		agentId: v.id("agents"),
+		taskId: v.optional(v.id("tasks")),
+		eventType: v.string(), // "tool_call", "error", "completion", "token_usage"
+		toolName: v.optional(v.string()),
+		durationMs: v.optional(v.number()),
+		inputTokens: v.optional(v.number()),
+		outputTokens: v.optional(v.number()),
+		costCents: v.optional(v.number()),
+		errorMessage: v.optional(v.string()),
+		metadata: v.optional(v.string()), // JSON blob
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_agent", ["tenantId", "agentId"]),
+	alertRules: defineTable({
+		name: v.string(),
+		condition: v.string(), // "error_rate > 10%", "cost > 500"
+		threshold: v.number(),
+		windowMinutes: v.number(),
+		enabled: v.boolean(),
+		lastTriggeredAt: v.optional(v.number()),
+		tenantId: v.optional(v.string()),
+	}).index("by_tenant", ["tenantId"]),
+	// ── Fleet Management ────────────────────────────────────────────────────
+	fleetInstances: defineTable({
+		stackId: v.id("stacks"),
+		label: v.string(),
+		host: v.optional(v.string()), // IP or hostname
+		status: v.string(), // "online", "offline", "degraded", "provisioning"
+		lastHeartbeat: v.optional(v.number()),
+		serviceStatuses: v.optional(v.string()), // JSON: Record<serviceId, status>
+		configHash: v.optional(v.string()), // hash of current config for diff detection
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_stack", ["tenantId", "stackId"]),
+	// ── Compliance & Governance ─────────────────────────────────────────────
+	auditLog: defineTable({
+		action: v.string(), // "task.created", "agent.config_changed", "stack.deployed"
+		actorType: v.string(), // "agent", "user", "system"
+		actorId: v.string(),
+		actorName: v.string(),
+		resourceType: v.string(), // "task", "agent", "stack", "document"
+		resourceId: v.optional(v.string()),
+		details: v.optional(v.string()), // JSON blob with diff/context
+		ipAddress: v.optional(v.string()),
+		piiDetected: v.optional(v.boolean()),
+		piiFields: v.optional(v.array(v.string())), // ["email", "phone", etc.]
+		tenantId: v.optional(v.string()),
+	})
+		.index("by_tenant", ["tenantId"])
+		.index("by_resource", ["tenantId", "resourceType"]),
+	compliancePolicies: defineTable({
+		name: v.string(),
+		description: v.string(),
+		type: v.string(), // "pii-detection", "access-control", "config-requirement", "retention"
+		enabled: v.boolean(),
+		config: v.string(), // JSON: policy-specific config
+		lastEvaluatedAt: v.optional(v.number()),
+		violationCount: v.optional(v.number()),
+		tenantId: v.optional(v.string()),
+	}).index("by_tenant", ["tenantId"]),
 });

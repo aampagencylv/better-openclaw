@@ -5,6 +5,7 @@ import Link from "next/link";
 interface NavLink {
 	href: string;
 	label: string;
+	external?: boolean;
 }
 
 interface MobileNavProps {
@@ -24,16 +25,29 @@ export function MobileNav({ links, session, onClose, onSignOut }: MobileNavProps
 						[ ENV: PRODUCTION ]
 					</span>
 				</div>
-				{links.map((link) => (
-					<Link
-						key={link.href}
-						href={link.href}
-						className="block py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
-						onClick={onClose}
-					>
-						{link.label}
-					</Link>
-				))}
+				{links.map((link) =>
+					link.external ? (
+						<a
+							key={link.href}
+							href={link.href}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="block py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+							onClick={onClose}
+						>
+							{link.label}
+						</a>
+					) : (
+						<Link
+							key={link.href}
+							href={link.href}
+							className="block py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+							onClick={onClose}
+						>
+							{link.label}
+						</Link>
+					),
+				)}
 				{session ? (
 					<>
 						<Link

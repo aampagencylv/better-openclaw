@@ -5,6 +5,7 @@ const productLinks = [
 	{ href: "/docs", label: "Docs" },
 	{ href: "/api-docs", label: "API" },
 	{ href: "/showcase", label: "Showcase" },
+	{ href: "https://clawexa.net", label: "Clawexa Cloud", external: true },
 ];
 
 const resourceLinks = [

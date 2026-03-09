@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 		template: "%s | better-openclaw",
 	},
 	description:
-		"CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks with Docker Compose. 58+ services, 10 skill packs, one command.",
+		"CLI tool, REST API, and web UI for scaffolding production-ready OpenClaw stacks with Docker Compose. 58+ services, 10 skill packs, one command. Or deploy instantly with Clawexa Cloud.",
 	keywords: [
 		"OpenClaw",
 		"docker-compose",
@@ -32,6 +32,9 @@ export const metadata: Metadata = {
 		"AI stack",
 		"automation",
 		"homelab",
+		"Clawexa",
+		"Clawexa cloud",
+		"hosted OpenClaw",
 		"n8n",
 		"qdrant",
 		"ollama",
@@ -108,6 +111,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			"Generate Docker Compose stacks with 58+ companion services pre-wired with OpenClaw skills",
 		url: "https://better-openclaw.dev",
 		offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+		isRelatedTo: {
+			"@type": "WebApplication",
+			name: "Clawexa",
+			url: "https://clawexa.net",
+		},
+	};
+
+	const clawexaJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "WebApplication",
+		name: "Clawexa",
+		url: "https://clawexa.net",
+		applicationCategory: "DeveloperApplication",
+		description:
+			"Cloud-hosted OpenClaw platform — deploy AI agent stacks without managing infrastructure",
+		offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+		isRelatedTo: {
+			"@type": "SoftwareApplication",
+			name: "better-openclaw",
+			url: "https://better-openclaw.dev",
+		},
 	};
 
 	return (
@@ -123,6 +147,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 					type="application/ld+json"
 					dangerouslySetInnerHTML={{
 						__html: JSON.stringify(softwareJsonLd),
+					}}
+				/>
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(clawexaJsonLd),
 					}}
 				/>
 			</head>

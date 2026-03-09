@@ -5,8 +5,11 @@ import AddAgentModal from "./components/AddAgentModal";
 import AddTaskModal from "./components/AddTaskModal";
 import AgentDetailTray from "./components/AgentDetailTray";
 import AgentsSidebar from "./components/AgentsSidebar";
+import CompliancePage from "./components/CompliancePage";
+import FleetPage from "./components/FleetPage";
 import Header, { type ActiveView } from "./components/Header";
 import MissionQueue from "./components/MissionQueue";
+import ObservabilityPage from "./components/ObservabilityPage";
 import RegisterStackModal from "./components/RegisterStackModal";
 import RightSidebar from "./components/RightSidebar";
 import ServicesPage from "./components/ServicesPage";
@@ -202,6 +205,27 @@ export default function App() {
 					{activeView === "skills" && (
 						<div style={{ gridArea: "main" }}>
 							<SkillsPage onRegisterStack={handleOpenRegisterStack} />
+						</div>
+					)}
+
+					{/* Observability view */}
+					{activeView === "observability" && (
+						<div style={{ gridArea: "main" }}>
+							<ObservabilityPage />
+						</div>
+					)}
+
+					{/* Fleet view */}
+					{activeView === "fleet" && (
+						<div style={{ gridArea: "main" }}>
+							<FleetPage />
+						</div>
+					)}
+
+					{/* Compliance view */}
+					{activeView === "compliance" && (
+						<div style={{ gridArea: "main" }}>
+							<CompliancePage />
 						</div>
 					)}
 				</main>

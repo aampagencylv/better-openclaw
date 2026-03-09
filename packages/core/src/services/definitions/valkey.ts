@@ -60,7 +60,7 @@ export const valkeyDefinition: ServiceDefinition = {
 
 	requires: [],
 	recommends: [],
-	conflictsWith: ["redis"],
+	conflictsWith: ["redis", "dragonfly"],
 
 	minMemoryMB: 128,
 	gpuRequired: false,

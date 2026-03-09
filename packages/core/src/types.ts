@@ -106,6 +106,7 @@ export interface GenerationMetadata {
 	serviceCount: number;
 	skillCount: number;
 	estimatedMemoryMB: number;
+	resolvedServices: string[];
 	generatedAt: string;
 }
 
@@ -339,5 +340,33 @@ export const SERVICE_CATEGORIES: CategoryInfo[] = [
 		description: "AI Fine-Tuning",
 		label: "AI Fine-Tuning",
 		icon: "🎯",
+	},
+	{
+		id: "project-management",
+		name: "Project Management",
+		description: "Project Management",
+		label: "Project Management",
+		icon: "📋",
+	},
+	{
+		id: "business-intelligence",
+		name: "Business Intelligence",
+		description: "Business Intelligence",
+		label: "Business Intelligence",
+		icon: "📈",
+	},
+	{
+		id: "dns-networking",
+		name: "DNS & Networking",
+		description: "DNS & Networking",
+		label: "DNS & Networking",
+		icon: "🌐",
+	},
+	{
+		id: "iot",
+		name: "IoT & Edge",
+		description: "IoT & Edge",
+		label: "IoT & Edge",
+		icon: "📡",
 	},
 ];

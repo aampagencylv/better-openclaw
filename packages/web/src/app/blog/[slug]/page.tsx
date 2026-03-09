@@ -140,6 +140,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 				</div>
 			</article>
 
+			{/* ─── Clawexa Cloud CTA ──────────────────────────────── */}
+			<div className="mx-auto max-w-3xl px-6 py-6 border-t border-border/30">
+				<p className="font-mono text-xs text-muted-foreground/70">
+					Skip the infrastructure setup? Deploy your stack on{" "}
+					<a
+						href="https://clawexa.net"
+						className="text-primary/80 transition-colors hover:text-primary hover:underline"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Clawexa Cloud
+					</a>{" "}
+					&mdash; the hosted version of better-openclaw.
+				</p>
+			</div>
+
 			{/* ─── Related Posts ────────────────────────────────────── */}
 			{relatedPosts.length > 0 && (
 				<section className="border-t border-border/50 bg-surface/30">

@@ -103,6 +103,26 @@ const presets: Preset[] = [
 		estimatedMemoryMB: 4096,
 	},
 	{
+		id: "ai-virtual-desktop",
+		name: "AI Virtual Desktop",
+		description:
+			"Self-hosted autonomous AI agent with local LLM, vector memory, web search, browser automation, and workflow orchestration. The open-source alternative to Manus and Perplexity Computer.",
+		services: [
+			"ollama",
+			"qdrant",
+			"postgresql",
+			"redis",
+			"minio",
+			"n8n",
+			"browserless",
+			"open-webui",
+			"searxng",
+			"caddy",
+		],
+		skillPacks: ["research-agent", "dev-ops"],
+		estimatedMemoryMB: 6144,
+	},
+	{
 		id: "coding-team",
 		name: "Coding Team",
 		description: "AI development environment with coding agents, Git, and browser IDE",

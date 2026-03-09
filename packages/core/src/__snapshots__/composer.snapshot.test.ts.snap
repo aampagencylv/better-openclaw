@@ -8,9 +8,10 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -50,6 +51,17 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
       - \${OPENCLAW_GATEWAY_BIND:-lan}
       - --port
       - "18789"
+      - --allow-unconfigured
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       minio:
         condition: service_healthy
@@ -97,16 +109,21 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
       - openclaw-network
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    network_mode: service:openclaw-gateway
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      OPENCLAW_GATEWAY_HOST: openclaw-gateway
-      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
       BROWSER: echo
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -123,15 +140,11 @@ exports[`compose snapshot tests > creator preset (ffmpeg + remotion + minio + re
     stdin_open: true
     tty: true
     init: true
-    networks:
-      - openclaw-network
     entrypoint:
       - node
       - dist/index.js
-    restart: no
     depends_on:
-      openclaw-gateway:
-        condition: service_started
+      - openclaw-gateway
 volumes:
   ffmpeg-shared:
   minio-data:
@@ -179,9 +192,10 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -220,6 +234,17 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       - \${OPENCLAW_GATEWAY_BIND:-lan}
       - --port
       - "18789"
+      - --allow-unconfigured
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       postgresql:
         condition: service_healthy
@@ -341,16 +366,21 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
       - openclaw-network
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    network_mode: service:openclaw-gateway
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      OPENCLAW_GATEWAY_HOST: openclaw-gateway
-      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
       BROWSER: echo
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -367,15 +397,11 @@ exports[`compose snapshot tests > devops preset (n8n + postgresql + redis + moni
     stdin_open: true
     tty: true
     init: true
-    networks:
-      - openclaw-network
     entrypoint:
       - node
       - dist/index.js
-    restart: no
     depends_on:
-      openclaw-gateway:
-        condition: service_started
+      - openclaw-gateway
 volumes:
   grafana-data:
   n8n-data:
@@ -470,9 +496,10 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -537,6 +564,17 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       - \${OPENCLAW_GATEWAY_BIND:-lan}
       - --port
       - "18789"
+      - --allow-unconfigured
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       browserless:
         condition: service_healthy
@@ -784,16 +822,21 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
       - openclaw-network
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    network_mode: service:openclaw-gateway
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      OPENCLAW_GATEWAY_HOST: openclaw-gateway
-      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
       BROWSER: echo
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -810,15 +853,11 @@ exports[`compose snapshot tests > full preset (many services) 1`] = `
     stdin_open: true
     tty: true
     init: true
-    networks:
-      - openclaw-network
     entrypoint:
       - node
       - dist/index.js
-    restart: no
     depends_on:
-      openclaw-gateway:
-        condition: service_started
+      - openclaw-gateway
 volumes:
   caddy-config:
   caddy-data:
@@ -849,9 +888,10 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -883,6 +923,17 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
       - \${OPENCLAW_GATEWAY_BIND:-lan}
       - --port
       - "18789"
+      - --allow-unconfigured
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       redis:
         condition: service_healthy
@@ -906,16 +957,21 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
       - openclaw-network
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    network_mode: service:openclaw-gateway
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      OPENCLAW_GATEWAY_HOST: openclaw-gateway
-      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
       BROWSER: echo
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -932,15 +988,11 @@ exports[`compose snapshot tests > minimal preset (redis only) 1`] = `
     stdin_open: true
     tty: true
     init: true
-    networks:
-      - openclaw-network
     entrypoint:
       - node
       - dist/index.js
-    restart: no
     depends_on:
-      openclaw-gateway:
-        condition: service_started
+      - openclaw-gateway
 volumes:
   redis-data:
 networks:
@@ -957,9 +1009,10 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -998,6 +1051,17 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
       - \${OPENCLAW_GATEWAY_BIND:-lan}
       - --port
       - "18789"
+      - --allow-unconfigured
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       browserless:
         condition: service_healthy
@@ -1081,16 +1145,21 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
       - openclaw-network
   openclaw-cli:
     image: \${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:latest}
+    network_mode: service:openclaw-gateway
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
     environment:
       HOME: /home/node
       TERM: xterm-256color
       OPENCLAW_GATEWAY_TOKEN: \${OPENCLAW_GATEWAY_TOKEN}
-      OPENCLAW_GATEWAY_HOST: openclaw-gateway
-      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: \${OPENCLAW_ALLOW_INSECURE_PRIVATE_WS:-}
       BROWSER: echo
-      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY}
-      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY}
-      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE}
+      CLAUDE_AI_SESSION_KEY: \${CLAUDE_AI_SESSION_KEY:-}
+      CLAUDE_WEB_SESSION_KEY: \${CLAUDE_WEB_SESSION_KEY:-}
+      CLAUDE_WEB_COOKIE: \${CLAUDE_WEB_COOKIE:-}
       OPENAI_API_KEY: \${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: \${ANTHROPIC_API_KEY}
       GOOGLE_API_KEY: \${GOOGLE_API_KEY}
@@ -1107,15 +1176,11 @@ exports[`compose snapshot tests > researcher preset (qdrant + searxng + browserl
     stdin_open: true
     tty: true
     init: true
-    networks:
-      - openclaw-network
     entrypoint:
       - node
       - dist/index.js
-    restart: no
     depends_on:
-      openclaw-gateway:
-        condition: service_started
+      - openclaw-gateway
 volumes:
   qdrant-data:
   redis-data:

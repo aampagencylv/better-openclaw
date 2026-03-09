@@ -1,15 +1,24 @@
 import {
 	IconBell,
+	IconChartBar,
 	IconChefHat,
 	IconLayoutSidebar,
 	IconMenu2,
+	IconNetwork,
 	IconServer,
+	IconShieldCheck,
 	IconSparkles,
 	IconTargetArrow,
 } from "@tabler/icons-react";
 import SignOut from "./Signout";
 
-export type ActiveView = "missions" | "services" | "skills";
+export type ActiveView =
+	| "missions"
+	| "services"
+	| "skills"
+	| "observability"
+	| "fleet"
+	| "compliance";
 
 interface HeaderProps {
 	onOpenAgents: () => void;
@@ -23,6 +32,9 @@ const NAV_ITEMS: { view: ActiveView; label: string; icon: React.ReactNode }[] = 
 	{ view: "missions", label: "Missions", icon: <IconTargetArrow size={16} /> },
 	{ view: "services", label: "Services", icon: <IconServer size={16} /> },
 	{ view: "skills", label: "Skills", icon: <IconSparkles size={16} /> },
+	{ view: "observability", label: "Observability", icon: <IconChartBar size={16} /> },
+	{ view: "fleet", label: "Fleet", icon: <IconNetwork size={16} /> },
+	{ view: "compliance", label: "Compliance", icon: <IconShieldCheck size={16} /> },
 ];
 
 export default function Header({
