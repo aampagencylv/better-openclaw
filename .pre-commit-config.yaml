@@ -1,0 +1,87 @@
+# Pre-commit hooks for better-openclaw
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+#
+# See https://pre-commit.com for more information
+
+repos:
+  # Basic file hygiene
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '^(docs/|dist/|vendor/|.*\.snap$)'
+      - id: end-of-file-fixer
+        exclude: '^(docs/|dist/|vendor/|.*\.snap$)'
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-merge-conflict
+      - id: detect-private-key
+        exclude: '(^|/)(\.secrets\.baseline$|\.detect-secrets\.cfg$|\.pre-commit-config\.yaml$|.*\.test\.ts$)'
+
+  # Secret detection (same as CI)
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args:
+          - --baseline
+          - .secrets.baseline
+          - --exclude-files
+          - '(^|/)pnpm-lock\.yaml$'
+          - --exclude-files
+          - '(^|/)package-lock\.yaml$'
+          - --exclude-lines
+          - '=== "string"'
+          - --exclude-lines
+          - 'typeof.*=== "string"'
+
+  # Shell script linting
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+      - id: shellcheck
+        args: [--severity=error]
+        exclude: "^(vendor/|scripts/e2e/)"
+
+  # GitHub Actions linting
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.10
+    hooks:
+      - id: actionlint
+
+  # GitHub Actions security audit
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.22.0
+    hooks:
+      - id: zizmor
+        args: [--persona=regular, --min-severity=medium, --min-confidence=medium]
+        exclude: "^(vendor/)"
+
+  # Project checks (same commands as CI)
+  - repo: local
+    hooks:
+      # pnpm audit --prod --audit-level=high
+      - id: pnpm-audit-prod
+        name: pnpm-audit-prod
+        entry: pnpm audit --prod --audit-level=high
+        language: system
+        pass_filenames: false
+
+      # biome check
+      - id: biome-check
+        name: biome-check
+        entry: pnpm biome check --error-on-warnings
+        language: system
+        pass_filenames: false
+        types_or: [javascript, jsx, ts, tsx, json, jsonc]
+
+      # TypeScript type checking
+      - id: typecheck
+        name: typecheck
+        entry: pnpm turbo run typecheck
+        language: system
+        pass_filenames: false
+        types_or: [ts, tsx]

@@ -143,6 +143,41 @@ npx vitest packages/core/src/
 - **Imports**: Always use `.js` extensions for ESM
 - **Package manager**: pnpm only (enforced via `preinstall` script)
 
+## Before You PR
+
+- Test locally with your better-openclaw setup
+- Run tests: `pnpm test`
+- Ensure types check: `pnpm typecheck`
+- Ensure linting passes: `pnpm lint`
+- Keep PRs focused (one thing per PR; do not mix unrelated concerns)
+- Describe what & why
+- Reply to or resolve bot review conversations you addressed before asking for review again
+- **Include screenshots** — one showing the problem/before, one showing the fix/after (for UI or visual changes)
+
+## Review Conversations Are Author-Owned
+
+If a review bot leaves review conversations on your PR, you are expected to handle the follow-through:
+
+- Resolve the conversation yourself once the code or explanation fully addresses the bot's concern
+- Reply and leave it open only when you need reviewer or maintainer judgment
+- Do not leave "fixed" bot review conversations for maintainers to clean up for you
+
+This applies to both human-authored and AI-assisted PRs.
+
+## AI/Vibe-Coded PRs Welcome! 🤖
+
+Built with Codex, Claude, or other AI tools? **Awesome - just mark it!**
+
+Please include in your PR:
+
+- [ ] Mark as AI-assisted in the PR title or description
+- [ ] Note the degree of testing (untested / lightly tested / fully tested)
+- [ ] Include prompts or session logs if possible (super helpful!)
+- [ ] Confirm you understand what the code does
+- [ ] Resolve or reply to bot review conversations after you address them
+
+AI PRs are first-class citizens here. We just want transparency so reviewers know what to look for. If you are using an LLM coding agent, instruct it to resolve bot review conversations it has addressed instead of leaving them for maintainers.
+
 ## Pull Request Guidelines
 
 1. Create a feature branch from `main`
@@ -150,7 +185,7 @@ npx vitest packages/core/src/
 3. Ensure all tests pass: `pnpm test`
 4. Ensure types check: `pnpm typecheck`
 5. Ensure linting passes: `pnpm lint`
-6. Submit a PR with a clear description of what changed and why
+6. Submit a PR using the provided template
 
 ## Versioning
 
@@ -161,6 +196,10 @@ pnpm changeset
 ```
 
 Follow the prompts to describe your change and select the appropriate version bump.
+
+## Report a Vulnerability
+
+We take security reports seriously. See [SECURITY.md](.github/SECURITY.md) for reporting instructions.
 
 ## License
 

@@ -473,7 +473,7 @@ const skillPacks: SkillPack[] = [
 		description:
 			"AI-powered helpdesk with live chat, LLM observability, and ticket management across channels",
 		requiredServices: ["chatwoot", "langfuse", "postgresql", "redis"],
-		skills: ["chatwoot-inbox", "langfuse-trace", "postgresql-query", "redis-cache"],
+		skills: ["chatwoot-support", "langfuse-trace", "postgresql-query", "redis-cache"],
 		icon: "💬",
 		tags: ["support", "chat", "helpdesk", "tickets", "customer-service"],
 	},
@@ -483,7 +483,7 @@ const skillPacks: SkillPack[] = [
 		description:
 			"CRM-driven sales pipeline with email marketing, newsletter management, and lead nurturing",
 		requiredServices: ["twenty", "mautic", "listmonk", "postgresql"],
-		skills: ["twenty-crm", "mautic-campaign", "listmonk-newsletter", "postgresql-query"],
+		skills: ["twenty-crm", "mautic-campaign", "listmonk-email", "postgresql-query"],
 		icon: "📈",
 		tags: ["sales", "crm", "email", "leads", "marketing"],
 	},
@@ -543,7 +543,7 @@ const skillPacks: SkillPack[] = [
 		description:
 			"Full marketing stack with blogging, email automation, newsletter management, and web analytics",
 		requiredServices: ["ghost", "mautic", "listmonk", "umami"],
-		skills: ["ghost-publish", "mautic-campaign", "listmonk-newsletter", "umami-analytics"],
+		skills: ["ghost-publish", "mautic-campaign", "listmonk-email", "umami-analytics"],
 		icon: "📣",
 		tags: ["marketing", "blog", "email", "analytics", "content"],
 	},

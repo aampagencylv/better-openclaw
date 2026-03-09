@@ -1,10 +1,21 @@
 # Dependencies
 node_modules/
+**/node_modules/
+.pnpm-store/
+pnpm-lock.yaml
+bun.lock
+bun.lockb
+package-lock.json
 
 # Build outputs
 dist/
+.turbo/
 .next/
 out/
+coverage/
+*.tsbuildinfo
+.build/
+bin/
 
 # Environment files
 .env
@@ -12,6 +23,9 @@ out/
 .env.*.local
 .env.production
 .env.staging
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Secrets & credentials
 *.pem
@@ -29,37 +43,70 @@ serviceAccountKey.json
 
 # OS
 .DS_Store
+**/.DS_Store
 Thumbs.db
 Desktop.ini
 
-# Turbo
-.turbo/
-
 # Testing
 coverage/
+test-results/
+playwright-report/
 
 # Logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Generated
 *.generated.*
 
+# Agent credentials and memory (NEVER COMMIT)
+/memory/
+.agent/*.json
+!.agent/workflows/
+/local/
+.claude/
+.agents/
+skills-lock.json
+
+# Local untracked files
+.local/
+IDENTITY.md
+USER.md
+.worktrees/
+
+# Convex
+.convex/
+
+# Python
+__pycache__/
+*.pyc
+
+# Temporary files
+*.tmp
+*.temp
+.tgz
+_tmp_*
+
+# Changesets
+.changeset/*.md
+!.changeset/README.md
 
 # Core package
 packages/core/.git
 packages/core/.github
 packages/core/.gitignore
 
+# Promo video (if needed, uncomment)
+# packages/promo-video/
+# packages/promo-video/src/
 
-packages/promo-video/
-packages/promo-video/src/
-
+# Local config files
 cursor_mcp_backup.json
 CLAUDE_CODE_PROMPT.md
 PROMPT_CLAUDE_CODE.md
 purpose_.txt
 trinity_identity.txt
-_tmp_*
 fixup.js

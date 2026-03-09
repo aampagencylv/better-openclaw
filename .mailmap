@@ -1,0 +1,13 @@
+# Git mailmap for author normalization
+# Format: Preferred Name <preferred@email> Commit Name <commit@email>
+#
+# This file ensures consistent author attribution across commits, especially when:
+# - Contributors use different email addresses (work/personal)
+# - Contributors change their name or email
+# - Multiple accounts are used
+#
+# See: https://git-scm.com/docs/gitmailmap
+
+# Example entries (replace with actual contributors):
+# John Doe <john@example.com> john <john@old-email.com>
+# Jane Smith <jane@example.com> <jane-old@example.com>

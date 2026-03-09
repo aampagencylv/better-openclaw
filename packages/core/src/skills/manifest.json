@@ -1445,6 +1445,70 @@
       "services": [
         "headscale"
       ]
+    },
+    {
+      "id": "langfuse-trace",
+      "path": "langfuse-trace/SKILL.md",
+      "emoji": "📊",
+      "services": [
+        "langfuse"
+      ]
+    },
+    {
+      "id": "twenty-crm",
+      "path": "twenty-crm/SKILL.md",
+      "emoji": "📇",
+      "services": [
+        "twenty"
+      ]
+    },
+    {
+      "id": "mautic-campaign",
+      "path": "mautic-campaign/SKILL.md",
+      "emoji": "📬",
+      "services": [
+        "mautic"
+      ]
+    },
+    {
+      "id": "airflow-dag",
+      "path": "airflow-dag/SKILL.md",
+      "emoji": "🌪️",
+      "services": [
+        "airflow"
+      ]
+    },
+    {
+      "id": "airbyte-sync",
+      "path": "airbyte-sync/SKILL.md",
+      "emoji": "🔗",
+      "services": [
+        "airbyte"
+      ]
+    },
+    {
+      "id": "fonoster-voice",
+      "path": "fonoster-voice/SKILL.md",
+      "emoji": "📞",
+      "services": [
+        "fonoster"
+      ]
+    },
+    {
+      "id": "medusa-commerce",
+      "path": "medusa-commerce/SKILL.md",
+      "emoji": "🛒",
+      "services": [
+        "medusa"
+      ]
+    },
+    {
+      "id": "axolotl-finetune",
+      "path": "axolotl-finetune/SKILL.md",
+      "emoji": "🦎",
+      "services": [
+        "axolotl"
+      ]
     }
   ]
 }
