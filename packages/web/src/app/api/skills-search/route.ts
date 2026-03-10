@@ -11,8 +11,6 @@ const SKILLSMP_BASE = "https://skillsmp.com/api/v1";
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
 	const query = searchParams.get("q") ?? "";
-	const page = searchParams.get("page") ?? "1";
-	const limit = searchParams.get("limit") ?? "20";
 	const mode = searchParams.get("mode") ?? "keyword"; // "keyword" | "ai"
 
 	if (!query.trim()) {
@@ -20,6 +18,21 @@ export async function GET(request: NextRequest) {
 			{
 				success: false,
 				error: { code: "MISSING_QUERY", message: "The 'q' parameter is required" },
+			},
+			{ status: 400 },
+		);
+	}
+
+	// Validate and clamp page/limit to prevent abuse
+	const page = Math.max(1, Math.min(100, Number(searchParams.get("page")) || 1));
+	const limit = Math.max(1, Math.min(50, Number(searchParams.get("limit")) || 20));
+
+	// Validate mode to prevent unexpected values
+	if (mode !== "keyword" && mode !== "ai") {
+		return NextResponse.json(
+			{
+				success: false,
+				error: { code: "INVALID_MODE", message: "Mode must be 'keyword' or 'ai'" },
 			},
 			{ status: 400 },
 		);
@@ -48,14 +61,12 @@ export async function GET(request: NextRequest) {
 		});
 
 		if (!upstream.ok) {
-			const errorBody = await upstream.text();
 			return NextResponse.json(
 				{
 					success: false,
 					error: {
 						code: "UPSTREAM_ERROR",
 						message: `SkillsMP returned ${upstream.status}`,
-						detail: errorBody,
 					},
 				},
 				{ status: upstream.status },
@@ -65,9 +76,9 @@ export async function GET(request: NextRequest) {
 		const data = await upstream.json();
 		return NextResponse.json(data);
 	} catch (err) {
-		const message = err instanceof Error ? err.message : "Unknown error";
+		console.error("skills-search proxy error:", err);
 		return NextResponse.json(
-			{ success: false, error: { code: "FETCH_FAILED", message } },
+			{ success: false, error: { code: "FETCH_FAILED", message: "Failed to fetch from upstream" } },
 			{ status: 502 },
 		);
 	}

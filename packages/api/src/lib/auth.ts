@@ -18,6 +18,13 @@ const trustedOrigins = process.env.WEB_URL?.split(",") ?? [
   "http://localhost:3000",
 ];
 
+const authSecret = process.env.BETTER_AUTH_SECRET;
+if (!authSecret && process.env.NODE_ENV === "production") {
+  throw new Error(
+    "BETTER_AUTH_SECRET is required in production. Set a random 32+ character string.",
+  );
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -28,9 +35,7 @@ export const auth = betterAuth({
       verification: schema.verification,
     },
   }),
-  secret:
-    process.env.BETTER_AUTH_SECRET ??
-    "change-this-secret-in-production-32chars",
+  secret: authSecret ?? "dev-only-insecure-secret-do-not-use-in-prod",
   baseURL: process.env.API_URL ?? "http://localhost:3456",
   basePath: "/api/auth",
   trustedOrigins: trustedOrigins,

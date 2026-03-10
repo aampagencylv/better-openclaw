@@ -52,7 +52,7 @@ export function useDeploy({ open, projectName, composeYaml, envContent }: UseDep
 
 	const provider = PROVIDERS.find((p) => p.id === selectedProvider) ?? PROVIDERS[0];
 
-	// Load saved credentials from localStorage
+	// Load saved instance URL from localStorage (API key is NOT persisted for security)
 	useEffect(() => {
 		if (!open) return;
 		const saved = localStorage.getItem(`${STORAGE_KEY_PREFIX}${selectedProvider}`);
@@ -60,7 +60,6 @@ export function useDeploy({ open, projectName, composeYaml, envContent }: UseDep
 			try {
 				const parsed = JSON.parse(saved);
 				setInstanceUrl(parsed.instanceUrl ?? "");
-				setApiKey(parsed.apiKey ?? "");
 			} catch {
 				// ignore
 			}
@@ -77,11 +76,12 @@ export function useDeploy({ open, projectName, composeYaml, envContent }: UseDep
 	}, [open]);
 
 	const saveCredentials = useCallback(() => {
+		// Only persist instance URL — API key stays in memory only for security
 		localStorage.setItem(
 			`${STORAGE_KEY_PREFIX}${selectedProvider}`,
-			JSON.stringify({ instanceUrl, apiKey }),
+			JSON.stringify({ instanceUrl }),
 		);
-	}, [selectedProvider, instanceUrl, apiKey]);
+	}, [selectedProvider, instanceUrl]);
 
 	const handleTestConnection = useCallback(async () => {
 		if (!instanceUrl.trim() || !apiKey.trim()) return;

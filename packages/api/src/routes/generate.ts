@@ -25,6 +25,11 @@ const route = new OpenAPIHono({
 	},
 });
 
+/** Sanitize a project name to prevent path traversal in ZIP archives. */
+function sanitizeProjectName(name: string): string {
+	return name.replace(/[^a-zA-Z0-9_\-. ]/g, "").replace(/\.{2,}/g, ".") || "project";
+}
+
 /** Build a ZIP buffer from generated files (projectName as root folder). */
 function buildZipBuffer(projectName: string, files: Record<string, string>): Promise<Buffer> {
 	return new Promise((resolve, reject) => {
@@ -135,7 +140,7 @@ route.openapi(generatePost, async (c: any) => {
 		// ZIP: return binary ZIP (Accept: application/zip or ?format=zip)
 		const wantsZip = accept.includes("application/zip") || format?.toLowerCase() === "zip";
 		if (wantsZip) {
-			const projectName = input.projectName ?? "project";
+			const projectName = sanitizeProjectName(input.projectName ?? "project");
 			const zipBuffer = await buildZipBuffer(projectName, result.files);
 			return c.body(new Uint8Array(zipBuffer), 200, {
 				"Content-Disposition": `attachment; filename="${projectName}.zip"`,
@@ -172,7 +177,8 @@ route.openapi(generatePost, async (c: any) => {
 		if (isConfigError) {
 			return c.json({ error: { code: "CONFLICT_ERROR" as const, message } }, 409);
 		}
-		return c.json({ error: { code: "GENERATION_ERROR" as const, message } }, 500);
+		console.error("Generation error:", err);
+		return c.json({ error: { code: "GENERATION_ERROR" as const, message: "Generation failed" } }, 500);
 	}
 });
 

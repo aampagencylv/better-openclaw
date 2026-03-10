@@ -1,4 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { auth } from "./lib/auth.js";
@@ -82,6 +83,10 @@ app.use(
 		credentials: true,
 	}),
 );
+// Security: Limit request body size (2 MB default, 5 MB for generate)
+app.use("/*", bodyLimit({ maxSize: 2 * 1024 * 1024 }));
+app.use("/v1/generate", bodyLimit({ maxSize: 5 * 1024 * 1024 }));
+
 app.use("/*", optionalApiKey());
 app.use("/*", rateLimiter());
 app.use("/v1/generate", generateRateLimiter());
@@ -99,14 +104,14 @@ app.use("/*", async (c, next) => {
 	await next();
 });
 
-// Error handler
+// Error handler — log full error server-side, return generic message to client
 app.onError((err, c) => {
-	console.error(err);
+	console.error(`[${c.get("requestId" as never) ?? "?"}]`, err);
 	return c.json(
 		{
 			error: {
 				code: "INTERNAL_ERROR",
-				message: err.message || "Internal server error",
+				message: "Internal server error",
 			},
 		},
 		500,

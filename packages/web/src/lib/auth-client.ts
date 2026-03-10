@@ -9,12 +9,6 @@ const API_BASE =
 
 export const authClient = createAuthClient({
 	baseURL: API_BASE,
-	headers: {
-		"Access-Control-Allow-Origin": "*",
-		"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-		"Access-Control-Allow-Headers":
-			"Set-Cookie, Cookie, Content-Type, Authorization, x-api-key, baggage, sentry-trace, sentry-release, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Access-Control-Allow-Origin",
-	},
 	plugins: [
 		magicLinkClient(),
 		passkeyClient(),

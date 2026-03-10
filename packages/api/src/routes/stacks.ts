@@ -1,7 +1,31 @@
 import { db, savedStack } from "@better-openclaw/db";
 import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
+import { z } from "zod";
 import { requireSession } from "../middleware/session.js";
+
+/** Zod schema for creating a stack (POST). */
+const CreateStackSchema = z.object({
+	name: z.string().min(1, "Stack name is required").max(100, "Stack name must be 100 characters or fewer"),
+	description: z.string().max(1000, "Description must be 1000 characters or fewer").nullish(),
+	services: z
+		.array(z.string().max(100))
+		.min(1, "At least one service is required")
+		.max(200, "Too many services"),
+	config: z.record(z.unknown()).optional().default({}),
+});
+
+/** Zod schema for updating a stack (PATCH). All fields optional. */
+const UpdateStackSchema = z.object({
+	name: z.string().min(1, "Stack name cannot be empty").max(100, "Stack name must be 100 characters or fewer").optional(),
+	description: z.string().max(1000, "Description must be 1000 characters or fewer").nullish(),
+	services: z
+		.array(z.string().max(100))
+		.min(1, "At least one service is required")
+		.max(200, "Too many services")
+		.optional(),
+	config: z.record(z.unknown()).optional(),
+});
 
 const route = new Hono();
 
@@ -23,27 +47,25 @@ route.get("/", async (c) => {
 route.post("/", async (c) => {
 	const user = c.get("user" as never) as { id: string };
 	const body = await c.req.json();
-	const { name, description, services, config } = body;
+	const parsed = CreateStackSchema.safeParse(body);
 
-	if (!name || typeof name !== "string") {
-		return c.json(
-			{
-				error: { code: "VALIDATION_ERROR", message: "Stack name is required" },
-			},
-			400,
-		);
-	}
-	if (!Array.isArray(services)) {
+	if (!parsed.success) {
 		return c.json(
 			{
 				error: {
 					code: "VALIDATION_ERROR",
-					message: "Services must be an array",
+					message: "Invalid stack input",
+					details: parsed.error.issues.map((i) => ({
+						field: i.path.join("."),
+						message: i.message,
+					})),
 				},
 			},
 			400,
 		);
 	}
+
+	const { name, description, services, config } = parsed.data;
 
 	const [stack] = await db
 		.insert(savedStack)
@@ -52,7 +74,7 @@ route.post("/", async (c) => {
 			name,
 			description: description ?? null,
 			services,
-			config: config ?? {},
+			config,
 		})
 		.returning();
 
@@ -80,15 +102,33 @@ route.patch("/:id", async (c) => {
 	const user = c.get("user" as never) as { id: string };
 	const id = c.req.param("id");
 	const body = await c.req.json();
-	const { name, description, services, config } = body;
+	const parsed = UpdateStackSchema.safeParse(body);
+
+	if (!parsed.success) {
+		return c.json(
+			{
+				error: {
+					code: "VALIDATION_ERROR",
+					message: "Invalid stack input",
+					details: parsed.error.issues.map((i) => ({
+						field: i.path.join("."),
+						message: i.message,
+					})),
+				},
+			},
+			400,
+		);
+	}
+
+	const { name, description, services, config } = parsed.data;
 
 	const [stack] = await db
 		.update(savedStack)
 		.set({
 			...(name ? { name } : {}),
 			...(description !== undefined ? { description } : {}),
-			...(Array.isArray(services) ? { services } : {}),
-			...(config && typeof config === "object" ? { config } : {}),
+			...(services ? { services } : {}),
+			...(config ? { config } : {}),
 			updatedAt: new Date(),
 		})
 		.where(and(eq(savedStack.id, id), eq(savedStack.userId, user.id)))

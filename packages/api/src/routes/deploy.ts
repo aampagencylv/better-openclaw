@@ -16,6 +16,67 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 
 const route = new OpenAPIHono();
 
+/**
+ * SSRF protection: reject URLs that point to localhost, private networks,
+ * or link-local addresses. Only HTTPS URLs are allowed in production.
+ */
+function validateInstanceUrl(url: string): string | null {
+	let parsed: URL;
+	try {
+		parsed = new URL(url);
+	} catch {
+		return "Invalid URL";
+	}
+
+	// Only allow http(s) schemes
+	if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+		return "URL must use http or https";
+	}
+
+	// Require HTTPS in production
+	if (process.env.NODE_ENV === "production" && parsed.protocol !== "https:") {
+		return "URL must use HTTPS in production";
+	}
+
+	const hostname = parsed.hostname.toLowerCase();
+
+	// Block localhost and loopback
+	if (
+		hostname === "localhost" ||
+		hostname === "127.0.0.1" ||
+		hostname === "::1" ||
+		hostname === "0.0.0.0" ||
+		hostname.endsWith(".localhost")
+	) {
+		return "URL must not point to localhost";
+	}
+
+	// Block private/internal IP ranges
+	const ipv4 = hostname.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+	if (ipv4) {
+		const [, a, b] = ipv4.map(Number);
+		if (
+			a === 10 ||                          // 10.0.0.0/8
+			(a === 172 && b! >= 16 && b! <= 31) || // 172.16.0.0/12
+			(a === 192 && b === 168) ||           // 192.168.0.0/16
+			a === 169 && b === 254                // 169.254.0.0/16 (link-local)
+		) {
+			return "URL must not point to a private network address";
+		}
+	}
+
+	// Block common internal hostnames
+	if (
+		hostname.endsWith(".internal") ||
+		hostname.endsWith(".local") ||
+		hostname.endsWith(".svc.cluster.local")
+	) {
+		return "URL must not point to an internal hostname";
+	}
+
+	return null; // valid
+}
+
 // ── Test Connection ─────────────────────────────────────────────────────────
 
 const testConnectionPost = createRoute({
@@ -66,6 +127,11 @@ const testConnectionPost = createRoute({
 // biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
 route.openapi(testConnectionPost, async (c: any) => {
 	const { provider, instanceUrl, apiKey } = c.req.valid("json");
+
+	const ssrfError = validateInstanceUrl(instanceUrl);
+	if (ssrfError) {
+		return c.json({ error: { code: "INVALID_URL" as const, message: ssrfError } }, 400);
+	}
 
 	const deployer = getDeployer(provider);
 	if (!deployer) {
@@ -160,6 +226,11 @@ route.openapi(deployPost, async (c: any) => {
 		description,
 		serverId,
 	} = c.req.valid("json");
+
+	const ssrfError = validateInstanceUrl(instanceUrl);
+	if (ssrfError) {
+		return c.json({ error: { code: "INVALID_URL" as const, message: ssrfError } }, 400);
+	}
 
 	const deployer = getDeployer(provider);
 	if (!deployer) {
@@ -279,6 +350,11 @@ const serversPost = createRoute({
 // biome-ignore lint/suspicious/noExplicitAny: Hono OpenAPI handler typing workaround
 route.openapi(serversPost, async (c: any) => {
 	const { provider, instanceUrl, apiKey } = c.req.valid("json");
+
+	const ssrfError = validateInstanceUrl(instanceUrl);
+	if (ssrfError) {
+		return c.json({ error: { code: "INVALID_URL" as const, message: ssrfError } }, 400);
+	}
 
 	const deployer = getDeployer(provider);
 	if (!deployer) {
