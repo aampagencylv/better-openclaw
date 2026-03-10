@@ -77,9 +77,10 @@ services:
         # For Docker networking, the browser reaches Convex via the host, not the
         # internal Docker network, so this should be the host-accessible URL.
         VITE_CONVEX_URL: ${VITE_CONVEX_URL:-http://127.0.0.1:3210}
-        # These are used at build time to push Convex functions to the backend.
+        # URL the build container uses to push Convex functions.
         CONVEX_SELF_HOSTED_URL: ${CONVEX_SELF_HOSTED_URL:-http://convex:3210}
-        CONVEX_SELF_HOSTED_ADMIN_KEY: ${CONVEX_SELF_HOSTED_ADMIN_KEY:-}
+      secrets:
+        - convex_admin_key
     ports:
       - "3660:3660"
     depends_on:
@@ -88,6 +89,10 @@ services:
     restart: unless-stopped
     networks:
       - openclaw-network
+
+secrets:
+  convex_admin_key:
+    environment: CONVEX_SELF_HOSTED_ADMIN_KEY
 
 volumes:
   convex-data:

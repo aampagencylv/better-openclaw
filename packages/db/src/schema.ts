@@ -1,4 +1,4 @@
-import { boolean, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // ── better-auth required tables ────────────────────────────────────────────────
 
@@ -80,7 +80,38 @@ export const favorite = pgTable("favorite", {
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// ── Analytics ───────────────────────────────────────────────────────────────────
+
+export const analyticsEvent = pgTable(
+	"analytics_event",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		source: text("source").notNull(), // "cli" | "web" | "api" | "mcp"
+		buildMethod: text("build_method").notNull(), // "preset" | "custom"
+		presetId: text("preset_id"),
+		services: jsonb("services").notNull().$type<string[]>(),
+		skillPacks: jsonb("skill_packs").notNull().$type<string[]>().default([]),
+		serviceCount: integer("service_count").notNull(),
+		proxy: text("proxy").notNull(),
+		deployment: text("deployment").notNull(),
+		deploymentType: text("deployment_type").notNull(),
+		platform: text("platform").notNull(),
+		gpu: boolean("gpu").notNull().default(false),
+		monitoring: boolean("monitoring").notNull().default(false),
+		hasDomain: boolean("has_domain").notNull().default(false),
+		openclawImage: text("openclaw_image").notNull(),
+		estimatedMemoryMB: integer("estimated_memory_mb").notNull(),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+	},
+	(table) => [
+		index("analytics_event_created_at_idx").on(table.createdAt),
+		index("analytics_event_source_idx").on(table.source),
+	],
+);
+
 export type User = typeof user.$inferSelect;
 export type Session = typeof session.$inferSelect;
 export type SavedStack = typeof savedStack.$inferSelect;
 export type Favorite = typeof favorite.$inferSelect;
+export type AnalyticsEvent = typeof analyticsEvent.$inferSelect;
+export type NewAnalyticsEvent = typeof analyticsEvent.$inferInsert;
