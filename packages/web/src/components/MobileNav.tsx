@@ -6,6 +6,7 @@ interface NavLink {
 	href: string;
 	label: string;
 	external?: boolean;
+	cloudGated?: boolean;
 }
 
 interface MobileNavProps {
@@ -13,9 +14,10 @@ interface MobileNavProps {
 	session: { user: { name?: string | null; email?: string | null } } | null;
 	onClose: () => void;
 	onSignOut: () => void;
+	onCloudClick?: () => void;
 }
 
-export function MobileNav({ links, session, onClose, onSignOut }: MobileNavProps) {
+export function MobileNav({ links, session, onClose, onSignOut, onCloudClick }: MobileNavProps) {
 	return (
 		<div className="border-t border-border bg-background/95 backdrop-blur-xl md:hidden">
 			<div className="space-y-1 px-4 py-4">
@@ -25,8 +27,23 @@ export function MobileNav({ links, session, onClose, onSignOut }: MobileNavProps
 						[ ENV: PRODUCTION ]
 					</span>
 				</div>
-				{links.map((link) =>
-					link.external ? (
+				{links.map((link) => {
+					if (link.cloudGated && onCloudClick) {
+						return (
+							<button
+								key={link.label}
+								type="button"
+								onClick={() => {
+									onCloudClick();
+									onClose();
+								}}
+								className="block py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground cursor-pointer"
+							>
+								{link.label}
+							</button>
+						);
+					}
+					return link.external ? (
 						<a
 							key={link.href}
 							href={link.href}
@@ -46,8 +63,8 @@ export function MobileNav({ links, session, onClose, onSignOut }: MobileNavProps
 						>
 							{link.label}
 						</Link>
-					),
-				)}
+					);
+				})}
 				{session ? (
 					<>
 						<Link

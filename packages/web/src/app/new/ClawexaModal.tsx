@@ -1,6 +1,7 @@
 "use client";
 
 import { generateStackAsZip, generateStackComplete } from "@/lib/api-client";
+import { CLOUD_ENABLED } from "@/lib/cloud";
 import { useStackBuilder } from "./StackBuilderProvider";
 
 const CLAWEXA_DEPLOY_URL = process.env.NEXT_PUBLIC_CLAWEXA_DEPLOY_URL ?? "";
@@ -41,7 +42,7 @@ export function ClawexaModal() {
 
 	const stackParams = useStackParams();
 
-	if (!showClawexaModal) return null;
+	if (!showClawexaModal || !CLOUD_ENABLED) return null;
 
 	async function handleDownloadZip() {
 		if (selectedServices.size === 0) return;

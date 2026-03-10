@@ -1,20 +1,36 @@
+"use client";
+
 import Link from "next/link";
 
 interface NavLink {
 	href: string;
 	label: string;
 	external?: boolean;
+	cloudGated?: boolean;
 }
 
 interface DesktopNavProps {
 	links: NavLink[];
+	onCloudClick?: () => void;
 }
 
-export function DesktopNav({ links }: DesktopNavProps) {
+export function DesktopNav({ links, onCloudClick }: DesktopNavProps) {
 	return (
 		<div className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:flex items-center gap-6">
-			{links.map((link) =>
-				link.external ? (
+			{links.map((link) => {
+				if (link.cloudGated && onCloudClick) {
+					return (
+						<button
+							key={link.label}
+							type="button"
+							onClick={onCloudClick}
+							className="font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+						>
+							{link.label}
+						</button>
+					);
+				}
+				return link.external ? (
 					<a
 						key={link.href}
 						href={link.href}
@@ -32,8 +48,8 @@ export function DesktopNav({ links }: DesktopNavProps) {
 					>
 						{link.label}
 					</Link>
-				),
-			)}
+				);
+			})}
 		</div>
 	);
 }

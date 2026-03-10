@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { CLOUD_ENABLED } from "@/lib/cloud";
+import { ComingSoonModal, useComingSoonModal } from "./ComingSoonModal";
 
 /* ── Floating HUD Data (module-level constant) ──────────────────────────── */
 const activeNodes = [
@@ -89,6 +91,7 @@ export function HeroContent() {
   const [mcpPkgManager, setMcpPkgManager] = useState<MCPPkgManager>("NPX");
   const [pkgDropdownOpen, setPkgDropdownOpen] = useState(false);
   const [mcpPkgDropdownOpen, setMcpPkgDropdownOpen] = useState(false);
+  const comingSoon = useComingSoonModal();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -467,16 +470,27 @@ export function HeroContent() {
       <motion.div variants={fadeUp} className="mt-10">
         <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60">
           NO CREDIT CARD REQ. | INSTANT PROVISIONING |{" "}
-          <a
-            href="https://clawexa.net"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary/60 transition-colors hover:text-primary"
-          >
-            BETTER-OPENCLAW CLOUD
-          </a>
+          {CLOUD_ENABLED ? (
+            <a
+              href="https://clawexa.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary/60 transition-colors hover:text-primary"
+            >
+              BETTER-OPENCLAW CLOUD
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={comingSoon.open}
+              className="text-primary/60 transition-colors hover:text-primary cursor-pointer"
+            >
+              BETTER-OPENCLAW CLOUD
+            </button>
+          )}
         </span>
       </motion.div>
+      <ComingSoonModal open={comingSoon.isOpen} onClose={comingSoon.close} />
     </motion.div>
   );
 }

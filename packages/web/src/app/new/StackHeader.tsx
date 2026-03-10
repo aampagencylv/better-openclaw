@@ -1,5 +1,7 @@
 "use client";
 
+import { ComingSoonModal, useComingSoonModal } from "@/components/ComingSoonModal";
+import { CLOUD_ENABLED } from "@/lib/cloud";
 import { ClawexaModal } from "./ClawexaModal";
 import { DownloadInstructions } from "./DownloadInstructions";
 import { ErrorBanners } from "./ErrorBanners";
@@ -18,6 +20,8 @@ export function StackHeader() {
 		setShowClawexaModal,
 	} = useStackBuilder();
 
+	const comingSoon = useComingSoonModal();
+
 	return (
 		<>
 			<HeaderActions />
@@ -31,11 +35,12 @@ export function StackHeader() {
 					platform={lastDownloadOptions?.platform}
 					onDismiss={() => setDownloadComplete(false)}
 					onDeployToServer={() => setShowDeployToServerModal(true)}
-					onDeployClawexa={() => setShowClawexaModal(true)}
+					onDeployClawexa={() => CLOUD_ENABLED ? setShowClawexaModal(true) : comingSoon.open()}
 				/>
 			) : null}
 
 			<ClawexaModal />
+			<ComingSoonModal open={comingSoon.isOpen} onClose={comingSoon.close} />
 		</>
 	);
 }

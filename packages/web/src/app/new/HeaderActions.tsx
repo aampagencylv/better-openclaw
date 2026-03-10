@@ -3,13 +3,16 @@
 import { ArrowLeft, Download, Loader2, Rocket, RotateCcw, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ComingSoonModal, useComingSoonModal } from "@/components/ComingSoonModal";
 import { useSession } from "@/lib/auth-client";
+import { CLOUD_ENABLED } from "@/lib/cloud";
 import { cn } from "@/lib/utils";
 import { useStackBuilder } from "./StackBuilderProvider";
 
 export function HeaderActions() {
 	const router = useRouter();
 	const { data: session } = useSession();
+	const comingSoon = useComingSoonModal();
 
 	const {
 		projectName,
@@ -25,6 +28,7 @@ export function HeaderActions() {
 	} = useStackBuilder();
 
 	return (
+		<>
 		<header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur-md">
 			<div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 md:px-6">
 				<div className="flex items-center gap-4">
@@ -108,7 +112,7 @@ export function HeaderActions() {
 
 					<button
 						type="button"
-						onClick={() => setShowClawexaModal(true)}
+						onClick={() => CLOUD_ENABLED ? setShowClawexaModal(true) : comingSoon.open()}
 						disabled={selectedServices.size === 0}
 						className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none disabled:opacity-50 sm:block"
 						aria-label="Deploy to clawexa.net"
@@ -143,5 +147,7 @@ export function HeaderActions() {
 				</div>
 			</div>
 		</header>
+		<ComingSoonModal open={comingSoon.isOpen} onClose={comingSoon.close} />
+		</>
 	);
 }
