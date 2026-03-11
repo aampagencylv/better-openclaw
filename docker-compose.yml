@@ -79,8 +79,6 @@ services:
         VITE_CONVEX_URL: ${VITE_CONVEX_URL:-http://127.0.0.1:3210}
         # URL the build container uses to push Convex functions.
         CONVEX_SELF_HOSTED_URL: ${CONVEX_SELF_HOSTED_URL:-http://convex:3210}
-      secrets:
-        - convex_admin_key
     ports:
       - "3660:3660"
     depends_on:
@@ -89,10 +87,6 @@ services:
     restart: unless-stopped
     networks:
       - openclaw-network
-
-secrets:
-  convex_admin_key:
-    environment: CONVEX_SELF_HOSTED_ADMIN_KEY
 
 volumes:
   convex-data:

@@ -38,17 +38,8 @@ RUN pnpm install --frozen-lockfile || pnpm install
 # Copy source (convex/_generated/ types are committed to the repo)
 COPY . .
 
-# Push Convex functions to self-hosted backend (schema + server functions)
-# Uses --mount=type=secret to avoid leaking the admin key in image layers.
-# Skipped when the secret or URL is not provided (e.g. CI image builds).
-RUN --mount=type=secret,id=convex_admin_key \
-    if [ -n "$CONVEX_SELF_HOSTED_URL" ] && [ -f /run/secrets/convex_admin_key ]; then \
-    export CONVEX_SELF_HOSTED_ADMIN_KEY=$(cat /run/secrets/convex_admin_key) && \
-    echo "Pushing Convex functions to self-hosted backend..." && \
-    npx convex deploy --cmd 'echo "Functions pushed successfully"'; \
-    else \
-    echo "Skipping Convex push (CONVEX_SELF_HOSTED_URL or convex_admin_key secret not set)"; \
-    fi
+# Convex push is skipped at build time — run it post-deploy instead.
+RUN echo "Skipping Convex push during build (will run post-deploy)"
 
 # Build the Vite SPA (VITE_CONVEX_URL is embedded at this step)
 RUN pnpm run build
