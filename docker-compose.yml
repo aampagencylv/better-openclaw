@@ -19,10 +19,10 @@ services:
       - DO_NOT_REQUIRE_SSL=true
     healthcheck:
       test: curl -f http://localhost:3210/version
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
     restart: unless-stopped
     networks:
       - openclaw-network
