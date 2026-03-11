@@ -9,7 +9,7 @@ COPY packages/core/package.json ./packages/core/
 COPY packages/api/package.json ./packages/api/
 COPY packages/cli/package.json ./packages/cli/
 COPY packages/web/package.json ./packages/web/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 FROM base AS builder
 WORKDIR /app
