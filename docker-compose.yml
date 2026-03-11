@@ -52,6 +52,7 @@ services:
       - NODE_ENV=production
       - PORT=3456
       - DATABASE_URL=${DATABASE_URL:-}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-}
     restart: unless-stopped
     networks:
       - openclaw-network
